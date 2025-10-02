@@ -46,12 +46,12 @@
 <td width="30%" align="center"> 
     <span id="mostrar">MOSTRAR</span>
     <select class="form-select mb-3" id="per_page" onchange="load(1);">
-
-       
-		<option value="50" <?php if($_REQUEST['per_page']=='50') echo 'selected'; ?>>50</option>
         <option value="10" <?php if($_REQUEST['per_page']=='10') echo 'selected'; ?>>10</option>
         <option value="15" <?php if($_REQUEST['per_page']=='15') echo 'selected'; ?>>15</option>
-        <option value="20" <?php if($_REQUEST['per_page']=='20') echo 'selected'; ?>>20</option>
+
+               <option value="20" <?php if($_REQUEST['per_page']=='20') echo 'selected'; ?>>20</option>
+		<option value="50" <?php if($_REQUEST['per_page']=='50') echo 'selected'; ?>>50</option>
+
         
         <option value="100"<?php if($_REQUEST['per_page']=='100')echo 'selected'; ?>>100</option>		
 		<option value="200" <?php if($_REQUEST['per_page']=='200'){echo 'selected';} ?>>200</option>

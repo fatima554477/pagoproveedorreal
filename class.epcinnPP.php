@@ -531,19 +531,19 @@ NoIdentificacionConcepto
 		return $row['id'];
 	}
 
-	public function verificar_usuario($conn,$nommbrerazon){
-		 $queryrfc = "SELECT * FROM 02direccionproveedor1 WHERE P_NOMBRE_FISCAL_RS_EMPRESA = '".$nommbrerazon."' ";
-		$arrayquery = mysqli_query($conn,$queryrfc);
-		$row = mysqli_fetch_array($arrayquery, MYSQLI_ASSOC);
-		return $row['id'];
-	}
-		
-	public function verificar_usuario_comercial($conn,$nommbrerazon){
-		ECHO  $queryrfc = "SELECT * FROM 02direccionproveedor1 WHERE P_NOMBRE_COMERCIAL_EMPRESA = '".$nommbrerazon."' ";
-		$arrayquery = mysqli_query($conn,$queryrfc);
-		$row = mysqli_fetch_array($arrayquery, MYSQLI_ASSOC);
-		return $row['id'];
-	}
+       public function verificar_usuario($conn,$nommbrerazon){
+                $queryrfc = "SELECT * FROM 02direccionproveedor1 WHERE P_NOMBRE_FISCAL_RS_EMPRESA = '".$nommbrerazon."' ";
+                $arrayquery = mysqli_query($conn,$queryrfc);
+                $row = mysqli_fetch_array($arrayquery, MYSQLI_ASSOC);
+                return $row['id'];
+        }
+
+        public function verificar_usuario_comercial($conn,$nommbrerazon){
+                $queryrfc = "SELECT * FROM 02direccionproveedor1 WHERE P_NOMBRE_COMERCIAL_EMPRESA = '".$nommbrerazon."' ";
+                $arrayquery = mysqli_query($conn,$queryrfc);
+                $row = mysqli_fetch_array($arrayquery, MYSQLI_ASSOC);
+                return $row['id'];
+        }
 	public function ingresar_usuario($conn,$nommbrerazon){
 		 $queryrfc = "insert into 02direccionproveedor1 (P_NOMBRE_FISCAL_RS_EMPRESA) values ('".$nommbrerazon."'); ";
 		$arrayquery = mysqli_query($conn,$queryrfc) or die('P160'.mysqli_error($conn));
