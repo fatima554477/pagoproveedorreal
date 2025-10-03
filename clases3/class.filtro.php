@@ -493,72 +493,47 @@ public function obtener_rfc_a_id($valor) {
                 return $this->counter;
         }
 
+        /**
+         * Determina si un colaborador puede autorizar operaciones de ventas.
+         *
+         * @param string|int $idPersonal Identificador del colaborador (idem en sesión).
+         * @return bool Verdadero si el colaborador tiene autorizaAUT = 'si'.
+         */
 /**
- * Determina si un colaborador puede autorizar operaciones de ventas.
+ * Determina si un colaborador puede autorizar operaciones de ventas
+ * de todos los registros de su mismo número de evento.
  *
- * El permiso se evalúa con base en la relación de 04personal → 04altaeventos → 02SUBETUFACTURA,
- * permitiendo que los colaboradores de ventas administren únicamente los eventos en los que
- * participan.
- *
- * @param string|int $idPersonal    Identificador del colaborador (idem en sesión).
- * @param string|int|null $numeroEvento Número de evento del registro a validar. Si es null, se
- *                                      valida si el colaborador cuenta con algún evento autorizado.
- * @return bool Verdadero si el colaborador tiene autorizaAUT = 'si' para el evento solicitado.
+ * @param string|int $idPersonal Identificador del colaborador (idem en sesión).
+ * @return bool Verdadero si el colaborador tiene autorizaAUT = 'si' en su evento.
  */
-public function puedeAutorizarVentas($idPersonal, $numeroEvento = null) {
-        if (empty($idPersonal)) {
-                return false;
-        }
-
-        $conn = $this->db();
-        $idPersonal = mysqli_real_escape_string($conn, trim($idPersonal));
-        $numeroEvento = ($numeroEvento !== null) ? trim($numeroEvento) : null;
-
-        static $columnaColaborador = null;
-        if ($columnaColaborador === null) {
-                $columnaColaborador = false;
-                $posiblesColumnas = ['id', 'idPersonal', 'id_colaborador'];
-                foreach ($posiblesColumnas as $columnaPosible) {
-                        $sqlColumna = "SHOW COLUMNS FROM 04personal LIKE '".$columnaPosible."'";
-                        $resultadoColumna = mysqli_query($conn, $sqlColumna);
-                        if ($resultadoColumna && mysqli_num_rows($resultadoColumna) > 0) {
-                                $columnaColaborador = $columnaPosible;
-                                break;
-                        }
-                }
-        }
-
-        $eventFilter = '';
-        if ($numeroEvento !== null && $numeroEvento !== '') {
-                $numeroEvento = mysqli_real_escape_string($conn, $numeroEvento);
-                $eventFilter = " AND ae.NUMERO_EVENTO = '".$numeroEvento."'";
-        }
-
-        if ($columnaColaborador) {
-                $sqlPermiso = "
-                        SELECT LOWER(p.autorizaAUT) AS autorizaAUT
-                        FROM 04personal p
-                        INNER JOIN 04altaeventos ae ON ae.id = p.idRelacion
-                        WHERE p.`".$columnaColaborador."` = '".$idPersonal."'".$eventFilter."\n                                LIMIT 1";
-                $resPermiso = mysqli_query($conn, $sqlPermiso);
-                if ($resPermiso && ($rowPermiso = mysqli_fetch_assoc($resPermiso))) {
-                        return $rowPermiso['autorizaAUT'] === 'si';
-                }
-        }
-
-        // Fallback legado: valida únicamente por idRelacion cuando no se identificó la columna
-        // del colaborador o no existe relación de eventos registrada.
-        $sqlLegacy = "
-                SELECT LOWER(p.autorizaAUT) AS autorizaAUT
-                FROM 04personal p
-                INNER JOIN 04altaeventos ae ON ae.id = p.idRelacion
-                WHERE p.idRelacion = '".$idPersonal."'".$eventFilter."\n                        LIMIT 1";
-        $resLegacy = mysqli_query($conn, $sqlLegacy);
-        if ($resLegacy && ($rowLegacy = mysqli_fetch_assoc($resLegacy))) {
-                return $rowLegacy['autorizaAUT'] === 'si';
-        }
-
+public function puedeAutorizarVentas($idPersonal) {
+    if (empty($idPersonal)) {
         return false;
+    }
+
+    $conn = $this->db();
+    $idPersonal = mysqli_real_escape_string($conn, trim($idPersonal));
+
+    // 1) Obtener el número de evento al que pertenece el colaborador
+    $sqlEvento = "
+        SELECT idRelacion AS NUMERO_EVENTO, autorizaAUT 
+        FROM 04personal 
+        WHERE idRelacion = '".$idPersonal."' 
+        LIMIT 1";
+    $resEvento = mysqli_query($conn, $sqlEvento);
+
+    if ($resEvento && ($rowEvento = mysqli_fetch_assoc($resEvento))) {
+        $numeroEvento = $rowEvento['NUMERO_EVENTO'];
+        $autorizaAUT  = strtolower($rowEvento['autorizaAUT']);
+
+        // 2) Validar si el colaborador tiene permiso en ese evento
+        if ($autorizaAUT === 'si') {
+            // ✅ Tiene permiso, autoriza a todos los registros del mismo evento
+            return true;
+        }
+    }
+
+    return false;
 }
 
 }

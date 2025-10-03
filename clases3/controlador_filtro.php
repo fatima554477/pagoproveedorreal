@@ -24,8 +24,8 @@ if($action == "ajax"){
         require(__ROOT6__."/class.filtro.php");
         $database=new orders();
 
-  $usuarioActual = isset($_SESSION['idem']) ? $_SESSION['idem'] : '';␊
-        $permisosVentasPorEvento = [];
+        $usuarioActual = isset($_SESSION['idem']) ? $_SESSION['idem'] : '';
+        $puedeAutorizarVentas = $database->puedeAutorizarVentas($usuarioActual);
 
 	$DEPARTAMENTO = !empty($_POST["DEPARTAMENTO2"])?$_POST["DEPARTAMENTO2"]:"DEFAULT";	
 	$nombreTabla = "SELECT * FROM `08pagoproveedoresfiltroDes`, 08altaeventosfiltroPLA WHERE 08pagoproveedoresfiltroDes.id = 08altaeventosfiltroPLA.idRelacion";
@@ -1406,7 +1406,7 @@ $colspan += 1; ?>/>
 </td>
 
 
-<td style="text-align:center; background:<?php echo ($row["STATUS_VENTAS"] == 'si') ? '#ceffcc' : '#e9d8ee'; ?>;"
+<td style="text-align:center; background:<?php echo ($row["STATUS_VENTAS"] == 'si') ? '#ceffcc' : '#e9d8ee'; ?>;" 
     id="color_VENTAS<?php echo $row["02SUBETUFACTURAid"]; ?>" >
 
     <input type="checkbox"
@@ -1417,16 +1417,6 @@ $colspan += 1; ?>/>
         value="<?php echo $row["02SUBETUFACTURAid"]; ?>"
         onclick="STATUS_VENTAS(<?php echo $row["02SUBETUFACTURAid"]; ?>)"
         <?php
-            $numeroEventoActual = isset($row['NUMERO_EVENTO']) ? trim($row['NUMERO_EVENTO']) : '';
-            $indicePermisoVentas = ($numeroEventoActual !== '') ? $numeroEventoActual : '_sin_evento_';
-            if (!array_key_exists($indicePermisoVentas, $permisosVentasPorEvento)) {
-                $permisosVentasPorEvento[$indicePermisoVentas] = $database->puedeAutorizarVentas(
-                    $usuarioActual,
-                    $numeroEventoActual !== '' ? $numeroEventoActual : null
-                );
-            }
-            $puedeAutorizarVentas = $permisosVentasPorEvento[$indicePermisoVentas];
-
             $atributosVentas = [];
             if ($row["STATUS_VENTAS"] == 'si') {
                 $atributosVentas[] = 'checked';
