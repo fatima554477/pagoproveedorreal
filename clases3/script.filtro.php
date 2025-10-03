@@ -1,4 +1,36 @@
 
+<style>
+/* Loader con animación */
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #6a0dad; /* Morado elegante */
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Texto estilizado */
+.msg-actualizando {
+  font-weight: bold;
+  font-size: 20px;
+  color: #6a0dad;
+  background: #f3e9fb;
+  border-radius: 6px;
+  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+}
+</style>
 <script>
 
 
@@ -677,9 +709,23 @@ var ULTIMA_CARGA_DATOBANCA=$("#ULTIMA_CARGA_DATOBANCA").val();
         url: 'pagoproveedores/clases3/controlador_filtro.php', 
         type: 'POST',
         data: parametros,
-						 beforeSend: function(objeto){
-				$("#loader2").html("Cargando...").fadeIn().delay(500).fadeOut();
-			  },
+beforeSend: function(objeto){
+  $("#loader2").html(
+    '<div class="msg-actualizando">' +
+      '<span class="loader2"></span> ⏳ ACTUALIZADO...' +
+    '</div>'
+  ).fadeIn();
+
+  // Quitar el mensaje después de 3 segundos
+  setTimeout(function(){
+    $("#loader2").fadeOut("slow", function(){
+      $(this).html(""); // limpia el contenido después de ocultarlo
+    });
+  }, 1000);
+},
+			  
+			  
+			  
         success: function (data) {
 			
 				
