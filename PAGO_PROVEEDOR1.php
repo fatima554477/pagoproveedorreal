@@ -103,6 +103,24 @@ $_SESSION['idusuario12']= '';
 			}
 		});
 		</script>
+		<style>
+  /* Aplica a todas las tablas de ese formulario */
+  table tr td:first-child, 
+  table tr th:first-child {
+    width: 50%;          /* 50% para el label */
+    vertical-align: middle;
+  }
+  table tr td:last-child, 
+  table tr th:last-child {
+    width: 50%;          /* 50% para el input */
+  }
+
+  /* Forzar a que el label e input ocupen todo el ancho de su celda */
+  .form-label, 
+  .form-control {
+    width: 100% !important;
+  }
+</style>
 		<div id="content">
 			<hr/> <strong> <P class="mb-0 text-uppercase">
 <img src="includes/contraer31.png" id="mostrar1" style="cursor:pointer;"/>
@@ -116,56 +134,27 @@ $_SESSION['idusuario12']= '';
 		<div id="target1" style="display:block;" class="content2">
 			<div class="card">
 				<div class="card-body">
-					<form class="row g-3 needs-validation was-validated" novalidate="" id="pagoaproveedoresform" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>"> <strong><p>AUTORIZACIONES</p></strong> <strong> <p>1- RESPONSABLE DEL EVENTO</P></strong> <strong> <P>2.-AUDITORÍA</p></strong> <strong> <p>3.-AUDITORÍA</p></strong> <strong> <p>4.-FINANZAS Y TESORERÍA</p></strong> <strong><p>5.-FORMATO Y CASILLAS COMPLETAS</p></strong> <strong><p>6.-FECHA DE AUTORIZACION DEL RESPONSABLE DEL EVENTO	</p>	</strong> <strong><p>7.-FECHA DE AUTORIZACIÓN DE AUDITORÍA</p></strong> <strong><p>8.-FECHA DE CARGO O LLENADO	</p></strong>
-						<hr>
+					<form class="row g-3 needs-validation was-validated" novalidate="" id="pagoaproveedoresform" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>"> 
 						<table class="table table-striped table-bordered" style="width:100%">
 							<tr>
-								<th scope="col">1</th>
-								<th scope="col">2</th>
-								<th scope="col">3</th>
-								<th scope="col">4</th>
-								<th scope="col">5</th>
-								<th style="text-align:center" scope="col">6</th>
-								<th style="text-align:center" scope="col">7</th>
-								<th style="text-align:center " scope="col">8</th>
-								<th scope="col">TRANSFERENCIA 1</th>
-								<th scope="col">DATOS</th>
+
 							</tr>
 							<tr style="width:300px;background:#d2faf1">
-								<td>
-									<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_PDF_1; ?>" name="ADJUNTAR_FACTURA_PDF_1">
-								</td>
-								<td>
-									<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_PDF_2; ?>" name="ADJUNTAR_FACTURA_PDF_2">
-								</td>
-								<td>
-									<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_PDF_3; ?>" name="ADJUNTAR_FACTURA_PDF_3">
-								</td>
-								<td>
-									<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_PDF_4; ?>" name="ADJUNTAR_FACTURA_PDF_4">
-								</td>
-								<td>
-									<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_PDF_5; ?>" name="ADJUNTAR_FACTURA_PDF_5">
-								</td>
-								<td>
-									<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_FACTURA_PDF_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="ADJUNTAR_FACTURA_PDF_FECHA_AUTORIZACION_RESPONSABLE">
-								</td>
-								<td>
-									<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_FACTURA_PDF_FECHA_AUTORIZACION_AUDITORIA; ?>" name="ADJUNTAR_FACTURA_PDF_FECHA_AUTORIZACION_AUDITORIA">
-								</td>
-								<td>
-									<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_FACTURA_PDF_FECHA_DE_LLENADO; ?>" name="ADJUNTAR_FACTURA_PDF_FECHA_DE_LLENADO">
-								</td>
+				
 								<th scope="row">
-									<label style="width:300px;text-align:left" for="validationCustom03" class="form-label"> PAGO A PROVEEDOR, VIÁTICO O REEMBOLSO,
-										<br>PAGO A PROVEEDOR CON DOS O MAS FACTURAS:</label>
+									<label  for="validationCustom03" class="form-label"> PAGO A PROVEEDOR, VIÁTICO O REEMBOLSO,
+										PAGO A PROVEEDOR CON DOS O MAS FACTURAS:</label>
 								</th>
 								<td>
-									<select class="form-select mb-3" aria-label="Default select example" id="validationCustom02" required="" name="VIATICOSOPRO"> >
+									<select class="form-select mb-3" aria-label="Default select example" id="validationCustom02" required="" name="VIATICOSOPRO"> 
 						<option style="background:#fac3aa" value="PAGO A PROVEEDOR" <?php if($VIATICOSOPRO=='PAGOAPROVE' ){echo "selected";} ?>>PAGO A PROVEEDOR </option>
+						
+						
 						<option style="background:#f571f7" value="PAGO A PROVEEDOR CON DOS O MAS FACTURAS" <?php if($VIATICOSOPRO=='PAGO A PROVEEDOR CON DOS O MAS FACTURAS' ){echo "selected";} ?>>SOLICITUD DE PAGO A PROVEEDOR CON DOS O MÁS FACTURAS</option>
 						
-						<option style="background:#b3f39b" value="PAGOS CON UNA SOLA FACTURA" <?php if($VIATICOSOPRO=='PAGOS CON UNA SOLA FACTURA' ){echo "selected";} ?>>SOLICITUD DE PAGOS CON UNA SOLA FACTURA</option>
+<option style="background:#b3f39b" value="PAGOS CON UNA SOLA FACTURA" <?php if($VIATICOSOPRO=='PAGOS CON UNA SOLA FACTURA' ){echo "selected";} ?>>SOLICITUD DE PAGOS CON UNA SOLA FACTURA</option>
+						
+						
 						<option style="background:#faf7aa" value="VIATICOS" <?php if($VIATICOSOPRO=='VIATICOS' ){echo "selected";} ?>>SOLICITUD DE VIATICOS</option>
 						<option style="background:#c0c7f6" value="REEMBOLSO" <?php if($VIATICOSOPRO=='REEMBOLSO' ){echo "selected";} ?>>SOLICITUD DE REEMBOLSO</option>
 										
@@ -175,30 +164,7 @@ $_SESSION['idusuario12']= '';
 				</div>
 				</tr>
 				<tr style="background: #d2faf1">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_1; ?>" name="ADJUNTAR_FACTURA_XML_1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_2; ?>" name="ADJUNTAR_FACTURA_XML_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_3; ?>" name="ADJUNTAR_FACTURA_XML_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_4; ?>" name="ADJUNTAR_FACTURA_XML_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_5; ?>" name="ADJUNTAR_FACTURA_XML_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="ADJUNTAR_FACTURA_XML_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_FECHA_AUTORIZACION_AUDITORIA; ?>" name="ADJUNTAR_FACTURA_XML_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_FECHA_DE_LLENADO; ?>" name="ADJUNTAR_FACTURA_XML_FECHA_DE_LLENADO">
-					</td>
+
 					<th scope="row">
 						<label style="width:300px" for="formFileSm" class="form-label">ADJUNTAR FACTURA(FORMATO XML)</label>
 					</th>
@@ -295,30 +261,7 @@ $NUMERO_CONSECUTIVO_PROVEE = $valor_base + 1;
 					</td>
 				</tr>
 				<tr style="background: #d2faf1">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_PDF_1; ?>" name="ADJUNTAR_FACTURA_PDF_1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_PDF_2; ?>" name="ADJUNTAR_FACTURA_PDF_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_PDF_3; ?>" name="ADJUNTAR_FACTURA_PDF_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_PDF_4; ?>" name="ADJUNTAR_FACTURA_PDF_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_PDF_5; ?>" name="ADJUNTAR_FACTURA_PDF_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_FACTURA_PDF_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="ADJUNTAR_FACTURA_PDF_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_FACTURA_PDF_FECHA_AUTORIZACION_AUDITORIA; ?>" name="ADJUNTAR_FACTURA_PDF_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_FACTURA_PDF_FECHA_DE_LLENADO; ?>" name="ADJUNTAR_FACTURA_PDF_FECHA_DE_LLENADO">
-					</td>
+	
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">ADJUNTAR FACTURA (FORMATO PDF)</label>
 					</th>
@@ -346,30 +289,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 					</td>
 				</tr>
 				<tr style="background:#fcf3cf">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_1; ?>" name="ADJUNTAR_FACTURA_XML_1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_2; ?>" name="ADJUNTAR_FACTURA_XML_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_3; ?>" name="ADJUNTAR_FACTURA_XML_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_4; ?>" name="ADJUNTAR_FACTURA_XML_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_5; ?>" name="ADJUNTAR_FACTURA_XML_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="ADJUNTAR_FACTURA_XML_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_FECHA_AUTORIZACION_AUDITORIA; ?>" name="ADJUNTAR_FACTURA_XML_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_FECHA_DE_LLENADO; ?>" name="ADJUNTAR_FACTURA_XML_FECHA_DE_LLENADO">
-					</td>
+		
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">NÚMERO CONSECUTIVO DE PAGO A PROVEEDORES</label>
 					</th>
@@ -380,30 +300,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 					</td>
 				</tr>
 				<tr style="background: #d2faf1">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_1; ?>" name="ADJUNTAR_FACTURA_XML_1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_2; ?>" name="ADJUNTAR_FACTURA_XML_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_3; ?>" name="ADJUNTAR_FACTURA_XML_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_4; ?>" name="ADJUNTAR_FACTURA_XML_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_5; ?>" name="ADJUNTAR_FACTURA_XML_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="ADJUNTAR_FACTURA_XML_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_FECHA_AUTORIZACION_AUDITORIA; ?>" name="ADJUNTAR_FACTURA_XML_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_FECHA_DE_LLENADO; ?>" name="ADJUNTAR_FACTURA_XML_FECHA_DE_LLENADO">
-					</td>
+				
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">NOMBRE COMERCIAL
 							<br><a style="color:red;font-size:11px">OBLIGATORIO</a></label>
@@ -477,30 +374,7 @@ if($rfcE==true){
 </span> </td>
 				</tr>
 				<tr style="background:#fcf3cf">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_1; ?>" name="ADJUNTAR_FACTURA_XML_1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_2; ?>" name="ADJUNTAR_FACTURA_XML_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_3; ?>" name="ADJUNTAR_FACTURA_XML_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_4; ?>" name="ADJUNTAR_FACTURA_XML_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_5; ?>" name="ADJUNTAR_FACTURA_XML_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="ADJUNTAR_FACTURA_XML_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_FECHA_AUTORIZACION_AUDITORIA; ?>" name="ADJUNTAR_FACTURA_XML_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_FACTURA_XML_FECHA_DE_LLENADO; ?>" name="ADJUNTAR_FACTURA_XML_FECHA_DE_LLENADO">
-					</td>
+
 					<th scope="row">
 						<label style="width:300px" for="RAZON_SOCIAL" class="form-label">RAZÓN SOCIAL</label>
 					</th>
@@ -510,30 +384,7 @@ if($rfcE==true){
 					</td>
 				</tr>
 				<tr style="background:#fcf3cf">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $RFC_1; ?>" name="">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $RFC_2; ?>" name="RFC_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $RFC_3; ?>" name="RFC_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $RFC_4; ?>" name="RFC_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $RFC_5; ?>" name="RFC_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $RFC_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="RFC_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $RFC_FECHA_AUTORIZACION_AUDITORIA; ?>" name="RFC_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $RFC_FECHA_DE_LLENADO; ?>" name="RFC_FECHA_DE_LLENADO">
-					</td>
+			
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">RFC DEL PROVEEDOR:</label>
 					</th>
@@ -543,30 +394,7 @@ if($rfcE==true){
 					</td>
 				</tr>
 				<tr style="background: #d2faf1">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NUMERO_EVENTO_1; ?>" name="NUMERO_EVENTO_1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NUMERO_EVENTO_2; ?>" name="NUMERO_EVENTO_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NUMERO_EVENTO_3; ?>" name="NUMERO_EVENTO_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NUMERO_EVENTO_4; ?>" name="NUMERO_EVENTO_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NUMERO_EVENTO_5; ?>" name="NUMERO_EVENTO_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NUMERO_EVENTO_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="NUMERO_EVENTO_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NUMERO_EVENTO_FECHA_AUTORIZACION_AUDITORIA; ?>" name="NUMERO_EVENTO_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NUMERO_EVENTO_FECHA_DE_LLENADO; ?>" name="NUMERO_EVENTO_FECHA_DE_LLENADO">
-					</td>
+
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">No. DE EVENTO:
 							<br><a style="color:red;font-size:11px">OBLIGATORIO</a></label>
@@ -619,30 +447,7 @@ if($rfcE==true){
 					</td>
 				</tr>
 				<tr style="background:#fcf3cf">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NOMBRE_EVENTO_1; ?>" name="NOMBRE_EVENTO_1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NOMBRE_EVENTO_2; ?>" name="NOMBRE_EVENTO_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NOMBRE_EVENTO_3; ?>" name="NOMBRE_EVENTO_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NOMBRE_EVENTO_4; ?>" name="NOMBRE_EVENTO_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NOMBRE_EVENTO_5; ?>" name="NOMBRE_EVENTO_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NOMBRE_EVENTO_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="NOMBRE_EVENTO_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NOMBRE_EVENTO_FECHA_AUTORIZACION_AUDITORIA; ?>" name="NOMBRE_EVENTO_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NOMBRE_EVENTO_FECHA_DE_LLENADO; ?>" name="NOMBRE_EVENTO_FECHA_DE_LLENADO;">
-					</td>
+			
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">NOMBRE DEL EVENTO:</label>
 					</th>
@@ -651,30 +456,7 @@ if($rfcE==true){
 					</td>
 				</tr>
 				<tr style="background: #d2faf1">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MOTIVO_GASTO_1; ?>" name="MOTIVO_GASTO_1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MOTIVO_GASTO_2; ?>" name="MOTIVO_GASTO_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MOTIVO_GASTO_3; ?>" name="MOTIVO_GASTO_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MOTIVO_GASTO_4; ?>" name="MOTIVO_GASTO_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MOTIVO_GASTO_5; ?>" name="MOTIVO_GASTO_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MOTIVO_GASTO_EVENTO_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="MOTIVO_GASTO_EVENTO_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MOTIVO_GASTO_FECHA_AUTORIZACION_AUDITORIA; ?>" name="MOTIVO_GASTO_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MOTIVO_GASTO_EVENTO_FECHA_DE_LLENADO; ?>" name="MOTIVO_GASTO_EVENTO_FECHA_DE_LLENADO">
-					</td>
+		
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">MOTIVO DEL GASTO:</label>
 					</th>
@@ -683,30 +465,7 @@ if($rfcE==true){
 					</td>
 				</tr>
 				<tr style="background:#fcf3cf">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MOTIVO_GASTO_1; ?>" name="MOTIVO_GASTO_1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MOTIVO_GASTO_2; ?>" name="MOTIVO_GASTO_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MOTIVO_GASTO_3; ?>" name="MOTIVO_GASTO_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MOTIVO_GASTO_4; ?>" name="MOTIVO_GASTO_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MOTIVO_GASTO_5; ?>" name="MOTIVO_GASTO_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MOTIVO_GASTO_EVENTO_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="MOTIVO_GASTO_EVENTO_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MOTIVO_GASTO_FECHA_AUTORIZACION_AUDITORIA; ?>" name="MOTIVO_GASTO_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MOTIVO_GASTO_EVENTO_FECHA_DE_LLENADO; ?>" name="MOTIVO_GASTO_EVENTO_FECHA_DE_LLENADO">
-					</td>
+			
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">CONCEPTO DE LA FACTURA:</label>
 					</th>
@@ -717,30 +476,7 @@ if($rfcE==true){
 					</td>
 				</tr>
 				<tr style="background: #d2faf1">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_TOTAL_COTIZACION_ADEUDO_1; ?>" name="MONTO_TOTAL_COTIZACION_ADEUDO_1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_TOTAL_COTIZACION_ADEUDO_2; ?>" name="MONTO_TOTAL_COTIZACION_ADEUDO_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_TOTAL_COTIZACION_ADEUDO_3; ?>" name="MONTO_TOTAL_COTIZACION_ADEUDO_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_TOTAL_COTIZACION_ADEUDO_4; ?>" name="MONTO_TOTAL_COTIZACION_ADEUDO_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_TOTAL_COTIZACION_ADEUDO_5; ?>" name="MONTO_TOTAL_COTIZACION_ADEUDO_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_TOTAL_COTIZACION_ADEUDO_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="MONTO_TOTAL_COTIZACION_ADEUDO_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_TOTAL_COTIZACION_ADEUDO_FECHA_AUTORIZACION_AUDITORIA; ?>" name="MONTO_TOTAL_COTIZACION_ADEUDO_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_TOTAL_COTIZACION_ADEUDO_FECHA_DE_LLENADO; ?>" name="MONTO_TOTAL_COTIZACION_ADEUDO_FECHA_DE_LLENADO">
-					</td>
+				
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">MONTO TOTAL DE LA COTIZACIÓN O DEL ADEUDO:</label>
 					</th>
@@ -753,30 +489,7 @@ if($rfcE==true){
 				</tr>
 				<br></br>
 				<tr style="background:#fcf3cf">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_FACTURA_1; ?>" name="MONTO_FACTURA_1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_FACTURA_2; ?>" name="MONTO_FACTURA_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_FACTURA_3; ?>" name="MONTO_FACTURA_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_FACTURA_4; ?>" name="MONTO_FACTURA_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_FACTURA_5; ?>" name="MONTO_FACTURA_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $FECHA_AUTORIZACION_RESPONSABLE; ?>" name="MONTO_FACTURA_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $FECHA_AUTORIZACION_AUDITORIA; ?>" name="MONTO_FACTURA_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $FECHA_DE_LLENADO;; ?>" name="MONTO_FACTURA_ADEUDO_FECHA_DE_LLENADO;">
-					</td>
+		
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">SUB TOTAL:</label>
 					</th>
@@ -788,30 +501,7 @@ if($rfcE==true){
 					</td>
 				</tr>
 				<tr style="background:#fcf3cf">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $IVA_1; ?>" name="IVA_1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $IVA_2; ?>" name="IVA_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $IVA_3; ?>" name="IVA_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $IVA_4; ?>" name="IVA_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $IVA_5; ?>" name="IVA_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $FECHA_AUTORIZACION_RESPONSABLE; ?>" name="IVA_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $FECHA_AUTORIZACION_AUDITORIA; ?>" name="IVA_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $FECHA_DE_LLENADO;; ?>" name="IVA_ADEUDO_FECHA_DE_LLENADO;">
-					</td>
+					
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">IVA:</label>
 					</th>
@@ -823,30 +513,7 @@ if($rfcE==true){
 					</td>
 				</tr>
 				<tr style="background:#fcf3cf">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $TImpuestosRetenidos_1; ?>" name="TImpuestosRetenidos_1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $TImpuestosRetenidos_2; ?>" name="TImpuestosRetenidos_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $TImpuestosRetenidos_3; ?>" name="TImpuestosRetenidos_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $TImpuestosRetenidos_4; ?>" name="TImpuestosRetenidos_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $TImpuestosRetenidos_5; ?>" name="TImpuestosRetenidos_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $FECHA_AUTORIZACION_RESPONSABLE; ?>" name="TImpuestosRetenidos_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $FECHA_AUTORIZACION_AUDITORIA; ?>" name="TImpuestosRetenidos_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $FECHA_DE_LLENADO;; ?>" name="TImpuestosRetenidos_ADEUDO_FECHA_DE_LLENADO;">
-					</td>
+					
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">IMPUESTOS RETENIDOS &nbsp;<a style="color:red;font:12px">(IVA)</a></label>
 					</th>
@@ -858,30 +525,7 @@ if($rfcE==true){
 					</td>
 				</tr>
 				<tr style="background:#fcf3cf">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $TImpuestosRetenidos_1; ?>" name="TImpuestosRetenidos_1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $TImpuestosRetenidos_2; ?>" name="TImpuestosRetenidos_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $TImpuestosRetenidos_3; ?>" name="TImpuestosRetenidos_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $TImpuestosRetenidos_4; ?>" name="TImpuestosRetenidos_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $TImpuestosRetenidos_5; ?>" name="TImpuestosRetenidos_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $FECHA_AUTORIZACION_RESPONSABLE; ?>" name="TImpuestosRetenidos_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $FECHA_AUTORIZACION_AUDITORIA; ?>" name="TImpuestosRetenidos_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $FECHA_DE_LLENADO;; ?>" name="TImpuestosRetenidos_ADEUDO_FECHA_DE_LLENADO;">
-					</td>
+				
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">IMPUESTOS RETENIDOS &nbsp;<a style="color:red;font:12px">(ISR)</a></label>
 					</th>
@@ -893,30 +537,7 @@ if($rfcE==true){
 					</td>
 				</tr>
 				<tr style="background: #d2faf1">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_PROPINA_1; ?>" name="MONTO_PROPINA_1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_PROPINA_2; ?>" name="MONTO_PROPINA_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_PROPINA_3; ?>" name="MONTO_PROPINA_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_PROPINA_4; ?>" name="MONTO_PROPINA_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_PROPINA_5; ?>" name="MONTO_PROPINA_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_PROPINA_FACTURA_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="MONTO_PROPINA_FACTURA_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_PROPINA_FECHA_AUTORIZACION_AUDITORIA; ?>" name="MONTO_PROPINA_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_PROPINA_ADEUDO_FECHA_DE_LLENADO; ?>" name="MONTO_PROPINA_ADEUDO_FECHA_DE_LLENADO">
-					</td>
+					
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label"><a style="color:red;font:12px">FAVOR DE PONER EL:&nbsp;</a>MONTO DE LA PROPINA O SERVICIO ESTÉ INCLUIDO O NO EN LA FACTURA</label>
 					</th>
@@ -926,30 +547,7 @@ if($rfcE==true){
 				</tr>
 				</div>
 				<tr style="background: #d2faf1">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_PROPINA_1; ?>" name="MONTO_PROPINA_1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_PROPINA_2; ?>" name="MONTO_PROPINA_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_PROPINA_3; ?>" name="MONTO_PROPINA_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_PROPINA_4; ?>" name="MONTO_PROPINA_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_PROPINA_5; ?>" name="MONTO_PROPINA_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_PROPINA_FACTURA_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="MONTO_PROPINA_FACTURA_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_PROPINA_FECHA_AUTORIZACION_AUDITORIA; ?>" name="MONTO_PROPINA_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_PROPINA_ADEUDO_FECHA_DE_LLENADO; ?>" name="MONTO_PROPINA_ADEUDO_FECHA_DE_LLENADO">
-					</td>
+				
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label"><a style="color:red;font:12px">FAVOR DE PONER EL:&nbsp;</a> IMPUESTO SOBRE
 							<BR>HOSPEDAJE MÁS EL IMPUESTO DE SANEAMIENTO:</label>
@@ -960,30 +558,7 @@ if($rfcE==true){
 				</tr>
 				</div>
 				<tr style="background:#fcf3cf">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $TImpuestosRetenidos_1; ?>" name="TImpuestosRetenidos_1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $TImpuestosRetenidos_2; ?>" name="TImpuestosRetenidos_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $TImpuestosRetenidos_3; ?>" name="TImpuestosRetenidos_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $TImpuestosRetenidos_4; ?>" name="TImpuestosRetenidos_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $TImpuestosRetenidos_5; ?>" name="TImpuestosRetenidos_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $FECHA_AUTORIZACION_RESPONSABLE; ?>" name="TImpuestosRetenidos_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $FECHA_AUTORIZACION_AUDITORIA; ?>" name="TImpuestosRetenidos_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $FECHA_DE_LLENADO;; ?>" name="TImpuestosRetenidos_ADEUDO_FECHA_DE_LLENADO;">
-					</td>
+		
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">DESCUENTO </label>
 					</th>
@@ -994,145 +569,58 @@ if($rfcE==true){
 						</div>
 					</td>
 				</tr>
-				<tr style="background:#fcf3cf; border:red 1px solid; margin:6px;">
-					<td colspan="5"><strong>AUTORIZACIONES</strong>
-						<br/>
-					</td>
-					<td colspan="4"><strong>RESPONSABLE DEL EVENTO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  AUDITORÍA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FECHA DE LLENADO</strong>
-						<br/>
-					</td>
-					<td colspan=""></td>
-				</tr>
-				<tr style="background:#fcf3cf; border:red 3px solid; margin:20px;">
-					<td>
-						<input class="form-check-input" type="checkbox" id="MONTO_DEPOSITAR1" required="" value="<?php echo date('d-m-Y'); ?>" name="MONTO_DEPOSITAR1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="MONTO_DEPOSITAR2" required="" value="<?php echo date('d-m-Y'); ?>" name="MONTO_DEPOSITAR2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="MONTO_DEPOSITAR3" required="" value="<?php echo date('d-m-Y'); ?>" name="MONTO_DEPOSITAR3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_DEPOSITAR_4; ?>" name="MONTO_DEPOSITAR_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_DEPOSITAR_5; ?>" name="MONTO_DEPOSITAR_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="text" class="form-control" id="FECHA_AUTORIZACION_RESPONSABLE" required="" value="<?php echo $FECHA_AUTORIZACION_RESPONSABLE; ?>" name="FECHA_AUTORIZACION_RESPONSABLE" placeholder="FECHA DE FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="text" class="form-control" id="FECHA_AUTORIZACION_AUDITORIA" required="" value="<?php echo $FECHA_AUTORIZACION_AUDITORIA; ?>" name="FECHA_AUTORIZACION_AUDITORIA" placeholder="FECHA DE AUTORIZACIÓN">
-					</td>
-					<td>
-						<input style="width: 160px;" type="text" class="form-control" id="FECHA_DE_LLENADO" required="" value="<?php echo $FECHA_DE_LLENADO; ?>" name="FECHA_DE_LLENADO" placeholder="FECHA DE AUTORIZACIÓN">
-					</td>
-					<th scope="row">
-						<label style="width:300px" for="validationCustom03" class="form-label">TOTAL:</label>
-					</th>
-					<td>
-						<div id="2MONTO_DEPOSITAR">
-							<div class="input-group mb-3"> <span class="input-group-text">$</span>
-								<input type="text" class="form-control" id="MONTO_DEPOSITAR" required="" value="<?php echo $total; ?>" name="MONTO_DEPOSITAR" placeholder="TOTAL"> </td>
-				</tr>
-				</div>
-				</div>
-				<tr style="background: #d2faf1">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_DEPOSITADO_1; ?>" name="MONTO_DEPOSITADO_1 ">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_DEPOSITADO_2; ?>" name="MONTO_DEPOSITADO_2 ">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_DEPOSITADO_3; ?>" name="MONTO_DEPOSITADO_3 ">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_DEPOSITADO_4; ?>" name="MONTO_DEPOSITADO_4 ">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_DEPOSITADO_5; ?>" name="MONTO_DEPOSITADO_5 ">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_DEPOSITADO_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="MONTO_DEPOSITADO_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_DEPOSITADO_FECHA_AUTORIZACION_AUDITORIA; ?>" name="MONTO_DEPOSITADO_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_DEPOSITADO_FECHA_DE_LLENADO; ?>" name="MONTO_DEPOSITADO_FECHA_DE_LLENADO ">
-					</td>
-					<th scope="row">
-						<label style="width:300px" for="validationCustom03" class="form-label">MONTO DEPOSITADO:</label>
-					</th>
-					<td>
-						<div>
-							<div class="input-group mb-3"> <span class="input-group-text">$</span>
-								<input type="text" class="form-control" id="MONTO_DEPOSITADO" required="" value="<?php echo $MONTO_DEPOSITADO; ?>" name="MONTO_DEPOSITADO" onkeyup="comasainput('MONTO_DEPOSITADO')" placeholder="MONTO DEPOSITADO"> </div>
-						</div>
-					</td>
-				</tr>
+				
+<tr style="background:#fcf3cf">
+  <th scope="row" style="width:50%;">
+    <label for="MONTO_DEPOSITAR" class="form-label">TOTAL:</label>
+  </th>
+  <td style="width:50%;">
+    <div id="2MONTO_DEPOSITAR" class="input-group mb-3">
+      <span class="input-group-text">$</span>
+      <input type="text" style="width:300px;height:40px;" id="MONTO_DEPOSITAR"
+             required value="<?php echo $total; ?>"
+             name="MONTO_DEPOSITAR" placeholder="TOTAL">
+    </div>
+  </td>
+</tr>
+
+<tr style="background:#d2faf1">
+  <th scope="row" style="width:50%;">
+    <label for="MONTO_DEPOSITADO" class="form-label">MONTO DEPOSITADO:</label>
+  </th>
+  <td style="width:50%;">
+    <div class="input-group mb-3">
+      <span class="input-group-text">$</span>
+      <input type="text" style="width:300px;height:40px;" id="MONTO_DEPOSITADO"
+             required value="<?php echo $MONTO_DEPOSITADO; ?>"
+             name="MONTO_DEPOSITADO"
+             onkeyup="comasainput('MONTO_DEPOSITADO')"
+             placeholder="MONTO DEPOSITADO">
+    </div>
+  </td>
+</tr>
+
+<tr style="background:#fcf3cf">
+  <th scope="row" style="width:50%;">
+    <label for="PENDIENTE_PAGO" class="form-label">PENDIENTE DE PAGO DE LA COTIZACIÓN:</label>
+  </th>
+  <td style="width:50%;">
+    <div class="input-group mb-3">
+      <span class="input-group-text">$</span>
+      <input type="text" style="width:300px;height:40px;"id="PENDIENTE_PAGO"
+             required value="<?php echo $PENDIENTE_PAGO; ?>"
+             name="PENDIENTE_PAGO"
+             onkeyup="comasainput('PENDIENTE_PAGO')"
+             placeholder="PENDIENTE DE PAGO" disabled>
+    </div>
+  </td>
+</tr>
+
+				
+				
+				
 				<tr style="background:#fcf3cf">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_DEPOSITADO_1; ?>" name="MONTO_DEPOSITADO_1 ">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_DEPOSITADO_2; ?>" name="MONTO_DEPOSITADO_2 ">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_DEPOSITADO_3; ?>" name="MONTO_DEPOSITADO_3 ">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_DEPOSITADO_4; ?>" name="MONTO_DEPOSITADO_4 ">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_DEPOSITADO_5; ?>" name="MONTO_DEPOSITADO_5 ">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_DEPOSITADO_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="MONTO_DEPOSITADO_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_DEPOSITADO_FECHA_AUTORIZACION_AUDITORIA; ?>" name="MONTO_DEPOSITADO_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_DEPOSITADO_FECHA_DE_LLENADO; ?>" name="MONTO_DEPOSITADO_FECHA_DE_LLENADO ">
-					</td>
-					<th scope="row">
-						<label style="width:300px" for="validationCustom03" class="form-label">PENDIENTE DE PAGO DE LA COTIZACÍON:</label>
-					</th>
-					<td>
-						<div>
-							<div class="input-group mb-3"> <span class="input-group-text">$</span>
-								<input type="text" class="form-control" id="PENDIENTE_PAGO" required="" value="<?php echo $PENDIENTE_PAGO; ?>" name="PENDIENTE_PAGO" onkeyup="comasainput('PENDIENTE_PAGO')" placeholder="PENDIENTE DE PAGO" disabled> </td>
-				</tr>
-				</div>
-				</div>
-				<tr style="background:#fcf3cf">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_FACTURA_1; ?>" name="MONTO_FACTURA_1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_FACTURA_2; ?>" name="MONTO_FACTURA_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_FACTURA_3; ?>" name="MONTO_FACTURA_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_FACTURA_4; ?>" name="MONTO_FACTURA_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_FACTURA_5; ?>" name="MONTO_FACTURA_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_FACTURA_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="MONTO_FACTURA_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_FACTURA_FECHA_AUTORIZACION_AUDITORIA; ?>" name="MONTO_FACTURA_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_FACTURA_ADEUDO_FECHA_DE_LLENADO;; ?>" name="MONTO_FACTURA_ADEUDO_FECHA_DE_LLENADO;">
-					</td>
+			
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">TIPO DE MONEDA O DIVISA:</label>
 					</th>
@@ -1156,30 +644,7 @@ if($rfcE==true){
 					</td>
 				</tr>
 				<tr style="background:#fcf3cf">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_FACTURA_1; ?>" name="MONTO_FACTURA_1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_FACTURA_2; ?>" name="MONTO_FACTURA_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_FACTURA_3; ?>" name="MONTO_FACTURA_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_FACTURA_4; ?>" name="MONTO_FACTURA_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_FACTURA_5; ?>" name="MONTO_FACTURA_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_FACTURA_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="MONTO_FACTURA_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_FACTURA_FECHA_AUTORIZACION_AUDITORIA; ?>" name="MONTO_FACTURA_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_FACTURA_ADEUDO_FECHA_DE_LLENADO;; ?>" name="MONTO_FACTURA_ADEUDO_FECHA_DE_LLENADO;">
-					</td>
+					
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">TIPO DE CAMBIO:</label>
 					</th>
@@ -1189,30 +654,7 @@ if($rfcE==true){
 					</td>
 				</tr>
 				<tr style="background:#fcf3cf">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_FACTURA_1; ?>" name="MONTO_FACTURA_1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_FACTURA_2; ?>" name="MONTO_FACTURA_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_FACTURA_3; ?>" name="MONTO_FACTURA_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_FACTURA_4; ?>" name="MONTO_FACTURA_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_FACTURA_5; ?>" name="MONTO_FACTURA_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_FACTURA_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="MONTO_FACTURA_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_FACTURA_FECHA_AUTORIZACION_AUDITORIA; ?>" name="MONTO_FACTURA_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_FACTURA_ADEUDO_FECHA_DE_LLENADO;; ?>" name="MONTO_FACTURA_ADEUDO_FECHA_DE_LLENADO;">
-					</td>
+		
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">TOTAL DE LA CONVERSIÓN:</label>
 					</th>
@@ -1222,30 +664,7 @@ if($rfcE==true){
 					</td>
 				</tr>
 				<tr style="background: #fcf3cf">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_FACTURA_1; ?>" name="MONTO_FACTURA_1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_FACTURA_2; ?>" name="MONTO_FACTURA_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_FACTURA_3; ?>" name="MONTO_FACTURA_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_FACTURA_4; ?>" name="MONTO_FACTURA_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_FACTURA_5; ?>" name="MONTO_FACTURA_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_FACTURA_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="MONTO_FACTURA_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_FACTURA_FECHA_AUTORIZACION_AUDITORIA; ?>" name="MONTO_FACTURA_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_FACTURA_ADEUDO_FECHA_DE_LLENADO;; ?>" name="MONTO_FACTURA_ADEUDO_FECHA_DE_LLENADO;">
-					</td>
+				
 					<th>
 						<label style="width: 300px" class="form-label">FORMA DE PAGO:</label>
 					</th>
@@ -1272,30 +691,7 @@ if($rfcE==true){
 							<div/> </td>
 				</tr>
 				<tr style="background:#fcf3cf">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="FECHA_DE_PAGO" value="<?php echo $FECHA_DE_PAGO_1; ?>" name="FECHA_DE_PAGO_1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="FECHA_DE_PAGO" value="<?php echo $FECHA_DE_PAGO_2; ?>" name="FECHA_DE_PAGO_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="FECHA_DE_PAGO" value="<?php echo $FECHA_DE_PAGO_3; ?>" name="FECHA_DE_PAGO_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="FECHA_DE_PAGO" value="<?php echo $FECHA_DE_PAGO_4; ?>" name="FECHA_DE_PAGO_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="FECHA_DE_PAGO" value="<?php echo $FECHA_DE_PAGO_5; ?>" name="FECHA_DE_PAGO_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $FECHA_DE_PAGO_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="FECHA_DE_PAGO_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $FECHA_DE_PAGO_FECHA_AUTORIZACION_AUDITORIA; ?>" name="FECHA_DE_PAG_FECHA_AUTORIZACION_AUDITORIAO">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $FECHA_DE_PAGO_ADEUDO_FECHA_DE_LLENADO; ?>" name="FECHA_DE_PAGO_ADEUDO_FECHA_DE_LLENADO">
-					</td>
+			
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">FECHA DE PROGRAMACIÓN DEL PAGO:</label>
 					</th>
@@ -1306,30 +702,7 @@ if($rfcE==true){
 					</td>
 				</tr>
 				<tr style="background:#d2faf1">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $FECHA_A_DEPOSITAR_1; ?>" name="FECHA_A_DEPOSITAR_1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $FECHA_A_DEPOSITAR_2; ?>" name="FECHA_A_DEPOSITAR_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $FECHA_A_DEPOSITAR_3; ?>" name="FECHA_A_DEPOSITAR_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $FECHA_A_DEPOSITAR_4; ?>" name="FECHA_A_DEPOSITAR_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $FECHA_A_DEPOSITAR_5; ?>" name="FECHA_A_DEPOSITAR_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $FECHA_A_DEPOSITAR_FACTURA_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="FECHA_A_DEPOSITAR_FACTURA_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $FECHA_A_DEPOSITAR_FECHA_AUTORIZACION_AUDITORIA; ?>" name="FECHA_A_DEPOSITAR_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $FECHA_A_DEPOSITAR_ADEUDO_FECHA_DE_LLENADO; ?>" name=FECHA_A_DEPOSITAR_ADEUDO_FECHA_DE_LLENADO "">
-					</td>
+	
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">FECHA EFECTIVA DE PAGO:</label>
 					</th>
@@ -1338,30 +711,7 @@ if($rfcE==true){
 					</td>
 				</tr>
 				<tr style="background:#d2faf1">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $STATUS_DE_PAGO_1; ?>" name="STATUS_DE_PAGO_1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $STATUS_DE_PAGO_2; ?>" name="STATUS_DE_PAGO_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $STATUS_DE_PAGO_3; ?>" name="STATUS_DE_PAGO_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $STATUS_DE_PAGO_4; ?>" name="STATUS_DE_PAGO_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $STATUS_DE_PAGO_5; ?>" name="STATUS_DE_PAGO_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $STATUS_DE_PAGO_PAGO_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="STATUS_DE_PAGO_PAGO_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $STATUS_DE_PAGO_FECHA_AUTORIZACION_AUDITORIA; ?>" name="STATUS_DE_PAGO_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $STATUS_DE_PAGO_FECHA_DE_LLENADO; ?>" name="STATUS_DE_PAGO_FECHA_DE_LLENADO">
-					</td>
+			
 					<th scope="row">
 						<label style="width:300px" for="validationCustom02" class="form-label">STATUS DE PAGO:</label>
 					</th>
@@ -1375,30 +725,7 @@ if($rfcE==true){
 					</td>
 				</tr>
 				<tr style="background: #d2faf1">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_COTIZACION_1; ?>" name="ADJUNTAR_COTIZACION_1">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_COTIZACION_2; ?>" name="ADJUNTAR_COTIZACION_2">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_COTIZACION_3; ?>" name="ADJUNTAR_COTIZACION_3">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_COTIZACION_4; ?>" name="ADJUNTAR_COTIZACION_4">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_COTIZACION_5; ?>" name="ADJUNTAR_COTIZACION_5">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_COTIZACION_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="ADJUNTAR_COTIZACION_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_COTIZACION_FECHA_AUTORIZACION_AUDITORIA;; ?>" name="ADJUNTAR_COTIZACION_FECHA_AUTORIZACION_AUDITORIA;">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_COTIZACION_FECHA_DE_LLENADO; ?>" name="ADJUNTAR_COTIZACION_FECHA_DE_LLENADO">
-					</td>
+			
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">ADJUNTAR COTIZACIÓN O REPORTE: (CUAQUIER FORMATO)</label>
 					</th>
@@ -1424,30 +751,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 					</td>
 				</tr>
 				<tr style="background: #d2faf1">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_1; ?>" name="ACTIVO_FIJO_1 ">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_2; ?>" name="ACTIVO_FIJO_2 ">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_3; ?>" name="ACTIVO_FIJO_3 ">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_4; ?>" name="ACTIVO_FIJO_4 ">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_5; ?>" name="ACTIVO_FIJO_5 ">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_AUTORIZACION_RESPONSABLE; ?>" name="ACTIVO_FIJO_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_AUTORIZACION_AUDITORIA; ?>" name="ACTIVO_FIJO_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_DE_LLENADO; ?>" name="ACTIVO_FIJO_DE_LLENADO ">
-					</td>
+			
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">ACTIVO FIJO:</label>
 					</th>
@@ -1460,30 +764,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 						</div>
 				</tr>
 				<tr style="background: #d2faf1">
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_1; ?>" name="ACTIVO_FIJO_1 ">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_2; ?>" name="ACTIVO_FIJO_2 ">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_3; ?>" name="ACTIVO_FIJO_3 ">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_4; ?>" name="ACTIVO_FIJO_4 ">
-					</td>
-					<td>
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_5; ?>" name="ACTIVO_FIJO_5 ">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_AUTORIZACION_RESPONSABLE; ?>" name="ACTIVO_FIJO_FECHA_AUTORIZACION_RESPONSABLE">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_AUTORIZACION_AUDITORIA; ?>" name="ACTIVO_FIJO_FECHA_AUTORIZACION_AUDITORIA">
-					</td>
-					<td>
-						<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_DE_LLENADO; ?>" name="ACTIVO_FIJO_DE_LLENADO ">
-					</td>
+				
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">GASTO FIJO:</label>
 					</th>
@@ -1496,30 +777,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 			</div>
 			</tr>
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_1; ?>" name="ACTIVO_FIJO_1 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_2; ?>" name="ACTIVO_FIJO_2 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_3; ?>" name="ACTIVO_FIJO_3 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_4; ?>" name="ACTIVO_FIJO_4 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_5; ?>" name="ACTIVO_FIJO_5 ">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_AUTORIZACION_RESPONSABLE; ?>" name="ACTIVO_FIJO_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_AUTORIZACION_AUDITORIA; ?>" name="ACTIVO_FIJO_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_DE_LLENADO; ?>" name="ACTIVO_FIJO_DE_LLENADO ">
-				</td>
+				
 				<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label"> PAGAR CADA:</label>
 				</th>
@@ -1534,30 +792,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				</td>
 			</tr>
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_1; ?>" name="ACTIVO_FIJO_1 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_2; ?>" name="ACTIVO_FIJO_2 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_3; ?>" name="ACTIVO_FIJO_3 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_4; ?>" name="ACTIVO_FIJO_4 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_5; ?>" name="ACTIVO_FIJO_5 ">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_AUTORIZACION_RESPONSABLE; ?>" name="ACTIVO_FIJO_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_AUTORIZACION_AUDITORIA; ?>" name="ACTIVO_FIJO_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_DE_LLENADO; ?>" name="ACTIVO_FIJO_DE_LLENADO ">
-				</td>
+				
 				<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label"> FECHA DE PROGRAMACIÓN DE PAGO:</label>
 				</th>
@@ -1566,30 +801,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				</td>
 			</tr>
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_1; ?>" name="ACTIVO_FIJO_1 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_2; ?>" name="ACTIVO_FIJO_2 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_3; ?>" name="ACTIVO_FIJO_3 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_4; ?>" name="ACTIVO_FIJO_4 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_5; ?>" name="ACTIVO_FIJO_5 ">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_AUTORIZACION_RESPONSABLE; ?>" name="ACTIVO_FIJO_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_AUTORIZACION_AUDITORIA; ?>" name="ACTIVO_FIJO_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_DE_LLENADO; ?>" name="ACTIVO_FIJO_DE_LLENADO ">
-				</td>
+			
 				<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label"> FECHA DE TERMINACIÓN DE LA PROGRAMACIÓN:</label>
 				</th>
@@ -1598,30 +810,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				</td>
 			</tr>
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_1; ?>" name="ACTIVO_FIJO_1 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_2; ?>" name="ACTIVO_FIJO_2 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_3; ?>" name="ACTIVO_FIJO_3 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_4; ?>" name="ACTIVO_FIJO_4 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_5; ?>" name="ACTIVO_FIJO_5 ">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_AUTORIZACION_RESPONSABLE; ?>" name="ACTIVO_FIJO_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_AUTORIZACION_AUDITORIA; ?>" name="ACTIVO_FIJO_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_DE_LLENADO; ?>" name="ACTIVO_FIJO_DE_LLENADO ">
-				</td>
+		
 				<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label"> NÚMERO DE EVENTO (FIJO) PARA PROGRAMACIÓN:</label>
 				</th>
@@ -1630,30 +819,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				</td>
 			</tr>
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_1; ?>" name="ACTIVO_FIJO_1 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_2; ?>" name="ACTIVO_FIJO_2 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_3; ?>" name="ACTIVO_FIJO_3 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_4; ?>" name="ACTIVO_FIJO_4 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_5; ?>" name="ACTIVO_FIJO_5 ">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_AUTORIZACION_RESPONSABLE; ?>" name="ACTIVO_FIJO_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_AUTORIZACION_AUDITORIA; ?>" name="ACTIVO_FIJO_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_DE_LLENADO; ?>" name="ACTIVO_FIJO_DE_LLENADO ">
-				</td>
+				
 				<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label"> CLASIFICACIÓN GENERAL:</label>
 				</th>
@@ -1662,30 +828,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				</td>
 			</tr>
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_1; ?>" name="ACTIVO_FIJO_1 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_2; ?>" name="ACTIVO_FIJO_2 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_3; ?>" name="ACTIVO_FIJO_3 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_4; ?>" name="ACTIVO_FIJO_4 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_5; ?>" name="ACTIVO_FIJO_5 ">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_AUTORIZACION_RESPONSABLE; ?>" name="ACTIVO_FIJO_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_AUTORIZACION_AUDITORIA; ?>" name="ACTIVO_FIJO_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_DE_LLENADO; ?>" name="ACTIVO_FIJO_DE_LLENADO ">
-				</td>
+	
 				<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label"> SUB CLASIFICACIÓN GENERAL:</label>
 				</th>
@@ -1694,30 +837,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				</td>
 			</tr>
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="CONPROBANTE_TRANSFERENCIA_1" value="<?php echo $CONPROBANTE_TRANSFERENCIA_1; ?>" name="CONPROBANTE_TRANSFERENCIA_1 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="CONPROBANTE_TRANSFERENCIA_2" value="<?php echo $CONPROBANTE_TRANSFERENCIA_2; ?>" name="CONPROBANTE_TRANSFERENCIA_2 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="CONPROBANTE_TRANSFERENCIA_3" value="<?php echo $CONPROBANTE_TRANSFERENCIA_3; ?>" name="CONPROBANTE_TRANSFERENCIA_3 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="CONPROBANTE_TRANSFERENCIA_4" value="<?php echo $CONPROBANTE_TRANSFERENCIA_4; ?>" name="CONPROBANTE_TRANSFERENCIA_4 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="CONPROBANTE_TRANSFERENCIA_5" value="<?php echo $CONPROBANTE_TRANSFERENCIA_5; ?>" name="CONPROBANTE_TRANSFERENCIA_5">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $CONPROBANTE_TRANSFERENCIA_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="CONPROBANTE_TRANSFERENCIA_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $CONPROBANTE_TRANSFERENCIA_FECHA_AUTORIZACION_AUDITORIA; ?>" name="CONPROBANTE_TRANSFERENCIA_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $CONPROBANTE_TRANSFERENCIA; ?>" name="CONPROBANTE_TRANSFERENCIA55">
-				</td>
+	
 				<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label">ADJUNTAR COMPROBANTE DE TRANSFERENCIA: (FORMATO PDF)</label>
 				</th>
@@ -1745,30 +865,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				</td>
 			</tr>
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_1; ?>" name="ACTIVO_FIJO_1 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_2; ?>" name="ACTIVO_FIJO_2 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_3; ?>" name="ACTIVO_FIJO_3 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_4; ?>" name="ACTIVO_FIJO_4 ">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ACTIVO_FIJO_5; ?>" name="ACTIVO_FIJO_5 ">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_AUTORIZACION_RESPONSABLE; ?>" name="ACTIVO_FIJO_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_AUTORIZACION_AUDITORIA; ?>" name="ACTIVO_FIJO_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ACTIVO_FIJO_DE_LLENADO; ?>" name="ACTIVO_FIJO_DE_LLENADO ">
-				</td>
+	
 				<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label"> CUENTA ORIGEN:</label>
 				</th>
@@ -1777,30 +874,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				</td>
 			</tr>
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NUMERO_EVENTO_1; ?>" name="NUMERO_EVENTO_1">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NUMERO_EVENTO_2; ?>" name="NUMERO_EVENTO_2">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NUMERO_EVENTO_3; ?>" name="NUMERO_EVENTO_3">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NUMERO_EVENTO_4; ?>" name="NUMERO_EVENTO_4">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NUMERO_EVENTO_5; ?>" name="NUMERO_EVENTO_5">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NUMERO_EVENTO_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="NUMERO_EVENTO_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NUMERO_EVENTO_FECHA_AUTORIZACION_AUDITORIA; ?>" name="NUMERO_EVENTO_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NUMERO_EVENTO_FECHA_DE_LLENADO; ?>" name="NUMERO_EVENTO_FECHA_DE_LLENADO">
-				</td>
+		
 				<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label">NÚMERO DE EVENTO (FIJO):</label>
 				</th>
@@ -1809,30 +883,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				</td>
 			</tr>
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NUMERO_EVENTO_1; ?>" name="NUMERO_EVENTO_1">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NUMERO_EVENTO_2; ?>" name="NUMERO_EVENTO_2">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NUMERO_EVENTO_3; ?>" name="NUMERO_EVENTO_3">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NUMERO_EVENTO_4; ?>" name="NUMERO_EVENTO_4">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NUMERO_EVENTO_5; ?>" name="NUMERO_EVENTO_5">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NUMERO_EVENTO_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="NUMERO_EVENTO_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NUMERO_EVENTO_FECHA_AUTORIZACION_AUDITORIA; ?>" name="NUMERO_EVENTO_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NUMERO_EVENTO_FECHA_DE_LLENADO; ?>" name="NUMERO_EVENTO_FECHA_DE_LLENADO">
-				</td>
+				
 				<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label">CLASIFICACIÓN GENERAL:</label>
 				</th>
@@ -1841,30 +892,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				</td>
 			</tr>
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NUMERO_EVENTO_1; ?>" name="NUMERO_EVENTO_1">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NUMERO_EVENTO_2; ?>" name="NUMERO_EVENTO_2">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NUMERO_EVENTO_3; ?>" name="NUMERO_EVENTO_3">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NUMERO_EVENTO_4; ?>" name="NUMERO_EVENTO_4">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NUMERO_EVENTO_5; ?>" name="NUMERO_EVENTO_5">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NUMERO_EVENTO_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="NUMERO_EVENTO_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NUMERO_EVENTO_FECHA_AUTORIZACION_AUDITORIA; ?>" name="NUMERO_EVENTO_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NUMERO_EVENTO_FECHA_DE_LLENADO; ?>" name="NUMERO_EVENTO_FECHA_DE_LLENADO">
-				</td>
+		
 				<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label">CLASIFICACIÓN ESPECIFICA:</label>
 				</th>
@@ -1873,30 +901,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				</td>
 			</tr>
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NUMERO_EVENTO_1; ?>" name="NUMERO_EVENTO_1">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NUMERO_EVENTO_2; ?>" name="NUMERO_EVENTO_2">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NUMERO_EVENTO_3; ?>" name="NUMERO_EVENTO_3">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NUMERO_EVENTO_4; ?>" name="NUMERO_EVENTO_4">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NUMERO_EVENTO_5; ?>" name="NUMERO_EVENTO_5">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NUMERO_EVENTO_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="NUMERO_EVENTO_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NUMERO_EVENTO_FECHA_AUTORIZACION_AUDITORIA; ?>" name="NUMERO_EVENTO_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NUMERO_EVENTO_FECHA_DE_LLENADO; ?>" name="NUMERO_EVENTO_FECHA_DE_LLENADO">
-				</td>
+			
 				<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label">PLACAS DEL VEHICULO:</label>
 				</th>
@@ -1905,30 +910,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				</td>
 			</tr>
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $COMPLEMENTO_PAGO_PDF_1; ?>" name="COMPLEMENTO_PAGO_PDF_1">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $COMPLEMENTO_PAGO_PDF_2; ?>" name="COMPLEMENTO_PAGO_PDF_2">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $COMPLEMENTO_PAGO_PDF_3; ?>" name="COMPLEMENTO_PAGO_PDF_3">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $COMPLEMENTO_PAGO_PDF_4; ?>" name="COMPLEMENTO_PAGO_PDF_4">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $COMPLEMENTO_PAGO_PDF_5; ?>" name="COMPLEMENTO_PAGO_PDF_5">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $COMPLEMENTO_PAGO_PDF_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="COMPLEMENTO_PAGO_PDF_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $COMPLEMENTO_PAGO_PDF_FECHA_AUTORIZACION_AUDITORIA; ?>" name="COMPLEMENTO_PAGO_PDF_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $COMPLEMENTO_PAGO_PDF_FECHA_DE_LLENADO; ?>" name="COMPLEMENTO_PAGO_PDF_XML_FECHA_DE_LLENADO">
-				</td>
+			
 				<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label">COMPLEMENTOS DE PAGO (FORMATO PDF)</label>
 				</th>
@@ -1956,30 +938,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				</td>
 			</tr>
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $COMPLEMENTO_PAGO_XML_1; ?>" name="COMPLEMENTO_PAGO_XML_1">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $COMPLEMENTO_PAGO_XML_2; ?>" name="COMPLEMENTO_PAGO_XML_2">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $COMPLEMENTO_PAGO_XML_3; ?>" name="COMPLEMENTO_PAGO_XML_3">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $COMPLEMENTO_PAGO_XML_4; ?>" name="COMPLEMENTO_PAGO_XML_4">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $COMPLEMENTO_PAGO_XML_5; ?>" name="COMPLEMENTO_PAGO_XML_5">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $COMPLEMENTO_PAGO_XML_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="COMPLEMENTO_PAGO_XML_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $COMPLEMENTO_PAGO_XML_FECHA_AUTORIZACION_AUDITORIA; ?>" name="COMPLEMENTO_PAGO_XML_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $COMPLEMENTO_PAGO_XML_FECHA_DE_LLENADO; ?>" name="COMPLEMENTO_PAGO_XML_FECHA_DE_LLENADO">
-				</td>
+		
 				<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label">COMPLEMENTOS DE PAGO (FORMATO XML)</label>
 				</th>
@@ -2007,30 +966,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				</td>
 			</tr>
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $CANCELACIONES_PDF_1; ?>" name="CANCELACIONES_PDF_1">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $CANCELACIONES_PDF_2; ?>" name="CANCELACIONES_PDF_2">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $CANCELACIONES_PDF_3; ?>" name="CANCELACIONES_PDF_3">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $CANCELACIONES_PDF_4; ?>" name="CANCELACIONES_PDF_4">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $CANCELACIONES_PDF_5; ?>" name="CANCELACIONES_PDF_5">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $CANCELACIONES_PDF_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="CANCELACIONES_PDF_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $CANCELACIONES_PDF_FECHA_AUTORIZACION_AUDITORIA; ?>" name="CANCELACIONES_PDF_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $CANCELACIONES_PDF_FECHA_DE_LLENADO; ?>" name="CANCELACIONES_PDF_FECHA_DE_LLENADO">
-				</td>
+		
 				<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label">ADJUNTAR CANCELACIONES (FORMATO PDF)</label>
 				</th>
@@ -2058,30 +994,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				</td>
 			</tr>
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $CANCELACIONES_XML_1; ?>" name="CANCELACIONES_XML_1">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $CANCELACIONES_XML_2; ?>" name="CANCELACIONES_XML_2">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $CANCELACIONES_XML_3; ?>" name="CANCELACIONES_XML_3">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $CANCELACIONES_XML_4; ?>" name="CANCELACIONES_XML_4">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $CANCELACIONES_XML_5; ?>" name="CANCELACIONES_XML_5">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $CANCELACIONESXML_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="CANCELACIONES_XML_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $CANCELACIONES_XML_FECHA_AUTORIZACION_AUDITORIA; ?>" name="CANCELACIONES_XML_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $CANCELACIONES_XML_FECHA_DE_LLENADO; ?>" name="CANCELACIONES_XML_FECHA_DE_LLENADO">
-				</td>
+
 				<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label">ADJUNTAR CANCELACIONES (FORMATO XML)</label>
 				</th>
@@ -2109,30 +1022,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				</td>
 			</tr>
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_DE_COMISION_1; ?>" name="ADJUNTAR_FACTURA_DE_COMISION_1">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_DE_COMISION_2; ?>" name="ADJUNTAR_FACTURA_DE_COMISION_2">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_DE_COMISION_3; ?>" name="ADJUNTAR_FACTURA_DE_COMISION_3">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_DE_COMISION_4; ?>" name="ADJUNTAR_FACTURA_DE_COMISION_4">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_FACTURA_DE_COMISION_5; ?>" name="ADJUNTAR_FACTURA_DE_COMISION_5">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_FACTURA_DE_COMISION_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="ADJUNTAR_FACTURA_DE_COMISION_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_FACTURA_DE_COMISION_FECHA_AUTORIZACION_AUDITORIA; ?>" name="ADJUNTAR_FACTURA_DE_COMISION_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_FACTURA_DE_COMISION_FECHA_DE_LLENADO; ?>" name="ADJUNTAR_FACTURA_DE_COMISION_FECHA_DE_LLENADO">
-				</td>
+	
 				<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label">ADJUNTAR FACTURA DE COMISIÓN (FORMATO PDF)</label>
 				</th>
@@ -2160,30 +1050,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				</td>
 			</tr>
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="ADJUNTAR_FACTURA_COMISION_XML_1" value="<?php echo $ADJUNTAR_FACTURA_COMISION_XML_1; ?>" name="ADJUNTAR_FACTURA_COMISION_XML_1">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="ADJUNTAR_FACTURA_COMISION_XML_2" value="<?php echo $ADJUNTAR_FACTURA_COMISION_XML_2; ?>" name="ADJUNTAR_FACTURA_COMISION_XML_2">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="ADJUNTAR_FACTURA_COMISION_XML_3" value="<?php echo $ADJUNTAR_FACTURA_COMISION_XML_3; ?>" name="ADJUNTAR_FACTURA_COMISION_XML_3">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="ADJUNTAR_FACTURA_COMISION_XML_4" value="<?php echo $ADJUNTAR_FACTURA_COMISION_XML_4; ?>" name="ADJUNTAR_FACTURA_COMISION_XML_4">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="ADJUNTAR_FACTURA_COMISION_XML_5" value="<?php echo $ADJUNTAR_FACTURA_COMISION_XML_5; ?>" name="ADJUNTAR_FACTURA_COMISION_XML_5">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_FACTURA_COMISION_XML_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="ADJUNTAR_FACTURA_COMISION_XML_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_FACTURA_COMISION_XML_FECHA_AUTORIZACION_AUDITORIA; ?>" name="ADJUNTAR_FACTURA_COMISION_XML_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_FACTURA_COMISION_XML_FECHA_DE_LLENADO; ?>" name="ADJUNTAR_FACTURA_COMISION_XML_FECHA_DE_LLENADO">
-				</td>
+		
 				<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label"> ADJUNTAR FACTURA DE COMISIÓN(FORMATO XML)</label>
 				</th>
@@ -2211,30 +1078,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				</td>
 			</tr>
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $CALCULO_DE_COMISION_1; ?>" name="CALCULO_DE_COMISION_1">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $CALCULO_DE_COMISION_2; ?>" name="CALCULO_DE_COMISION_2">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $CALCULO_DE_COMISION_3; ?>" name="CALCULO_DE_COMISION_3">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $CALCULO_DE_COMISION_4; ?>" name="CALCULO_DE_COMISION_4">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $CALCULO_DE_COMISION_5; ?>" name="CALCULO_DE_COMISION_5">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $CALCULO_DE_COMISION_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="CALCULO_DE_COMISION_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $CALCULO_DE_COMISION_FECHA_AUTORIZACION_AUDITORIA; ?>" name="CALCULO_DE_COMISION_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $CALCULO_DE_COMISION_FECHA_DE_LLENADO; ?>" name="CALCULO_DE_COMISION_FECHA_DE_LLENADO">
-				</td>
+	
 				<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label"> ADJUNTAR CALCULO DE COMISIÓN: (CUALQUIER FORMATO)</label>
 				</th>
@@ -2262,30 +1106,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				</td>
 			</tr>
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_DE_COMISION_1; ?>" name="MONTO_DE_COMISION_1">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_DE_COMISION_2; ?>" name="MONTO_DE_COMISION_2">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_DE_COMISION_3; ?>" name="MONTO_DE_COMISION_3">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_DE_COMISION_4; ?>" name="MONTO_DE_COMISION_4">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MONTO_DE_COMISION_5; ?>" name="MONTO_DE_COMISION_5">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_DE_COMISION_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="MONTO_DE_COMISION_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_DE_COMISION_FECHA_AUTORIZACION_AUDITORIA; ?>" name="MONTO_DE_COMISION_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MONTO_DE_COMISION_FECHA_DE_LLENADO; ?>" name="MONTO_DE_COMISION_FECHA_DE_LLENADO">
-				</td>
+	
 				<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label">MONTO DE COMISIÓN:</label>
 				</th>
@@ -2294,30 +1115,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				</td>
 			</tr>
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $COMPROBANTE_DE_DEVOLUCION_1; ?>" name="COMPROBANTE_DE_DEVOLUCION_1">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $COMPROBANTE_DE_DEVOLUCION_2; ?>" name="COMPROBANTE_DE_DEVOLUCION_2">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $COMPROBANTE_DE_DEVOLUCION_3; ?>" name="COMPROBANTE_DE_DEVOLUCION_3">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $COMPROBANTE_DE_DEVOLUCION_4; ?>" name="COMPROBANTE_DE_DEVOLUCION_4">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $COMPROBANTE_DE_DEVOLUCION_5; ?>" name="COMPROBANTE_DE_DEVOLUCION_5">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $COMPROBANTE_DE_DEVOLUCION_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="COMPROBANTE_DE_DEVOLUCION_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $COMPROBANTE_DE_DEVOLUCION_FECHA_AUTORIZACION_AUDITORIA; ?>" name="COMPROBANTE_DE_DEVOLUCION_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $COMPROBANTE_DE_DEVOLUCION_FECHA_DE_LLENADO; ?>" name="COMPROBANTE_DE_DEVOLUCION_FECHA_DE_LLENADO">
-				</td>
+	
 				<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label"> ADJUNTAR COMPROBANTE DE DEVOLUCIÓN DE DINERO (CUALQUIER FORMATO)</label>
 				</th>
@@ -2345,31 +1143,8 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				</td>
 			</tr>
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NOTA_DE_CREDITO_COMPRA_1; ?>" name="NOTA_DE_CREDITO_COMPRA_1">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NOTA_DE_CREDITO_COMPRA_2; ?>" name="NOTA_DE_CREDITO_COMPRA_2">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NOTA_DE_CREDITO_COMPRA_3; ?>" name="NOTA_DE_CREDITO_COMPRA_3">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NOTA_DE_CREDITO_COMPRA_4; ?>" name="NOTA_DE_CREDITO_COMPRA_4">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NOTA_DE_CREDITO_COMPRA_5; ?>" name="NOTA_DE_CREDITO_COMPRA_5">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NOTA_DE_CREDITO_COMPRA_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="NOTA_DE_CREDITO_COMPRA_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NOTA_DE_CREDITO_COMPRA_FECHA_AUTORIZACION_AUDITORIA; ?>" name="NOTA_DE_CREDITO_COMPRA_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NOTA_DE_CREDITO_COMPRA_FECHA_DE_LLENADO; ?>" name="NOTA_DE_CREDITO_COMPRA_FECHA_DE_LLENADO">
-				</td>
-				<th scope="row">
+
+		<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label"> ADJUNTAR NOTA DE CREDITO DE COMPRA: (CUALQUIER FORMATO)</label>
 				</th>
 				<td style="width:300px;">
@@ -2395,31 +1170,11 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				 ?></div>
 				</td>
 			</tr>
+			
+			
+			
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $POLIZA_NUMERO_1; ?>" name="POLIZA_NUMERO_1">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $POLIZA_NUMERO_2; ?>" name="POLIZA_NUMERO_2">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $POLIZA_NUMERO_3; ?>" name="POLIZA_NUMERO_3">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $POLIZA_NUMERO_4; ?>" name="POLIZA_NUMERO_4">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $POLIZA_NUMERO_5; ?>" name="POLIZA_NUMERO_5">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $POLIZA_NUMERO_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="POLIZA_NUMERO_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $POLIZA_NUMERO_FECHA_AUTORIZACION_AUDITORIA; ?>" name="POLIZA_NUMERO_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $POLIZA_NUMERO_FECHA_DE_LLENADO; ?>" name="POLIZA_NUMERO_FECHA_DE_LLENADO">
-				</td>
+	
 				<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label">PÓLIZA NÚMERO:</label>
 				</th>
@@ -2428,30 +1183,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				</td>
 			</tr>
 			<tr style="background:#fcf3cf">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NOMBRE_DEL_EJECUTIVO_1; ?>" name="NOMBRE_DEL_EJECUTIVO_1">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NOMBRE_DEL_EJECUTIVO_2; ?>" name="NOMBRE_DEL_EJECUTIVO_2">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NOMBRE_DEL_EJECUTIVO_3; ?>" name="NOMBRE_DEL_EJECUTIVO_3">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NOMBRE_DEL_EJECUTIVO_4; ?>" name="NOMBRE_DEL_EJECUTIVO_4">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NOMBRE_DEL_EJECUTIVO_5; ?>" name="NOMBRE_DEL_EJECUTIVO_5">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NOMBRE_DEL_EJECUTIVO_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="NOMBRE_DEL_EJECUTIVO_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NOMBRE_DEL_EJECUTIVO_FECHA_AUTORIZACION_AUDITORIA; ?>" name="NOMBRE_DEL_EJECUTIVO_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NOMBRE_DEL_EJECUTIVO_FECHA_DE_LLENADO; ?>" name="NOMBRE_DEL_EJECUTIVO_FECHA_DE_LLENADO">
-				</td>
+		
 				<th scope="row">
 					<label for="validationCustom03" class="form-label">NOMBRE DEL EJECUTIVO QUE INGRESO ESTA FACTURA:</label>
 				</th>
@@ -2459,30 +1191,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				</td>
 			</tr>
 			<tr style="background:#fcf3cf">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NOMBRE_DEL_EJECUTIVO_1; ?>" name="NOMBRE_DEL_EJECUTIVO_1">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NOMBRE_DEL_EJECUTIVO_2; ?>" name="NOMBRE_DEL_EJECUTIVO_2">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NOMBRE_DEL_EJECUTIVO_3; ?>" name="NOMBRE_DEL_EJECUTIVO_3">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NOMBRE_DEL_EJECUTIVO_4; ?>" name="NOMBRE_DEL_EJECUTIVO_4">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $NOMBRE_DEL_EJECUTIVO_5; ?>" name="NOMBRE_DEL_EJECUTIVO_5">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NOMBRE_DEL_EJECUTIVO_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="NOMBRE_DEL_EJECUTIVO_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NOMBRE_DEL_EJECUTIVO_FECHA_AUTORIZACION_AUDITORIA; ?>" name="NOMBRE_DEL_EJECUTIVO_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $NOMBRE_DEL_EJECUTIVO_FECHA_DE_LLENADO; ?>" name="NOMBRE_DEL_EJECUTIVO_FECHA_DE_LLENADO">
-				</td>
+		
 				<th style="text-align:left" scope="col">NOMBRE DEL EJECUTIVO QUE REALIZÓ LA COMPRA:</th>
 				<td>
 					<?php
@@ -2514,30 +1223,7 @@ echo $encabezadoA.$option2.'</select>';
 				</td>
 			</tr>
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MACH_ESTADO_CUENTA_1; ?>" name="MACH_ESTADO_CUENTA_1">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MACH_ESTADO_CUENTA_2; ?>" name="MACH_ESTADO_CUENTA_2">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MACH_ESTADO_CUENTA_3; ?>" name="MACH_ESTADO_CUENTA_3">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MACH_ESTADO_CUENTA_4; ?>" name="MACH_ESTADO_CUENTA_4">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $MACH_ESTADO_CUENTA_5; ?>" name="MACH_ESTADO_CUENTA_5">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MACH_ESTADO_CUENTA_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="MACH_ESTADO_CUENTA_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MACH_ESTADO_CUENTA_FECHA_AUTORIZACION_AUDITORIA; ?>" name="MACH_ESTADO_CUENTA_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $MACH_ESTADO_CUENTA_FECHA_DE_LLENADO; ?>" name="MACH_ESTADO_CUENTA_FECHA_DE_LLENADO">
-				</td>
+	
 				<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label">MATCH CON EL ESTADO DE CUENTA:</label>
 				</th>
@@ -2566,30 +1252,7 @@ echo $encabezadoA.$option2.'</select>';
 				</td>
 			</tr>
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $OBSERVACIONES_1_1; ?>" name="OBSERVACIONES_1_1">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $OBSERVACIONES_1_2; ?>" name="OBSERVACIONES_1_2">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $OBSERVACIONES_1_3; ?>" name="OBSERVACIONES_1_3">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $OBSERVACIONES_1_4; ?>" name="OBSERVACIONES_1_4">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $OBSERVACIONES_1_5; ?>" name="OBSERVACIONES_1_5">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $OBSERVACIONES_1_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="OBSERVACIONES_1_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $OBSERVACIONES_1_FECHA_AUTORIZACION_AUDITORIA; ?>" name="OBSERVACIONES_1_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $OBSERVACIONES_1_FECHA_DE_LLENADO; ?>" name="OBSERVACIONES_1_FECHA_DE_LLENADO">
-				</td>
+		
 				<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label">OBSERVACIONES:</label>
 				</th>
@@ -2598,30 +1261,7 @@ echo $encabezadoA.$option2.'</select>';
 				</td>
 			</tr>
 			<tr style="background: #d2faf1">
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_ARCHIVO_1_1; ?>" name="ADJUNTAR_ARCHIVO_1_1">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_ARCHIVO_1_2; ?>" name="ADJUNTAR_ARCHIVO_1_2">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_ARCHIVO_1_3; ?>" name="ADJUNTAR_ARCHIVO_1_3">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_ARCHIVO_1_4; ?>" name="ADJUNTAR_ARCHIVO_1_4">
-				</td>
-				<td>
-					<input class="form-check-input" type="checkbox" id="inlineCheckbox2" required="" value="<?php echo $ADJUNTAR_ARCHIVO_1_5; ?>" name="ADJUNTAR_ARCHIVO_1_">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_ARCHIVO_1_FECHA_AUTORIZACION_RESPONSABLE; ?>" name="ADJUNTAR_ARCHIVO_1_FECHA_AUTORIZACION_RESPONSABLE">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_ARCHIVO_1_FECHA_AUTORIZACION_AUDITORIA; ?>" name="ADJUNTAR_ARCHIVO_1_FECHA_AUTORIZACION_AUDITORIA">
-				</td>
-				<td>
-					<input style="width: 160px;" type="date" class="form-control" id="validationCustom03" required="" value="<?php echo $ADJUNTAR_ARCHIVO_1_FECHA_DE_LLENADO; ?>" name="ADJUNTAR_ARCHIVO_1_FECHA_DE_LLENADO">
-				</td>
+			
 				<th scope="row">
 					<label style="width:300px" for="validationCustom03" class="form-label">ADJUNTAR ARCHIVO RELACIONADO A ESTE GASTO: (CUALQUIER FORMATO)</label>
 				</th>
@@ -2903,14 +1543,10 @@ echo $encabezadoA.$option2.'</select>';
 						<input type="text" class="form-control" id="validationCustom03" required="" value="<?php echo $OTRO_FACTURA; ?>" name="OTRO_FACTURA" placeholder="OTRO" readonly="readonly">
 					</td>
 				</tr>
-				<tr>
-					<th scope="row">
-						<label style="width:300px" for="validationCustom03" class="form-label">TOTAL:</label>
-					</th>
-					<td>
-						<input type="text" class="form-control" id="validationCustom03" required="" value="<?php echo $total; ?>" name="TOTAL_FACTURA" placeholder="TOTAL" readonly="readonly">
-					</td>
-				</tr>
+                 <tr>
+                    <th scope="row"> <label for="validationCustom03" class="form-label">TOTAL:</label></th>
+                 <td><input type="text" class="form-control" id="validationCustom03" required=""  value="<?php echo $total; ?>" name="TOTAL_FACTURA" placeholder="TOTAL" readonly="readonly"></td>
+                 </tr>
 				<tr>
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">MONEDA:</label>
