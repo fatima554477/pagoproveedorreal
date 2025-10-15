@@ -369,6 +369,13 @@ $campos_xml = '
         ? ' style="width:300px;pointer-events:none;opacity:0.6;"'
         : ' style="width:300px;"';
 
+    $fechaDePagoBloqueada = '';
+    $fechaProgramacionColor = '#39FF14';
+    if (in_array($row['STATUS_DE_PAGO'], array('APROBADO', 'PAGADO'))) {
+        $fechaDePagoBloqueada = ' readonly="readonly" style="background:#d7bde2"';
+        $fechaProgramacionColor = '#dfd9f3';
+    }
+
 
      $output .= '
 
@@ -589,8 +596,8 @@ $campos_xml = '
 
 <tr>
 
-<td width="30%" width="30%" style="background:#39FF14"><label>FECHA DE PROGRAMACIÓN DEL PAGO</label></td>
-<td width="70%"><input type="date"  name="FECHA_DE_PAGO" value="'.$row["FECHA_DE_PAGO"].'"></td>
+<td width="30%" width="30%" style="background:'.$fechaProgramacionColor.'"><label>FECHA DE PROGRAMACIÓN DEL PAGO</label></td>
+<td width="70%"><input type="date"  name="FECHA_DE_PAGO" value="'.$row["FECHA_DE_PAGO"].'"'.$fechaDePagoBloqueada.'></td>
 </tr> 
 <tr>
 
@@ -744,6 +751,33 @@ $campos_xml = '
     </div>
   </td>
 </tr>
+
+<tr>
+  <td width="30%" style="background:#dfd9f3"><label>COMPLEMENTOS DE PAGO  (FORMATO PDF)</label></td>
+  <td width="70%">
+    <div id="drop_file_zone" style="width:300px; background-color:#d7bde2;"> <!-- Fondo gris -->
+      <p style="color:#999;">Suelta aquí o busca tu archivo</p> <!-- Texto deshabilitado -->
+      <p>
+        <!-- Input con readonly y sin eventos -->
+        <input 
+          class="form-control form-control-sm" 
+          id="COMPLEMENTOS_PAGO_PDF" 
+          type="text" 
+          readonly 
+          style="width:250px; background-color:#e9ecef;" 
+          value="'.$row["COMPLEMENTOS_PAGO_PDF"] .'" 
+          required 
+        />
+      </p>
+      <!-- Archivo oculto y deshabilitado -->
+      <input type="file" name="COMPLEMENTOS_PAGO_PDF" id="nono" style="display:none;" disabled />
+    </div>
+    <div id="3COMPLEMENTOS_PAGO_PDF">
+      '.$COMPLEMENTOS_PAGO_PDF.'
+    </div>
+  </td>
+</tr>
+
 
 <tr>
   <td width="30%" style="background:#dfd9f3"><label>ADJUNTAR CANCELACIONES (FORMATO PDF)</label></td>
