@@ -386,7 +386,7 @@ $campos_xml = '
 
  <tr>
  
-<td width="30%" style="font-weight:bold;" ><label>ADJUNTAR FACTURA (FORMATO XML)</label></td>
+<td width="30%" style="font-weight:bold;background:#39FF14" ><label>ADJUNTAR FACTURA (FORMATO XML)</label></td>
 <td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_FACTURA_XML\')" ondragover="return false"'.$facturaDropZoneAttributes.'>
 <p>Suelta aquí o busca tu archivo</p>
 <p><input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_XML" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_FACTURA_XML\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_FACTURA_XML"] .' " required'.$facturaInputAttributes.' /></p>
@@ -397,7 +397,7 @@ $campos_xml = '
 <tr>
  
  
-<td width="30%" style="font-weight:bold;" ><label>ADJUNTAR FACTURA (FORMATO PDF)</label></td>
+<td width="30%" style="font-weight:bold;background:#39FF14" ><label>ADJUNTAR FACTURA (FORMATO PDF)</label></td>
 <td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_FACTURA_PDF\')" ondragover="return false"'.$facturaDropZoneAttributes.'>
 <p>Suelta aquí o busca tu archivo</p>
 <p><input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_PDF" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_FACTURA_PDF\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_FACTURA_PDF"] .' " required'.$facturaInputAttributes.' /></p>
@@ -717,7 +717,7 @@ $campos_xml = '
       <!-- Archivo oculto y deshabilitado -->
       <input type="file" name="CONPROBANTE_TRANSFERENCIA" id="nono" style="display:none;" disabled />
     </div>
-    <div id="3COMPLEMENTOS_PAGO_XML">
+    <div id="3CONPROBANTE_TRANSFERENCIA">
       '.$CONPROBANTE_TRANSFERENCIA.'
     </div>
   </td>
@@ -726,31 +726,8 @@ $campos_xml = '
 
 
 
-<tr>
-  <td width="30%" style="background:#dfd9f3"><label>COMPLEMENTOS DE PAGO  (FORMATO XML)</label></td>
-  <td width="70%">
-    <div id="drop_file_zone" style="width:300px; background-color:#d7bde2;"> <!-- Fondo gris -->
-      <p style="color:#999;">Suelta aquí o busca tu archivo</p> <!-- Texto deshabilitado -->
-      <p>
-        <!-- Input con readonly y sin eventos -->
-        <input 
-          class="form-control form-control-sm" 
-          id="COMPLEMENTOS_PAGO_XML" 
-          type="text" 
-          readonly 
-          style="width:250px; background-color:#e9ecef;" 
-          value="'.$row["COMPLEMENTOS_PAGO_XML"] .'" 
-          required 
-        />
-      </p>
-      <!-- Archivo oculto y deshabilitado -->
-      <input type="file" name="COMPLEMENTOS_PAGO_XML" id="nono" style="display:none;" disabled />
-    </div>
-    <div id="3COMPLEMENTOS_PAGO_XML">
-      '.$COMPLEMENTOS_PAGO_XML.'
-    </div>
-  </td>
-</tr>
+
+
 
 <tr>
   <td width="30%" style="background:#dfd9f3"><label>COMPLEMENTOS DE PAGO  (FORMATO PDF)</label></td>
@@ -777,7 +754,31 @@ $campos_xml = '
     </div>
   </td>
 </tr>
-
+<tr>
+  <td width="30%" style="background:#dfd9f3"><label>COMPLEMENTOS DE PAGO  (FORMATO XML)</label></td>
+  <td width="70%">
+    <div id="drop_file_zone" style="width:300px; background-color:#d7bde2;"> <!-- Fondo gris -->
+      <p style="color:#999;">Suelta aquí o busca tu archivo</p> <!-- Texto deshabilitado -->
+      <p>
+        <!-- Input con readonly y sin eventos -->
+        <input 
+          class="form-control form-control-sm" 
+          id="COMPLEMENTOS_PAGO_XML" 
+          type="text" 
+          readonly 
+          style="width:250px; background-color:#e9ecef;" 
+          value="'.$row["COMPLEMENTOS_PAGO_XML"] .'" 
+          required 
+        />
+      </p>
+      <!-- Archivo oculto y deshabilitado -->
+      <input type="file" name="COMPLEMENTOS_PAGO_XML" id="nono" style="display:none;" disabled />
+    </div>
+    <div id="3COMPLEMENTOS_PAGO_XML">
+      '.$COMPLEMENTOS_PAGO_XML.'
+    </div>
+  </td>
+</tr>
 
 <tr>
   <td width="30%" style="background:#dfd9f3"><label>ADJUNTAR CANCELACIONES (FORMATO PDF)</label></td>
@@ -1032,8 +1033,8 @@ $campos_xml = '
 
 
 	        <tr>
-            <td width="30%"><label>GUARDAR</label></td>  
-            <td width="70%"><button class="btn btn-sm btn-outline-success px-5"  type="button" id="clickPAGOP">GUARDAR</button>
+            <td width="30%"><label></label></td>  
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<td width="70%"><button class="btn btn-sm btn-outline-success px-5"  type="button" id="clickPAGOP">GUARDAR</button>
 			
 			<input type="hidden" value="ENVIARPAGOprovee"  name="ENVIARPAGOprovee"/>
 			<input type="hidden" value="'.$row["id"].'"  name="IPpagoprovee" id="IPpagoprovee"/>
