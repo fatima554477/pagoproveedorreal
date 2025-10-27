@@ -629,6 +629,10 @@ if($database->plantilla_filtro($nombreTabla,"total",$altaeventos,$DEPARTAMENTO)=
 <th style="background:#c6eaaa;text-align:center">SIN 46%</th>
 <?php } ?>
 
+<?php if($database->variablespermisos('','VoBo','ver')=='si'){ ?>
+<th style="background:#c6eaaa;text-align:center">VoBo CxP</th>
+<?php } ?>
+
 <?php 
 if($database->plantilla_filtro($nombreTabla,"P_TIPO_DE_MONEDA_1",$altaeventos,$DEPARTAMENTO)=="si"){ ?><th style="background:#c9e8e8;text-align:center">TIPO DE MONEDA</th>
 <?php } ?>
@@ -1252,7 +1256,14 @@ if($database->plantilla_filtro($nombreTabla,"total",$altaeventos,$DEPARTAMENTO)=
 
 <td style="background:#f16c4f;text-align:center"><input type="text" class="form-control" id="PorfaltaDeFactura_1" value="<?php
 echo $PorfaltaDeFactura; ?>"></td>
+
+
+
 <?php if($database->variablespermisos('','boton_sin','ver')=='si'){ ?>
+<td style="background:#c6eaaa;text-align:center"></td>
+<?php } ?>
+
+<?php if($database->variablespermisos('','VoBo','ver')=='si'){ ?>
 <td style="background:#c6eaaa;text-align:center"></td>
 <?php } ?>
 
@@ -2277,6 +2288,16 @@ $totales2 = 'si';
 
 <!-- Elemento para mostrar notificaciones -->
 <div id="ajax-notification" style="position:fixed; top:20px; right:20px; padding:15px; background:#4CAF50; color:white; border-radius:5px; display:none; z-index:1000;"></div>
+
+
+<td style="text-align:center; background:<?php if($row["QUITA_CANT"]=='si'){?> #ceffcc; <?php }else{?>#e9d8ee; <?php }?>" id="color_QUITACANT<?php echo $row["02SUBETUFACTURAid"]; ?>" >
+
+<input type="checkbox" style="width:30PX;" class="form-check-input" id="QUITA_CANT<?php echo $row["02SUBETUFACTURAid"]; ?>"  name="QUITA_CANT<?php echo $row["02SUBETUFACTURAid"]; ?>" value="<?php echo $row["02SUBETUFACTURAid"]; ?>" onclick="QUITA_CANT(<?php echo $row["02SUBETUFACTURAid"]; ?>)" <?php if($row["QUITA_CANT"]=='si'){
+	echo "checked";
+}
+$colspan += 1; ?>/>
+
+</td>
 
 
 <?php  if($database->plantilla_filtro($nombreTabla,"P_TIPO_DE_MONEDA_1",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="text-align:center"><?php 
