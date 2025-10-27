@@ -42,12 +42,18 @@ $busqueda = isset($_POST["busqueda"])?$_POST["busqueda"]:"";
 
 
 
-$QUITACANT_id = isset($_POST["QUITACANT_id"])?$_POST["QUITACANT_id"]:"";
-$QUITACANT1_text = isset($_POST["QUITACANT1_text"])?$_POST["QUITACANT1_text"]:"";
+$STATUS_VOBOCXP_id = isset($_POST["STATUS_VOBOCXP_id"])?$_POST["STATUS_VOBOCXP_id"]:"";
 
-if($QUITACANT_id!='' and ($QUITACANT1_text=='si' or $QUITACANT1_text=='no') ){	
-echo $pagoproveedores->QUITA_CANT ($QUITACANT_id , $QUITACANT1_text  );
+$STATUS_VOBOCXP_text = isset($_POST["STATUS_VOBOCXP_text"])?$_POST["STATUS_VOBOCXP_text"]:"";
+
+
+
+if($STATUS_VOBOCXP_id!='' and ($STATUS_VOBOCXP_text=='si' or $STATUS_VOBOCXP_text=='no') ){
+
+echo $pagoproveedores->STATUS_VOBOCXP ($STATUS_VOBOCXP_id , $STATUS_VOBOCXP_text  );
+
 }
+
 
 
 
