@@ -25,7 +25,7 @@ if($action == "ajax"){
         $database=new orders();
 
         $usuarioActual = isset($_SESSION['idem']) ? $_SESSION['idem'] : '';
-        $puedeAutorizarVentas = $database->puedeAutorizarVentas($usuarioActual);
+       $eventosAutorizadosVentas = array_flip($database->puedeAutorizarVentas($usuarioActual));
 
 	$DEPARTAMENTO = !empty($_POST["DEPARTAMENTO2"])?$_POST["DEPARTAMENTO2"]:"DEFAULT";	
 	$nombreTabla = "SELECT * FROM `08pagoproveedoresfiltroDes`, 08altaeventosfiltroPLA WHERE 08pagoproveedoresfiltroDes.id = 08altaeventosfiltroPLA.idRelacion";
@@ -329,7 +329,7 @@ if($database->plantilla_filtro($nombreTabla,"NUMERO_CONSECUTIVO_PROVEE",$altaeve
 
 
 <?php 
-if($database->plantilla_filtro($nombreTabla,"VIATICOSOPRO",$altaeventos,$DEPARTAMENTO)=="si"){ ?><th style="background:#c9e8e8;text-align:center">PAGO A PROVEEDOR, VIÁTICO O REEMBOLSO,<br>PAGO A PROVEEDOR CON DOS O MAS FACTURAS</th>
+if($database->plantilla_filtro($nombreTabla,"VIATICOSOPRO",$altaeventos,$DEPARTAMENTO)=="si"){ ?><th style="background:#c9e8e8;text-align:center">TIPO DE PAGO</th>
 <?php } ?>
 
 <?php 
@@ -402,9 +402,14 @@ if($database->plantilla_filtro($nombreTabla,"PFORMADE_PAGO",$altaeventos,$DEPART
 if($database->plantilla_filtro($nombreTabla,"FECHA_DE_PAGO",$altaeventos,$DEPARTAMENTO)=="si"){ ?><th style="background:#c9e8e8;text-align:center">FECHA DE PROGRAMACIÓN  DEL PAGO</th>
 <?php } ?><?php 
 if($database->plantilla_filtro($nombreTabla,"FECHA_A_DEPOSITAR",$altaeventos,$DEPARTAMENTO)=="si"){ ?><th style="background:#f48a81;text-align:center">FECHA EFECTIVA DE PAGO</th>
-<?php } ?><?php 
+<?php } ?>
+
+
+<?php 
 if($database->plantilla_filtro($nombreTabla,"STATUS_DE_PAGO",$altaeventos,$DEPARTAMENTO)=="si"){ ?><th style="background:#f48a81;text-align:center">STATUS DE PAGO</th>
-<?php } ?><?php                                     
+<?php } ?>
+
+<?php                                     
 if($database->plantilla_filtro($nombreTabla,"ADJUNTAR_COTIZACION",$altaeventos,$DEPARTAMENTO)=="si"){ ?><th style="background:#c9e8e8;text-align:center"> COTIZACIÓN O REPORTE</th>
 <?php } ?><?php                                     
 if($database->plantilla_filtro($nombreTabla,"CONPROBANTE_TRANSFERENCIA",$altaeventos,$DEPARTAMENTO)=="si"){ ?><th style="background:#f48a81"> COMPROBANTE DE TRANSFERENCIA</th>
@@ -650,6 +655,7 @@ if($database->plantilla_filtro($nombreTabla,"FOTO_ESTADO_PROVEE",$altaeventos,$D
 <th style="background:#c9e8e8"></th>
 <th style="background:#c9e8e8"></th>
 <th style="background:#c9e8e8"></th>
+<th style="background:#c9e8e8"></th>
 
 </tr>
 
@@ -691,10 +697,29 @@ echo $NUMERO_CONSECUTIVO_PROVEE; ?>"></td>
 <?php } ?>
 
 
-
-<?php if($database->plantilla_filtro($nombreTabla,"VIATICOSOPRO",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="background:#c9e8e8"><input type="text" class="form-control" id="VIATICOSOPRO_2" value="<?php 
-echo $VIATICOSOPRO; ?>"></td>
+<?php  
+if($database->plantilla_filtro($nombreTabla,"VIATICOSOPRO",$altaeventos,$DEPARTAMENTO)=="si"){ ?>
+             <td style="background:#c9e8e8">
+				
+			<select class="form-select mb-3" aria-label="Default select example" id="VIATICOSOPRO_2" onchange="load(1);">
+			<option value="">TODOS</option>
+			
+			<option value="PAGO A PROVEEDOR" <?php if($_POST['VIATICOSOPRO']=='PAGO A PROVEEDOR'){echo 'selected';} ?>>PAGO A PROVEEDOR</option>
+			
+			<option value="VIATICOS" <?php if($_POST['VIATICOSOPRO']=='VIATICOS'){echo 'selected';} ?>>VIATICOS</option>
+			
+			<option value="REEMBOLSO" <?php if($_POST['VIATICOSOPRO']=='REEMBOLSO'){echo 'selected';} ?>>REEMBOLSOS</option>
+			
+			
+			<option value="PAGOS CON UNA SOLA FACTURA" <?php if($_POST['VIATICOSOPRO']=='PAGOS CON UNA SOLA FACTURA'){echo 'selected';} ?>>PAGOS CON UNA SOLA FACTURA</option>
+			<option value="PAGO A PROVEEDOR CON DOS O MAS FACTURAS" <?php if($_POST['VIATICOSOPRO']=='PAGO A PROVEEDOR CON DOS O MAS FACTURAS'){echo 'selected';} ?>>PAGO A PROVEEDOR CON DOS O MAS FACTURAS</option>
+			<option value="SELECCIONA UNA OPCION" <?php if($_POST['VIATICOSOPRO']=='SELECCIONA UNA OPCION'){echo 'selected';} ?>>SELECCIONA UNA OPCION</option>								
+			</select>
+</td>
 <?php } ?>
+
+
+
 <?php  
 if($database->plantilla_filtro($nombreTabla,"NOMBRE_COMERCIAL",$altaeventos,$DEPARTAMENTO)=="si"){ ?>
 
@@ -860,10 +885,30 @@ echo $MONTO_DEPOSITADO; ?>"></td>
 <?php } ?><?php  
 if($database->plantilla_filtro($nombreTabla,"PENDIENTE_PAGO",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="background:#c9e8e8"><input type="text" class="form-control" id="PENDIENTE_PAGO_2" value="<?php 
 echo $PENDIENTE_PAGO; ?>"></td>
-<?php } ?><?php  
-if($database->plantilla_filtro($nombreTabla,"TIPO_DE_MONEDA",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="background:#c9e8e8"><input type="text" class="form-control" id="TIPO_DE_MONEDA_2" value="<?php 
-echo $TIPO_DE_MONEDA; ?>"></td>
 <?php } ?>
+
+<?php  
+if($database->plantilla_filtro($nombreTabla,"TIPO_DE_MONEDA",$altaeventos,$DEPARTAMENTO)=="si"){ ?>
+    <td style="background:#c9e8e8">
+        <select class="form-select mb-3" aria-label="Default select example" id="TIPO_DE_MONEDA_2" name="TIPO_DE_MONEDA" onchange="load(1);">
+            <option value="">TODOS</option>
+            <option style="background: #c9e8e8" value="MXN" <?php if($TIPO_DE_MONEDA=='MXN'){echo "selected";} ?>>MXN (Peso mexicano)</option>
+            <option style="background: #a3e4d7" value="USD" <?php if($TIPO_DE_MONEDA=='USD'){echo "selected";} ?>>USD (Dólar estadounidense)</option>
+            <option style="background: #e8f6f3" value="EUR" <?php if($TIPO_DE_MONEDA=='EUR'){echo "selected";} ?>>EUR (Euro)</option>
+            <option style="background: #fdf2e9" value="GBP" <?php if($TIPO_DE_MONEDA=='GBP'){echo "selected";} ?>>GBP (Libra esterlina)</option>
+            <option style="background: #eaeded" value="CHF" <?php if($TIPO_DE_MONEDA=='CHF'){echo "selected";} ?>>CHF (Franco suizo)</option>
+            <option style="background: #fdebd0" value="CNY" <?php if($TIPO_DE_MONEDA=='CNY'){echo "selected";} ?>>CNY (Yuan chino)</option>
+            <option style="background: #ebdef0" value="JPY" <?php if($TIPO_DE_MONEDA=='JPY'){echo "selected";} ?>>JPY (Yen japonés)</option>
+            <option style="background: #d6eaf8" value="HKD" <?php if($TIPO_DE_MONEDA=='HKD'){echo "selected";} ?>>HKD (Dólar hongkonés)</option>
+            <option style="background: #fef5e7" value="CAD" <?php if($TIPO_DE_MONEDA=='CAD'){echo "selected";} ?>>CAD (Dólar canadiense)</option>
+            <option style="background: #ebedef" value="AUD" <?php if($TIPO_DE_MONEDA=='AUD'){echo "selected";} ?>>AUD (Dólar australiano)</option>
+            <option style="background: #fbeee6" value="BRL" <?php if($TIPO_DE_MONEDA=='BRL'){echo "selected";} ?>>BRL (Real brasileño)</option>
+            <option style="background: #e8f6f3" value="RUB" <?php if($TIPO_DE_MONEDA=='RUB'){echo "selected";} ?>>RUB (Rublo ruso)</option>
+			<option value="SELECCIONA UNA OPCION" <?php if($_POST['TIPO_DE_MONEDA']=='SELECCIONA UNA OPCION'){echo 'selected';} ?>>SELECCIONA UNA OPCION</option>								
+			</select>
+</td>
+<?php } ?>
+
 
 <?php  
 if($database->plantilla_filtro($nombreTabla,"TIPO_CAMBIOP",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="background:#c9e8e8"><input type="text" class="form-control" id="TIPO_CAMBIOP_2" value="<?php 
@@ -902,10 +947,24 @@ echo $FECHA_DE_PAGO2a; ?>"></td>
 <?php  
 if($database->plantilla_filtro($nombreTabla,"FECHA_A_DEPOSITAR",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="background:#f48a81"><input type="date" class="form-control" id="FECHA_A_DEPOSITAR_2" value="<?php 
 echo $FECHA_A_DEPOSITAR; ?>"></td>
-<?php } ?><?php  
-if($database->plantilla_filtro($nombreTabla,"STATUS_DE_PAGO",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="background:#f48a81"><input type="text" class="form-control" id="STATUS_DE_PAGO_2" value="<?php 
-echo $STATUS_DE_PAGO; ?>"></td>
 <?php } ?>
+
+<?php  
+if($database->plantilla_filtro($nombreTabla,"STATUS_DE_PAGO",$altaeventos,$DEPARTAMENTO)=="si"){ ?>
+             </br><td style="background:#f48a81">
+				
+			<select class="form-select mb-3" aria-label="Default select example" id="STATUS_DE_PAGO_2" onchange="load(1);">
+			<option value="">TODOS</option>
+			<option value="SOLICITADO" <?php if($_POST['STATUS_DE_PAGO']=='SOLICITADO'){echo 'selected';} ?>>SOLICITADO</option>
+			<option value="APROBADO" <?php if($_POST['STATUS_DE_PAGO']=='APROBADO'){echo 'selected';} ?>>APROBADO</option>
+			<option value="PAGADO" <?php if($_POST['STATUS_DE_PAGO']=='PAGADO'){echo 'selected';} ?>>PAGADO</option>
+			<option value="RECHAZADO" <?php if($_POST['STATUS_DE_PAGO']=='RECHAZADO'){echo 'selected';} ?>>RECHAZADO</option>
+			<option value="SELECCIONA UNA OPCION" <?php if($_POST['STATUS_DE_PAGO']=='SELECCIONA UNA OPCION'){echo 'selected';} ?>>SELECCIONA UNA OPCION</option>								
+			</select>
+</td>
+<?php } ?>
+
+
 <?php  
 if($database->plantilla_filtro($nombreTabla,"ADJUNTAR_COTIZACION",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="background:#c9e8e8;text-align:center"><input type="text" class="form-control" id="ADJUNTAR_COTIZACION" value="<?php
 echo $ADJUNTAR_COTIZACION; ?>"></td>
@@ -1228,6 +1287,7 @@ if($database->plantilla_filtro($nombreTabla,"FOTO_ESTADO_PROVEE",$altaeventos,$D
 		<td style="background:#c9e8e8"></td>
 		<td style="background:#c9e8e8"></td>
 		<td style="background:#c9e8e8"></td>
+		<td style="background:#c9e8e8"></td>
             </tr>			
         </thead>
 		<?php 	if ($numrows<0){ ?>
@@ -1282,32 +1342,45 @@ foreach ($datos as $key=>$row){
     $fondo_existe_xml = "";
     $fondo_existe_xml2 = "";
 
-    // Nueva condición para PFORMADE_PAGO
 if (isset($row['STATUS_DE_PAGO']) && $row['STATUS_DE_PAGO'] == 'RECHAZADO') {
-    $fondo_existe_xml = "style='background-color: #ff0000'"; // Rojo sólido
+    // 1. Rechazado → Rojo
+    $fondo_existe_xml = "style='background-color: #ff0000'"; 
     $fondo_existe_xml2 = "style='background-color: #ff0000'";
-} 
-// 2. Segunda prioridad: Forma de pago diferente de '03' (ROSADO)
+}
+// 2. Método de pago diferente de 'PUE' (vacío cuenta como PUE) → Rosado
+else if (
+    isset($row['metodoDePago']) && 
+    trim($row['metodoDePago']) !== '' && 
+    strtoupper(trim($row['metodoDePago'])) != 'PUE'
+) {
+    $fondo_existe_xml = "style='background-color: #ffb6c1'"; 
+    $fondo_existe_xml2 = "style='background-color: #ffb6c1'"; 
+}
+// 3. Forma de pago diferente de '03' → Rosado
 else if ($row['PFORMADE_PAGO'] != '03') {
     $fondo_existe_xml = "style='background-color: #ffb6c1'"; 
     $fondo_existe_xml2 = "style='background-color: #ffb6c1'"; 
 }
-// 3. ClaveUnidadConcepto presente (BLANCO)
+// 4. ClaveUnidadConcepto presente → Blanco
 else if (!empty($row['ClaveUnidadConcepto'])) {
     $fondo_existe_xml = "style='background-color: #ffffff'"; 
     $fondo_existe_xml2 = "style='background-color: #ffffff'"; 
-} 
-// 4. ClaveUnidadConcepto vacío (AMARILLO)
+}
+// 5. ClaveUnidadConcepto vacío → Amarillo
 else if (empty($row['ClaveUnidadConcepto'])) {
     $fondo_existe_xml2 = "style='background-color: #fdfe87'"; 
     $fondo_existe_xml = "style='background-color: #fdfe87'"; 
 }
-// 5. Caso por defecto (SIN ESTILO)
+// 6. Caso por defecto
 else {
     $fondo_existe_xml = "";
     $fondo_existe_xml2 = "";
 }
+
+
 ?>
+
+
 <tr <?php echo $fondo_existe_xml2; ?> >
 <td>
     <input type="checkbox" 
@@ -1416,14 +1489,19 @@ $colspan += 1; ?>/>
         name="STATUS_VENTAS<?php echo $row["02SUBETUFACTURAid"]; ?>"
         value="<?php echo $row["02SUBETUFACTURAid"]; ?>"
         onclick="STATUS_VENTAS(<?php echo $row["02SUBETUFACTURAid"]; ?>)"
-        <?php
+       <?php
             $atributosVentas = [];
             if ($row["STATUS_VENTAS"] == 'si') {
                 $atributosVentas[] = 'checked';
             }
-            if (!$puedeAutorizarVentas) {
+
+            $numeroEventoRegistro = isset($row["NUMERO_EVENTO"]) ? strtoupper(trim((string) $row["NUMERO_EVENTO"])) : '';
+            $tienePermisoVenta = $numeroEventoRegistro !== '' && isset($eventosAutorizadosVentas[$numeroEventoRegistro]);
+
+            if (!$tienePermisoVenta) {
                 $atributosVentas[] = 'disabled';
             }
+
             echo implode(' ', $atributosVentas);
         ?>
     />
@@ -1448,20 +1526,27 @@ $colspan += 1; ?>/>
     <input type="checkbox" style="width:30PX;" class="form-check-input" 
            id="STATUS_AUDITORIA1<?php echo $row["02SUBETUFACTURAid"]; ?>" 
            name="STATUS_AUDITORIA1<?php echo $row["02SUBETUFACTURAid"]; ?>" 
-           value="<?php echo $row["02SUBETUFACTURAid"]; ?>"  
+           value="<?php echo $row["02SUBETUFACTURAid"]; ?>"
            <?php 
-           if ($row["STATUS_DE_PAGO"] == 'APROBADO' || $row["STATUS_DE_PAGO"] == 'PAGADO'): 
+           // Condición de estatus
+           if ($row["STATUS_DE_PAGO"] == 'APROBADO' || $row["STATUS_DE_PAGO"] == 'PAGADO') {
                echo 'checked disabled';
-           else: 
-               echo 'onclick="STATUS_AUDITORIA1('.$row["02SUBETUFACTURAid"].')"';
-           endif; 
-		   
+           } else {
+               // Validación de permisoS
+               if($database->variablespermisos('','AUDITORIA1','ver') == 'si'){
+                   echo 'onclick="STATUS_AUDITORIA1('.$row["02SUBETUFACTURAid"].')"';
+               } else {
+                   echo 'disabled';
+               }
+           }
            ?>
     />
 </td>
 
 
-<td style="text-align:center; background:<?php echo ($row["STATUS_FINANZAS"] == 'si') ? '#ceffcc' : '#e9d8ee'; ?>;" 
+
+<td style="text-align:center; background:
+    <?php echo ($row["STATUS_FINANZAS"] == 'si') ? '#ceffcc' : '#e9d8ee'; ?>;" 
     id="color_FINANZAS<?php echo $row["02SUBETUFACTURAid"]; ?>">
 
     <input type="checkbox" 
@@ -1469,18 +1554,28 @@ $colspan += 1; ?>/>
         class="form-check-input" 
         id="STATUS_FINANZAS<?php echo $row["02SUBETUFACTURAid"]; ?>"  
         name="STATUS_FINANZAS<?php echo $row["02SUBETUFACTURAid"]; ?>" 
-        value="<?php echo $row["02SUBETUFACTURAid"]; ?>" 
-        onclick="STATUS_FINANZAS(<?php echo $row["02SUBETUFACTURAid"]; ?>)" 
+        value="<?php echo $row["02SUBETUFACTURAid"]; ?>"
         <?php 
-            if ($row["STATUS_FINANZAS"] == 'si') {
-                echo "checked disabled";  // Marcado y bloqueado si es 'si'
+        if ($row["STATUS_FINANZAS"] == 'si') {
+            // Ya autorizado → marcado y bloqueado
+            echo 'checked disabled style="cursor:not-allowed;" title="Sin permiso para modificar"';
+        } else {
+            // Validar permiso antes de habilitar
+            if($database->variablespermisos('','DIRECCION1','ver') == 'si'){
+                echo 'onclick="STATUS_FINANZAS('.$row["02SUBETUFACTURAid"].')"';
+            } else {
+                // Sin permiso → deshabilitado y con aviso
+                echo 'disabled style="cursor:not-allowed;" title="Sin permiso para modificar"';
             }
+        }
         ?>
     />
     <?php $colspan += 1; ?>
 </td>
 
-<td style="text-align:center; background:<?php echo ($row["STATUS_DE_PAGO"] == 'PAGADO') ? '#ceffcc' : '#e9d8ee'; ?>;" 
+
+<td style="text-align:center; background:
+    <?php echo ($row["STATUS_DE_PAGO"] == 'PAGADO') ? '#ceffcc' : '#e9d8ee'; ?>;" 
     id="color_pagado1a<?php echo $row["02SUBETUFACTURAid"]; ?>">
 
     <input type="checkbox" 
@@ -1488,35 +1583,55 @@ $colspan += 1; ?>/>
         class="form-check-input" 
         id="pasarpagado1a<?php echo $row["02SUBETUFACTURAid"]; ?>" 
         name="pasarpagado1a<?php echo $row["02SUBETUFACTURAid"]; ?>" 
-        value="<?php echo $row["02SUBETUFACTURAid"]; ?>"  
-        onclick="pasarpagado2(<?php echo $row["02SUBETUFACTURAid"]; ?>)"  
+        value="<?php echo $row["02SUBETUFACTURAid"]; ?>"
         <?php 
-            if ($row["STATUS_DE_PAGO"] == 'PAGADO') {
-                echo "checked disabled"; // Marcar y bloquear si ya está pagado
+        if ($row["STATUS_DE_PAGO"] == 'PAGADO') {
+            // Ya está pagado → marcado y bloqueado
+            echo 'checked disabled style="cursor:not-allowed;" title="Ya está pagado"';
+        } else {
+            // Validar permiso FINANZAS
+            if($database->variablespermisos('','FINANZAS','ver') == 'si'){
+                echo 'onclick="pasarpagado2('.$row["02SUBETUFACTURAid"].')"';
+            } else {
+                // Sin permiso → bloqueado y con aviso
+                echo 'disabled style="cursor:not-allowed;" title="Sin permiso para modificar"';
             }
+        }
         ?>
     />
     <?php $colspan += 1; ?>
 </td>
 
-<td style="text-align:center; background:<?php echo ($row["STATUS_AUDITORIA2"] == 'si') ? '#ceffcc' : '#e9d8ee'; ?>;" 
+
+<td style="text-align:center; background:
+    <?php echo ($row["STATUS_AUDITORIA2"] == 'si') ? '#ceffcc' : '#e9d8ee'; ?>;" 
     id="color_AUDITORIA2<?php echo $row["02SUBETUFACTURAid"]; ?>">
 
     <input type="checkbox" 
-        style="width:30px;" 
+        style="width:30px; cursor:pointer;" 
         class="form-check-input" 
         id="STATUS_AUDITORIA2<?php echo $row["02SUBETUFACTURAid"]; ?>"  
         name="STATUS_AUDITORIA2<?php echo $row["02SUBETUFACTURAid"]; ?>" 
-        value="<?php echo $row["02SUBETUFACTURAid"]; ?>" 
-        onclick="STATUS_AUDITORIA2(<?php echo $row["02SUBETUFACTURAid"]; ?>)" 
+        value="<?php echo $row["02SUBETUFACTURAid"]; ?>"
         <?php 
-            if ($row["STATUS_AUDITORIA2"] == 'si') {
-                echo "checked disabled"; // Marcado y bloqueado si es 'si'
+        if ($row["STATUS_AUDITORIA2"] == 'si') {
+            // Ya autorizado → marcado y bloqueado
+            echo 'checked disabled style="cursor:not-allowed;" title="Ya autorizado"';
+        } else {
+            if($database->variablespermisos('','AUDITORIA2','ver') == 'si'){
+                // Permitir acción → al marcar se llama a tu función y se bloquea el checkbox
+                echo 'onclick="STATUS_AUDITORIA2('.$row["02SUBETUFACTURAid"].'); this.disabled=true; this.style.cursor=\'not-allowed\';"';
+            } else {
+                // Sin permiso → bloqueado
+                echo 'disabled style="cursor:not-allowed;" title="Sin permiso para modificar"';
             }
+        }
         ?>
     />
     <?php $colspan += 1; ?>
 </td>
+
+
 
 
 
@@ -2084,16 +2199,46 @@ $totales2 = 'si';
 
  
 
-<!-- Celda para mostrar el valor calculado -->
 <td style="text-align:center" id="valorCalculado_<?php echo $row['02SUBETUFACTURAid']; ?>">
-    <?php 
-        if (($row['STATUS_CHECKBOX'] === 'no' || $row['STATUS_CHECKBOX'] === null) && strlen(trim($row['UUID'])) < 1) {
+    <?php
+     if (in_array($row['VIATICOSOPRO'], [
+        'VIATICOS',
+        'REEMBOLSO',
+        'PAGO A PROVEEDOR CON DOS O MAS FACTURAS',
+        'PAGOS CON UNA SOLA FACTURA'
+    ])) {
+        $PorfaltaDeFacturaSUBERES2 = $database->diferenciaPorConsecutivo($row['NUMERO_CONSECUTIVO_PROVEE']);
+        $valorNUEVO = $PorfaltaDeFacturaSUBERES2 ;
+        echo number_format($valorNUEVO, 2, '.', ',');
+		                  
+				   
+        $totales2 = 'si';
+
+    }	
+        elseif (($row['STATUS_CHECKBOX'] === 'no' || $row['STATUS_CHECKBOX'] === null) && strlen(trim($row['UUID'])) < 1) {
             $valorCalculado = $porfalta2 * 1.46;
             echo number_format($valorCalculado, 2, '.', ',');
-            $PorfaltaDeFactura12 += $valorCalculado;
+				                   $Porfalta22 = $valorNUEVO + $valorCalculado;
+				   $PorfaltaDeFactura12 += $Porfalta22 ;
+
         }
+    
     ?>
 </td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         
 <?php if($database->variablespermisos('','boton_sin','ver')=='si'){ ?>
 <td style="text-align:center; background:<?php 

@@ -215,6 +215,7 @@ function recalcularTotal() {
 		success:function(data){
 		var result = data.split('^');				
 		$('#pasarpagado2').html("<span id='ACTUALIZADO' >"+result[0]+"</span>");
+		load(1);
 		
 		if(result[1]=='si'){
 		$('#color_RESPONSABLE_EVENTO'+RESPONSABLE_EVENTO_id).css('background-color', '#ceffcc');
@@ -298,6 +299,7 @@ function recalcularTotal() {
 		success:function(data){
 		var result = data.split('^');				
 		$('#pasarpagado2').html("Cargando...").fadeIn().delay(500).fadeOut();
+		load(1);
 
 		if(result[1]=='si'){
 		$('#color_AUDITORIA2'+AUDITORIA2_id).css('background-color', '#ceffcc');
@@ -332,6 +334,7 @@ function recalcularTotal() {
 		success:function(data){
 		var result = data.split('^');				
 		$('#pasarpagado2').html("Cargando...").fadeIn().delay(500).fadeOut();
+		load(1);
 		
 		if(result[1]=='si'){
 		$('#color_FINANZAS'+FINANZAS_id).css('background-color', '#ceffcc');
@@ -364,6 +367,7 @@ function recalcularTotal() {
 		success:function(data){
 		var result = data.split('^');				
 		$('#pasarpagado2').html("Cargando...").fadeIn().delay(500).fadeOut();
+		load(1);
 		
 		if(result[1]=='si'){
 		$('#color_VENTAS'+VENTAS_id).css('background-color', '#ceffcc');
