@@ -2286,18 +2286,18 @@ $totales2 = 'si';
 </td>
 <?php } ?>
 
-<!-- Elemento para mostrar notificaciones -->
-<div id="ajax-notification" style="position:fixed; top:20px; right:20px; padding:15px; background:#4CAF50; color:white; border-radius:5px; display:none; z-index:1000;"></div>
+<td style="text-align:center; background:<?php if($row["STATUS_VOBOCXP"]=='si'){?> #ceffcc; <?php }else{?>#e9d8ee; <?php }?>" id="color_VOBOCXP<?php echo $row["02SUBETUFACTURAid"]; ?>" >
 
-
-<td style="text-align:center; background:<?php if($row["QUITA_CANT"]=='si'){?> #ceffcc; <?php }else{?>#e9d8ee; <?php }?>" id="color_QUITACANT<?php echo $row["02SUBETUFACTURAid"]; ?>" >
-
-<input type="checkbox" style="width:30PX;" class="form-check-input" id="QUITA_CANT<?php echo $row["02SUBETUFACTURAid"]; ?>"  name="QUITA_CANT<?php echo $row["02SUBETUFACTURAid"]; ?>" value="<?php echo $row["02SUBETUFACTURAid"]; ?>" onclick="QUITA_CANT(<?php echo $row["02SUBETUFACTURAid"]; ?>)" <?php if($row["QUITA_CANT"]=='si'){
+<input type="checkbox" style="width:30PX;" class="form-check-input" id="STATUS_VOBOCXP<?php echo $row["02SUBETUFACTURAid"]; ?>"  name="STATUS_VOBOCXP<?php echo $row["02SUBETUFACTURAid"]; ?>" value="<?php echo $row["02SUBETUFACTURAid"]; ?>" onclick="STATUS_VOBOCXP(<?php echo $row["02SUBETUFACTURAid"]; ?>)" <?php if($row["STATUS_VOBOCXP"]=='si'){
 	echo "checked";
 }
 $colspan += 1; ?>/>
 
 </td>
+<div id="ajax-notification" style="position:fixed; top:20px; right:20px; padding:15px; background:#4CAF50; color:white; border-radius:5px; display:none; z-index:1000;"></div>
+
+
+
 
 
 <?php  if($database->plantilla_filtro($nombreTabla,"P_TIPO_DE_MONEDA_1",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="text-align:center"><?php 

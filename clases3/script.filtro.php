@@ -192,41 +192,40 @@ function recalcularTotal() {
 
 
 
-	function QUITA_CANT(QUITACANT_id){
+
+	function STATUS_VOBOCXP(STATUS_VOBOCXP_id){
 
 
-	var checkBox = document.getElementById("QUITA_CANT"+QUITACANT_id);
-	var QUITACANT1_text = "";
+	var checkBox = document.getElementById("STATUS_VOBOCXP"+STATUS_VOBOCXP_id);
+	var STATUS_VOBOCXP_text = "";
 	if (checkBox.checked == true){
-	QUITACANT1_text = "si";
+	STATUS_VOBOCXP_text = "si";
 	}else{
-	QUITACANT1_text = "no";
+	STATUS_VOBOCXP_text = "no";
 	}
-
 	  $.ajax({
 		url:'pagoproveedores/controladorPP.php',
 		method:'POST',
-		data:{QUITACANT_id:QUITACANT_id,QUITACANT1_text:QUITACANT1_text},
+		data:{STATUS_VOBOCXP_id:STATUS_VOBOCXP_id,STATUS_VOBOCXP_text:STATUS_VOBOCXP_text},
 		beforeSend:function(){
 		$('#pasarpagado2').html('cargando');
 	},
 		success:function(data){
 		var result = data.split('^');				
-		$('#pasarpagado2').html("ACTUALIZADO").fadeIn().delay(1000).fadeOut();
-		 load(1);
-		 
-
+		$('#pasarpagado2').html("<span id='ACTUALIZADO' >"+result[0]+"</span>");
+		load(1);
+		
 		if(result[1]=='si'){
-		$('#color_QUITACANT'+QUITACANT_id).css('background-color', '#ceffcc');
+		$('#color_VOBOCXP'+STATUS_VOBOCXP_id).css('background-color', '#ceffcc');
 		}
 		if(result[1]=='no'){
-		$('#color_QUITACANT'+QUITACANT_id).css('background-color', '#e9d8ee');
+		$('#color_VOBOCXP'+STATUS_VOBOCXP_id).css('background-color', '#e9d8ee');
 		}
-	   	
 		
 	}
 	});
 }
+
 
 
 	function STATUS_RESPONSABLE_EVENTO(RESPONSABLE_EVENTO_id){
