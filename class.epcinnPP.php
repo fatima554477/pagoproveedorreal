@@ -887,7 +887,24 @@ NoIdentificacionConcepto
 		}
     }
 
+       	public function QUITA_CANT (
+	    $QUITACANT_id , $QUITACANT1_text ){
+	
+		$conn = $this->db();
+		$session = isset($_SESSION['idem'])?$_SESSION['idem']:'';    
+		if($session != ''){
 
+		 $var1 = "update 02SUBETUFACTURA SET QUITA_CANT = '".$QUITACANT1_text."' WHERE id = '".$QUITACANT_id."'  ";	
+	
+
+		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
+		return "Actualizado^".$QUITACANT1_text;
+		
+			
+        }else{
+		echo "NO HAY UN PROVEEDOR SELECCIONADO";	
+		}
+    }
 
 	
 	

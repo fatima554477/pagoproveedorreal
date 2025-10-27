@@ -39,12 +39,27 @@ $pasarpagado_id = isset($_POST["pasarpagado_id"])?$_POST["pasarpagado_id"]:"";
 $busqueda = isset($_POST["busqueda"])?$_POST["busqueda"]:"";
 
 
+
+
+
+$QUITACANT_id = isset($_POST["QUITACANT_id"])?$_POST["QUITACANT_id"]:"";
+$QUITACANT1_text = isset($_POST["QUITACANT1_text"])?$_POST["QUITACANT1_text"]:"";
+
+if($QUITACANT_id!='' and ($QUITACANT1_text=='si' or $QUITACANT1_text=='no') ){	
+echo $pagoproveedores->QUITA_CANT ($QUITACANT_id , $QUITACANT1_text  );
+}
+
+
+
+
 $AUDITORIA1_id = isset($_POST["AUDITORIA1_id"])?$_POST["AUDITORIA1_id"]:"";
 $AUDITORIA1_text = isset($_POST["AUDITORIA1_text"])?$_POST["AUDITORIA1_text"]:"";
 
 if($AUDITORIA1_id!='' and ($AUDITORIA1_text=='si' or $AUDITORIA1_text=='no') ){	
 echo $pagoproveedores->ACTUALIZA_AUDITORIA1 ($AUDITORIA1_id , $AUDITORIA1_text  );
 }
+
+
 
 
 $CHECKBOX_id = isset($_POST["CHECKBOX_id"]) ? $_POST["CHECKBOX_id"] : "";
@@ -218,7 +233,7 @@ include_once (__ROOT1__."/includes/crea_funciones_filtro_completo.php");*/
 	}
 	
 	
-if( $NUMERO_EVENTO == ""){
+if( $NUMERO_EVENTO == "" OR $MONTO_TOTAL_COTIZACION_ADEUDO == ""){
 	echo "<P style='color:red; font-size:23px;'>FAVOR DE LLENAR CAMPOS OBLIGATORIOS</p>";
 }else{		
 	

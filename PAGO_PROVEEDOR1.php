@@ -133,13 +133,42 @@ $_SESSION['idusuario12']= '';
                                 }
                         });
                 }
-                document.addEventListener('DOMContentLoaded', () => {
-                        toggleFacturaFields();
-                        const select = document.querySelector('select[name="VIATICOSOPRO"]');
-                        if(select) {
-                                select.addEventListener('change', toggleFacturaFields);
-                        }
-                });
+               function updateReembolsoLabels() {
+                       const select = document.querySelector('select[name="VIATICOSOPRO"]');
+                       if(!select) {
+                               return;
+                       }
+                       const isReembolso = select.value === 'REEMBOLSO';
+                       const nombreComercialLabel = document.getElementById('label-nombre-comercial-text');
+                       if(nombreComercialLabel) {
+                               nombreComercialLabel.textContent = isReembolso
+                                       ? 'NOMBRE COMERCIAL DEL BENEFICIARIO DEL REEMBOLSO'
+                                       : 'NOMBRE COMERCIAL';
+                       }
+                       const razonSocialLabel = document.getElementById('label-razon-social-text');
+                       if(razonSocialLabel) {
+                               razonSocialLabel.textContent = isReembolso
+                                       ? 'RAZÓN SOCIAL DEL BENEFICIARIO DEL REEMBOLSO'
+                                       : 'RAZÓN SOCIAL';
+                       }
+                       const rfcLabel = document.getElementById('label-rfc-text');
+                       if(rfcLabel) {
+                               rfcLabel.textContent = isReembolso
+                                       ? 'RFC DEL BENEFICIARIO DEL REEMBOLSO:'
+                                       : 'RFC DEL PROVEEDOR:';
+                       }
+               }
+               document.addEventListener('DOMContentLoaded', () => {
+                       toggleFacturaFields();
+                       updateReembolsoLabels();
+                       const select = document.querySelector('select[name="VIATICOSOPRO"]');
+                       if(select) {
+                               select.addEventListener('change', () => {
+                                       toggleFacturaFields();
+                                       updateReembolsoLabels();
+                               });
+                       }
+               });
                 $(document).on('change', 'input[type="checkbox"]', function(e) {
                         if(this.id == "MONTO_DEPOSITAR1") {
                                 if(this.checked) $('#FECHA_AUTORIZACION_RESPONSABLE').val(this.value);
@@ -343,10 +372,25 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				</tr>
 				<tr style="background: #d2faf1">
 				
-					<th scope="row">
-						<label style="width:300px" for="validationCustom03" class="form-label">NOMBRE COMERCIAL
-							<br><a style="color:red;font-size:11px">OBLIGATORIO</a></label>
-					</th>
+                                        <th scope="row">
+                                                <?php
+                                               $labelNombreComercial = ($VIATICOSOPRO == 'REEMBOLSO')
+                                                       ? 'NOMBRE COMERCIAL DEL BENEFICIARIO DEL REEMBOLSO'
+                                                       : 'NOMBRE COMERCIAL';
+                                               $labelRazonSocial = ($VIATICOSOPRO == 'REEMBOLSO')
+                                                       ? 'RAZÓN SOCIAL DEL BENEFICIARIO DEL REEMBOLSO'
+                                                       : 'RAZÓN SOCIAL';
+                                               $labelRfc = ($VIATICOSOPRO == 'REEMBOLSO')
+                                                       ? 'RFC DEL BENEFICIARIO DEL REEMBOLSO:'
+                                                       : 'RFC DEL PROVEEDOR:';
+                                               $placeholderRazonSocial = $labelRazonSocial;
+                                               $placeholderRfc = ($VIATICOSOPRO == 'REEMBOLSO')
+                                                       ? 'RFC DEL BENEFICIARIO DEL REEMBOLSO'
+                                                       : 'RFC DEL PROVEEDOR';
+                                               ?>
+                                               <label style="width:300px" for="validationCustom03" class="form-label"><span id="label-nombre-comercial-text"><?php echo $labelNombreComercial; ?></span>
+                                                        <br><a style="color:red;font-size:11px">OBLIGATORIO</a></label>
+                                        </th>
 					<td>
 						<select class="form-select mb-3" id="NOMBRE_COMERCIAL" name="NOMBRE_COMERCIAL" onchange="buscanombrecomercial(1);">
 							<option value="<?php echo $evento_get; ?>">
@@ -418,21 +462,21 @@ if($rfcE==true){
 				<tr style="background:#fcf3cf">
 
 					<th scope="row">
-						<label style="width:300px" for="RAZON_SOCIAL" class="form-label">RAZÓN SOCIAL</label>
+                                            <label style="width:300px" for="RAZON_SOCIAL" class="form-label"><span id="label-razon-social-text"><?php echo $labelRazonSocial; ?></span></label>
 					</th>
 					<td>
-						<div id="RAZON_SOCIAL2">
-							<input type="text" class="form-control" id="RAZON_SOCIAL" required="" value="<?php echo $nombreE; ?>" name="RAZON_SOCIAL" placeholder="RAZÓN SOCIAL"> </div>
+                                            <div id="RAZON_SOCIAL2">
+                                                    <input type="text" class="form-control" id="RAZON_SOCIAL" required="" value="<?php echo $nombreE; ?>" name="RAZON_SOCIAL" placeholder="<?php echo $placeholderRazonSocial; ?>"> </div>
 					</td>
 				</tr>
 				<tr style="background:#fcf3cf">
 			
 					<th scope="row">
-						<label style="width:300px" for="validationCustom03" class="form-label">RFC DEL PROVEEDOR:</label>
+                                            <label style="width:300px" for="validationCustom03" class="form-label"><span id="label-rfc-text"><?php echo $labelRfc; ?></span></label>
 					</th>
 					<td>
-						<div id="RFC_PROVEEDOR2">
-							<input type="text" class="form-control" id="RFC_PROVEEDOR" required="" value="<?php echo $rfcE; ?>" name="RFC_PROVEEDOR" placeholder="RFC DEL PROVEEDOR"> </div>
+                                            <div id="RFC_PROVEEDOR2">
+                                                    <input type="text" class="form-control" id="RFC_PROVEEDOR" required="" value="<?php echo $rfcE; ?>" name="RFC_PROVEEDOR" placeholder="<?php echo $placeholderRfc; ?>"> </div>
 					</td>
 				</tr>
 				<tr style="background: #d2faf1">
@@ -1708,4 +1752,3 @@ echo $encabezadoA.$option2.'</select>';
 		</div>
 		</div>
 		</div>
-
