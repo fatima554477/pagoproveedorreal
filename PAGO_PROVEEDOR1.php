@@ -83,12 +83,69 @@ $_SESSION['idusuario12']= '';
 				});
 			});
 		}
-		document.addEventListener("DOMContentLoaded", calcular);
-		$(document).on('change', 'input[type="checkbox"]', function(e) {
-			if(this.id == "MONTO_DEPOSITAR1") {
-				if(this.checked) $('#FECHA_AUTORIZACION_RESPONSABLE').val(this.value);
-				else $('#FECHA_AUTORIZACION_RESPONSABLE').val("");
-			}
+               document.addEventListener("DOMContentLoaded", calcular);
+                function toggleFacturaFields() {
+                        const select = document.querySelector('select[name="VIATICOSOPRO"]');
+                        if(!select) {
+                                return;
+                        }
+                        const shouldHide = [
+                                'VIATICOS',
+                                'REEMBOLSO',
+                                'PAGO A PROVEEDOR CON DOS O MAS FACTURAS'
+                        ].includes(select.value);
+                        const xmlRow = document.getElementById('row-adjuntar-factura-xml');
+                        const pdfRow = document.getElementById('row-adjuntar-factura-pdf');
+                        const xmlInput = document.getElementById('ADJUNTAR_FACTURA_XML');
+                        const pdfInput = document.getElementById('ADJUNTAR_FACTURA_PDF');
+                        const xmlFileInput = document.querySelector('input[type="file"][name="ADJUNTAR_FACTURA_XML"]');
+                        const pdfFileInput = document.querySelector('input[type="file"][name="ADJUNTAR_FACTURA_PDF"]');
+
+                        const inputs = [
+                                [xmlRow, xmlInput, xmlFileInput],
+                                [pdfRow, pdfInput, pdfFileInput]
+                        ];
+
+                        inputs.forEach(([row, textInput, fileInput]) => {
+                                if(textInput && !textInput.dataset.originalRequired) {
+                                        textInput.dataset.originalRequired = textInput.hasAttribute('required') ? 'true' : 'false';
+                                }
+                                if(shouldHide) {
+                                        if(row) row.style.display = 'none';
+                                        if(textInput) {
+                                                textInput.setAttribute('disabled', 'disabled');
+                                                textInput.removeAttribute('required');
+                                        }
+                                        if(fileInput) {
+                                                fileInput.setAttribute('disabled', 'disabled');
+                                        }
+                                } else {
+                                        if(row) row.style.display = '';
+                                        if(textInput) {
+                                                textInput.removeAttribute('disabled');
+                                                if(textInput.dataset.originalRequired === 'true') {
+                                                        textInput.setAttribute('required', '');
+                                                }
+                                        }
+                                        if(fileInput) {
+                                                fileInput.removeAttribute('disabled');
+                                        }
+                                }
+                        });
+                }
+                document.addEventListener('DOMContentLoaded', () => {
+                        toggleFacturaFields();
+                        const select = document.querySelector('select[name="VIATICOSOPRO"]');
+                        if(select) {
+                                select.addEventListener('change', toggleFacturaFields);
+                        }
+                });
+                $(document).on('change', 'input[type="checkbox"]', function(e) {
+                        if(this.id == "MONTO_DEPOSITAR1") {
+                                if(this.checked) $('#FECHA_AUTORIZACION_RESPONSABLE').val(this.value);
+                                else $('#FECHA_AUTORIZACION_RESPONSABLE').val("");
+                        }
+			
 		});
 		$(document).on('change', 'input[type="checkbox"]', function(e) {
 			if(this.id == "MONTO_DEPOSITAR2") {
@@ -103,24 +160,7 @@ $_SESSION['idusuario12']= '';
 			}
 		});
 		</script>
-		<style>
-  /* Aplica a todas las tablas de ese formulario */
-  table tr td:first-child, 
-  table tr th:first-child {
-    width: 50%;          /* 50% para el label */
-    vertical-align: middle;
-  }
-  table tr td:last-child, 
-  table tr th:last-child {
-    width: 50%;          /* 50% para el input */
-  }
 
-  /* Forzar a que el label e input ocupen todo el ancho de su celda */
-  .form-label, 
-  .form-control {
-    width: 100% !important;
-  }
-</style>
 		<div id="content">
 			<hr/> <strong> <P class="mb-0 text-uppercase">
 <img src="includes/contraer31.png" id="mostrar1" style="cursor:pointer;"/>
@@ -149,10 +189,12 @@ $_SESSION['idusuario12']= '';
 									<select class="form-select mb-3" aria-label="Default select example" id="validationCustom02" required="" name="VIATICOSOPRO"> 
 						<option style="background:#fac3aa" value="PAGO A PROVEEDOR" <?php if($VIATICOSOPRO=='PAGOAPROVE' ){echo "selected";} ?>>PAGO A PROVEEDOR </option>
 						
+						<option style="background:#b3f39b" value="PAGOS CON UNA SOLA FACTURA" <?php if($VIATICOSOPRO=='PAGOS CON UNA SOLA FACTURA' ){echo "selected";} ?>>SOLICITUD DE PAGOS CON UNA SOLA FACTURA</option>
+						
 						
 						<option style="background:#f571f7" value="PAGO A PROVEEDOR CON DOS O MAS FACTURAS" <?php if($VIATICOSOPRO=='PAGO A PROVEEDOR CON DOS O MAS FACTURAS' ){echo "selected";} ?>>SOLICITUD DE PAGO A PROVEEDOR CON DOS O MÁS FACTURAS</option>
 						
-<option style="background:#b3f39b" value="PAGOS CON UNA SOLA FACTURA" <?php if($VIATICOSOPRO=='PAGOS CON UNA SOLA FACTURA' ){echo "selected";} ?>>SOLICITUD DE PAGOS CON UNA SOLA FACTURA</option>
+                       
 						
 						
 						<option style="background:#faf7aa" value="VIATICOS" <?php if($VIATICOSOPRO=='VIATICOS' ){echo "selected";} ?>>SOLICITUD DE VIATICOS</option>
@@ -163,7 +205,7 @@ $_SESSION['idusuario12']= '';
 								</td>
 				</div>
 				</tr>
-				<tr style="background: #d2faf1">
+				                               <tr style="background: #d2faf1" id="row-adjuntar-factura-xml">
 
 					<th scope="row">
 						<label style="width:300px" for="formFileSm" class="form-label">ADJUNTAR FACTURA(FORMATO XML)</label>
@@ -260,7 +302,7 @@ $NUMERO_CONSECUTIVO_PROVEE = $valor_base + 1;
 ?> </div>
 					</td>
 				</tr>
-				<tr style="background: #d2faf1">
+			                            <tr style="background: #d2faf1" id="row-adjuntar-factura-pdf">
 	
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">ADJUNTAR FACTURA (FORMATO PDF)</label>
@@ -478,7 +520,7 @@ if($rfcE==true){
 				<tr style="background: #d2faf1">
 				
 					<th scope="row">
-						<label style="width:300px" for="validationCustom03" class="form-label">MONTO TOTAL DE LA COTIZACIÓN O DEL ADEUDO:</label>
+						<label style="width:300px" for="validationCustom03" class="form-label">MONTO TOTAL DE LA COTIZACIÓN O DEL ADEUDO<br><a style="color:red;font-size:11px">OBLIGATORIO</a></label>
 					</th>
 					<td>
 						<div class="input-group mb-3"> <span class="input-group-text">$</span>
@@ -1288,13 +1330,13 @@ echo $encabezadoA.$option2.'</select>';
 
 				 ?></div>
 				</td>
-				<td>
-					<input type="hidden" style="width:200px;" class="form-control" id="validationCustom03" value="<?php echo date('d-m-Y'); ?>" name="FECHA_DE_LLENADO"> </td>
+			
+					<input type="hidden" style="width:200px;" class="form-control" id="validationCustom03" value="<?php echo date('d-m-Y'); ?>" name="FECHA_DE_LLENADO">
 			</tr>
 			<input type="hidden" name="hiddenpagoproveedores" value="hiddenpagoproveedores"> </table>
 			<BR/>
 			<BR/>
-			<table style="border-collapse:collapse;" border="1" ; class="table mb-0 table-striped" id="resettabla">
+			<table  class="table mb-0 table-striped" id="resettabla">
 				<tr>
 					<th scope="col">FACTURA</th>
 					<th scope="col">DATOS DE LA FACTURA</th>
@@ -1499,10 +1541,7 @@ echo $encabezadoA.$option2.'</select>';
 						<input type="text" class="form-control" id="validationCustom03" required="" value="<?php echo $TImpuestosRetenidos; ?>" name="TImpuestosRetenidos" placeholder="IMPUESTOS RETENIDO" readonly="readonly">
 					</td>
 				</tr>
-				<!-- <tr> 
-                    <th scope="row"> <label  style="width:300px" for="validationCustom03" class="form-label">I.S.R RETENIDO:</label></th>
-                 <td><input type="text" class="form-control" id="validationCustom03" required=""  value="<?php echo $ISR_RETENIDO; ?>" name="ISR_RETENIDO" placeholder="I.S.R RETENIDO" readonly="readonly"></td>
-                 </tr>-->
+			
 				<tr>
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">TUA:</label>
@@ -1669,3 +1708,4 @@ echo $encabezadoA.$option2.'</select>';
 		</div>
 		</div>
 		</div>
+
