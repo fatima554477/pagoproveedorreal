@@ -501,8 +501,9 @@ if($rfcE == true){
 				 
 				 
 <tr  style="background:#fcf3cf"> 
-
-                  <label style="width:300px" for="RAZON_SOCIAL" class="form-label"><span id="label-razon-social-text"><?php echo $labelRazonSocial; ?></span></label>
+<th scope="row">
+                                            <label style="width:300px" for="RAZON_SOCIAL" class="form-label"><span id="label-razon-social-text"><?php echo $labelRazonSocial; ?></span></label>
+					</th>
                  <td>
 				 
 				 <div id="RAZON_SOCIAL2">
