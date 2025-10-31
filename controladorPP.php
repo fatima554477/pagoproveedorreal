@@ -42,17 +42,9 @@ $busqueda = isset($_POST["busqueda"])?$_POST["busqueda"]:"";
 
 
 
-$STATUS_VOBOCXP_id = isset($_POST["STATUS_VOBOCXP_id"])?$_POST["STATUS_VOBOCXP_id"]:"";
-
-$STATUS_VOBOCXP_text = isset($_POST["STATUS_VOBOCXP_text"])?$_POST["STATUS_VOBOCXP_text"]:"";
 
 
 
-if($STATUS_VOBOCXP_id!='' and ($STATUS_VOBOCXP_text=='si' or $STATUS_VOBOCXP_text=='no') ){
-
-echo $pagoproveedores->STATUS_VOBOCXP ($STATUS_VOBOCXP_id , $STATUS_VOBOCXP_text  );
-
-}
 
 
 
@@ -77,6 +69,19 @@ if($CHECKBOX_id != '' && ($CHECKBOX_text == 'si' || $CHECKBOX_text == 'no')) {
     
  
 }
+
+
+$STATUS_VOBOCXP_id = isset($_POST["STATUS_VOBOCXP_id"]) ? $_POST["STATUS_VOBOCXP_id"] : "";
+$STATUS_VOBOCXP_text = isset($_POST["STATUS_VOBOCXP_text"]) ? $_POST["STATUS_VOBOCXP_text"] : "";
+
+if($STATUS_VOBOCXP_id != '' && ($STATUS_VOBOCXP_text == 'si' || $STATUS_VOBOCXP_text == 'no')) {
+    // Primero: ejecutar la actualización en la base de datos
+    echo $pagoproveedores->ACTUALIZA_STATUS_VOBOCXP($STATUS_VOBOCXP_id, $CHECKBOX_text);
+    
+ 
+}
+
+
 
 
 $AUDITORIA2_id = isset($_POST["AUDITORIA2_id"])?$_POST["AUDITORIA2_id"]:"";

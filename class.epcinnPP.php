@@ -798,6 +798,27 @@ NoIdentificacionConcepto
     }
 	
 
+	public function ACTUALIZA_STATUS_VOBOCXP (
+	$STATUS_VOBOCXP_id , $STATUS_VOBOCXP_text ){
+	
+		$conn = $this->db();
+		$session = isset($_SESSION['idem'])?$_SESSION['idem']:'';    
+		if($session != ''){
+		
+		$var1 = "update 02SUBETUFACTURA SET STATUS_VOBOCXP = '".$STATUS_VOBOCXP_text."' WHERE id = '".$STATUS_VOBOCXP_id."'  ";	
+	
+		
+		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
+		return "Actualizado^".$STATUS_VOBOCXP_text;
+	
+			
+        }else{
+		echo "NO HAY UN PROVEEDOR SELECCIONADO";	
+		}
+    }
+
+
+
 
 	public function borrar_xmls($ruta,$id,$nombrearchivo,$tabla1,$tabla2){ 
 		$conn = $this->db();
@@ -887,24 +908,7 @@ NoIdentificacionConcepto
 		}
     }
 
-		public function STATUS_VOBOCXP (
-	    $STATUS_VOBOCXP_id , $STATUS_VOBOCXP_text ){
-	
-		$conn = $this->db();
-		$session = isset($_SESSION['idem'])?$_SESSION['idem']:'';    
-		if($session != ''){
 
-		$var1 = "update 02SUBETUFACTURA SET STATUS_VOBOCXP = '".$STATUS_VOBOCXP_text."' WHERE id = '".$STATUS_VOBOCXP_id."'  ";	
-	
-		
-		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
-		return "Actualizado";
-		
-			
-        }else{
-		echo "NO HAY UN PROVEEDOR SELECCIONADO";	
-		}
-    }
 
 
 	
