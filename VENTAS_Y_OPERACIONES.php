@@ -121,29 +121,54 @@ fecha fatis : 01/MAYO/2025
                                 }
                         });
                 }
-               function updateReembolsoLabels() {
+				
+				
+    function updateReembolsoLabels() {
                        const select = document.querySelector('select[name="VIATICOSOPRO"]');
                        if(!select) {
                                return;
                        }
-                       const isReembolso = select.value === 'REEMBOLSO';
+                       const value = select.value;
                        const nombreComercialLabel = document.getElementById('label-nombre-comercial-text');
-                       if(nombreComercialLabel) {
-                               nombreComercialLabel.textContent = isReembolso
-                                       ? 'NOMBRE COMERCIAL DEL BENEFICIARIO DEL REEMBOLSO'
-                                       : 'NOMBRE COMERCIAL';
-                       }
                        const razonSocialLabel = document.getElementById('label-razon-social-text');
-                       if(razonSocialLabel) {
-                               razonSocialLabel.textContent = isReembolso
-                                       ? 'RAZÓN SOCIAL DEL BENEFICIARIO DEL REEMBOLSO'
-                                       : 'RAZÓN SOCIAL';
-                       }
                        const rfcLabel = document.getElementById('label-rfc-text');
+                       const razonSocialInput = document.querySelector('input[name="RAZON_SOCIAL"]');
+                       const rfcInput = document.querySelector('input[name="RFC_PROVEEDOR"]');
+
+                       let nombreComercialText = 'NOMBRE COMERCIAL';
+                       let razonSocialText = 'RAZÓN SOCIAL';
+                       let rfcText = 'RFC DEL PROVEEDOR:';
+                       let razonSocialPlaceholder = 'RAZÓN SOCIAL';
+                       let rfcPlaceholder = 'RFC DEL PROVEEDOR';
+
+                       if(value === 'REEMBOLSO') {
+                               nombreComercialText = 'NOMBRE COMERCIAL DEL BENEFICIARIO DEL REEMBOLSO';
+                               razonSocialText = 'RAZÓN SOCIAL DEL BENEFICIARIO DEL REEMBOLSO';
+                               rfcText = 'RFC DEL BENEFICIARIO DEL REEMBOLSO:';
+                               razonSocialPlaceholder = 'RAZÓN SOCIAL DEL BENEFICIARIO DEL REEMBOLSO';
+                               rfcPlaceholder = 'RFC DEL BENEFICIARIO DEL REEMBOLSO';
+                       } else if(value === 'VIATICOS') {
+                               nombreComercialText = 'NOMBRE COMERCIAL DEL BENEFICIARIO DEL VIATICO';
+                               razonSocialText = 'RAZÓN SOCIAL DEL BENEFICIARIO DEL VIATICO';
+                               rfcText = 'RFC DEL BENEFICIARIO DEL VIATICO:';
+                               razonSocialPlaceholder = 'RAZÓN SOCIAL DEL BENEFICIARIO DEL VIATICO';
+                               rfcPlaceholder = 'RFC DEL BENEFICIARIO DEL VIATICO';
+                       }
+
+                       if(nombreComercialLabel) {
+                               nombreComercialLabel.textContent = nombreComercialText;
+                       }
+                       if(razonSocialLabel) {
+                               razonSocialLabel.textContent = razonSocialText;
+                       }
                        if(rfcLabel) {
-                               rfcLabel.textContent = isReembolso
-                                       ? 'RFC DEL BENEFICIARIO DEL REEMBOLSO:'
-                                       : 'RFC DEL PROVEEDOR:';
+                               rfcLabel.textContent = rfcText;
+                       }
+                       if(razonSocialInput) {
+                               razonSocialInput.placeholder = razonSocialPlaceholder;
+                       }
+                       if(rfcInput) {
+                               rfcInput.placeholder = rfcPlaceholder;
                        }
                }
                document.addEventListener('DOMContentLoaded', () => {
@@ -385,19 +410,27 @@ echo "<a target='_blank' href='includes/archivos/".$rowsube['ADJUNTAR_FACTURA_PD
 
                                              <th scope="row">
                                                 <?php
-                                               $labelNombreComercial = ($VIATICOSOPRO == 'REEMBOLSO')
-                                                       ? 'NOMBRE COMERCIAL DEL BENEFICIARIO DEL REEMBOLSO'
-                                                       : 'NOMBRE COMERCIAL';
-                                               $labelRazonSocial = ($VIATICOSOPRO == 'REEMBOLSO')
-                                                       ? 'RAZÓN SOCIAL DEL BENEFICIARIO DEL REEMBOLSO'
-                                                       : 'RAZÓN SOCIAL';
-                                               $labelRfc = ($VIATICOSOPRO == 'REEMBOLSO')
-                                                       ? 'RFC DEL BENEFICIARIO DEL REEMBOLSO:'
-                                                       : 'RFC DEL PROVEEDOR:';
-                                               $placeholderRazonSocial = $labelRazonSocial;
-                                               $placeholderRfc = ($VIATICOSOPRO == 'REEMBOLSO')
-                                                       ? 'RFC DEL BENEFICIARIO DEL REEMBOLSO'
-                                                       : 'RFC DEL PROVEEDOR';
+                               $isReembolso = ($VIATICOSOPRO == 'REEMBOLSO');
+                                               $isViaticos = ($VIATICOSOPRO == 'VIATICOS');
+                                               if($isReembolso) {
+                                                       $labelNombreComercial = 'NOMBRE COMERCIAL DEL BENEFICIARIO DEL REEMBOLSO';
+                                                       $labelRazonSocial = 'RAZÓN SOCIAL DEL BENEFICIARIO DEL REEMBOLSO';
+                                                       $labelRfc = 'RFC DEL BENEFICIARIO DEL REEMBOLSO:';
+                                                       $placeholderRazonSocial = 'RAZÓN SOCIAL DEL BENEFICIARIO DEL REEMBOLSO';
+                                                       $placeholderRfc = 'RFC DEL BENEFICIARIO DEL REEMBOLSO';
+                                               } elseif($isViaticos) {
+                                                       $labelNombreComercial = 'NOMBRE COMERCIAL DEL BENEFICIARIO DEL VIATICO';
+                                                       $labelRazonSocial = 'RAZÓN SOCIAL DEL BENEFICIARIO DEL VIATICO';
+                                                       $labelRfc = 'RFC DEL BENEFICIARIO DEL VIATICO:';
+                                                       $placeholderRazonSocial = 'RAZÓN SOCIAL DEL BENEFICIARIO DEL VIATICO';
+                                                       $placeholderRfc = 'RFC DEL BENEFICIARIO DEL VIATICO';
+                                               } else {
+                                                       $labelNombreComercial = 'NOMBRE COMERCIAL';
+                                                       $labelRazonSocial = 'RAZÓN SOCIAL';
+                                                       $labelRfc = 'RFC DEL PROVEEDOR:';
+                                                       $placeholderRazonSocial = 'RAZÓN SOCIAL';
+                                                       $placeholderRfc = 'RFC DEL PROVEEDOR';
+                                               }
                                                ?>
                                                <label style="width:300px" for="validationCustom03" class="form-label"><span id="label-nombre-comercial-text"><?php echo $labelNombreComercial; ?></span>
                                                         <br><a style="color:red;font-size:11px">OBLIGATORIO</a></label>
@@ -508,7 +541,7 @@ if($rfcE == true){
 				 
 				 <div id="RAZON_SOCIAL2">
 				 
-				 <input type="text" class="form-control" id="RAZON_SOCIAL" required=""  value="<?php echo $nombreE; ?>" name="RAZON_SOCIAL" placeholder="RAZÓN SOCIAL">
+			 <input type="text" class="form-control" id="RAZON_SOCIAL" required=""  value="<?php echo $nombreE; ?>" name="RAZON_SOCIAL" placeholder="<?php echo $placeholderRazonSocial; ?>">
 				 </div>
 				 </td>
                  </tr>
@@ -519,7 +552,7 @@ if($rfcE == true){
                  <td>
 				 
 				 <div id="RFC_PROVEEDOR2">
-			 <input type="text" class="form-control" id="RFC_PROVEEDOR"   value="<?php echo $rfcE; ?>" name="RFC_PROVEEDOR" placeholder="RFC DEL PROVEEDOR">
+		    <input type="text" class="form-control" id="RFC_PROVEEDOR"   value="<?php echo $rfcE; ?>" name="RFC_PROVEEDOR" placeholder="<?php echo $placeholderRfc; ?>">
 				 
 				 </div>
 				 </td>
