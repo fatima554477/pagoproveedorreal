@@ -71,12 +71,12 @@ if($CHECKBOX_id != '' && ($CHECKBOX_text == 'si' || $CHECKBOX_text == 'no')) {
 }
 
 
-$STATUS_VOBOCXP_id = isset($_POST["STATUS_VOBOCXP_id"]) ? $_POST["STATUS_VOBOCXP_id"] : "";
-$STATUS_VOBOCXP_text = isset($_POST["STATUS_VOBOCXP_text"]) ? $_POST["STATUS_VOBOCXP_text"] : "";
+$LISTO_id = isset($_POST["LISTO_id"]) ? $_POST["LISTO_id"] : "";
+$LISTO_text = isset($_POST["LISTO_text"]) ? $_POST["LISTO_text"] : "";
 
-if($STATUS_VOBOCXP_id != '' && ($STATUS_VOBOCXP_text == 'si' || $STATUS_VOBOCXP_text == 'no')) {
+if($LISTO_id != '' && ($LISTO_text == 'si' || $LISTO_text == 'no')) {
     // Primero: ejecutar la actualización en la base de datos
-    echo $pagoproveedores->ACTUALIZA_STATUS_VOBOCXP($STATUS_VOBOCXP_id, $CHECKBOX_text);
+    echo $pagoproveedores->ACTUALIZA_LISTO($LISTO_id, $LISTO_text);
     
  
 }

@@ -798,24 +798,7 @@ NoIdentificacionConcepto
     }
 	
 
-	public function ACTUALIZA_STATUS_VOBOCXP (
-	$STATUS_VOBOCXP_id , $STATUS_VOBOCXP_text ){
-	
-		$conn = $this->db();
-		$session = isset($_SESSION['idem'])?$_SESSION['idem']:'';    
-		if($session != ''){
-		
-		$var1 = "update 02SUBETUFACTURA SET STATUS_VOBOCXP = '".$STATUS_VOBOCXP_text."' WHERE id = '".$STATUS_VOBOCXP_id."'  ";	
-	
-		
-		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
-		return "Actualizado^".$STATUS_VOBOCXP_text;
-	
-			
-        }else{
-		echo "NO HAY UN PROVEEDOR SELECCIONADO";	
-		}
-    }
+
 
 
 
@@ -1003,6 +986,26 @@ NoIdentificacionConcepto
 		}
     }
 
+		public function ACTUALIZA_LISTO (
+	    $LISTO_id , $LISTO_text ){
+	
+		$conn = $this->db();
+		$session = isset($_SESSION['idem'])?$_SESSION['idem']:'';    
+		if($session != ''){
+
+		$var1 = "update 02SUBETUFACTURA SET STATUS_LISTO = '".$LISTO_text."' WHERE id = '".$LISTO_id."'  ";	
+	
+		
+		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
+		return "Actualizado";
+		
+			
+        }else{
+		echo "NO HAY UN PROVEEDOR SELECCIONADO";	
+		}
+    }
+	
+	
 
 //Listado_subefacturaDOCTOS
 	public function borrapagoaproveedores($id){ 
