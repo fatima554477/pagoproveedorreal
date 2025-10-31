@@ -376,7 +376,24 @@ public function obtener_rfc_a_id($valor) {
     return null;
 }
 
+     public function iralevento($valor) {
+    $conn = $this->db();
 
+    // Escapar el valor por seguridad
+    $valor = mysqli_real_escape_string($conn, trim($valor));
+
+    // 1. Buscar por RFC exacto
+    $query = 'SELECT id FROM 04altaeventos WHERE NUMERO_EVENTO = "'.$valor.'" LIMIT 1';
+    $respuesta = mysqli_query($conn, $query);
+    $fetch_array = mysqli_fetch_array($respuesta, MYSQLI_ASSOC);
+
+    if (!empty($fetch_array['id'])) {
+        return $fetch_array['id'];
+    }
+	}
+	
+	
+	
 	public function getTotalAmaunt($rfc,$idrelacioN=false){
 		//PRINT_R($idrelacioN);
 		$query_OR = "";

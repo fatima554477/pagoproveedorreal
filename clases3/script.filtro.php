@@ -206,21 +206,23 @@ function recalcularTotal() {
 	  $.ajax({
 		url:'pagoproveedores/controladorPP.php',
 		method:'POST',
-		data:{STATUS_VOBOCXP_id:STATUS_VOBOCXP_id,STATUS_VOBOCXP_text:STATUS_VOBOCXP_text},
+		data:{pasarpagado_id:pasarpagado_id,STATUS_VOBOCXP_text:STATUS_VOBOCXP_text},
 		beforeSend:function(){
-		$('#pasarpagado2').html('cargando');
+		$('#STATUS_VOBOCXP').html('cargando');
 	},
 		success:function(data){
-		var result = data.split('^');				
-		$('#pasarpagado2').html("<span id='ACTUALIZADO' >"+result[0]+"</span>");
-		load(1);
+			load(1);
+			
+		var result = data.split('^');			
+		$('#STATUS_VOBOCXP').html("<span id='ACTUALIZADO' >"+result[0]+"</span>");
 		
-		if(result[1]=='si'){
-		$('#color_VOBOCXP'+STATUS_VOBOCXP_id).css('background-color', '#ceffcc');
+		
+		if(STATUS_VOBOCXP_text=='si'){
+		$('#color_VOBOCXP'+pasarpagado_id).css('background-color', '#ceffcc');
 		}
-		if(result[1]=='no'){
-		$('#color_VOBOCXP'+STATUS_VOBOCXP_id).css('background-color', '#e9d8ee');
-		}
+		if(STATUS_VOBOCXP_text=='no'){
+		$('#color_VOBOCXP'+pasarpagado_id).css('background-color', '#e9d8ee');
+		}		
 		
 	}
 	});
@@ -513,7 +515,7 @@ $("#FECHA_A_DEPOSITAR_2").val("");
         $(function() {
                 const triggerSearch = () => load(1);
 
-                $('#target5').on('keydown', 'thead input, thead select', function(event) {
+                $('#target46').on('keydown', 'thead input, thead select', function(event) {
                         if (event.key === 'Enter' || event.which === 13) {
                                 event.preventDefault();
                                 triggerSearch();
