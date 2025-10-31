@@ -35,7 +35,7 @@
 
 
 
-	function pasarpagado2(pasarpagado_id){
+	function pasarpagado(pasarpagado_id){
 
 
 	var checkBox = document.getElementById("pasarpagado1a"+pasarpagado_id);
@@ -50,13 +50,13 @@
 		method:'POST',
 		data:{pasarpagado_id:pasarpagado_id,pasarpagado_text:pasarpagado_text},
 		beforeSend:function(){
-		$('#pasarpagado2').html('cargando');
+		$('#pasarpagado').html('cargando');
 	},
 		success:function(data){
 			load(1);
 			
 		var result = data.split('^');			
-		$('#pasarpagado2').html("<span id='ACTUALIZADO' >"+result[0]+"</span>");
+		$('#pasarpagado').html("<span id='ACTUALIZADO' >"+result[0]+"</span>");
 		
 		
 		if(pasarpagado_text=='si'){
@@ -183,50 +183,72 @@ function recalcularTotal() {
         }
     });
 
-    let totalFormateado = total.toLocaleString('es-MX', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
-    $('#totalCalculado').text('$' + totalFormateado);
 }
 
 
 
+function STATUS_LISTO(LISTO_id) {
+  var checkBox = document.getElementById("STATUS_LISTO" + LISTO_id);
+  if (!checkBox) return; // seguridad por si el elemento no existe
 
-	function STATUS_VOBOCXP(STATUS_VOBOCXP_id){
+  var LISTO_text = checkBox.checked ? "si" : "no";
 
+  // Cambiar color inmediato
+  var newColor = checkBox.checked ? "#ceffcc" : "#e9d8ee";
+  $("#color_LISTO" + LISTO_id).css("background-color", newColor);
 
-	var checkBox = document.getElementById("STATUS_VOBOCXP"+STATUS_VOBOCXP_id);
-	var STATUS_VOBOCXP_text = "";
-	if (checkBox.checked == true){
-	STATUS_VOBOCXP_text = "si";
-	}else{
-	STATUS_VOBOCXP_text = "no";
-	}
-	  $.ajax({
-		url:'pagoproveedores/controladorPP.php',
-		method:'POST',
-		data:{pasarpagado_id:pasarpagado_id,STATUS_VOBOCXP_text:STATUS_VOBOCXP_text},
-		beforeSend:function(){
-		$('#STATUS_VOBOCXP').html('cargando');
-	},
-		success:function(data){
-			load(1);
-			
-		var result = data.split('^');			
-		$('#STATUS_VOBOCXP').html("<span id='ACTUALIZADO' >"+result[0]+"</span>");
-		
-		
-		if(STATUS_VOBOCXP_text=='si'){
-		$('#color_VOBOCXP'+pasarpagado_id).css('background-color', '#ceffcc');
-		}
-		if(STATUS_VOBOCXP_text=='no'){
-		$('#color_VOBOCXP'+pasarpagado_id).css('background-color', '#e9d8ee');
-		}		
-		
-	}
-	});
+  $.ajax({
+    url: "pagoproveedores/controladorPP.php",
+    method: "POST",
+    data: {
+      LISTO_id: LISTO_id,
+      LISTO_text: LISTO_text
+    },
+    beforeSend: function () {
+      $("#ajax-notification")
+        .html('<div class="loader"></div> ⏳ ACTUALIZANDO...')
+        .fadeIn();
+    },
+    success: function (data) {
+      var result = String(data || "").split("^");
+      var estado = (result[1] || "").trim().toLowerCase();
+
+      $("#ajax-notification")
+        .html("✅ ACTUALIZADO")
+        .delay(1000)
+        .fadeOut();
+
+      if (estado === "si") {
+        $("#color_LISTO" + LISTO_id).css("background-color", "#ceffcc");
+        $("#valorCalculado22_" + LISTO_id).text("");
+      } else if (estado === "no") {
+        $("#color_LISTO" + LISTO_id).css("background-color", "#e9d8ee");
+      }
+
+      // Reflejar el estado real
+      if (estado === "si" || estado === "no") {
+        checkBox.checked = (estado === "si");
+      }
+
+      if (typeof recalcularTotal22 === "function") {
+        recalcularTotal22();
+      }
+    },
+    error: function () {
+      // Revertir visualmente en caso de error
+      checkBox.checked = !checkBox.checked;
+      var originalColor = checkBox.checked ? "#ceffcc" : "#e9d8ee";
+      $("#color_LISTO" + LISTO_id).css("background-color", originalColor);
+
+      $("#ajax-notification")
+        .html("❌ Error al actualizar")
+        .delay(2000)
+        .fadeOut();
+    }
+  });
 }
+
+
 
 
 
