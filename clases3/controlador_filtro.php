@@ -629,7 +629,7 @@ if($database->plantilla_filtro($nombreTabla,"total",$altaeventos,$DEPARTAMENTO)=
 <th style="background:#c6eaaa;text-align:center">SIN 46%</th>
 <?php } ?>
 <?php if($database->variablespermisos('','boton_sin','ver')=='si'){ ?>
-<th style="background:#c6eaaa;text-align:center">VoBo CxP</th>
+<th style="background:#27F2F5;text-align:center">VoBo CxP</th>
 <?php } ?>
 
 
@@ -1263,7 +1263,7 @@ echo $PorfaltaDeFactura; ?>"></td>
 <td style="background:#c6eaaa;text-align:center"></td>
 <?php } ?>
 
-<td style="background:#c6eaaa;text-align:center"></td>
+<td style="background:#27F2F5;text-align:center"></td>
 
 
 

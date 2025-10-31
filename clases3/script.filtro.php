@@ -191,27 +191,50 @@ function STATUS_LISTO(LISTO_id) {
   var checkBox = document.getElementById("STATUS_LISTO" + LISTO_id);
   if (!checkBox) return; // seguridad por si el elemento no existe
 
+  var previousChecked = !checkBox.checked;
+  var previousColor = previousChecked ? "#ceffcc" : "#e9d8ee";
   var LISTO_text = checkBox.checked ? "si" : "no";
 
   // Cambiar color inmediato
   var newColor = checkBox.checked ? "#ceffcc" : "#e9d8ee";
   $("#color_LISTO" + LISTO_id).css("background-color", newColor);
 
+  function revertListo(message) {
+    checkBox.checked = previousChecked;
+    $("#color_LISTO" + LISTO_id).css("background-color", previousColor);
+
+    $("#ajax-notification")
+      .html(message || "❌ Error al actualizar")
+      .delay(2000)
+      .fadeOut();
+  }
+
   $.ajax({
     url: "pagoproveedores/controladorPP.php",
     method: "POST",
+    dataType: "json",
     data: {
       LISTO_id: LISTO_id,
-      LISTO_text: LISTO_text
+      LISTO_text: LISTO_text,
+      LISTO_expect_json: 1
     },
     beforeSend: function () {
       $("#ajax-notification")
         .html('<div class="loader"></div> ⏳ ACTUALIZANDO...')
         .fadeIn();
     },
-    success: function (data) {
-      var result = String(data || "").split("^");
-      var estado = (result[1] || "").trim().toLowerCase();
+    success: function (response) {
+      if (!response || !response.success) {
+        var errorMessage = response && response.message ? "❌ " + response.message : "❌ Error al actualizar";
+        revertListo(errorMessage);
+        return;
+      }
+
+      var estado = String(response.estado || "").trim().toLowerCase();
+      if (estado !== "si" && estado !== "no") {
+        revertListo("❌ Respuesta desconocida del servidor");
+        return;
+      }
 
       $("#ajax-notification")
         .html("✅ ACTUALIZADO")
@@ -221,29 +244,22 @@ function STATUS_LISTO(LISTO_id) {
       if (estado === "si") {
         $("#color_LISTO" + LISTO_id).css("background-color", "#ceffcc");
         $("#valorCalculado22_" + LISTO_id).text("");
-      } else if (estado === "no") {
+      } else {
         $("#color_LISTO" + LISTO_id).css("background-color", "#e9d8ee");
       }
 
-      // Reflejar el estado real
-      if (estado === "si" || estado === "no") {
-        checkBox.checked = (estado === "si");
-      }
+      checkBox.checked = (estado === "si");
 
       if (typeof recalcularTotal22 === "function") {
         recalcularTotal22();
       }
     },
-    error: function () {
-      // Revertir visualmente en caso de error
-      checkBox.checked = !checkBox.checked;
-      var originalColor = checkBox.checked ? "#ceffcc" : "#e9d8ee";
-      $("#color_LISTO" + LISTO_id).css("background-color", originalColor);
-
-      $("#ajax-notification")
-        .html("❌ Error al actualizar")
-        .delay(2000)
-        .fadeOut();
+    error: function (xhr) {
+      var message = "❌ Error al actualizar";
+      if (xhr && xhr.responseJSON && xhr.responseJSON.message) {
+        message = "❌ " + xhr.responseJSON.message;
+      }
+      revertListo(message);
     }
   });
 }
