@@ -629,7 +629,9 @@ if($database->plantilla_filtro($nombreTabla,"total",$altaeventos,$DEPARTAMENTO)=
 <th style="background:#c6eaaa;text-align:center">SIN 46%</th>
 <?php } ?>
 
-
+<?php if($database->variablespermisos('','VoBo','ver')=='si'){ ?>
+<th style="background:#c6eaaa;text-align:center">VoBo CxP</th>
+<?php } ?>
 
 <?php 
 if($database->plantilla_filtro($nombreTabla,"P_TIPO_DE_MONEDA_1",$altaeventos,$DEPARTAMENTO)=="si"){ ?><th style="background:#c9e8e8;text-align:center">TIPO DE MONEDA</th>
@@ -1261,7 +1263,9 @@ echo $PorfaltaDeFactura; ?>"></td>
 <td style="background:#c6eaaa;text-align:center"></td>
 <?php } ?>
 
-
+<?php if($database->variablespermisos('','VoBo','ver')=='si'){ ?>
+<td style="background:#c6eaaa;text-align:center"></td>
+<?php } ?>
 
 
 
@@ -1666,17 +1670,8 @@ $colspan += 1; ?>/>
 
 <?php  if($database->plantilla_filtro($nombreTabla,"RFC_PROVEEDOR",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="text-align:center"><?php $colspan += 1; echo $row['RFC_PROVEEDOR'];?></td>
 <?php } ?>
-
-
-<?php  if($database->plantilla_filtro($nombreTabla,"NUMERO_EVENTO",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="text-align:center;"> 
-    <a href="calendarioDEeventos2.php?idevento=<?php echo urlencode($database->iralevento($row['NUMERO_EVENTO'])); ?>"target="_blank">
-        <?php $colspan += 1; echo $row['NUMERO_EVENTO']; ?>
-    </a>
-</td>
+<?php  if($database->plantilla_filtro($nombreTabla,"NUMERO_EVENTO",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="text-align:center"><?php $colspan += 1; echo $row['NUMERO_EVENTO'];?></td>
 <?php } ?>
-
-
-
 <?php  if($database->plantilla_filtro($nombreTabla,"NOMBRE_EVENTO",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="text-align:center"><?php $colspan += 1; echo $row['NOMBRE_EVENTO'];?></td>
 <?php } ?>
 <?php  if($database->plantilla_filtro($nombreTabla,"MOTIVO_GASTO",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="text-align:center"><?php $colspan += 1; echo $row['MOTIVO_GASTO'];?></td>
@@ -2291,8 +2286,14 @@ $totales2 = 'si';
 </td>
 <?php } ?>
 
+<td style="text-align:center; background:<?php if($row["STATUS_VOBOCXP"]=='si'){?> #ceffcc; <?php }else{?>#e9d8ee; <?php }?>" id="color_VOBOCXP<?php echo $row["02SUBETUFACTURAid"]; ?>" >
 
+<input type="checkbox" style="width:30PX;" class="form-check-input" id="STATUS_VOBOCXP<?php echo $row["02SUBETUFACTURAid"]; ?>"  name="STATUS_VOBOCXP<?php echo $row["02SUBETUFACTURAid"]; ?>" value="<?php echo $row["02SUBETUFACTURAid"]; ?>" onclick="STATUS_VOBOCXP(<?php echo $row["02SUBETUFACTURAid"]; ?>)" <?php if($row["STATUS_VOBOCXP"]=='si'){
+	echo "checked";
+}
+$colspan += 1; ?>/>
 
+</td>
 <div id="ajax-notification" style="position:fixed; top:20px; right:20px; padding:15px; background:#4CAF50; color:white; border-radius:5px; display:none; z-index:1000;"></div>
 
 
@@ -2526,18 +2527,7 @@ if($database->plantilla_filtro($nombreTabla,"MONTO_TOTAL_COTIZACION_ADEUDO",$alt
 <?php  if($database->plantilla_filtro($nombreTabla,"total",$altaeventos,$DEPARTAMENTO)=="si"){  ?>
 <td style="text-align:center" ><strong style="font-size:16px" >$<?php echo number_format($totalf12,2,'.',','); ?></strong></td>
 <?php } ?>
-<?php
-if (!empty($valorNUEVO) && $valorNUEVO > 0) {
-    $totalGeneral = $valorNUEVO;
-} else {
-    $totalGeneral = $PorfaltaDeFactura12;
-}
-?>
-<td style="text-align:center">
-  <strong style="font-size:16px" id="totalCalculado">
-    $<?php echo number_format($totalGeneral, 2, '.', ','); ?>
-  </strong>
-</td>
+<td style="text-align:center"  ><strong style="font-size:16px" id="totalCalculado">$<?php echo number_format($PorfaltaDeFactura12,2,'.',','); ?></strong></td>
 
 
 </tr>		
