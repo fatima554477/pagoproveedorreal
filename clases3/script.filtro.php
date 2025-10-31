@@ -199,45 +199,111 @@ function STATUS_LISTO(LISTO_id) {
   var newColor = checkBox.checked ? "#ceffcc" : "#e9d8ee";
   $("#color_LISTO" + LISTO_id).css("background-color", newColor);
 
+  function ensureNotificationContainer() {
+    var $notification = $("#ajax-notification");
+    if (!$notification.length) {
+      $notification = $('<div id="ajax-notification" style="position:fixed; top:20px; right:20px; padding:15px; background:#4CAF50; color:white; border-radius:5px; display:none; z-index:1000;"></div>');
+      $("body").append($notification);
+    }
+    return $notification;
+  }
+
   function revertListo(message) {
     checkBox.checked = previousChecked;
     $("#color_LISTO" + LISTO_id).css("background-color", previousColor);
 
-    $("#ajax-notification")
+    ensureNotificationContainer()
       .html(message || "❌ Error al actualizar")
       .delay(2000)
       .fadeOut();
   }
 
+  function normalizaEstado(valor) {
+    var normalizado = (valor == null ? "" : String(valor)).trim().toLowerCase();
+    return (normalizado === "si" || normalizado === "no") ? normalizado : null;
+  }
+
+  function interpretaRespuestaLISTO(payload, estadoPredeterminado) {
+    var mensajePorDefecto = "ACTUALIZADO";
+    var fallbackEstado = normalizaEstado(estadoPredeterminado);
+
+    if (payload == null) {
+      return { success: false, message: "Respuesta vacía del servidor" };
+    }
+
+    if (typeof payload === "object") {
+      var estadoObjeto = normalizaEstado(payload.estado);
+      return {
+        success: payload.success !== false,
+        estado: estadoObjeto || fallbackEstado,
+        message: payload.message ? String(payload.message).trim() || mensajePorDefecto : mensajePorDefecto
+      };
+    }
+
+    var texto = String(payload).trim();
+    if (!texto.length) {
+      return { success: false, message: "Respuesta vacía del servidor" };
+    }
+
+    if (texto.charAt(0) === "{" || texto.charAt(0) === "[") {
+      try {
+        return interpretaRespuestaLISTO(JSON.parse(texto), estadoPredeterminado);
+      } catch (error) {
+        // Si no es JSON válido, continuamos con el formato de texto.
+      }
+    }
+
+    var partes = texto.split('^');
+    if (partes.length >= 2) {
+      var estadoPartes = normalizaEstado(partes[1]);
+      return {
+        success: estadoPartes !== null,
+        estado: estadoPartes,
+        message: partes[0] ? partes[0].trim() || mensajePorDefecto : mensajePorDefecto
+      };
+    }
+
+    if (fallbackEstado) {
+      return {
+        success: true,
+        estado: fallbackEstado,
+        message: texto
+      };
+    }
+
+    return { success: false, message: texto };
+  }
+
   $.ajax({
     url: "pagoproveedores/controladorPP.php",
     method: "POST",
-    dataType: "json",
+    dataType: "text",
     data: {
       LISTO_id: LISTO_id,
       LISTO_text: LISTO_text,
       LISTO_expect_json: 1
     },
     beforeSend: function () {
-      $("#ajax-notification")
+      ensureNotificationContainer()
         .html('<div class="loader"></div> ⏳ ACTUALIZANDO...')
         .fadeIn();
     },
     success: function (response) {
-      if (!response || !response.success) {
-        var errorMessage = response && response.message ? "❌ " + response.message : "❌ Error al actualizar";
-        revertListo(errorMessage);
+      var interpretacion = interpretaRespuestaLISTO(response, LISTO_text);
+
+      if (!interpretacion.success) {
+        revertListo("❌ " + (interpretacion.message || "Error al actualizar"));
         return;
       }
 
-      var estado = String(response.estado || "").trim().toLowerCase();
-      if (estado !== "si" && estado !== "no") {
+      var estado = normalizaEstado(interpretacion.estado);
+      if (!estado) {
         revertListo("❌ Respuesta desconocida del servidor");
         return;
       }
 
-      $("#ajax-notification")
-        .html("✅ ACTUALIZADO")
+      ensureNotificationContainer()
+        .html("✅ " + (interpretacion.message || "ACTUALIZADO"))
         .delay(1000)
         .fadeOut();
 
@@ -256,14 +322,20 @@ function STATUS_LISTO(LISTO_id) {
     },
     error: function (xhr) {
       var message = "❌ Error al actualizar";
-      if (xhr && xhr.responseJSON && xhr.responseJSON.message) {
-        message = "❌ " + xhr.responseJSON.message;
+      if (xhr) {
+        if (xhr.responseJSON && xhr.responseJSON.message) {
+          message = "❌ " + xhr.responseJSON.message;
+        } else if (xhr.responseText) {
+          var texto = xhr.responseText.trim();
+          if (texto.length) {
+            message = "❌ " + texto;
+          }
+        }
       }
       revertListo(message);
     }
   });
 }
-
 
 
 

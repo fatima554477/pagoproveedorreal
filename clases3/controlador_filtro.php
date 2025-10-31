@@ -2298,7 +2298,7 @@ $totales2 = 'si';
 
 
 
-<td style="text-align:center; background:<?php if($row["STATUS_LISTO"]=='si'){?> #ceffcc; <?php }else{?>#e9d8ee; <?php }?>" id="color_LISTO<?php echo $row["02SUBETUFACTURAid"]; ?>" >
+<td style="text-align:center; background:<?php if($row["STATUS_LISTO"]=='si'){?> #ceffcc; <?php }else{?>#e9d8ee; <?php }?>" id="STATUS_LISTO<?php echo $row["02SUBETUFACTURAid"]; ?>" >
 
 <input type="checkbox" style="width:30PX;" class="form-check-input" id="STATUS_LISTO<?php echo $row["02SUBETUFACTURAid"]; ?>"  name="STATUS_LISTO<?php echo $row["02SUBETUFACTURAid"]; ?>" value="<?php echo $row["02SUBETUFACTURAid"]; ?>" onclick="STATUS_LISTO(<?php echo $row["02SUBETUFACTURAid"]; ?>)" <?php if($row["STATUS_LISTO"]=='si'){
 	echo "checked";
