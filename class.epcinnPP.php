@@ -986,61 +986,7 @@ NoIdentificacionConcepto
 		}
     }
 
-         public function ACTUALIZA_LISTO (
-        $LISTO_id , $LISTO_text ){
 
-                $conn = $this->db();
-                $session = isset($_SESSION['idem'])?$_SESSION['idem']:'';
-                $LISTO_text = strtolower(trim($LISTO_text));
-                $LISTO_id = trim($LISTO_id);
-
-                if($session == ''){
-                        return array(
-                                'success' => false,
-                                'estado' => null,
-                                'message' => 'NO HAY UN PROVEEDOR SELECCIONADO'
-                        );
-                }
-
-                if($LISTO_id === '' || ($LISTO_text !== 'si' && $LISTO_text !== 'no')){
-                        return array(
-                                'success' => false,
-                                'estado' => null,
-                                'message' => 'Parámetros inválidos'
-                        );
-                }
-
-                $sql = "update 02SUBETUFACTURA SET STATUS_LISTO = ? WHERE id = ?";
-                $stmt = mysqli_prepare($conn, $sql);
-
-                if(!$stmt){
-                        return array(
-                                'success' => false,
-                                'estado' => null,
-                                'message' => 'P156'.mysqli_error($conn)
-                        );
-                }
-
-                mysqli_stmt_bind_param($stmt, 'ss', $LISTO_text, $LISTO_id);
-
-                if(!mysqli_stmt_execute($stmt)){
-                        $error = 'P156'.mysqli_stmt_error($stmt);
-                        mysqli_stmt_close($stmt);
-                        return array(
-                                'success' => false,
-                                'estado' => null,
-                                'message' => $error
-                        );
-                }
-
-                mysqli_stmt_close($stmt);
-
-                return array(
-                        'success' => true,
-                        'estado' => $LISTO_text,
-                        'message' => 'Actualizado'
-                );
-    }
 	
 	
 
