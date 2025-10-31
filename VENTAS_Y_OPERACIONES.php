@@ -502,7 +502,7 @@ if($rfcE == true){
 				 
 <tr  style="background:#fcf3cf"> 
 
-                 <th scope="row"> <label for="validationCustom03" class="form-label">RAZÓN SOCIAL</label></th>
+                  <label style="width:300px" for="RAZON_SOCIAL" class="form-label"><span id="label-razon-social-text"><?php echo $labelRazonSocial; ?></span></label>
                  <td>
 				 
 				 <div id="RAZON_SOCIAL2">
@@ -514,7 +514,7 @@ if($rfcE == true){
                  <tr  style="background:#fcf3cf"> 
               
 
-                 <th scope="row"> <label for="validationCustom03" class="form-label">RFC DEL PROVEEDOR:</label></th>
+                 <th scope="row">   <label style="width:300px" for="validationCustom03" class="form-label"><span id="label-rfc-text"><?php echo $labelRfc; ?></span></label></th>
                  <td>
 				 
 				 <div id="RFC_PROVEEDOR2">
