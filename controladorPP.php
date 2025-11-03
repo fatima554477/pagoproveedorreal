@@ -71,32 +71,11 @@ if($CHECKBOX_id != '' && ($CHECKBOX_text == 'si' || $CHECKBOX_text == 'no')) {
 }
 
 
-$LISTO_id = isset($_POST["LISTO_id"]) ? $_POST["LISTO_id"] : "";
-$LISTO_text = isset($_POST["LISTO_text"]) ? $_POST["LISTO_text"] : "";
-$LISTO_expect_json = isset($_POST["LISTO_expect_json"]) ? $_POST["LISTO_expect_json"] : "";
+$AUDITORIA3_id = isset($_POST["AUDITORIA3_id"])?$_POST["AUDITORIA3_id"]:"";
+$AUDITORIA3_text = isset($_POST["AUDITORIA3_text"])?$_POST["AUDITORIA3_text"]:"";
 
-if($LISTO_id != '' && ($LISTO_text == 'si' || $LISTO_text == 'no')) {
-    $resultado_LISTO = $pagoproveedores->ACTUALIZA_LISTO($LISTO_id, $LISTO_text);
-    $expectsJson = ($LISTO_expect_json === '1' || $LISTO_expect_json === 1 || $LISTO_expect_json === true);
-
-    if(is_array($resultado_LISTO)){
-        if($expectsJson){
-            header('Content-Type: application/json; charset=utf-8');
-            if(!$resultado_LISTO['success']){
-                http_response_code(500);
-            }
-            echo json_encode($resultado_LISTO);
-        }else{
-            if($resultado_LISTO['success']){
-                echo $resultado_LISTO['message'].'^'.$resultado_LISTO['estado'];
-            }else{
-                echo 'Error^'.$resultado_LISTO['message'];
-            }
-        }
-    }else{
-        echo $resultado_LISTO;
-    }
-    exit;
+if($AUDITORIA3_id!='' and ($AUDITORIA3_text=='si' or $AUDITORIA3_text=='no') ){	
+echo $pagoproveedores->ACTUALIZA_AUDITORIA3 ($AUDITORIA3_id , $AUDITORIA3_text  );
 }
 
 

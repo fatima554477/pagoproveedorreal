@@ -865,7 +865,24 @@ NoIdentificacionConcepto
 		}
     }
 
-
+         	public function ACTUALIZA_AUDITORIA3 (
+	$AUDITORIA3_id , $AUDITORIA3_text ){
+	
+		$conn = $this->db();
+		$session = isset($_SESSION['idem'])?$_SESSION['idem']:'';    
+		if($session != ''){
+		
+		 $var1 = "update 02SUBETUFACTURA SET STATUS_AUDITORIA3 = '".$AUDITORIA3_text."' WHERE id = '".$AUDITORIA3_id."'  ";	
+	
+		//if($pasarpagado_text=='si'){
+		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
+		return "Actualizado^".$AUDITORIA3_text;
+		//}
+			
+        }else{
+		echo "NO HAY UN PROVEEDOR SELECCIONADO";	
+		}
+    }
 
 
 	public function ACTUALIZA_AUDITORIA1 (
