@@ -186,37 +186,79 @@ function recalcularTotal() {
 
 
 
-	function STATUS_AUDITORIA3(AUDITORIA3_id){
-	
 
-	var checkBox = document.getElementById("STATUS_AUDITORIA3"+AUDITORIA3_id);
-	var AUDITORIA3_text = "";
-	if (checkBox.checked == true){
-	AUDITORIA3_text = "si";
-	}else{
-	AUDITORIA3_text = "no";
-	}
-	  $.ajax({
-        url:'pagoproveedores/controladorPP.php',
-		method:'POST',
-		data:{AUDITORIA3_id:AUDITORIA3_id,AUDITORIA3_text:AUDITORIA3_text},
-		beforeSend:function(){
-		$('#pasarpagado2').html('cargando');
-	},
-		success:function(data){
-		var result = data.split('^');				
-		$('#pasarpagado2').html("Cargando...").fadeIn().delay(500).fadeOut();
+function STATUS_AUDITORIA3(id){
+  var $cb = $("#STATUS_AUDITORIA3" + id);
+  var permGuardar   = ($cb.data("perm-guardar")   == 1);
+  var permModificar = ($cb.data("perm-modificar") == 1);
+  var valorPrevio   = String($cb.data("prev")); // 'si' | 'no'
+  var valorNuevo    = $cb.is(":checked") ? "si" : "no";
 
-		if(result[1]=='si'){
-		$('#color_AUDITORIA3'+AUDITORIA3_id).css('background-color', '#ceffcc');
-		}
-		if(result[1]=='no'){
-		$('#color_AUDITORIA3'+AUDITORIA3_id).css('background-color', '#e9d8ee');
-		}		
-		
-	}
-	});
+  // 1) Sin guardar ni modificar: nunca debería disparar, pero por seguridad:
+  if(!permGuardar && !permModificar){
+    $cb.prop('checked', (valorPrevio === 'si'));
+    showNotify("Sin permiso para modificar", false);
+    return;
+  }
+
+  // 2) Si NO tiene modificar:
+  // - Puede pasar de 'no' -> 'si'
+  // - NO puede pasar de 'si' -> 'no' (revertir y salir)
+  if(!permModificar){
+    if(valorPrevio === 'si' && valorNuevo === 'no'){
+      // No permitido apagar
+      $cb.prop('checked', true);
+      showNotify("Solo puedes prender, no apagar", false);
+      return;
+    }
+  }
+
+  // Pintado optimista
+  $("#color_AUDITORIA3" + id).css('background-color', (valorNuevo === 'si') ? '#ceffcc' : '#e9d8ee');
+
+  $.ajax({
+    url: 'pagoproveedores/controladorPP.php',
+    type: 'POST',
+    data: { AUDITORIA3_id: id, AUDITORIA3_text: valorNuevo },
+    beforeSend: function(){
+      $('#pasarpagado2').html('cargando...');
+    },
+    success: function(resp){
+      // Éxito → fijar nuevo previo
+      $cb.data("prev", valorNuevo);
+
+      // 3) Regla clave: si SOLO tiene guardar y acaba de prender -> BLOQUEAR
+      if(!permModificar && permGuardar && valorNuevo === 'si'){
+        $cb.prop('disabled', true)
+           .css('cursor','not-allowed')
+           .attr('title','Autorizado (bloqueado)');
+      }
+
+      $('#pasarpagado2').html("<span>ACTUALIZADO</span>").fadeIn().delay(500).fadeOut();
+      showNotify("Autorización actualizada ✅", true);
+    },
+    error: function(xhr){
+      // Rollback total
+      var volverSi = (valorPrevio === 'si');
+      $cb.prop('checked', volverSi);
+      $("#color_AUDITORIA3" + id).css('background-color', volverSi ? '#ceffcc' : '#e9d8ee');
+
+      showNotify("❌ Error de conexión (" + xhr.status + ")", false);
+    }
+  });
 }
+
+function showNotify(msg, ok){
+  $("#ajax-notification").stop(true,true)
+    .text(msg)
+    .css('background', ok ? '#4CAF50' : '#E53935')
+    .fadeIn(150).delay(1000).fadeOut(300);
+}
+
+
+
+
+
 
 
 

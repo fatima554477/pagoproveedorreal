@@ -1351,40 +1351,45 @@ foreach ($datos as $key=>$row){
     $fondo_existe_xml = "";
     $fondo_existe_xml2 = "";
 
-if (isset($row['STATUS_DE_PAGO']) && $row['STATUS_DE_PAGO'] == 'RECHAZADO') {
+// 0. Si está AUTORIZADO (AUDITORIA3) → blanco SIEMPRE
+if (isset($row['STATUS_AUDITORIA3']) && trim($row['STATUS_AUDITORIA3'])=='si') {
+    $fondo_existe_xml = "style='background-color: #ffffff'";
+    $fondo_existe_xml2 = "style='background-color: #ffffff'";
+}
+else if (isset($row['STATUS_DE_PAGO']) && $row['STATUS_DE_PAGO'] == 'RECHAZADO') {
     // 1. Rechazado → Rojo
     $fondo_existe_xml = "style='background-color: #ff0000'"; 
     $fondo_existe_xml2 = "style='background-color: #ff0000'";
 }
-// 2. Método de pago diferente de 'PUE' (vacío cuenta como PUE) → Rosado
 else if (
     isset($row['metodoDePago']) && 
     trim($row['metodoDePago']) !== '' && 
     strtoupper(trim($row['metodoDePago'])) != 'PUE'
 ) {
+    // 2. Método de pago diferente de 'PUE' → Rosado
     $fondo_existe_xml = "style='background-color: #ffb6c1'"; 
     $fondo_existe_xml2 = "style='background-color: #ffb6c1'"; 
 }
-// 3. Forma de pago diferente de '03' → Rosado
 else if ($row['PFORMADE_PAGO'] != '03') {
+    // 3. Forma de pago diferente de '03' → Rosado
     $fondo_existe_xml = "style='background-color: #ffb6c1'"; 
     $fondo_existe_xml2 = "style='background-color: #ffb6c1'"; 
 }
-// 4. ClaveUnidadConcepto presente → Blanco
 else if (!empty($row['ClaveUnidadConcepto'])) {
+    // 4. Tiene ClaveUnidadConcepto → Blanco
     $fondo_existe_xml = "style='background-color: #ffffff'"; 
     $fondo_existe_xml2 = "style='background-color: #ffffff'"; 
 }
-// 5. ClaveUnidadConcepto vacío → Amarillo
 else if (empty($row['ClaveUnidadConcepto'])) {
+    // 5. Vacío → Amarillo
     $fondo_existe_xml2 = "style='background-color: #fdfe87'"; 
     $fondo_existe_xml = "style='background-color: #fdfe87'"; 
 }
-// 6. Caso por defecto
 else {
     $fondo_existe_xml = "";
     $fondo_existe_xml2 = "";
 }
+
 
 
 ?>
@@ -2292,6 +2297,49 @@ $totales2 = 'si';
     </span>
 </td>
 <?php } ?>
+
+
+<?php if ($database->variablespermisos('', 'CONTABILIDADCOM2', 'ver') == 'si') { ?>
+<?php
+  $idFila   = (int)$row["02SUBETUFACTURAid"];
+  $estaSi   = ($row["STATUS_AUDITORIA3"] == 'si');
+
+  $perm_guardar   = ($database->variablespermisos('', 'CONTABILIDADCOM2', 'guardar')   == 'si');
+  $perm_modificar = ($database->variablespermisos('', 'CONTABILIDADCOM2', 'modificar') == 'si');
+
+  // Estado inicial: habilitado solo si:
+  // - está en "no" y tiene guardar o modificar
+  // - está en "si" y tiene modificar
+  $habilitado = (!$estaSi && ($perm_guardar || $perm_modificar)) || ($estaSi && $perm_modificar);
+?>
+
+<td
+  style="text-align:center; background:<?php echo $estaSi ? '#ceffcc' : '#e9d8ee'; ?>;"
+  id="color_AUDITORIA3<?php echo $idFila; ?>">
+
+  <input
+    type="checkbox"
+    class="form-check-input"
+    style="width:30px; <?php echo $habilitado ? 'cursor:pointer;' : 'cursor:not-allowed;'; ?>"
+    id="STATUS_AUDITORIA3<?php echo $idFila; ?>"
+    name="STATUS_AUDITORIA3<?php echo $idFila; ?>"
+    value="<?php echo $idFila; ?>"
+    <?php echo $estaSi ? 'checked' : ''; ?>
+    <?php echo $habilitado ? '' : 'disabled'; ?>
+    title="<?php echo $habilitado ? '' : 'Sin permiso para modificar'; ?>"
+
+    data-perm-guardar="<?php echo $perm_guardar ? '1' : '0'; ?>"
+    data-perm-modificar="<?php echo $perm_modificar ? '1' : '0'; ?>"
+    data-prev="<?php echo $estaSi ? 'si' : 'no'; ?>"
+
+    onclick="STATUS_AUDITORIA3(<?php echo $idFila; ?>)"
+  />
+</td>
+<?php } ?>
+
+
+
+
 <div id="ajax-notification" style="position:fixed; top:20px; right:20px; padding:15px; background:#4CAF50; color:white; border-radius:5px; display:none; z-index:1000;"></div>
 
 
@@ -2299,37 +2347,7 @@ $totales2 = 'si';
 
 
 
-<td style="text-align:center; background:
-    <?php echo ($row["STATUS_AUDITORIA3"] == 'si') ? '#ceffcc' : '#e9d8ee'; ?>;"
-    id="color_AUDITORIA3<?php echo $row["02SUBETUFACTURAid"]; ?>">
 
-    <input type="checkbox"
-        style="width:30px; cursor:pointer;"
-        class="form-check-input"
-        id="STATUS_AUDITORIA3<?php echo $row["02SUBETUFACTURAid"]; ?>"
-        name="STATUS_AUDITORIA3<?php echo $row["02SUBETUFACTURAid"]; ?>"
-        value="<?php echo $row["02SUBETUFACTURAid"]; ?>"
-        <?php
-        if ($row["STATUS_AUDITORIA3"] == 'si') {
-            // Ya autorizado → marcado y bloqueado
-            echo 'checked disabled style="cursor:not-allowed;" title="Ya autorizado"';
-        } else {
-            if ($database->variablespermisos("", "CONTABILIDADCOM2", "ver") == "si") {
-                // Permitir acción → ejecutar función, bloquear y pintar verde en vivo
-                echo 'onclick="STATUS_AUDITORIA3('.$row["02SUBETUFACTURAid"].');'
-                    .' this.disabled=true; this.style.cursor=\'not-allowed\';'
-                    .' document.getElementById(\'color_AUDITORIA3'.$row["02SUBETUFACTURAid"].'\').style.background=\'#ceffcc\';'
-                    .' this.title=\'Autorizado\';"';
-            } else {
-                // Sin permiso → bloqueado
-                echo 'disabled style="cursor:not-allowed;" title="Sin permiso para modificar"';
-            }
-        }
-        ?>
-    />
-
-   
-</td>
 
 
 <?php  if($database->plantilla_filtro($nombreTabla,"P_TIPO_DE_MONEDA_1",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="text-align:center"><?php 
