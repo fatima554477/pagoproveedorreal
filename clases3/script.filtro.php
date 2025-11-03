@@ -31,11 +31,11 @@
   box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
 }
 </style>
-<script>
+<script type="text/javascript">
 
 
 
-	function pasarpagado(pasarpagado_id){
+	function pasarpagado2(pasarpagado_id){
 
 
 	var checkBox = document.getElementById("pasarpagado1a"+pasarpagado_id);
@@ -50,14 +50,13 @@
 		method:'POST',
 		data:{pasarpagado_id:pasarpagado_id,pasarpagado_text:pasarpagado_text},
 		beforeSend:function(){
-		$('#pasarpagado').html('cargando');
+		$('#pasarpagado2').html('cargando');
 	},
 		success:function(data){
-			load(1);
-			
 		var result = data.split('^');			
-		$('#pasarpagado').html("<span id='ACTUALIZADO' >"+result[0]+"</span>");
-		
+		$('#pasarpagado2').html("<span 'ACTUALIZADO'</span>").fadeIn().delay(500).fadeOut();
+		load(1);
+
 		
 		if(pasarpagado_text=='si'){
 		$('#color_pagado1a'+pasarpagado_id).css('background-color', '#ceffcc');
@@ -187,154 +186,36 @@ function recalcularTotal() {
 
 
 
-function STATUS_LISTO(LISTO_id) {
-  var checkBox = document.getElementById("STATUS_LISTO" + LISTO_id);
-  if (!checkBox) return; // seguridad por si el elemento no existe
+	function STATUS_AUDITORIA3(AUDITORIA3_id){
+	
 
-  var previousChecked = !checkBox.checked;
-  var previousColor = previousChecked ? "#ceffcc" : "#e9d8ee";
-  var LISTO_text = checkBox.checked ? "si" : "no";
+	var checkBox = document.getElementById("STATUS_AUDITORIA3"+AUDITORIA3_id);
+	var AUDITORIA3_text = "";
+	if (checkBox.checked == true){
+	AUDITORIA3_text = "si";
+	}else{
+	AUDITORIA3_text = "no";
+	}
+	  $.ajax({
+        url:'pagoproveedores/controladorPP.php',
+		method:'POST',
+		data:{AUDITORIA3_id:AUDITORIA3_id,AUDITORIA3_text:AUDITORIA3_text},
+		beforeSend:function(){
+		$('#pasarpagado2').html('cargando');
+	},
+		success:function(data){
+		var result = data.split('^');				
+		$('#pasarpagado2').html("Cargando...").fadeIn().delay(500).fadeOut();
 
-  // Cambiar color inmediato
-  var newColor = checkBox.checked ? "#ceffcc" : "#e9d8ee";
-  $("#color_LISTO" + LISTO_id).css("background-color", newColor);
-
-  function ensureNotificationContainer() {
-    var $notification = $("#ajax-notification");
-    if (!$notification.length) {
-      $notification = $('<div id="ajax-notification" style="position:fixed; top:20px; right:20px; padding:15px; background:#4CAF50; color:white; border-radius:5px; display:none; z-index:1000;"></div>');
-      $("body").append($notification);
-    }
-    return $notification;
-  }
-
-  function revertListo(message) {
-    checkBox.checked = previousChecked;
-    $("#color_LISTO" + LISTO_id).css("background-color", previousColor);
-
-    ensureNotificationContainer()
-      .html(message || "❌ Error al actualizar")
-      .delay(2000)
-      .fadeOut();
-  }
-
-  function normalizaEstado(valor) {
-    var normalizado = (valor == null ? "" : String(valor)).trim().toLowerCase();
-    return (normalizado === "si" || normalizado === "no") ? normalizado : null;
-  }
-
-  function interpretaRespuestaLISTO(payload, estadoPredeterminado) {
-    var mensajePorDefecto = "ACTUALIZADO";
-    var fallbackEstado = normalizaEstado(estadoPredeterminado);
-
-    if (payload == null) {
-      return { success: false, message: "Respuesta vacía del servidor" };
-    }
-
-    if (typeof payload === "object") {
-      var estadoObjeto = normalizaEstado(payload.estado);
-      return {
-        success: payload.success !== false,
-        estado: estadoObjeto || fallbackEstado,
-        message: payload.message ? String(payload.message).trim() || mensajePorDefecto : mensajePorDefecto
-      };
-    }
-
-    var texto = String(payload).trim();
-    if (!texto.length) {
-      return { success: false, message: "Respuesta vacía del servidor" };
-    }
-
-    if (texto.charAt(0) === "{" || texto.charAt(0) === "[") {
-      try {
-        return interpretaRespuestaLISTO(JSON.parse(texto), estadoPredeterminado);
-      } catch (error) {
-        // Si no es JSON válido, continuamos con el formato de texto.
-      }
-    }
-
-    var partes = texto.split('^');
-    if (partes.length >= 2) {
-      var estadoPartes = normalizaEstado(partes[1]);
-      return {
-        success: estadoPartes !== null,
-        estado: estadoPartes,
-        message: partes[0] ? partes[0].trim() || mensajePorDefecto : mensajePorDefecto
-      };
-    }
-
-    if (fallbackEstado) {
-      return {
-        success: true,
-        estado: fallbackEstado,
-        message: texto
-      };
-    }
-
-    return { success: false, message: texto };
-  }
-
-  $.ajax({
-    url: "pagoproveedores/controladorPP.php",
-    method: "POST",
-    dataType: "text",
-    data: {
-      LISTO_id: LISTO_id,
-      LISTO_text: LISTO_text,
-      LISTO_expect_json: 1
-    },
-    beforeSend: function () {
-      ensureNotificationContainer()
-        .html('<div class="loader"></div> ⏳ ACTUALIZANDO...')
-        .fadeIn();
-    },
-    success: function (response) {
-      var interpretacion = interpretaRespuestaLISTO(response, LISTO_text);
-
-      if (!interpretacion.success) {
-        revertListo("❌ " + (interpretacion.message || "Error al actualizar"));
-        return;
-      }
-
-      var estado = normalizaEstado(interpretacion.estado);
-      if (!estado) {
-        revertListo("❌ Respuesta desconocida del servidor");
-        return;
-      }
-
-      ensureNotificationContainer()
-        .html("✅ " + (interpretacion.message || "ACTUALIZADO"))
-        .delay(1000)
-        .fadeOut();
-
-      if (estado === "si") {
-        $("#color_LISTO" + LISTO_id).css("background-color", "#ceffcc");
-        $("#valorCalculado22_" + LISTO_id).text("");
-      } else {
-        $("#color_LISTO" + LISTO_id).css("background-color", "#e9d8ee");
-      }
-
-      checkBox.checked = (estado === "si");
-
-      if (typeof recalcularTotal22 === "function") {
-        recalcularTotal22();
-      }
-    },
-    error: function (xhr) {
-      var message = "❌ Error al actualizar";
-      if (xhr) {
-        if (xhr.responseJSON && xhr.responseJSON.message) {
-          message = "❌ " + xhr.responseJSON.message;
-        } else if (xhr.responseText) {
-          var texto = xhr.responseText.trim();
-          if (texto.length) {
-            message = "❌ " + texto;
-          }
-        }
-      }
-      revertListo(message);
-    }
-  });
+		if(result[1]=='si'){
+		$('#color_AUDITORIA3'+AUDITORIA3_id).css('background-color', '#ceffcc');
+		}
+		if(result[1]=='no'){
+		$('#color_AUDITORIA3'+AUDITORIA3_id).css('background-color', '#e9d8ee');
+		}		
+		
+	}
+	});
 }
 
 

@@ -62,6 +62,9 @@ class orders extends accesoclase {
 		$count=$query->num_rows;
 		return $count;
 	}
+	
+	
+	
 	//STATUS_EVENTO,NOMBRE_CORTO_EVENTO,NOMBRE_EVENTO
 	public function getData($tables3,$campos,$search){
 		$offset=$search['offset'];

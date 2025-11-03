@@ -2292,22 +2292,46 @@ $totales2 = 'si';
     </span>
 </td>
 <?php } ?>
+<div id="ajax-notification" style="position:fixed; top:20px; right:20px; padding:15px; background:#4CAF50; color:white; border-radius:5px; display:none; z-index:1000;"></div>
 
 
 
 
 
 
-<td style="text-align:center; background:<?php if($row["STATUS_LISTO"]=='si'){?> #ceffcc; <?php }else{?>#e9d8ee; <?php }?>" id="STATUS_LISTO<?php echo $row["02SUBETUFACTURAid"]; ?>" >
+<td style="text-align:center; background:
+    <?php echo ($row["STATUS_AUDITORIA3"] == 'si') ? '#ceffcc' : '#e9d8ee'; ?>;"
+    id="color_AUDITORIA3<?php echo $row["02SUBETUFACTURAid"]; ?>">
 
-<input type="checkbox" style="width:30PX;" class="form-check-input" id="STATUS_LISTO<?php echo $row["02SUBETUFACTURAid"]; ?>"  name="STATUS_LISTO<?php echo $row["02SUBETUFACTURAid"]; ?>" value="<?php echo $row["02SUBETUFACTURAid"]; ?>" onclick="STATUS_LISTO(<?php echo $row["02SUBETUFACTURAid"]; ?>)" <?php if($row["STATUS_LISTO"]=='si'){
-	echo "checked";
-}$colspan += 1;
- ?>/>
+    <input type="checkbox"
+        style="width:30px; cursor:pointer;"
+        class="form-check-input"
+        id="STATUS_AUDITORIA3<?php echo $row["02SUBETUFACTURAid"]; ?>"
+        name="STATUS_AUDITORIA3<?php echo $row["02SUBETUFACTURAid"]; ?>"
+        value="<?php echo $row["02SUBETUFACTURAid"]; ?>"
+        <?php
+        if ($row["STATUS_AUDITORIA3"] == 'si') {
+            // Ya autorizado → marcado y bloqueado
+            echo 'checked disabled style="cursor:not-allowed;" title="Ya autorizado"';
+        } else {
+            if ($database->variablespermisos("", "CONTABILIDADCOM2", "ver") == "si") {
+                // Permitir acción → ejecutar función, bloquear y pintar verde en vivo
+                echo 'onclick="STATUS_AUDITORIA3('.$row["02SUBETUFACTURAid"].');'
+                    .' this.disabled=true; this.style.cursor=\'not-allowed\';'
+                    .' document.getElementById(\'color_AUDITORIA3'.$row["02SUBETUFACTURAid"].'\').style.background=\'#ceffcc\';'
+                    .' this.title=\'Autorizado\';"';
+            } else {
+                // Sin permiso → bloqueado
+                echo 'disabled style="cursor:not-allowed;" title="Sin permiso para modificar"';
+            }
+        }
+        ?>
+    />
 
+   
 </td>
 
-<div id="ajax-notification" style="position:fixed; top:20px; right:20px; padding:15px; background:#4CAF50; color:white; border-radius:5px; display:none; z-index:1000;"></div>
+
 <?php  if($database->plantilla_filtro($nombreTabla,"P_TIPO_DE_MONEDA_1",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="text-align:center"><?php 
 
 echo $P_TIPO_DE_MONEDA_1;
