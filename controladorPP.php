@@ -15,7 +15,7 @@ fecha fatis : 03/04/2024
 
 define('__ROOT1__', dirname(dirname(__FILE__)));
 include_once (__ROOT1__."/includes/error_reporting.php");
-include_once (__ROOT1__."/ventasoperacionesPP/class.epcinnPP.php");
+include_once (__ROOT1__."/pagoproveedores/class.epcinnPP.php");
 
 $pagoproveedores= NEW accesoclase();
 $conexion = NEW colaboradores();
