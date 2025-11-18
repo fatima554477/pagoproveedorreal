@@ -258,7 +258,75 @@ function showNotify(msg, ok){
 }
 
 
+function STATUS_SINXML(id){
+  var $cb = $("#STATUS_SINXML" + id);
+  var permGuardar   = ($cb.data("perm-guardar")   == 1);
+  var permModificar = ($cb.data("perm-modificar") == 1);
+  var valorPrevio   = String($cb.data("prev")); // 'si' | 'no'
+  var valorNuevo    = $cb.is(":checked") ? "si" : "no";
 
+  // 1) Sin guardar ni modificar: nunca debería disparar, pero por seguridad:
+  if(!permGuardar && !permModificar){
+    $cb.prop('checked', (valorPrevio === 'si'));
+    showNotify("Sin permiso para modificar", false);
+    return;
+  }
+
+  // 2) Si NO tiene modificar:
+  // - Puede pasar de 'no' -> 'si'
+  // - NO puede pasar de 'si' -> 'no' (revertir y salir)
+  if(!permModificar){
+    if(valorPrevio === 'si' && valorNuevo === 'no'){
+      // No permitido apagar
+      $cb.prop('checked', true);
+      showNotify("Solo puedes prender, no apagar", false);
+      return;
+    }
+  }
+
+  // Pintado optimista
+  $("#color_SINXML" + id).css('background-color', (valorNuevo === 'si') ? '#ceffcc' : '#e9d8ee');
+
+  $.ajax({
+    url: 'pagoproveedores/controladorPP.php',
+    type: 'POST',
+    data: { SINXML_id: id, SINXML_text: valorNuevo },
+    beforeSend: function(){
+      $('#pasarpagado2').html('cargando...');
+    },
+    success: function(resp){
+      // Éxito → fijar nuevo previo
+      $cb.data("prev", valorNuevo);
+
+      // 3) Regla clave: si SOLO tiene guardar y acaba de prender -> BLOQUEAR
+      if(!permModificar && permGuardar && valorNuevo === 'si'){
+        $cb.prop('disabled', true)
+           .css('cursor','not-allowed')
+           .attr('title','Autorizado (bloqueado)');
+      }
+
+      $('#pasarpagado2').html("<span>ACTUALIZADO</span>").fadeIn().delay(500).fadeOut();
+      showNotify("Autorización actualizada ✅", true);
+	  	load(1);
+    },
+
+    error: function(xhr){
+      // Rollback total
+      var volverSi = (valorPrevio === 'si');
+      $cb.prop('checked', volverSi);
+      $("#color_SINXML" + id).css('background-color', volverSi ? '#ceffcc' : '#e9d8ee');
+
+      showNotify("❌ Error de conexión (" + xhr.status + ")", false);
+    }
+  });
+}
+
+function showNotify(msg, ok){
+  $("#ajax-notification").stop(true,true)
+    .text(msg)
+    .css('background', ok ? '#4CAF50' : '#E53935')
+    .fadeIn(150).delay(1000).fadeOut(300);
+}
 
 
 

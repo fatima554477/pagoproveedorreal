@@ -626,7 +626,9 @@ if($database->plantilla_filtro($nombreTabla,"total",$altaeventos,$DEPARTAMENTO)=
 
 
 <th style="background:#f16c4f;text-align:center">46% PERDIDA DE COSTO FISCAL</th>
-
+<?php if($database->variablespermisos('','boton_sinxml','ver')=='si'){ ?>
+<th style="background:#BB27F5;text-align:center">SIN EFECTO<br> XML</th>
+<?php } ?>
 
 <?php if($database->variablespermisos('','boton_sin','ver')=='si'){ ?>
 <th style="background:#c6eaaa;text-align:center">SIN 46%</th>
@@ -635,6 +637,7 @@ if($database->plantilla_filtro($nombreTabla,"total",$altaeventos,$DEPARTAMENTO)=
 <?php if($database->variablespermisos('','boton_VOBO','ver')=='si'){ ?>
 <th style="background:#94A2F5;text-align:center">VoBo CxP</th>
 <?php } ?>
+
 
 
 <?php 
@@ -1262,10 +1265,15 @@ if($database->plantilla_filtro($nombreTabla,"total",$altaeventos,$DEPARTAMENTO)=
 echo $PorfaltaDeFactura; ?>"></td>
 
 
-
+<?php if($database->variablespermisos('','boton_sinxml','ver')=='si'){ ?>     
+<td style="background:#BB27F5;text-align:center"></td>
+<?php } ?>
 <?php if($database->variablespermisos('','boton_sin','ver')=='si'){ ?>     
 <td style="background:#c6eaaa;text-align:center"></td>
 <?php } ?>
+
+
+
 
 <?php if($database->variablespermisos('','boton_VOBO','ver')=='si'){ ?> 
 <td style="background:#94A2F5;text-align:center"></td>
@@ -1348,7 +1356,7 @@ if($database->plantilla_filtro($nombreTabla,"FOTO_ESTADO_PROVEE",$altaeventos,$D
 
                         $database->ingresarTemproal($identificadorProveedor,$row['MONTO_TOTAL_COTIZACION_ADEUDO'],$row['MONTO_DEPOSITADO'],$row['idRelacion'],$balance);//guardamos en el segundo temporal
 
-                                                                $ultimoNombreComercial = $identificadorProveedor;
+                        $ultimoNombreComercial = $identificadorProveedor;
 
                 }
 		
@@ -1813,13 +1821,19 @@ $MONTO_DEPOSITADO12 += $row['MONTO_DEPOSITADO'];
 
 $resultadoEstadoCuenta = $database->resultadoTemproal($idactual,$identificadorProveedor);
  if($database->plantilla_filtro($nombreTabla,"PENDIENTE_PAGO",$altaeventos,$DEPARTAMENTO)=="si"){ ?>
-<td style="text-align:center"><?php 
-		$totales = 'si';
+<td style="text-align:center"><?php
+                $totales = 'si';
 
 
- 
- echo number_format((float)$resultadoEstadoCuenta, 2, '.', ','); 
-$PENDIENTE_PAGO12 += $gran_total2;
+
+ if (!in_array($row['VIATICOSOPRO'], [
+     'VIATICOS',
+     'REEMBOLSO',
+     'PAGO A PROVEEDOR CON DOS O MAS FACTURAS'
+ ])) {
+     echo number_format((float)$resultadoEstadoCuenta, 2, '.', ',');
+     $PENDIENTE_PAGO12 += $gran_total2;
+ }
  $colspan2 += 1;
 ?></td>
 <?php } ?>
@@ -2268,7 +2282,43 @@ $totales2 = 'si';
 
 
 
+<?php if ($database->variablespermisos('', 'boton_sinxml', 'ver') == 'si') { ?>
+<?php
+  $idFila   = (int)$row["02SUBETUFACTURAid"];
+  $estaSi   = ($row["STATUS_SINXML"] == 'si');
 
+  $perm_guardar   = ($database->variablespermisos('', 'boton_sinxml', 'guardar')   == 'si');
+  $perm_modificar = ($database->variablespermisos('', 'boton_sinxml', 'modificar') == 'si');
+
+  // Estado inicial: habilitado solo si:
+  // - está en "no" y tiene guardar o modificar
+  // - está en "si" y tiene modificar
+  $habilitado = (!$estaSi && ($perm_guardar || $perm_modificar)) || ($estaSi && $perm_modificar);
+?>
+
+<td
+  style="text-align:center; background:<?php echo $estaSi ? '#ceffcc' : '#e9d8ee'; ?>;"
+  id="color_SINXML<?php echo $idFila; ?>">
+
+  <input
+    type="checkbox"
+    class="form-check-input"
+    style="width:30px; <?php echo $habilitado ? 'cursor:pointer;' : 'cursor:not-allowed;'; ?>"
+    id="STATUS_SINXML<?php echo $idFila; ?>"
+    name="STATUS_SINXML<?php echo $idFila; ?>"
+    value="<?php echo $idFila; ?>"
+    <?php echo $estaSi ? 'checked' : ''; ?>
+    <?php echo $habilitado ? '' : 'disabled'; ?>
+    title="<?php echo $habilitado ? '' : 'Sin permiso para modificar'; ?>"
+
+    data-perm-guardar="<?php echo $perm_guardar ? '1' : '0'; ?>"
+    data-perm-modificar="<?php echo $perm_modificar ? '1' : '0'; ?>"
+    data-prev="<?php echo $estaSi ? 'si' : 'no'; ?>"
+
+    onclick="STATUS_SINXML(<?php echo $idFila; ?>)"
+  />
+</td>
+<?php } ?>
 
 
 
@@ -2509,8 +2559,8 @@ $VIATICOSOPRO = isset($row['VIATICOSOPRO'])?$row['VIATICOSOPRO']:'' ;
 <td style="text-align:right; padding-right:45px;" colspan="<?php echo $colspan + 2; ?>" ><strong style="font-size:16px">TOTALES</strong></td>
 <?php } ?>
 
-<?php 
-$PENDIENTE_PAGO12_total = $MONTO_TOTAL_COTIZACION_ADEUDO12 - $MONTO_DEPOSITADO12;
+<?php
+
 
 if($database->plantilla_filtro($nombreTabla,"MONTO_TOTAL_COTIZACION_ADEUDO",$altaeventos,$DEPARTAMENTO)=="si"){ ?>
 <td style="text-align:center"><strong style="font-size:16px">$<?php echo number_format($MONTO_TOTAL_COTIZACION_ADEUDO12,2,'.',','); ?></strong></td>
@@ -2553,7 +2603,12 @@ if($database->plantilla_filtro($nombreTabla,"MONTO_TOTAL_COTIZACION_ADEUDO",$alt
 <td style="text-align:center"><strong style="font-size:16px">$<?php echo number_format($MONTO_DEPOSITADO12,2,'.',','); ?></strong></td>
 <?php } ?>
 
-<?php  if($database->plantilla_filtro($nombreTabla,"PENDIENTE_PAGO",$altaeventos,$DEPARTAMENTO)=="si"){  ?>
+<?php 
+
+
+    $PENDIENTE_PAGO12_total = $MONTO_TOTAL_COTIZACION_ADEUDO12 - $MONTO_DEPOSITADO12;
+
+ if($database->plantilla_filtro($nombreTabla,"PENDIENTE_PAGO",$altaeventos,$DEPARTAMENTO)=="si"){  ?>
 <td style="text-align:center"><strong style="font-size:16px">$<?php echo number_format($PENDIENTE_PAGO12_total,2,'.',','); ?></strong></td>
 <?php } ?>
 
