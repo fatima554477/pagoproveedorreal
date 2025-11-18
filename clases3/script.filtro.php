@@ -236,7 +236,9 @@ function STATUS_AUDITORIA3(id){
 
       $('#pasarpagado2').html("<span>ACTUALIZADO</span>").fadeIn().delay(500).fadeOut();
       showNotify("Autorización actualizada ✅", true);
+	  	load(1);
     },
+
     error: function(xhr){
       // Rollback total
       var volverSi = (valorPrevio === 'si');

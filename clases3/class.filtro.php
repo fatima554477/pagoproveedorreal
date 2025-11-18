@@ -410,7 +410,8 @@ public function obtener_rfc_a_id($valor) {
 		$ROWevento = $this->var_altaeventos();
 		$conn = $this->db();		
 		$NUMERO_EVENTO = isset($ROWevento["NUMERO_EVENTO"])?$ROWevento["NUMERO_EVENTO"]:"";
-		$sWhere3  = ' where ( 02SUBETUFACTURA.NUMERO_EVENTO = "'.$NUMERO_EVENTO.'") and RFC_PROVEEDOR = trim("'.trim($rfc).'")  ';
+                $identificadorProveedor = trim((string)$rfc);
+                $sWhere3  = ' where ( 02SUBETUFACTURA.NUMERO_EVENTO = "'.$NUMERO_EVENTO.'") and (NOMBRE_COMERCIAL = trim("'.$identificadorProveedor.'") or RFC_PROVEEDOR = trim("'.$identificadorProveedor.'"))  ';
 		$sql1="SELECT sum(MONTO_TOTAL_COTIZACION_ADEUDO - MONTO_DEPOSITADO) as MONTO_TOTAL_COTIZACION_ADEUDO1 FROM  02SUBETUFACTURA ".$sWhere3." and (".$query_OR2.") ";
 		$query = mysqli_query($conn,$sql1);
 		$fetch_arrary = mysqli_fetch_array($query);
@@ -425,7 +426,8 @@ public function obtener_rfc_a_id($valor) {
 
 	public function resultadoTemproal($idRelacion,$rfc){
 		$connn=$this->db();
-		$queryTemporal = 'select * from 02temporalEstadoCuenta where idRelacion = "'.$idRelacion.'" and RFC_PROVEEDOR = "'.$rfc.'" ';
+		$identificadorProveedor = trim((string)$rfc);
+		$queryTemporal = 'select * from 02temporalEstadoCuenta where idRelacion = "'.$idRelacion.'" and RFC_PROVEEDOR = "'.$identificadorProveedor.'" ';
 		$query = mysqli_query($connn,$queryTemporal);
 		$fetch_arrary = mysqli_fetch_array($query);
 		return $fetch_arrary['BALANCE'];
@@ -475,7 +477,8 @@ public function obtener_rfc_a_id($valor) {
 
 	public function getTotalAmaunt2($rfc){
 		$conn = $this->db();		
-		$sWhere3  = ' where RFC_PROVEEDOR = trim("'.trim($rfc).'")  ';
+		$identificadorProveedor = trim((string)$rfc);
+		$sWhere3  = ' where RFC_PROVEEDOR = trim("'.$identificadorProveedor.'")  ';
 		$sql1="SELECT sum(MONTO_TOTAL_COTIZACION_ADEUDO - MONTO_DEPOSITADO) as MONTO_TOTAL_COTIZACION_ADEUDO1 FROM  02temporalEstadoCuenta ".$sWhere3." ";
 		$query = mysqli_query($conn,$sql1);
 		$fetch_arrary = mysqli_fetch_array($query);
@@ -499,7 +502,8 @@ public function obtener_rfc_a_id($valor) {
 			return 0;
 		}
 		$conn = $this->db();		
-		$sWhere3  = ' where RFC_PROVEEDOR = trim("'.trim($rfc).'")  ';
+		$identificadorProveedor = trim((string)$rfc);
+		$sWhere3  = ' where RFC_PROVEEDOR = trim("'.$identificadorProveedor.'")  ';
 		$sql12="SELECT sum(MONTO_DEPOSITADO) as MONTO_DEPOSITADO1 FROM  02temporalEstadoCuenta ".$sWhere3.$query_OR3." ";
 		$query2 = mysqli_query($conn,$sql12);
 		$fetch_arrary2 = mysqli_fetch_array($query2);

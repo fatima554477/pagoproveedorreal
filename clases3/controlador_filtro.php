@@ -87,7 +87,7 @@ $descuentos = isset($_POST["descuentos_3"])?$_POST["descuentos_3"]:"";
 
 
 $RAZON_SOCIAL_orden = isset($_POST["RAZON_SOCIAL_orden"])?trim($_POST["RAZON_SOCIAL_orden"]):"";  
-$RFC_PROVEEDOR_orden = isset($_POST["RFC_PROVEEDOR_orden"])?trim($_POST["RFC_PROVEEDOR_orden"]):""; 
+$RFC_PROVEEDOR_orden = isset($_POST["NOMBRE_COMERCIAL_orden"])?trim($_POST["RFC_PROVEEDOR_orden"]):""; 
 $MONTO_FACTURA_orden = isset($_POST["MONTO_FACTURA_orden"])?trim($_POST["MONTO_FACTURA_orden"]):""; 
 $FECHA_DE_PAGO_orden = isset($_POST["FECHA_DE_PAGO_orden"])?trim($_POST["FECHA_DE_PAGO_orden"]):""; 
 $NUMERO_EVENTO_orden = isset($_POST["NUMERO_EVENTO_orden"])?trim($_POST["NUMERO_EVENTO_orden"]):""; 
@@ -323,7 +323,7 @@ if($database->plantilla_filtro($nombreTabla,"ADJUNTAR_FACTURA_XML",$altaeventos,
 <?php 
 if($database->plantilla_filtro($nombreTabla,"ADJUNTAR_FACTURA_PDF",$altaeventos,$DEPARTAMENTO)=="si"){ ?><th style="background:#c9e8e8;text-align:center">FACTURA PDF</th>
 <?php } ?><?php 
-if($database->plantilla_filtro($nombreTabla,"NUMERO_CONSECUTIVO_PROVEE",$altaeventos,$DEPARTAMENTO)=="si"){ ?><th style="background:#c9e8e8;text-align:center">NÚMERO CONSECUTIVO<br> PROVEEDORES</th>
+if($database->plantilla_filtro($nombreTabla,"NUMERO_CONSECUTIVO_PROVEE",$altaeventos,$DEPARTAMENTO)=="si"){ ?><th style="background:#c9e8e8;text-align:center">NÚMERO DE SOLICITUD</th>
 <?php } ?>
 
 
@@ -398,9 +398,12 @@ if($database->plantilla_filtro($nombreTabla,"TOTAL_ENPESOS",$altaeventos,$DEPART
 
 <?php 
 if($database->plantilla_filtro($nombreTabla,"PFORMADE_PAGO",$altaeventos,$DEPARTAMENTO)=="si"){ ?><th style="background:#c9e8e8;text-align:center">FORMA DE PAGO</th>
-<?php } ?><?php 
+<?php } ?>
+<?php 
 if($database->plantilla_filtro($nombreTabla,"FECHA_DE_PAGO",$altaeventos,$DEPARTAMENTO)=="si"){ ?><th style="background:#c9e8e8;text-align:center">FECHA DE PROGRAMACIÓN  DEL PAGO</th>
-<?php } ?><?php 
+<?php } ?>
+
+<?php 
 if($database->plantilla_filtro($nombreTabla,"FECHA_A_DEPOSITAR",$altaeventos,$DEPARTAMENTO)=="si"){ ?><th style="background:#f48a81;text-align:center">FECHA EFECTIVA DE PAGO</th>
 <?php } ?>
 
@@ -628,8 +631,9 @@ if($database->plantilla_filtro($nombreTabla,"total",$altaeventos,$DEPARTAMENTO)=
 <?php if($database->variablespermisos('','boton_sin','ver')=='si'){ ?>
 <th style="background:#c6eaaa;text-align:center">SIN 46%</th>
 <?php } ?>
-<?php if($database->variablespermisos('','boton_sin','ver')=='si'){ ?>
-<th style="background:#27F2F5;text-align:center">VoBo CxP</th>
+
+<?php if($database->variablespermisos('','boton_VOBO','ver')=='si'){ ?>
+<th style="background:#94A2F5;text-align:center">VoBo CxP</th>
 <?php } ?>
 
 
@@ -1259,12 +1263,13 @@ echo $PorfaltaDeFactura; ?>"></td>
 
 
 
-<?php if($database->variablespermisos('','boton_sin','ver')=='si'){ ?>
+<?php if($database->variablespermisos('','boton_sin','ver')=='si'){ ?>     
 <td style="background:#c6eaaa;text-align:center"></td>
 <?php } ?>
 
-<td style="background:#27F2F5;text-align:center"></td>
-
+<?php if($database->variablespermisos('','boton_VOBO','ver')=='si'){ ?> 
+<td style="background:#94A2F5;text-align:center"></td>
+<?php } ?>
 
 
 <?php  
@@ -1311,36 +1316,41 @@ if($database->plantilla_filtro($nombreTabla,"FOTO_ESTADO_PROVEE",$altaeventos,$D
 
 
 
-		//esta función guarda en 2 temporales para sacar el balance entre el monto depositado (MONTO_DEPOSITADO) y monto de la cotización MONTO_TOTAL_COTIZACION_ADEUDO
-		$database->TruncateingresarTemproal2();//borramos los temporales
-		$balance2 = 0 ;//no calcula ningun balance, va en 000 ceros
-		foreach ($datos as $key2=>$row2){			
-			$database->ingresarTemproal2($row2['RFC_PROVEEDOR'],$row2['MONTO_TOTAL_COTIZACION_ADEUDO'],$row2['MONTO_DEPOSITADO'],$row2['02SUBETUFACTURAid'],$balance2);//guardamos en el priemr temporal
-		}
-		$datos2 = $database->resultadoTemproal2();//regresamos ordenamos por rfc y id ascendente
-		
-		$database->TruncateingresarTemproal();//borramos temporales
-		foreach ($datos2 as $key=>$row){
+             $database->TruncateingresarTemproal2();//borramos los temporales
+                $balance2 = 0 ;//no calcula ningun balance, va en 000 ceros
+                foreach ($datos as $key2=>$row2){
+                        $nombreComercialTemporal = isset($row2['NOMBRE_COMERCIAL']) ? trim($row2['NOMBRE_COMERCIAL']) : '';
+                        $identificadorProveedor = $nombreComercialTemporal !== '' ? $nombreComercialTemporal : (isset($row2['RFC_PROVEEDOR']) ? trim($row2['RFC_PROVEEDOR']) : '');
+                        $database->ingresarTemproal2($identificadorProveedor,$row2['MONTO_TOTAL_COTIZACION_ADEUDO'],$row2['MONTO_DEPOSITADO'],$row2['02SUBETUFACTURAid'],$balance2);//guardamos en el priemr temporal
+                }
+                $datos2 = $database->resultadoTemproal2();//regresamos ordenamos por rfc y id ascendente
 
-			if ($ultimoRFC =='') {//sino está vacío guardamos en memoria el rfc
-				$ultimoRFC = $row['RFC_PROVEEDOR'];
-			}
+                $database->TruncateingresarTemproal();//borramos temporales
+                $ultimoNombreComercial = '';
+                $balance = 0;
+                foreach ($datos2 as $key=>$row){
 
-			if ($row['RFC_PROVEEDOR'] != $ultimoRFC) {//si el rfc es diferente lo mandamos a ceros
-						$balance = 0;	
-			}
-		
-			if($row['MONTO_DEPOSITADO']!='' or $row['MONTO_DEPOSITADO']<0){//revisamos que MONTO_DEPOSITADO sea mayor a ceros
-				$balance += $row['MONTO_TOTAL_COTIZACION_ADEUDO']-$row['MONTO_DEPOSITADO'];
-			}else{
-				$balance = $balance-$row['MONTO_DEPOSITADO'];				
-			}
-			
-			$database->ingresarTemproal($row['RFC_PROVEEDOR'],$row['MONTO_TOTAL_COTIZACION_ADEUDO'],$row['MONTO_DEPOSITADO'],$row['idRelacion'],$balance);//guardamos en el segundo temporal
-				
-								$ultimoRFC = $row['RFC_PROVEEDOR'];
-				
-		}
+                        $identificadorProveedor = isset($row['RFC_PROVEEDOR']) ? trim($row['RFC_PROVEEDOR']) : '';
+
+                        if ($ultimoNombreComercial =='') {//sino está vacío guardamos en memoria el rfc
+                                $ultimoNombreComercial = $identificadorProveedor;
+                        }
+
+                        if ($identificadorProveedor != $ultimoNombreComercial) {//si el rfc es diferente lo mandamos a ceros
+                                                $balance = 0;
+                        }
+
+                        if($row['MONTO_DEPOSITADO']!='' or $row['MONTO_DEPOSITADO']<0){//revisamos que MONTO_DEPOSITADO sea mayor a ceros
+                                $balance += $row['MONTO_TOTAL_COTIZACION_ADEUDO']-$row['MONTO_DEPOSITADO'];
+                        }else{
+                                $balance = $balance-$row['MONTO_DEPOSITADO'];
+                        }
+
+                        $database->ingresarTemproal($identificadorProveedor,$row['MONTO_TOTAL_COTIZACION_ADEUDO'],$row['MONTO_DEPOSITADO'],$row['idRelacion'],$balance);//guardamos en el segundo temporal
+
+                                                                $ultimoNombreComercial = $identificadorProveedor;
+
+                }
 		
 		
 		
@@ -1350,6 +1360,8 @@ foreach ($datos as $key=>$row){
     $colspan2 = 0;
     $fondo_existe_xml = "";
     $fondo_existe_xml2 = "";
+    $nombreComercialActual = isset($row['NOMBRE_COMERCIAL']) ? trim($row['NOMBRE_COMERCIAL']) : '';
+    $identificadorProveedor = $nombreComercialActual !== '' ? $nombreComercialActual : (isset($row['RFC_PROVEEDOR']) ? trim($row['RFC_PROVEEDOR']) : '');
 
 // 0. Si está AUTORIZADO (AUDITORIA3) → blanco SIEMPRE
 if (isset($row['STATUS_AUDITORIA3']) && trim($row['STATUS_AUDITORIA3'])=='si') {
@@ -1785,16 +1797,21 @@ echo number_format($row['MONTO_DEPOSITADO'],2,'.',',');
 
 $idrelacion['idrelacion'][$row['02SUBETUFACTURAid']]=$row['02SUBETUFACTURAid'];
 $idactual = $row['02SUBETUFACTURAid'];
-$gran_total = $database->getTotalAmaunt2($row['RFC_PROVEEDOR']);
-$gran_totalid = $database->getTotalAmaunt2id($row['RFC_PROVEEDOR'],$idrelacion,$idactual);
+$gran_total = $database->getTotalAmaunt2($identificadorProveedor);
+$gran_totalid = $database->getTotalAmaunt2id($identificadorProveedor,$idrelacion,$idactual);
 $gran_total2 = $gran_totalid + $gran_total;
+
 $MONTO_DEPOSITADO12 += $row['MONTO_DEPOSITADO'];
+
  $colspan2 += 1;
+
 ?></td>
+
 <?php }
 
 
-$resultadoEstadoCuenta = $database->resultadoTemproal($idactual,$row['RFC_PROVEEDOR']);
+
+$resultadoEstadoCuenta = $database->resultadoTemproal($idactual,$identificadorProveedor);
  if($database->plantilla_filtro($nombreTabla,"PENDIENTE_PAGO",$altaeventos,$DEPARTAMENTO)=="si"){ ?>
 <td style="text-align:center"><?php 
 		$totales = 'si';
@@ -2227,8 +2244,8 @@ $totales2 = 'si';
      if (in_array($row['VIATICOSOPRO'], [
         'VIATICOS',
         'REEMBOLSO',
-        'PAGO A PROVEEDOR CON DOS O MAS FACTURAS',
-        'PAGOS CON UNA SOLA FACTURA'
+        'PAGO A PROVEEDOR CON DOS O MAS FACTURAS'
+        
     ])) {
         $PorfaltaDeFacturaSUBERES2 = $database->diferenciaPorConsecutivo($row['NUMERO_CONSECUTIVO_PROVEE']);
         $valorNUEVO = $PorfaltaDeFacturaSUBERES2 ;
@@ -2299,13 +2316,13 @@ $totales2 = 'si';
 <?php } ?>
 
 
-<?php if ($database->variablespermisos('', 'CONTABILIDADCOM2', 'ver') == 'si') { ?>
+<?php if ($database->variablespermisos('', 'boton_VOBO', 'ver') == 'si') { ?>
 <?php
   $idFila   = (int)$row["02SUBETUFACTURAid"];
   $estaSi   = ($row["STATUS_AUDITORIA3"] == 'si');
 
-  $perm_guardar   = ($database->variablespermisos('', 'CONTABILIDADCOM2', 'guardar')   == 'si');
-  $perm_modificar = ($database->variablespermisos('', 'CONTABILIDADCOM2', 'modificar') == 'si');
+  $perm_guardar   = ($database->variablespermisos('', 'boton_VOBO', 'guardar')   == 'si');
+  $perm_modificar = ($database->variablespermisos('', 'boton_VOBO', 'modificar') == 'si');
 
   // Estado inicial: habilitado solo si:
   // - está en "no" y tiene guardar o modificar
@@ -2446,15 +2463,7 @@ $VIATICOSOPRO = isset($row['VIATICOSOPRO'])?$row['VIATICOSOPRO']:'' ;
             </button>
         </a>
 		<?php endif; ?>
-			<?php
-$VIATICOSOPRO = isset($row['VIATICOSOPRO'])?$row['VIATICOSOPRO']:'' ;
- if ($VIATICOSOPRO == "PAGOS CON UNA SOLA FACTURA") : ?>
-        <a href="PAGOPROVEEDORF2P.php?num_evento=<?php echo urlencode($row['NUMERO_EVENTO']); ?>&ID_RELACIONADO=<?php echo urlencode($row['NUMERO_CONSECUTIVO_PROVEE']); ?>&NUMERO_CONSECUTIVO_PROVEE=<?php echo urlencode($row['NUMERO_CONSECUTIVO_PROVEE']); ?>" target="_blank" rel="noopener noreferrer">
-            <button style="text-align:center;width:160px"class="btn btn-info btn-xs" type="button">
-                UNA FACTURA <br>VARIOS PAGOS
-            </button>
-        </a>
-		<?php endif; ?>
+
     </td>
 
 	
@@ -2470,7 +2479,23 @@ $VIATICOSOPRO = isset($row['VIATICOSOPRO'])?$row['VIATICOSOPRO']:'' ;
 
 
 <input type="button" name="view2" value="BORRAR" id="<?php echo $row["02SUBETUFACTURAid"]; ?>" class="btn btn-info btn-xs view_dataSBborrar" />
-<?php } ?></td>			
+<?php } ?></td>	
+<td>
+    <input type="checkbox" 
+           class="checkbox"
+           data-id="<?php echo $row['02SUBETUFACTURAid'];?>" 
+           style="transform: scale(1.1); cursor: pointer;" 
+           onchange="
+               const fila = this.closest('tr');
+               const id = this.getAttribute('data-id');
+               if (this.checked) {
+                      fila.style.filter = 'brightness(65%) sepia(100%) saturate(200%) hue-rotate(0deg)';
+                   localStorage.setItem('checkbox_' + id, 'checked');
+               } else {
+                   fila.style.filter = 'none';
+                   localStorage.removeItem('checkbox_' + id);
+               }">
+</td>		
 		</tr>
 			<?php
 			$finales++;
