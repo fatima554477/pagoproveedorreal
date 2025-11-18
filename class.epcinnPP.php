@@ -885,6 +885,27 @@ NoIdentificacionConcepto
     }
 
 
+         	public function ACTUALIZA_SINXML (
+	    $SINXML_id , $SINXML_text ){
+	
+		$conn = $this->db();
+		$session = isset($_SESSION['idem'])?$_SESSION['idem']:'';    
+		if($session != ''){
+		
+		 $var1 = "update 02SUBETUFACTURA SET STATUS_SINXML = '".$SINXML_text."' WHERE id = '".$SINXML_id."'  ";	
+	
+		//if($pasarpagado_text=='si'){
+		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
+		return "Actualizado^".$SINXML_text;
+		//}
+			
+        }else{
+		echo "NO HAY UN PROVEEDOR SELECCIONADO";	
+		}
+    }
+
+
+
 	public function ACTUALIZA_AUDITORIA1 (
 	$AUDITORIA1_id , $AUDITORIA1_text ){
 	

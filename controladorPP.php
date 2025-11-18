@@ -79,7 +79,12 @@ echo $pagoproveedores->ACTUALIZA_AUDITORIA3 ($AUDITORIA3_id , $AUDITORIA3_text  
 }
 
 
+$SINXML_id = isset($_POST["SINXML_id"])?$_POST["SINXML_id"]:"";
+$SINXML_text = isset($_POST["SINXML_text"])?$_POST["SINXML_text"]:"";
 
+if($SINXML_id!='' and ($SINXML_text=='si' or $SINXML_text=='no') ){	
+echo $pagoproveedores->ACTUALIZA_SINXML ($SINXML_id , $SINXML_text  );
+}
 
 $AUDITORIA2_id = isset($_POST["AUDITORIA2_id"])?$_POST["AUDITORIA2_id"]:"";
 $AUDITORIA2_text = isset($_POST["AUDITORIA2_text"])?$_POST["AUDITORIA2_text"]:"";
