@@ -208,26 +208,25 @@ $_SESSION['idusuario12']= '';
 							<tr>
 
 							</tr>
-							<tr style="width:300px;background:#d2faf1">
+							<tr style="background:#d2faf1">
 				
-								<th scope="row">
-									<label  for="validationCustom03" class="form-label"> PAGO A PROVEEDOR, VIÁTICO O REEMBOLSO,
-										PAGO A PROVEEDOR CON DOS O MAS FACTURAS:</label>
+								<th scope="row" style="width:45%">
+									<label  for="validationCustom03" class="form-label"> PAGO A PROVEEDOR, VIÁTICO, REEMBOLSO,   etc.</label>
 								</th>
 								<td>
 									<select class="form-select mb-3" aria-label="Default select example" id="validationCustom02" required="" name="VIATICOSOPRO"> 
-						<option style="background:#fac3aa" value="PAGO A PROVEEDOR" <?php if($VIATICOSOPRO=='PAGOAPROVE' ){echo "selected";} ?>>PAGO A PROVEEDOR </option>
+						<option style="background:#fac3aa" value="PAGO A PROVEEDOR" <?php if($VIATICOSOPRO=='PAGOAPROVE' ){echo "selected";} ?>>SOLICITUD DE UN SOLO PAGO CON UNA SOLA FACTURA </option>
+						<option style="background:#faf7aa" value="VIATICOS" <?php if($VIATICOSOPRO=='VIATICOS' ){echo "selected";} ?>>SOLICITUD DE VIATICOS</option>
+						<option style="background:#c0c7f6" value="REEMBOLSO" <?php if($VIATICOSOPRO=='REEMBOLSO' ){echo "selected";} ?>>SOLICITUD DE REEMBOLSO</option>
+					
 						
-						<option style="background:#b3f39b" value="PAGOS CON UNA SOLA FACTURA" <?php if($VIATICOSOPRO=='PAGOS CON UNA SOLA FACTURA' ){echo "selected";} ?>>SOLICITUD DE PAGOS CON UNA SOLA FACTURA</option>
 						
-						
-						<option style="background:#f571f7" value="PAGO A PROVEEDOR CON DOS O MAS FACTURAS" <?php if($VIATICOSOPRO=='PAGO A PROVEEDOR CON DOS O MAS FACTURAS' ){echo "selected";} ?>>SOLICITUD DE PAGO A PROVEEDOR CON DOS O MÁS FACTURAS</option>
-						
+						<option style="background:#f571f7" value="PAGO A PROVEEDOR CON DOS O MAS FACTURAS" <?php if($VIATICOSOPRO=='PAGO A PROVEEDOR CON DOS O MAS FACTURAS' ){echo "selected";} ?>>SOLICITUD DE UN SOLO PAGO  CON DOS O MÁS FACTURAS</option>
+							<option style="background:#b3f39b" value="PAGOS CON UNA SOLA FACTURA" <?php if($VIATICOSOPRO=='PAGOS CON UNA SOLA FACTURA' ){echo "selected";} ?>>SOLICITUD DE VARIOS PAGOS CON UNA SOLA FACTURA</option>
                        
 						
 						
-						<option style="background:#faf7aa" value="VIATICOS" <?php if($VIATICOSOPRO=='VIATICOS' ){echo "selected";} ?>>SOLICITUD DE VIATICOS</option>
-						<option style="background:#c0c7f6" value="REEMBOLSO" <?php if($VIATICOSOPRO=='REEMBOLSO' ){echo "selected";} ?>>SOLICITUD DE REEMBOLSO</option>
+						
 										
 										
 									</select>
@@ -362,7 +361,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 				<tr style="background:#fcf3cf">
 		
 					<th scope="row">
-						<label style="width:300px" for="validationCustom03" class="form-label">NÚMERO CONSECUTIVO DE PAGO A PROVEEDORES</label>
+						<label style="width:300px" for="validationCustom03" class="form-label">NÚMERO DE SOLICITUD</label>
 					</th>
 					<td>
 						<div id="NUMERO_CONSECUTIVO_PROVEE2">

@@ -31,12 +31,12 @@
     </style>
 
 <div id="content">
-	<hr/> <strong>	  <p class="mb-0 text-uppercase" ><img src="includes/contraer31.png" id="mostrar5" onclick="load(1);"style="cursor:pointer;"/>
-<img src="includes/contraer41.png" id="ocultar5" style="cursor:pointer;"/>&nbsp;&nbsp;&nbsp; FILTRO PAGO A PROVEEDORES-A  <a style="color:red;font:7px">ORDEN DESCENDENTE </a></p></strong></div>
+	<hr/> <strong>	  <p class="mb-0 text-uppercase" ><img src="includes/contraer31.png" id="mostrar500" onclick="load(1);"style="cursor:pointer;"/>
+<img src="includes/contraer41.png" id="ocultar500" style="cursor:pointer;"/>&nbsp;&nbsp;&nbsp; FILTRO PAGO A PROVEEDORES-A  <a style="color:red;font:7px">ORDEN DESCENDENTE </a></p></strong></div>
 <div id="mensajefiltro"></div>
 <div id="pasarpagado2"></div>
 </div>
-<div id="target5" style="display:block;" class="content2">
+<div id="target500" style="display:block;" class="content2">
 	<div class="card">
 		<div class="card-body">
 			<!--aqui inicia filtro-->
