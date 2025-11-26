@@ -236,7 +236,7 @@ $_SESSION['idusuario12']= '';
 				                               <tr style="background: #d2faf1" id="row-adjuntar-factura-xml">
 
 					<th scope="row">
-						<label style="width:300px" for="formFileSm" class="form-label">ADJUNTAR FACTURA(FORMATO XML)</label>
+						<label style="width:300px" for="formFileSm" class="form-label">ADJUNTAR FACTURA FORMATO &nbsp;<a style="color:red;font:12px">(XML)</a></label>
 					</th>
 					<td>
 						<div id="drop_file_zone" ondrop="upload_file(event,'ADJUNTAR_FACTURA_XML')" ondragover="return false">
@@ -333,7 +333,7 @@ $NUMERO_CONSECUTIVO_PROVEE = $valor_base + 1;
 			                            <tr style="background: #d2faf1" id="row-adjuntar-factura-pdf">
 	
 					<th scope="row">
-						<label style="width:300px" for="validationCustom03" class="form-label">ADJUNTAR FACTURA (FORMATO PDF)</label>
+						<label style="width:300px" for="validationCustom03" class="form-label">ADJUNTAR FACTURA FORMATO (PDF)</label>
 					</th>
 					<td>
 						<div id="drop_file_zone" ondrop="upload_file(event,'ADJUNTAR_FACTURA_PDF')" ondragover="return false">
@@ -1639,10 +1639,10 @@ echo $encabezadoA.$option2.'</select>';
 				</tr>
 				<tr>
 					<th scope="row">
-						<label style="width:300px" for="validationCustom03" class="form-label">MONEDA EXTRANGERA:</label>
+						<label style="width:300px" for="validationCustom03" class="form-label">MONEDA EXTRANJERA:</label>
 					</th>
 					<td>
-						<input type="text" class="form-control" id="validationCustom03" required="" value="<?php echo $MONEDA_EXTRANGERA_FACTURA; ?>" name="MONEDA_EXTRNGERA_FACTURA" placeholder="MONEDA EXTRANGERA" readonly="readonly">
+						<input type="text" class="form-control" id="validationCustom03" required="" value="<?php echo $MONEDA_EXTRANGERA_FACTURA; ?>" name="MONEDA_EXTRNGERA_FACTURA" placeholder="MONEDA EXTRANJERA" readonly="readonly">
 					</td>
 				</tr>
 				<tr>
