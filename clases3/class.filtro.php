@@ -10,9 +10,9 @@
  
 */
 
-define("__ROOT1__", dirname(dirname(__FILE__)));
-include_once (__ROOT1__."/../includes/error_reporting.php");
-include_once (__ROOT1__."/../pagoproveedores/class.epcinnPP.php");
+define("__ROOT1__", dirname(__DIR__));
+include_once (__ROOT1__."/includes/error_reporting.php");
+include_once (__ROOT1__."/class.epcinnPP.php");
 
 class orders extends accesoclase {
 	public $mysqli;
