@@ -23,7 +23,6 @@ if($identioficador != '')
 $queryVISTAPREV = $pagoproveedores->Listado_pagoproveedor2($identioficador);
 
 ?>
-<div id="respuestaser">
 <?php
    while($row = mysqli_fetch_array($queryVISTAPREV))
     {
@@ -163,12 +162,11 @@ $STATUS_DE_PAGO = '<select required="" name="STATUS_DE_PAGO">
 
 
 ?>
-</div>
 
 <?php
 
 
- $output .= '<div id="respuestaser"></div><form  id="ListadoPAGOPROVEEform"> 
+ $output .= '<form  id="ListadoPAGOPROVEEform"> 
       <div class="table-responsive">  
            <table class="table table-bordered" style="background: #ebf9e9;">';
 		   
@@ -346,8 +344,6 @@ $campos_xml = '
 <td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="TuaTotalCargos" value="'.$row2xml["TuaTotalCargos"].'"></td>
 </tr>
 
-<div id="respuestaser">
-
 <!--aqui termina la lectura BD a XML-->
 <!--aqui termina la lectura BD a XML-->
 <!--aqui termina la lectura BD a XML-->
@@ -441,7 +437,7 @@ $campos_xml = '
 
 
 <td width="30%" style="font-weight:bold;" ><label>NOMBRE COMERCIAL</label></td>
-<td width="70%"><input type="text" name="NOMBRE_COMERCIAL" value="'.$row["NOMBRE_COMERCIAL"].'"></td>
+<td width="70%"><input type="text" name="NOMBRE_COMERCIAL" value="'.$row["NOMBRE_COMERCIAL"].'"><br><a style="color:red;font-size:10px">OBLIGATORIO</a></td>
 </tr> 
 <tr>
 
@@ -456,7 +452,7 @@ $campos_xml = '
 <tr>
 
 <td width="30%" style="font-weight:bold;" ><label>NÚMERO  DE EVENTO </label></td>
-<td width="70%"><input type="text" name="NUMERO_EVENTO" value="'.$row["NUMERO_EVENTO"].'"></td>
+<td width="70%"><input type="text" name="NUMERO_EVENTO" value="'.$row["NUMERO_EVENTO"].'"><br><a style="color:red;font-size:10px">OBLIGATORIO</a></td>
 </tr> 
 <tr>
 
@@ -520,7 +516,7 @@ $campos_xml = '
 
 <tr >
 <td width="30%" style="font-weight:bold;" ><label>TOTAL</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="MONTO_DEPOSITAR" id="montoTotalEventoResultado" value="'.$row["MONTO_DEPOSITAR"].'"></td>
+<td width="70%"><input type="text" style="background:#decaf1" name="MONTO_DEPOSITAR" id="montoTotalEventoResultado" value="'.$row["MONTO_DEPOSITAR"].'"></td>
 </tr>
 
 
@@ -866,15 +862,14 @@ $campos_xml = '
 <td width="70%"><input type="text" readonly=»readonly» style="background:#decaf1" name="FECHA_DE_LLENADO" value="'.$row["FECHA_DE_LLENADO"].'"></td>
 </tr>
 </table>
-<div id="respuestaser" >
 <tr>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <td width="30%"> <label><strong style="font-size:22px;"></strong></label></td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <td width="70%">
+    <td width="30%"><label><strong style="font-size:22px;"></strong></label></td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <td width="70%" class="align-middle">
         <!-- Botón GUARDAR -->
         <button class="btn btn-sm btn-outline-success px-5" type="button" id="clickPAGOP">GUARDAR</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
         <!-- Mensaje/respuesta al lado -->
-        <div id="respuestaser2" class="d-inline-block ms-3" style="
+      
+        <div id="respuestaser" class="d-inline-block ms-3" style="
     color: #f5f5f5;
     text-shadow: 1px 1px 1px #919191,
         1px 2px 1px #919191,
@@ -890,7 +885,7 @@ $campos_xml = '
     1px 22px 10px rgba(16,16,16,0.2),
     1px 25px 35px rgba(16,16,16,0.2),
     1px 30px 60px rgba(16,16,16,0.4);
-	@keyframes fadeIn {
+        @keyframes fadeIn {
   0% { opacity: 0; }
   100% { opacity: 100; }
 }"></div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -902,7 +897,6 @@ $campos_xml = '
         <input type="hidden" value="'.$identioficador.'" name="IPpagoprovee" id="IPpagoprovee"/>
     </td>
 </tr>
-
 
 
      ';
@@ -1026,10 +1020,10 @@ $("#clickPAGOP").click(function(){
 			$("#respuestaser").html("<span id='ACTUALIZADO' >"+data+"</span>");
 			 $('#respuestaser2').html("<span id='ACTUALIZADO' >"+data+"</span>");
                      setTimeout(function() {
-                    $("#respuestaser2").fadeOut(300, function() {
+                    $("#respuestaser").fadeOut(300, function() {
                         $(this).html('').show();
                     });
-                    $("#respuestaser3").fadeOut(300, function() {
+                    $("#respuestaser2").fadeOut(300, function() {
                         $(this).html('').show();
                     });
                 }, 2000);
