@@ -21,11 +21,21 @@ define("__ROOT1__", dirname(dirname(__FILE__)));
 		$this->mysqli = $this->db();
     }
 	
-	public function countAll($sql){
-		$query=$this->mysqli->query($sql);
-		$count=$query->num_rows;
-		return $count;
-	}
+       public function countAll($sql){
+                // El conteo de resultados completos sin paginar se estaba haciendo con la
+                // misma consulta de selección, lo que devolvía todos los registros y hacía
+                // muy lenta la opción "TODOS". Usamos una consulta COUNT(*) contra un
+                // subquery sin ORDER BY para minimizar el trabajo del servidor.
+                $sqlSinOrden = preg_replace('/ORDER BY[\s\S]*$/i', '', $sql);
+                $countQuery = "SELECT COUNT(*) AS total FROM (".$sqlSinOrden.") AS count_table";
+
+                if($resultado = $this->mysqli->query($countQuery)){
+                        $fila = $resultado->fetch_assoc();
+                        return isset($fila['total']) ? (int)$fila['total'] : 0;
+                }
+
+                return 0;
+        }
 	//STATUS_EVENTO,NOMBRE_CORTO_EVENTO,NOMBRE_EVENTO
 	public function getData($tables,$campos,$search){
 		$offset=$search['offset'];

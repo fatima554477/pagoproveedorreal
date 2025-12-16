@@ -22,21 +22,31 @@ class orders extends accesoclase {
 		$this->mysqli = $this->db();
     }
 
-	public function datos_bancarios_xml($rfc){
-		$conn = $this->db();
-		$variable = "select *,02usuarios.id as iddd from 02usuarios left join 02direccionproveedor1 ON 02usuarios.id = 02direccionproveedor1.idRelacion where P_RFC_MTDP = '".$rfc."' ";
-		$query = mysqli_query($conn,$variable);
-		$row = mysqli_fetch_array($query, MYSQLI_ASSOC);
-		return $row['iddd'];
-	}
+       public function datos_bancarios_xml($rfc){
+                $conn = $this->db();
+                $value = mysqli_real_escape_string($conn, $rfc);
+                $variable = "SELECT 02DATOSBANCARIOS1.idRelacion AS idRelacion FROM 02usuarios "
+                        ."LEFT JOIN 02direccionproveedor1 ON 02usuarios.id = 02direccionproveedor1.idRelacion "
+                        ."LEFT JOIN 02DATOSBANCARIOS1 ON 02DATOSBANCARIOS1.idRelacion = 02usuarios.id "
+                        ."WHERE P_RFC_MTDP = '".$value."' OR 02direccionproveedor1.P_NOMBRE_COMERCIAL_EMPRESA = '".$value."' "
+                        ."ORDER BY 02DATOSBANCARIOS1.checkbox = 'si' DESC, 02DATOSBANCARIOS1.id DESC LIMIT 1";
+                $query = mysqli_query($conn,$variable);
+                $row = mysqli_fetch_array($query, MYSQLI_ASSOC);
+                return $row ? $row['idRelacion'] : null;
+        }
 
-	public function datos_bancarios_todo($idRelacion){
-		$conn = $this->db();
-		$variable2 = "select * from 02DATOSBANCARIOS1 where idRelacion = '".$idRelacion."' and checkbox = 'si'  ";
-		$query2 = mysqli_query($conn,$variable2);
-		$row2 = mysqli_fetch_array($query2, MYSQLI_ASSOC);
-		return $row2;
-	}
+        public function datos_bancarios_todo($idRelacion){
+                $conn = $this->db();
+                $value = mysqli_real_escape_string($conn, $idRelacion);
+                $variable2 = "SELECT 02DATOSBANCARIOS1.* FROM 02DATOSBANCARIOS1 "
+                        ."LEFT JOIN 02usuarios ON 02usuarios.id = 02DATOSBANCARIOS1.idRelacion "
+                        ."LEFT JOIN 02direccionproveedor1 ON 02usuarios.id = 02direccionproveedor1.idRelacion "
+                        ."WHERE (02DATOSBANCARIOS1.idRelacion = '".$value."' OR 02direccionproveedor1.P_NOMBRE_COMERCIAL_EMPRESA = '".$value."') "
+                        ."AND 02DATOSBANCARIOS1.checkbox = 'si' ORDER BY 02DATOSBANCARIOS1.id DESC LIMIT 1";
+                $query2 = mysqli_query($conn,$variable2);
+                $row2 = mysqli_fetch_array($query2, MYSQLI_ASSOC);
+                return $row2 ? $row2 : [];
+        }
 
 	public function DOCUMENTOSFISCALES_PAGOA($idRelacion, $documento , $documento2=FALSE){
 		$conn = $this->db();
@@ -331,15 +341,21 @@ class orders extends accesoclase {
 
 		$sWhere3 .= " order by ".$sWhere3campo;
 
-		$sql="SELECT $campos , 02SUBETUFACTURA.id as 02SUBETUFACTURAid, RFC_PROVEEDOR as RFC_PROVEEDOR1trim FROM $tables LEFT JOIN $tables2 $sWhere $sWhere3 LIMIT $offset,$per_page";
-		$query=$this->mysqli->query($sql);
-		$sql1="SELECT $campos , 02SUBETUFACTURA.id as 02SUBETUFACTURAid, RFC_PROVEEDOR as RFC_PROVEEDOR1trim FROM  $tables LEFT JOIN $tables2 $sWhere $sWhere3 ";
-		$nums_row=$this->countAll($sql1); 
-		//Set counter
-		$this->setCounter($nums_row);
-		return $query;
+              $sql="SELECT SQL_CALC_FOUND_ROWS $campos , 02SUBETUFACTURA.id as 02SUBETUFACTURAid, RFC_PROVEEDOR as RFC_PROVEEDOR1trim FROM $tables LEFT JOIN $tables2 $sWhere $sWhere3 LIMIT $offset,$per_page";
+                $query=$this->mysqli->query($sql);
+
+                // Use FOUND_ROWS() to avoid ejecutar una consulta completa solo para contar resultados
+                $totalResult = $this->mysqli->query("SELECT FOUND_ROWS() AS total");
+                $totalRow = $totalResult ? $totalResult->fetch_assoc() : ['total' => 0];
+                $nums_row = isset($totalRow['total']) ? (int)$totalRow['total'] : 0;
+
+                //Set counter
+                $this->setCounter($nums_row);
+                return $query;
 		
+
 	}
+
 
 
 public function obtener_rfc_a_id($valor) {
@@ -348,31 +364,23 @@ public function obtener_rfc_a_id($valor) {
     // Escapar el valor por seguridad
     $valor = mysqli_real_escape_string($conn, trim($valor));
 
-    // 1. Buscar por RFC exacto
-    $query = 'SELECT idRelacion FROM 02direccionproveedor1 WHERE P_RFC_MTDP = "'.$valor.'" LIMIT 1';
-    $respuesta = mysqli_query($conn, $query);
-    $fetch_array = mysqli_fetch_array($respuesta, MYSQLI_ASSOC);
+    $condiciones = [
+        'dp.P_RFC_MTDP = "'.$valor.'"',
+        'dp.P_NOMBRE_FISCAL_RS_EMPRESA LIKE "%'.$valor.'%"',
+        'dp.P_NOMBRE_COMERCIAL_EMPRESA LIKE "%'.$valor.'%"',
+    ];
 
-    if (!empty($fetch_array['idRelacion'])) {
-        return $fetch_array['idRelacion'];
-    }
+    foreach ($condiciones as $condicion) {
+        $query = 'SELECT dp.idRelacion AS idRelacion FROM 02direccionproveedor1 dp '
+            .'INNER JOIN 02usuarios u ON u.id = dp.idRelacion '
+            .'WHERE '.$condicion.' ORDER BY dp.idRelacion DESC';
 
-    // 2. Buscar por razón social (LIKE)
-    $query2 = 'SELECT idRelacion FROM 02direccionproveedor1 WHERE P_NOMBRE_FISCAL_RS_EMPRESA LIKE "%'.$valor.'%" LIMIT 1';
-    $respuesta2 = mysqli_query($conn, $query2);
-    $fetch_array2 = mysqli_fetch_array($respuesta2, MYSQLI_ASSOC);
+        $respuesta = mysqli_query($conn, $query);
+        $fetch_array = mysqli_fetch_array($respuesta, MYSQLI_ASSOC);
 
-    if (!empty($fetch_array2['idRelacion'])) {
-        return $fetch_array2['idRelacion'];
-    }
-
-    // 3. Buscar por nombre comercial (LIKE)
-    $query3 = 'SELECT idRelacion FROM 02direccionproveedor1 WHERE P_NOMBRE_COMERCIAL_EMPRESA LIKE "%'.$valor.'%" LIMIT 1';
-    $respuesta3 = mysqli_query($conn, $query3);
-    $fetch_array3 = mysqli_fetch_array($respuesta3, MYSQLI_ASSOC);
-
-    if (!empty($fetch_array3['idRelacion'])) {
-        return $fetch_array3['idRelacion'];
+        if (!empty($fetch_array['idRelacion'])) { 
+            return $fetch_array['idRelacion'];
+        }
     }
 
     // Si no encontró nada, regresar NULL o falso
