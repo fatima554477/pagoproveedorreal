@@ -437,18 +437,99 @@ $campos_xml = '
 
 
 <td width="30%" style="font-weight:bold;" ><label>NOMBRE COMERCIAL</label></td>
-<td width="70%"><input type="text" name="NOMBRE_COMERCIAL" value="'.$row["NOMBRE_COMERCIAL"].'"><br><a style="color:red;font-size:10px">OBLIGATORIO</a></td>
+<td width="70%">
+    <select class="form-select mb-3" id="NOMBRE_COMERCIAL" name="NOMBRE_COMERCIAL" onchange="buscanombrecomercial(1);">
+        <option value="">SELECCIONA UNA OPCIÓN</option>
+        <option value="'.$row["NOMBRE_COMERCIAL"].'" selected>'.$row["NOMBRE_COMERCIAL"].'</option>
+    </select>
+    <script type="text/javascript">
+        function initSelectComercial() {
+            if (!window.jQuery || !$.fn.select2) {
+                return;
+            }
+            var $select = $("#NOMBRE_COMERCIAL");
+            if (!$select.length) {
+                return;
+            }
+            // Reinicia si ya estaba inicializado
+            if ($select.hasClass("select2-hidden-accessible")) {
+                $select.select2("destroy");
+            }
+            var $modalParent = $("#dataModal");
+            if (!$modalParent.length) {
+                $modalParent = $select.closest(".modal");
+            }
+            $select.select2({
+                placeholder: "ESCRIBE Y SELECCIONA UNA OPCIÓN",
+                allowClear: true,
+                width: "100%",
+                dropdownParent: $modalParent.length ? $modalParent : $(document.body),
+                ajax: {
+                    url: "pagoproveedores/controladorNOMBRE_COMERCIAL.php",
+                    dataType: "json",
+                    delay: 250,
+                    type: "post",
+                    data: function (params) {
+                        return {
+                            BUSCA_NOMBRE_COMERCIAL: params.term
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data
+                        };
+                    },
+                    cache: true
+                }
+            });
+        }
+        // Inicializa al insertar el HTML
+        initSelectComercial();
+        // Re-inicializa si la ventana modal se muestra después de la carga AJAX
+        $(document).on("shown.bs.modal", "#dataModal", function () {
+            initSelectComercial();
+        });
+
+        function buscanombrecomercial(page) {
+            var NOMBRE_COMERCIAL = $("#NOMBRE_COMERCIAL").val();
+            var parametros = {
+                action: "NOMBRE_COMERCIAL",
+                NOMBRE_COMERCIAL: NOMBRE_COMERCIAL
+            };
+            $("#loader").fadeIn("slow");
+            $.ajax({
+                url: "pagoproveedores/controladorNOMBRE_COMERCIAL.php",
+                type: "POST",
+                data: parametros,
+                beforeSend: function () {
+                    $("#loader").html("Cargando...");
+                },
+                success: function (data) {
+                    var result = data.split("^^^");
+                    document.getElementsByName("RAZON_SOCIAL")[0].value = result[0];
+                    document.getElementsByName("RFC_PROVEEDOR")[0].value = result[1];
+                    $("#NOMBRE_COMERCIAL2").html("");
+                }
+            });
+        }
+    </script>
+    <br><span id="NOMBRE_COMERCIAL2"></span>
+    <br><a style="color:red;font-size:10px">OBLIGATORIO</a>
+</td>
 </tr> 
 <tr>
 
 <td width="30%" style="font-weight:bold;" ><label>RAZÓN SOCIAL</label></td>
-<td width="70%"><input type="text" name="RAZON_SOCIAL" value="'.$row["RAZON_SOCIAL"].'"></td>
+<td width="70%"><input type="text" name="RAZON_SOCIAL" id="RAZON_SOCIAL" value="'.$row["RAZON_SOCIAL"].'"></td>
 </tr> 
 <tr>
  
 <td width="30%" style="font-weight:bold;" ><label>RFC DEL PROVEEDOR</label></td>
-<td width="70%"><input type="text" name="RFC_PROVEEDOR" value="'.$row["RFC_PROVEEDOR"].'"></td>
+<td width="70%"><input type="text" name="RFC_PROVEEDOR" id="RFC_PROVEEDOR" value="'.$row["RFC_PROVEEDOR"].'"></td>
 </tr> 
+
+
+ 
 <tr>
 
 <td width="30%" style="font-weight:bold;" ><label>NÚMERO  DE EVENTO </label></td>
