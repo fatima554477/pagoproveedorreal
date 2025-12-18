@@ -71,6 +71,7 @@ if($CHECKBOX_id != '' && ($CHECKBOX_text == 'si' || $CHECKBOX_text == 'no')) {
 }
 
 
+
 $AUDITORIA3_id = isset($_POST["AUDITORIA3_id"])?$_POST["AUDITORIA3_id"]:"";
 $AUDITORIA3_text = isset($_POST["AUDITORIA3_text"])?$_POST["AUDITORIA3_text"]:"";
 
@@ -85,6 +86,9 @@ $SINXML_text = isset($_POST["SINXML_text"])?$_POST["SINXML_text"]:"";
 if($SINXML_id!='' and ($SINXML_text=='si' or $SINXML_text=='no') ){	
 echo $pagoproveedores->ACTUALIZA_SINXML ($SINXML_id , $SINXML_text  );
 }
+
+
+
 
 $AUDITORIA2_id = isset($_POST["AUDITORIA2_id"])?$_POST["AUDITORIA2_id"]:"";
 $AUDITORIA2_text = isset($_POST["AUDITORIA2_text"])?$_POST["AUDITORIA2_text"]:"";
@@ -252,7 +256,7 @@ if( $NUMERO_EVENTO == "" OR $NOMBRE_COMERCIAL == ""){
 	
 	
               // include_once (__ROOT1__."/includes/crea_funciones.php");PFORMADE_PAGO
-echo $pagoproveedores->PAGOPRO ($NUMERO_CONSECUTIVO_PROVEE , $ID_RELACIONADO,$NOMBRE_COMERCIAL , $RAZON_SOCIAL ,$VIATICOSOPRO, $RFC_PROVEEDOR , $NUMERO_EVENTO ,$NOMBRE_EVENTO, $MOTIVO_GASTO , $CONCEPTO_PROVEE , $MONTO_TOTAL_COTIZACION_ADEUDO , $MONTO_DEPOSITAR , $MONTO_PROPINA ,$PENDIENTE_PAGO, $FECHA_AUTORIZACION_RESPONSABLE , $FECHA_AUTORIZACION_AUDITORIA , $FECHA_DE_LLENADO , $MONTO_FACTURA , $TIPO_DE_MONEDA , $PFORMADE_PAGO,$FECHA_DE_PAGO , $FECHA_A_DEPOSITAR , $STATUS_DE_PAGO ,$ACTIVO_FIJO, $GASTO_FIJO,$PAGAR_CADA,$FECHA_PPAGO,$FECHA_TPROGRAPAGO,$NUMERO_EVENTOFIJO,$CLASI_GENERAL,$SUB_GENERAL,$BANCO_ORIGEN , $MONTO_DEPOSITADO , $CLASIFICACION_GENERAL , $CLASIFICACION_ESPECIFICA , $PLACAS_VEHICULO , $MONTO_DE_COMISION , $POLIZA_NUMERO , $NOMBRE_DEL_EJECUTIVO ,$NOMBRE_DEL_AYUDO,$ID_AYUDO, $OBSERVACIONES_1 , $TIPO_CAMBIOP,  $TOTAL_ENPESOS,$IMPUESTO_HOSPEDAJE,$TImpuestosRetenidosIVA,$TImpuestosRetenidosISR,$descuentos,$IVA, $ENVIARPAGOprovee,$hiddenpagoproveedores,$IPpagoprovee,
+echo $pagoproveedores->PAGOPRO ($NUMERO_CONSECUTIVO_PROVEE , $ID_RELACIONADO,$NOMBRE_COMERCIAL , $RAZON_SOCIAL ,$VIATICOSOPRO, $RFC_PROVEEDOR , $NUMERO_EVENTO ,$NOMBRE_EVENTO, $MOTIVO_GASTO , $CONCEPTO_PROVEE , $MONTO_TOTAL_COTIZACION_ADEUDO , $MONTO_DEPOSITAR , $MONTO_PROPINA ,$PENDIENTE_PAGO, $FECHA_AUTORIZACION_RESPONSABLE , $FECHA_AUTORIZACION_AUDITORIA , $FECHA_DE_LLENADO , $MONTO_FACTURA , $TIPO_DE_MONEDA , $PFORMADE_PAGO,$FECHA_DE_PAGO , $FECHA_A_DEPOSITAR , $STATUS_DE_PAGO ,$ACTIVO_FIJO, $GASTO_FIJO,$PAGAR_CADA,$FECHA_PPAGO,$FECHA_TPROGRAPAGO,$NUMERO_EVENTOFIJO,$CLASI_GENERAL,$SUB_GENERAL,$BANCO_ORIGEN , $MONTO_DEPOSITADO , $CLASIFICACION_GENERAL , $CLASIFICACION_ESPECIFICA , $PLACAS_VEHICULO , $MONTO_DE_COMISION , $POLIZA_NUMERO , $NOMBRE_DEL_EJECUTIVO ,$NOMBRE_DEL_AYUDO, $OBSERVACIONES_1 , $TIPO_CAMBIOP,  $TOTAL_ENPESOS,$IMPUESTO_HOSPEDAJE,$TImpuestosRetenidosIVA,$TImpuestosRetenidosISR,$descuentos,$IVA, $ENVIARPAGOprovee,$hiddenpagoproveedores,$IPpagoprovee,
 	$FechaTimbrado, $tipoDeComprobante, 
 		$metodoDePago, $formaDePago, $condicionesDePago, $subTotal, 
 		$TipoCambio, $Moneda, $total, $serie, 
@@ -370,15 +374,18 @@ if( $_FILES["ADJUNTAR_FACTURA_XML"] == true){
 	$regreso = $conexion2->lectorxml($url);
 	$rfcE = $regreso['rfcE'];					
 	$nombreE = $regreso['nombreE'];	
-	$conn = $conexion->db();//verificar_usuario
-		if( $pagoproveedores->verificar_rfc($conn,$rfcE) ==''){
-			$idwebc = $pagoproveedores->ingresar_usuario($conn,TRIM($nombreE));
-			$pagoproveedores->ingresar_rfc($conn,TRIM($rfcE),$idwebc);
-		}elseif($pagoproveedores->verificar_rfc($conn,$rfcE) !=''){
-			$idwebc = $pagoproveedores->verificar_rfc($conn,$rfcE);
-		}else{
-			$idwebc = $pagoproveedores->verificar_usuario($conn,$nombreE);
-		}
+        $conn = $conexion->db();//verificar_usuario
+                $idwebc = '';
+
+                if ($pagoproveedores->verificar_rfc($conn, $rfcE) != '') {
+                        $idwebc = $pagoproveedores->verificar_rfc($conn, $rfcE);
+                } elseif ($pagoproveedores->verificar_usuario($conn, $nombreE) != '') {
+                        $idwebc = $pagoproveedores->verificar_usuario($conn, $nombreE);
+                } elseif (isset($_SESSION["idPROV"]) && $_SESSION["idPROV"] != '') {
+                        $idwebc = $_SESSION["idPROV"];
+                } else {
+                        $idwebc = 1;
+                }
 		//echo $explotado[1];
 //}
 $_SESSION["idPROV"] = $idwebc;

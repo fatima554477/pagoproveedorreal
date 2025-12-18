@@ -33,13 +33,14 @@ elseif($row['STATUS_DE_PAGO']=="APROBADO"){$APROBADO = "selected";}
 elseif($row['STATUS_DE_PAGO']=="PAGADO"){$PAGADO = "selected";}
 elseif($row['STATUS_DE_PAGO']=="RECHAZADO"){$RECHAZADO = "selected";}
 
-$STATUS_DE_PAGO = '<select required="" name="STATUS_DE_PAGO" disabled > 
+$STATUS_DE_PAGO = '<select required="" name="STATUS_DE_PAGO" disabled >
 <option selected="">SELECCIONA UNA OPCION</option>
 <option style="background:#d9f9fa" value="SOLICITADO" '.$SOLICITADO.'>SOLICITADO</option>
 <option style="background:#e1f5de" value="APROBADO" '.$APROBADO.'>APROBADO</option>
 <option style="background:#f5deee" value="PAGADO" '.$PAGADO.'>PAGADO</option>
 <option style="background:#f5f4de" value="RECHAZADO" '.$RECHAZADO.'>RECHAZADO</option>
 </select>';
+$STATUS_DE_PAGO .= '<input type="hidden" name="STATUS_DE_PAGO" value="'.$row['STATUS_DE_PAGO'].'">';
 		
 
 	$queryVISTAPREV = $pagoproveedores->Listado_subefacturaDOCTOS($row['id']);		
@@ -544,6 +545,7 @@ $campos_xml = '
             <option style="background:#fcfbde" value="29" '.($row["PFORMADE_PAGO"] == "29" ? "selected" : "").'>29 TARJETA DE SERVICIO</option>
             <option style="background:#f9e5fa" value="99" '.($row["PFORMADE_PAGO"] == "99" ? "selected" : "").'>99 OTRO</option>
         </select>
+        <input type="hidden" name="PFORMADE_PAGO" value="'.$row["PFORMADE_PAGO"].'">
     </td>
 </tr>
 

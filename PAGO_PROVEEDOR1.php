@@ -158,9 +158,20 @@ $_SESSION['idusuario12']= '';
                                        : 'RFC DEL PROVEEDOR:';
                        }
                }
+             function setCurrentFillingDate() {
+                       const fechaInput = document.querySelector('input[name="FECHA_DE_LLENADO"]');
+                       if(!fechaInput) {
+                               return;
+                       }
+                       const now = new Date();
+                       const pad = (value) => value.toString().padStart(2, '0');
+                       const formatted = `${pad(now.getDate())}-${pad(now.getMonth() + 1)}-${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+                       fechaInput.value = formatted;
+               }
                document.addEventListener('DOMContentLoaded', () => {
                        toggleFacturaFields();
                        updateReembolsoLabels();
+                       setCurrentFillingDate();
                        const select = document.querySelector('select[name="VIATICOSOPRO"]');
                        if(select) {
                                select.addEventListener('change', () => {
@@ -169,6 +180,7 @@ $_SESSION['idusuario12']= '';
                                });
                        }
                });
+			   
                 $(document).on('change', 'input[type="checkbox"]', function(e) {
                         if(this.id == "MONTO_DEPOSITAR1") {
                                 if(this.checked) $('#FECHA_AUTORIZACION_RESPONSABLE').val(this.value);
@@ -543,7 +555,7 @@ if($rfcE==true){
 				<tr style="background: #d2faf1">
 		
 					<th scope="row">
-						<label style="width:300px" for="validationCustom03" class="form-label">MOTIVO DEL GASTO:</label>
+						<label style="width:300px" for="validationCustom03" class="form-label">MOTIVO DEL GASTO:<br><a style="color:red;font-size:11px">OBLIGATORIO</a></label>
 					</th>
 					<td>
 						<input type="text" class="form-control" id="validationCustom03" required="" value="<?php echo $MOTIVO_GASTO; ?>" name="MOTIVO_GASTO" placeholder="MOTIVO DEL GASTO ">
@@ -657,14 +669,14 @@ if($rfcE==true){
 				
 <tr style="background:#fcf3cf">
   <th scope="row" style="width:50%;">
-    <label for="MONTO_DEPOSITAR" class="form-label">TOTAL:</label>
+    <label for="MONTO_DEPOSITAR" class="form-label">TOTAL A PAGAR:</label>
   </th>
   <td style="width:50%;">
     <div id="2MONTO_DEPOSITAR" class="input-group mb-3">
       <span class="input-group-text">$</span>
       <input type="text" style="width:300px;height:40px;" id="MONTO_DEPOSITAR"
              required value="<?php echo $total; ?>"
-             name="MONTO_DEPOSITAR" placeholder="TOTAL">
+             name="MONTO_DEPOSITAR" placeholder="TOTAL"  readonly="readonly">
     </div>
   </td>
 </tr>
@@ -812,7 +824,7 @@ if($rfcE==true){
 				<tr style="background: #d2faf1">
 			
 					<th scope="row">
-						<label style="width:300px" for="validationCustom03" class="form-label">ADJUNTAR COTIZACIÓN O REPORTE: (CUAQUIER FORMATO)</label>
+						<label style="width:300px" for="validationCustom03" class="form-label">ADJUNTAR COTIZACIÓN O REPORTE: (CUALQUIER FORMATO)</label>
 					</th>
 					<td>
 						<div id="drop_file_zone" ondrop="upload_file(event,'ADJUNTAR_COTIZACION')" ondragover="return false">
@@ -1373,9 +1385,12 @@ echo $encabezadoA.$option2.'</select>';
 
 				 ?></div>
 				</td>
+				
 			
-					<input type="hidden" style="width:200px;" class="form-control" id="validationCustom03" value="<?php echo date('d-m-Y'); ?>" name="FECHA_DE_LLENADO">
+ <input type="hidden" style="width:200px;" class="form-control" id="validationCustom03" value="<?php echo date('d-m-Y H:i:s'); ?>" name="FECHA_DE_LLENADO">
 			</tr>
+			
+			
 			<input type="hidden" name="hiddenpagoproveedores" value="hiddenpagoproveedores"> </table>
 			<BR/>
 			<BR/>

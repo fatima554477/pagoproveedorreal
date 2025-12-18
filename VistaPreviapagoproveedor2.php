@@ -359,11 +359,23 @@ $campos_xml = '
 '; 
 
 	}else{
-	$campos_xml = '';
-	}
+        $campos_xml = '';
+        }
 
- 
+
+    $disableFactura = in_array($row["VIATICOSOPRO"], array(
+        "PAGO A PROVEEDOR CON DOS O MAS FACTURAS",
+        "VIATICOS",
+        "REEMBOLSO"
+    ));
+    $facturaInputAttributes = $disableFactura ? ' disabled="disabled"' : '';
+    $facturaDropZoneAttributes = $disableFactura
+        ? ' style="width:300px;pointer-events:none;opacity:0.6;"'
+        : ' style="width:300px;"';
+
+
      $output .= '
+
 
 
 
@@ -372,10 +384,10 @@ $campos_xml = '
  <tr>
  
 <td width="30%" style="font-weight:bold;" ><label>ADJUNTAR FACTURA (FORMATO XML)</label></td>
-<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_FACTURA_XML\')" ondragover="return false" style="width:300px;">
+<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_FACTURA_XML\')" ondragover="return false"'.$facturaDropZoneAttributes.'>
 <p>Suelta aquí o busca tu archivo</p>
-<p><input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_XML" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_FACTURA_XML\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_FACTURA_XML"] .' " required /></p>
-<input type="file" name="ADJUNTAR_FACTURA_XML" id="nono"/>
+<p><input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_XML" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_FACTURA_XML\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_FACTURA_XML"] .' " required'.$facturaInputAttributes.' /></p>
+<input type="file" name="ADJUNTAR_FACTURA_XML" id="nono"'.$facturaInputAttributes.'/>
 <div id="3ADJUNTAR_FACTURA_XML">
 '.$ADJUNTAR_FACTURA_XML.'
 </tr> 
@@ -383,13 +395,13 @@ $campos_xml = '
  
  
 <td width="30%" style="font-weight:bold;" ><label>ADJUNTAR FACTURA (FORMATO PDF)</label></td>
-<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_FACTURA_PDF\')" ondragover="return false" style="width:300px;">
+<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_FACTURA_PDF\')" ondragover="return false"'.$facturaDropZoneAttributes.'>
 <p>Suelta aquí o busca tu archivo</p>
-<p><input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_PDF" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_FACTURA_PDF\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_FACTURA_PDF"] .' " required /></p>
-<input type="file" name="ADJUNTAR_FACTURA_PDF" id="nono"/>
+<p><input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_PDF" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_FACTURA_PDF\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_FACTURA_PDF"] .' " required'.$facturaInputAttributes.' /></p>
+<input type="file" name="ADJUNTAR_FACTURA_PDF" id="nono"'.$facturaInputAttributes.'/>
 <div id="3ADJUNTAR_FACTURA_PDF">
 '.$ADJUNTAR_FACTURA_PDF.'
-</tr> 
+</tr>  
 
 <tr style="background:#F368E7">
 

@@ -195,6 +195,7 @@ $('#NOMBRE_COMERCIAL2').load(location.href + ' #NOMBRE_COMERCIAL2');
 			$.getScript(load(1));
 			
 			
+			
 /*nuevo final 2PFORMADE_PAGO*/
 
 }
@@ -260,9 +261,6 @@ function pasarpagado(pasarpagado_id){
 	});
 
 }
-
-
-
 
 //////////////////////////////////////////////////////////////////////////////////////
 
