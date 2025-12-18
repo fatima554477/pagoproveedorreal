@@ -441,20 +441,24 @@ $campos_xml = '
 
         if ($listaProveedores) {
             while ($proveedor = mysqli_fetch_array($listaProveedores, MYSQLI_ASSOC)) {
-                $nombreComercialProveedor = trim(isset($proveedor["P_NOMBRE_COMERCIAL_EMPRESA"]) ? $proveedor["P_NOMBRE_COMERCIAL_EMPRESA"] : "");
-                if ($nombreComercialProveedor === "" && isset($proveedor["nommbrerazon"])) {
-                    $nombreComercialProveedor = trim($proveedor["nommbrerazon"]);
-                }
-                $razonSocialProveedor = isset($proveedor["P_NOMBRE_FISCAL_RS_EMPRESA"]) ? $proveedor["P_NOMBRE_FISCAL_RS_EMPRESA"] : "";
-                $rfcProveedor = isset($proveedor["P_RFC_MTDP"]) ? $proveedor["P_RFC_MTDP"] : "";
+$nombreComercialProveedor = trim($proveedor["NOMBRE_COMERCIAL"] ?? "");
+$razonSocialProveedor     = trim($proveedor["RAZON_SOCIAL"] ?? "");
+$rfcProveedor             = trim($proveedor["RFC_PROV"] ?? "");
 
-                if ($nombreComercialProveedor === "") {
-                    continue;
-                }
+if ($nombreComercialProveedor === "") {
+    continue;
+}
 
-                $selectedProveedor = trim($nombreComercialProveedor) === trim($row["NOMBRE_COMERCIAL"]) ? ' selected' : '';
+$selectedProveedor = (mb_strtoupper($nombreComercialProveedor) === mb_strtoupper(trim($row["NOMBRE_COMERCIAL"] ?? "")))
+    ? " selected"
+    : "";
 
-                $opcionesNombresComerciales .= '<option value="' . htmlspecialchars($nombreComercialProveedor, ENT_QUOTES, "UTF-8") . '" data-razon="' . htmlspecialchars($razonSocialProveedor, ENT_QUOTES, "UTF-8") . '" data-rfc="' . htmlspecialchars($rfcProveedor, ENT_QUOTES, "UTF-8") . '"' . $selectedProveedor . '>' . $nombreComercialProveedor . '</option>';
+$opcionesNombresComerciales .= '<option value="' . htmlspecialchars($nombreComercialProveedor, ENT_QUOTES, "UTF-8") . '"
+    data-razon="' . htmlspecialchars($razonSocialProveedor, ENT_QUOTES, "UTF-8") . '"
+    data-rfc="' . htmlspecialchars($rfcProveedor, ENT_QUOTES, "UTF-8") . '"
+    data-id-relacion="' . htmlspecialchars($proveedor["IDDD"], ENT_QUOTES, "UTF-8") . '"
+    ' . $selectedProveedor . '>' . htmlspecialchars($nombreComercialProveedor, ENT_QUOTES, "UTF-8") . '</option>';
+
             }
         }
 
@@ -469,7 +473,7 @@ $campos_xml = '
         '.$opcionesNombresComerciales.'
     </select>
     <script type="text/javascript">
-        function buscanombrecomercial() {
+    function buscanombrecomercial() {
             var select = document.getElementById("NOMBRE_COMERCIAL");
             if (!select) {
                 return;
@@ -477,8 +481,9 @@ $campos_xml = '
             var selectedOption = select.options[select.selectedIndex];
             var razonSocial = selectedOption ? selectedOption.getAttribute("data-razon") : "";
             var rfcProveedor = selectedOption ? selectedOption.getAttribute("data-rfc") : "";
-            var razonField = document.getElementsByName("RAZON_SOCIAL")[0];
-            var rfcField = document.getElementsByName("RFC_PROVEEDOR")[0];
+            var proveedorIdRelacion = selectedOption ? selectedOption.getAttribute("data-id-relacion") : "";
+            var razonField = document.getElementById("RAZON_SOCIAL");
+            var rfcField   = document.getElementById("RFC_PROVEEDOR");
 
             if (razonField) {
                 razonField.value = razonSocial || "";
@@ -486,11 +491,38 @@ $campos_xml = '
             if (rfcField) {
                 rfcField.value = rfcProveedor || "";
             }
+
+            if ((!razonSocial || !rfcProveedor) && proveedorIdRelacion) {
+                $.ajax({
+                    url: "pagoproveedores/controladorPP.php",
+                    method: "POST",
+                    data: { action: "datos_proveedor", proveedor_id: proveedorIdRelacion },
+                    success: function (response) {
+                        var partes = response.split("^^^");
+                        var razon = partes[0] ? partes[0] : "";
+                        var rfc = partes[1] ? partes[1] : "";
+
+                        if (razonField) {
+                            razonField.value = razon;
+                        }
+                        if (rfcField) {
+                            rfcField.value = rfc;
+                        }
+
+                        if (selectedOption) {
+                            selectedOption.setAttribute("data-razon", razon);
+                            selectedOption.setAttribute("data-rfc", rfc);
+                        }
+                    }
+                });
+            }
         }
 
-        document.addEventListener("DOMContentLoaded", function () {
-            buscanombrecomercial();
-        });
+       document.addEventListener("DOMContentLoaded", function () {
+       buscanombrecomercial();
+});
+
+        buscanombrecomercial();
     </script>
     <br><span id="NOMBRE_COMERCIAL2"></span>
     <br><a style="color:red;font-size:10px">OBLIGATORIO</a>

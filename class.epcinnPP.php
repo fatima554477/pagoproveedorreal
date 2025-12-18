@@ -515,14 +515,32 @@ NoIdentificacionConcepto
 		}
 	}	
 	
-	public function listado3(){
-		$conn = $this->db();
+public function listado3(){
+    $conn = $this->db();
 
-		$var = 'select *,02usuarios.id AS IDDD from 02usuarios left join 02direccionproveedor1 on 02usuarios.id = 02direccionproveedor1.idRelacion order by nommbrerazon asc';		
-		RETURN $query = mysqli_query($conn,$var);
+    $var = "
+        SELECT
+            02usuarios.id AS IDDD,
+            02usuarios.nommbrerazon,
 
-		
-	}
+            -- Nombre comercial (toma el que exista)
+            COALESCE(NULLIF(TRIM(02direccionproveedor1.P_NOMBRE_COMERCIAL_EMPRESA), ''), NULLIF(TRIM(02usuarios.nommbrerazon), '')) AS NOMBRE_COMERCIAL,
+
+            -- Razón social (toma el que exista)
+            COALESCE(NULLIF(TRIM(02direccionproveedor1.P_NOMBRE_FISCAL_RS_EMPRESA), ''), NULLIF(TRIM(02usuarios.nommbrerazon), '')) AS RAZON_SOCIAL,
+
+            -- RFC
+            TRIM(COALESCE(02direccionproveedor1.P_RFC_MTDP, 02usuarios.P_RFC_MTDP)) AS RFC_PROV
+
+        FROM 02usuarios
+        LEFT JOIN 02direccionproveedor1
+            ON 02usuarios.id = 02direccionproveedor1.idRelacion
+        ORDER BY 02usuarios.nommbrerazon ASC
+    ";
+
+    return mysqli_query($conn,$var);
+}
+
 	
 	public function verificar_rfc($conn,$RFC_PROVEEDOR){
 		 $queryrfc = "SELECT * FROM 02direccionproveedor1 WHERE P_RFC_MTDP = '".$RFC_PROVEEDOR."' ";
