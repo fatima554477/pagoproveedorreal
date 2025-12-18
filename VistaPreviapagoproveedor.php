@@ -420,6 +420,8 @@ $campos_xml = '
 <tr>
     <td width="30%" style="font-weight:bold;" ><label>PAGO A PROVEEDOR, VIATICO, REEMBOLSO O<br> PAGO A PROVEEDOR CON DOS O MAS FACTURAS:</label></td>
     <td width="70%" class="form-control">
+
+
         <select name="VIATICOSOPRO" style="background:#daddf5">
             <option style="background:#f2b4f5" value="SELECCIONA UNA OPCIÓN">SELECCIONA UNA OPCIÓN</option>
             <option style="background:#f2b4f5" value="PAGO A PROVEEDOR" '.($row["VIATICOSOPRO"] == "PAGO A PROVEEDOR" ? "selected" : "").'>PAGO A PROVEEDOR </option>
@@ -432,86 +434,63 @@ $campos_xml = '
     </td>
 </tr>
 
- 
+';
+
+        $listaProveedores = $pagoproveedores->listado3();
+        $opcionesNombresComerciales = '';
+
+        if ($listaProveedores) {
+            while ($proveedor = mysqli_fetch_array($listaProveedores, MYSQLI_ASSOC)) {
+                $nombreComercialProveedor = trim(isset($proveedor["P_NOMBRE_COMERCIAL_EMPRESA"]) ? $proveedor["P_NOMBRE_COMERCIAL_EMPRESA"] : "");
+                if ($nombreComercialProveedor === "" && isset($proveedor["nommbrerazon"])) {
+                    $nombreComercialProveedor = trim($proveedor["nommbrerazon"]);
+                }
+                $razonSocialProveedor = isset($proveedor["P_NOMBRE_FISCAL_RS_EMPRESA"]) ? $proveedor["P_NOMBRE_FISCAL_RS_EMPRESA"] : "";
+                $rfcProveedor = isset($proveedor["P_RFC_MTDP"]) ? $proveedor["P_RFC_MTDP"] : "";
+
+                if ($nombreComercialProveedor === "") {
+                    continue;
+                }
+
+                $selectedProveedor = trim($nombreComercialProveedor) === trim($row["NOMBRE_COMERCIAL"]) ? ' selected' : '';
+
+                $opcionesNombresComerciales .= '<option value="' . htmlspecialchars($nombreComercialProveedor, ENT_QUOTES, "UTF-8") . '" data-razon="' . htmlspecialchars($razonSocialProveedor, ENT_QUOTES, "UTF-8") . '" data-rfc="' . htmlspecialchars($rfcProveedor, ENT_QUOTES, "UTF-8") . '"' . $selectedProveedor . '>' . $nombreComercialProveedor . '</option>';
+            }
+        }
+
+        $output .= '
 <tr>
 
 
 <td width="30%" style="font-weight:bold;" ><label>NOMBRE COMERCIAL</label></td>
 <td width="70%">
-    <select class="form-select mb-3" id="NOMBRE_COMERCIAL" name="NOMBRE_COMERCIAL" onchange="buscanombrecomercial(1);">
+    <select class="form-select mb-3" id="NOMBRE_COMERCIAL" name="NOMBRE_COMERCIAL" onchange="buscanombrecomercial();">
         <option value="">SELECCIONA UNA OPCIÓN</option>
-        <option value="'.$row["NOMBRE_COMERCIAL"].'" selected>'.$row["NOMBRE_COMERCIAL"].'</option>
+        '.$opcionesNombresComerciales.'
     </select>
     <script type="text/javascript">
-        function initSelectComercial() {
-            if (!window.jQuery || !$.fn.select2) {
+        function buscanombrecomercial() {
+            var select = document.getElementById("NOMBRE_COMERCIAL");
+            if (!select) {
                 return;
             }
-            var $select = $("#NOMBRE_COMERCIAL");
-            if (!$select.length) {
-                return;
-            }
-            // Reinicia si ya estaba inicializado
-            if ($select.hasClass("select2-hidden-accessible")) {
-                $select.select2("destroy");
-            }
-            var $modalParent = $("#dataModal");
-            if (!$modalParent.length) {
-                $modalParent = $select.closest(".modal");
-            }
-            $select.select2({
-                placeholder: "ESCRIBE Y SELECCIONA UNA OPCIÓN",
-                allowClear: true,
-                width: "100%",
-                dropdownParent: $modalParent.length ? $modalParent : $(document.body),
-                ajax: {
-                    url: "pagoproveedores/controladorNOMBRE_COMERCIAL.php",
-                    dataType: "json",
-                    delay: 250,
-                    type: "post",
-                    data: function (params) {
-                        return {
-                            BUSCA_NOMBRE_COMERCIAL: params.term
-                        };
-                    },
-                    processResults: function (data) {
-                        return {
-                            results: data
-                        };
-                    },
-                    cache: true
-                }
-            });
-        }
-        // Inicializa al insertar el HTML
-        initSelectComercial();
-        // Re-inicializa si la ventana modal se muestra después de la carga AJAX
-        $(document).on("shown.bs.modal", "#dataModal", function () {
-            initSelectComercial();
-        });
+            var selectedOption = select.options[select.selectedIndex];
+            var razonSocial = selectedOption ? selectedOption.getAttribute("data-razon") : "";
+            var rfcProveedor = selectedOption ? selectedOption.getAttribute("data-rfc") : "";
+            var razonField = document.getElementsByName("RAZON_SOCIAL")[0];
+            var rfcField = document.getElementsByName("RFC_PROVEEDOR")[0];
 
-        function buscanombrecomercial(page) {
-            var NOMBRE_COMERCIAL = $("#NOMBRE_COMERCIAL").val();
-            var parametros = {
-                action: "NOMBRE_COMERCIAL",
-                NOMBRE_COMERCIAL: NOMBRE_COMERCIAL
-            };
-            $("#loader").fadeIn("slow");
-            $.ajax({
-                url: "pagoproveedores/controladorNOMBRE_COMERCIAL.php",
-                type: "POST",
-                data: parametros,
-                beforeSend: function () {
-                    $("#loader").html("Cargando...");
-                },
-                success: function (data) {
-                    var result = data.split("^^^");
-                    document.getElementsByName("RAZON_SOCIAL")[0].value = result[0];
-                    document.getElementsByName("RFC_PROVEEDOR")[0].value = result[1];
-                    $("#NOMBRE_COMERCIAL2").html("");
-                }
-            });
+            if (razonField) {
+                razonField.value = razonSocial || "";
+            }
+            if (rfcField) {
+                rfcField.value = rfcProveedor || "";
+            }
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            buscanombrecomercial();
+        });
     </script>
     <br><span id="NOMBRE_COMERCIAL2"></span>
     <br><a style="color:red;font-size:10px">OBLIGATORIO</a>
