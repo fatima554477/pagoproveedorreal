@@ -167,7 +167,7 @@ $STATUS_DE_PAGO = '<select required="" name="STATUS_DE_PAGO">
 <?php
 
 
-    $proveedoresOptions = '<option value="">SELECCIONA UNA OPCIÓN</option>';
+   $proveedoresOptions = '<option value="">SELECCIONA UNA OPCIÓN</option>';
     $listadoProveedores = $pagoproveedores->listado3();
     if($listadoProveedores){
         while($rowProveedor = mysqli_fetch_array($listadoProveedores, MYSQLI_ASSOC)){
@@ -176,6 +176,18 @@ $STATUS_DE_PAGO = '<select required="" name="STATUS_DE_PAGO">
             $rfcProveedor = $rowProveedor["P_RFC_MTDP"];
             $selectedProveedor = $nombreComercial == $row["NOMBRE_COMERCIAL"] ? 'selected' : '';
             $proveedoresOptions .= '<option value="'.$nombreComercial.'" data-razon="'.$razonSocial.'" data-rfc="'.$rfcProveedor.'" '.$selectedProveedor.'>'.$nombreComercial.'</option>';
+        }
+    }
+
+
+    $eventosOptions = '<option value="">SELECCIONA UNA OPCIÓN</option>';
+    $listadoEventos = $pagoproveedores->listadoEventos();
+    if($listadoEventos){
+        while($rowEvento = mysqli_fetch_array($listadoEventos, MYSQLI_ASSOC)){
+            $numeroEvento = $rowEvento["NUMERO_EVENTO"];
+            $nombreEvento = $rowEvento["NOMBRE_EVENTO"];
+            $selectedEvento = $numeroEvento == $row["NUMERO_EVENTO"] ? 'selected' : '';
+            $eventosOptions .= '<option value="'.$numeroEvento.'" data-nombre="'.$nombreEvento.'" '.$selectedEvento.'>'.$numeroEvento.'</option>';
         }
     }
 
@@ -467,18 +479,18 @@ $campos_xml = '
 
 
  
-<tr>
 
 <td width="30%" style="font-weight:bold;" ><label>NÚMERO  DE EVENTO </label></td>
-<td width="70%"><input type="text" name="NUMERO_EVENTO" value="'.$row["NUMERO_EVENTO"].'"><br><a style="color:red;font-size:10px">OBLIGATORIO</a></td>
+<td width="70%"><select id="NUMERO_EVENTO_SELECT" name="NUMERO_EVENTO" class="form-control">'.$eventosOptions.'</select><br><a style="color:red;font-size:10px">OBLIGATORIO (BUSCAR)  </a></td>
 </tr> 
 <tr>
 
  
 <td width="30%" style="font-weight:bold;" ><label>NOMBRE DEL EVENTO</label></td>
-<td width="70%"><input type="text" name="NOMBRE_EVENTO" value="'.$row["NOMBRE_EVENTO"].'"></td>
+<td width="70%"><input type="text" id="NOMBRE_EVENTO_INPUT" style="width:80%;" name="NOMBRE_EVENTO" value="'.$row["NOMBRE_EVENTO"].'"></td>
 </tr> 
 <tr>
+
  
 <td width="30%" style="font-weight:bold;" ><label>MOTIVO DEL GASTO</label></td>
 <td width="70%"><input type="text" name="MOTIVO_GASTO" value="'.$row["MOTIVO_GASTO"].'"></td>
@@ -930,16 +942,18 @@ $campos_xml = '
 
 
 <script>
-	(function() {
+(function() {
 		const selectProveedor = document.getElementById('NOMBRE_COMERCIAL_SELECT');
 		const razonSocialInput = document.getElementById('RAZON_SOCIAL_INPUT');
 		const rfcProveedorInput = document.getElementById('RFC_PROVEEDOR_INPUT');
-
-		if (!selectProveedor) {
-			return;
-		}
+		const selectEvento = document.getElementById('NUMERO_EVENTO_SELECT');
+		const nombreEventoInput = document.getElementById('NOMBRE_EVENTO_INPUT');
 
 		const actualizarDatosProveedor = () => {
+			if (!selectProveedor) {
+				return;
+			}
+
 			const optionSeleccionada = selectProveedor.options[selectProveedor.selectedIndex];
 			if (!optionSeleccionada) {
 				return;
@@ -957,8 +971,25 @@ $campos_xml = '
 			}
 		};
 
-		selectProveedor.addEventListener('change', actualizarDatosProveedor);
-		actualizarDatosProveedor();
+		const actualizarDatosEvento = () => {
+			if (!selectEvento || !nombreEventoInput) {
+				return;
+			}
+
+			const opcionSeleccionadaEvento = selectEvento.options[selectEvento.selectedIndex];
+			const nombreEvento = opcionSeleccionadaEvento ? opcionSeleccionadaEvento.getAttribute('data-nombre') || '' : '';
+			nombreEventoInput.value = nombreEvento;
+		};
+
+		if (selectProveedor) {
+			selectProveedor.addEventListener('change', actualizarDatosProveedor);
+			actualizarDatosProveedor();
+		}
+
+		if (selectEvento) {
+			selectEvento.addEventListener('change', actualizarDatosEvento);
+			actualizarDatosEvento();
+		}
 	})();
 
 	var fileobj;
