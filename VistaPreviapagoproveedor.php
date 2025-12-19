@@ -519,14 +519,13 @@ $campos_xml = '
 
 <tr>
 <td width="30%" style="font-weight:bold;" ><label>IMPUESTOS RETENIDOS  IVA:</label></td>
-<td width="70%"><input type="text" name="TImpuestosRetenidosIVA"  value="'.$row["TImpuestosRetenidosIVA"].'"></td>
+<td width="70%"><input type="text" name="TImpuestosRetenidosIVA" id="montoRetenidoIVA" value="'.$row["TImpuestosRetenidosIVA"].'"></td>
 </tr> 
 
 <tr >
 <td width="30%" style="font-weight:bold;" ><label>IMPUESTOS RETENIDOS  ISR:</label></td>
-<td width="70%"><input type="text" name="TImpuestosRetenidosISR"  value="'.$row["TImpuestosRetenidosISR"].'"></td>
+<td width="70%"><input type="text" name="TImpuestosRetenidosISR" id="montoRetenidoISR" value="'.$row["TImpuestosRetenidosISR"].'"></td>
 </tr> 
-
 
 <tr >
 <td width="30%" style="font-weight:bold;" ><label>MONTO DE LA PROPINA O SERVICIO NO INCLUIDO EN LA FACTURA</label></td>
@@ -540,7 +539,7 @@ $campos_xml = '
 
 <tr>
 <td width="30%" style="font-weight:bold;" ><label>DESCUENTO:</label></td>
-<td width="70%"><input type="text" name="descuentos"  value="'.$row["descuentos"].'"></td>
+<td width="70%"><input type="text" name="descuentos" id="montoDescuentos" value="'.$row["descuentos"].'"></td>
 </tr> 
 
 
@@ -1016,9 +1015,12 @@ function calcularTotal() {
     const montoAvion = parseFloat(document.getElementById('montoTotalAvion').value) || 0;
     const montopropina = parseFloat(document.getElementById('montoTotalpropina').value) || 0;
     const montohospedaje = parseFloat(document.getElementById('montoTotalhospedaje').value) || 0;
+    const montoRetenidoIVA = parseFloat(document.getElementById('montoRetenidoIVA').value) || 0;
+    const montoRetenidoISR = parseFloat(document.getElementById('montoRetenidoISR').value) || 0;
+    const montoDescuentos = parseFloat(document.getElementById('montoDescuentos').value) || 0;
     
     // Calcular suma
-    const total = montoEvento + montoAvion + montopropina + montohospedaje;
+    const total = montoEvento + montoAvion + montopropina + montohospedaje - montoRetenidoIVA - montoRetenidoISR - montoDescuentos;
     
     // Asignar resultado (con 2 decimales)
     document.getElementById('montoTotalEventoResultado').value = total.toFixed(2);
@@ -1032,6 +1034,9 @@ document.getElementById('montoTotalEvento').addEventListener('input', calcularTo
 document.getElementById('montoTotalAvion').addEventListener('input', calcularTotal);
 document.getElementById('montoTotalpropina').addEventListener('input', calcularTotal);
 document.getElementById('montoTotalhospedaje').addEventListener('input', calcularTotal);
+document.getElementById('montoRetenidoIVA').addEventListener('input', calcularTotal);
+document.getElementById('montoRetenidoISR').addEventListener('input', calcularTotal);
+document.getElementById('montoDescuentos').addEventListener('input', calcularTotal);
 
 	
 	
