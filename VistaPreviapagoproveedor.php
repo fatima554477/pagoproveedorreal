@@ -1,3 +1,5 @@
+
+
 <?php
 /*
 fecha sandor: 
@@ -23,6 +25,7 @@ if($identioficador != '')
 $queryVISTAPREV = $pagoproveedores->Listado_pagoproveedor2($identioficador);
 
 ?>
+<div id="respuestaser">
 <?php
    while($row = mysqli_fetch_array($queryVISTAPREV))
     {
@@ -162,11 +165,12 @@ $STATUS_DE_PAGO = '<select required="" name="STATUS_DE_PAGO">
 
 
 ?>
+</div>
 
 <?php
 
 
- $output .= '<form  id="ListadoPAGOPROVEEform"> 
+ $output .= '<div id="respuestaser"></div><form  id="ListadoPAGOPROVEEform"> 
       <div class="table-responsive">  
            <table class="table table-bordered" style="background: #ebf9e9;">';
 		   
@@ -344,6 +348,8 @@ $campos_xml = '
 <td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="TuaTotalCargos" value="'.$row2xml["TuaTotalCargos"].'"></td>
 </tr>
 
+<div id="respuestaser">
+
 <!--aqui termina la lectura BD a XML-->
 <!--aqui termina la lectura BD a XML-->
 <!--aqui termina la lectura BD a XML-->
@@ -353,21 +359,10 @@ $campos_xml = '
 '; 
 
 	}else{
-        $campos_xml = '';
-        }
+	$campos_xml = '';
+	}
 
-
-    $disableFactura = in_array($row["VIATICOSOPRO"], array(
-        "PAGO A PROVEEDOR CON DOS O MAS FACTURAS",
-        "VIATICOS",
-        "REEMBOLSO"
-    ));
-    $facturaInputAttributes = $disableFactura ? ' disabled="disabled"' : '';
-    $facturaDropZoneAttributes = $disableFactura
-        ? ' style="width:300px;pointer-events:none;opacity:0.6;"'
-        : ' style="width:300px;"';
-
-
+ 
      $output .= '
 
 
@@ -377,10 +372,10 @@ $campos_xml = '
  <tr>
  
 <td width="30%" style="font-weight:bold;" ><label>ADJUNTAR FACTURA (FORMATO XML)</label></td>
-<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_FACTURA_XML\')" ondragover="return false"'.$facturaDropZoneAttributes.'>
+<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_FACTURA_XML\')" ondragover="return false" style="width:300px;">
 <p>Suelta aquí o busca tu archivo</p>
-<p><input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_XML" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_FACTURA_XML\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_FACTURA_XML"] .' " required'.$facturaInputAttributes.' /></p>
-<input type="file" name="ADJUNTAR_FACTURA_XML" id="nono"'.$facturaInputAttributes.'/>
+<p><input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_XML" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_FACTURA_XML\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_FACTURA_XML"] .' " required /></p>
+<input type="file" name="ADJUNTAR_FACTURA_XML" id="nono"/>
 <div id="3ADJUNTAR_FACTURA_XML">
 '.$ADJUNTAR_FACTURA_XML.'
 </tr> 
@@ -388,21 +383,13 @@ $campos_xml = '
  
  
 <td width="30%" style="font-weight:bold;" ><label>ADJUNTAR FACTURA (FORMATO PDF)</label></td>
-<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_FACTURA_PDF\')" ondragover="return false"'.$facturaDropZoneAttributes.'>
+<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_FACTURA_PDF\')" ondragover="return false" style="width:300px;">
 <p>Suelta aquí o busca tu archivo</p>
-<p><input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_PDF" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_FACTURA_PDF\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_FACTURA_PDF"] .' " required'.$facturaInputAttributes.' /></p>
-<input type="file" name="ADJUNTAR_FACTURA_PDF" id="nono"'.$facturaInputAttributes.'/>
+<p><input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_PDF" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_FACTURA_PDF\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_FACTURA_PDF"] .' " required /></p>
+<input type="file" name="ADJUNTAR_FACTURA_PDF" id="nono"/>
 <div id="3ADJUNTAR_FACTURA_PDF">
 '.$ADJUNTAR_FACTURA_PDF.'
 </tr> 
-
-
-
-
-
-
-
-
 
 <tr style="background:#F368E7">
 
@@ -412,7 +399,7 @@ $campos_xml = '
 
  
 
-<td width="30%" style="font-weight:bold;" ><label>NÚMERO DE SOLICITUD</label></td>
+<td width="30%" style="font-weight:bold;" ><label>NÚMERO CONSECUTIVO DE PAGO A PROVEEDORES</label></td>
 <td width="70%"><input type="text"   name="NUMERO_CONSECUTIVO_PROVEE" value="'.$row["NUMERO_CONSECUTIVO_PROVEE"].'"></td>
 </tr>
 
@@ -420,8 +407,6 @@ $campos_xml = '
 <tr>
     <td width="30%" style="font-weight:bold;" ><label>PAGO A PROVEEDOR, VIATICO, REEMBOLSO O<br> PAGO A PROVEEDOR CON DOS O MAS FACTURAS:</label></td>
     <td width="70%" class="form-control">
-
-
         <select name="VIATICOSOPRO" style="background:#daddf5">
             <option style="background:#f2b4f5" value="SELECCIONA UNA OPCIÓN">SELECCIONA UNA OPCIÓN</option>
             <option style="background:#f2b4f5" value="PAGO A PROVEEDOR" '.($row["VIATICOSOPRO"] == "PAGO A PROVEEDOR" ? "selected" : "").'>PAGO A PROVEEDOR </option>
@@ -434,117 +419,27 @@ $campos_xml = '
     </td>
 </tr>
 
-';
-
-        $listaProveedores = $pagoproveedores->listado3();
-        $opcionesNombresComerciales = '';
-
-        if ($listaProveedores) {
-            while ($proveedor = mysqli_fetch_array($listaProveedores, MYSQLI_ASSOC)) {
-$nombreComercialProveedor = trim($proveedor["NOMBRE_COMERCIAL"] ?? "");
-$razonSocialProveedor     = trim($proveedor["RAZON_SOCIAL"] ?? "");
-$rfcProveedor             = trim($proveedor["RFC_PROV"] ?? "");
-
-if ($nombreComercialProveedor === "") {
-    continue;
-}
-
-$selectedProveedor = (mb_strtoupper($nombreComercialProveedor) === mb_strtoupper(trim($row["NOMBRE_COMERCIAL"] ?? "")))
-    ? " selected"
-    : "";
-
-$opcionesNombresComerciales .= '<option value="' . htmlspecialchars($nombreComercialProveedor, ENT_QUOTES, "UTF-8") . '"
-    data-razon="' . htmlspecialchars($razonSocialProveedor, ENT_QUOTES, "UTF-8") . '"
-    data-rfc="' . htmlspecialchars($rfcProveedor, ENT_QUOTES, "UTF-8") . '"
-    data-id-relacion="' . htmlspecialchars($proveedor["IDDD"], ENT_QUOTES, "UTF-8") . '"
-    ' . $selectedProveedor . '>' . htmlspecialchars($nombreComercialProveedor, ENT_QUOTES, "UTF-8") . '</option>';
-
-            }
-        }
-
-        $output .= '
+ 
 <tr>
 
 
 <td width="30%" style="font-weight:bold;" ><label>NOMBRE COMERCIAL</label></td>
-<td width="70%">
-    <select class="form-select mb-3" id="NOMBRE_COMERCIAL" name="NOMBRE_COMERCIAL" onchange="buscanombrecomercial();">
-        <option value="">SELECCIONA UNA OPCIÓN</option>
-        '.$opcionesNombresComerciales.'
-    </select>
-    <script type="text/javascript">
-    function buscanombrecomercial() {
-            var select = document.getElementById("NOMBRE_COMERCIAL");
-            if (!select) {
-                return;
-            }
-            var selectedOption = select.options[select.selectedIndex];
-            var razonSocial = selectedOption ? selectedOption.getAttribute("data-razon") : "";
-            var rfcProveedor = selectedOption ? selectedOption.getAttribute("data-rfc") : "";
-            var proveedorIdRelacion = selectedOption ? selectedOption.getAttribute("data-id-relacion") : "";
-            var razonField = document.getElementById("RAZON_SOCIAL");
-            var rfcField   = document.getElementById("RFC_PROVEEDOR");
-
-            if (razonField) {
-                razonField.value = razonSocial || "";
-            }
-            if (rfcField) {
-                rfcField.value = rfcProveedor || "";
-            }
-
-            if ((!razonSocial || !rfcProveedor) && proveedorIdRelacion) {
-                $.ajax({
-                    url: "pagoproveedores/controladorPP.php",
-                    method: "POST",
-                    data: { action: "datos_proveedor", proveedor_id: proveedorIdRelacion },
-                    success: function (response) {
-                        var partes = response.split("^^^");
-                        var razon = partes[0] ? partes[0] : "";
-                        var rfc = partes[1] ? partes[1] : "";
-
-                        if (razonField) {
-                            razonField.value = razon;
-                        }
-                        if (rfcField) {
-                            rfcField.value = rfc;
-                        }
-
-                        if (selectedOption) {
-                            selectedOption.setAttribute("data-razon", razon);
-                            selectedOption.setAttribute("data-rfc", rfc);
-                        }
-                    }
-                });
-            }
-        }
-
-       document.addEventListener("DOMContentLoaded", function () {
-       buscanombrecomercial();
-});
-
-        buscanombrecomercial();
-    </script>
-    <br><span id="NOMBRE_COMERCIAL2"></span>
-    <br><a style="color:red;font-size:10px">OBLIGATORIO</a>
-</td>
+<td width="70%"><input type="text" name="NOMBRE_COMERCIAL" value="'.$row["NOMBRE_COMERCIAL"].'"></td>
 </tr> 
 <tr>
 
 <td width="30%" style="font-weight:bold;" ><label>RAZÓN SOCIAL</label></td>
-<td width="70%"><input type="text" name="RAZON_SOCIAL" id="RAZON_SOCIAL" value="'.$row["RAZON_SOCIAL"].'"></td>
+<td width="70%"><input type="text" name="RAZON_SOCIAL" value="'.$row["RAZON_SOCIAL"].'"></td>
 </tr> 
 <tr>
  
 <td width="30%" style="font-weight:bold;" ><label>RFC DEL PROVEEDOR</label></td>
-<td width="70%"><input type="text" name="RFC_PROVEEDOR" id="RFC_PROVEEDOR" value="'.$row["RFC_PROVEEDOR"].'"></td>
+<td width="70%"><input type="text" name="RFC_PROVEEDOR" value="'.$row["RFC_PROVEEDOR"].'"></td>
 </tr> 
-
-
- 
 <tr>
 
 <td width="30%" style="font-weight:bold;" ><label>NÚMERO  DE EVENTO </label></td>
-<td width="70%"><input type="text" name="NUMERO_EVENTO" value="'.$row["NUMERO_EVENTO"].'"><br><a style="color:red;font-size:10px">OBLIGATORIO</a></td>
+<td width="70%"><input type="text" name="NUMERO_EVENTO" value="'.$row["NUMERO_EVENTO"].'"></td>
 </tr> 
 <tr>
 
@@ -608,7 +503,7 @@ $opcionesNombresComerciales .= '<option value="' . htmlspecialchars($nombreComer
 
 <tr >
 <td width="30%" style="font-weight:bold;" ><label>TOTAL</label></td>
-<td width="70%"><input type="text" style="background:#decaf1" name="MONTO_DEPOSITAR" id="montoTotalEventoResultado" value="'.$row["MONTO_DEPOSITAR"].'"></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="MONTO_DEPOSITAR" id="montoTotalEventoResultado" value="'.$row["MONTO_DEPOSITAR"].'"></td>
 </tr>
 
 
@@ -791,7 +686,7 @@ $opcionesNombresComerciales .= '<option value="' . htmlspecialchars($nombreComer
 <td width="30%" style="font-weight:bold;" ><label>PLACAS DEL VEHICULO</label></td>
 <td width="70%"><input type="text" name="PLACAS_VEHICULO" value="'.$row["PLACAS_VEHICULO"].'"></td>
 </tr>
-<tr  style="background: #f1a766">
+<tr>
 
 <td width="30%" style="font-weight:bold;" ><label>ADJUNTAR COMPROBANTE DE TRANSFERENCIA: (FORMATO PDF)</label></td>
 <td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'CONPROBANTE_TRANSFERENCIA\')" ondragover="return false" style="width:300px;">
@@ -845,7 +740,7 @@ $opcionesNombresComerciales .= '<option value="' . htmlspecialchars($nombreComer
 
 <tr>
 
-<td width="30%" style="font-weight:bold;" ><label>ADJUNTAR FACTURA DE COMISIÓN :(FORMATO PDF)</label></td>
+<td width="30%" style="font-weight:bold;" ><label>ADJUNTAR FACTURA DE COMISIÓN DESCONTADA:(FORMATO PDF)</label></td>
 <td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_FACTURA_DE_COMISION_PDF\')" ondragover="return false" style="width:300px;">
 <p>Suelta aquí o busca tu archivo</p>
 <p><input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_DE_COMISION_PDF" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_FACTURA_DE_COMISION_PDF\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_FACTURA_DE_COMISION_PDF"] .' " required /></p>
@@ -855,7 +750,7 @@ $opcionesNombresComerciales .= '<option value="' . htmlspecialchars($nombreComer
 </tr>
 <tr>
 
-<td width="30%" style="font-weight:bold;" ><label>ADJUNTAR FACTURA DE COMISIÓN:(FORMATO XML)</label></td>
+<td width="30%" style="font-weight:bold;" ><label>ADJUNTAR FACTURA DE COMISIÓN DESCONTADA:(FORMATO XML)</label></td>
 <td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_FACTURA_DE_COMISION_XML\')" ondragover="return false" style="width:300px;">
 <p>Suelta aquí o busca tu archivo</p>
 <p><input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_DE_COMISION_XML" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_FACTURA_DE_COMISION_XML\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_FACTURA_DE_COMISION_XML"] .' " required /></p>
@@ -954,14 +849,15 @@ $opcionesNombresComerciales .= '<option value="' . htmlspecialchars($nombreComer
 <td width="70%"><input type="text" readonly=»readonly» style="background:#decaf1" name="FECHA_DE_LLENADO" value="'.$row["FECHA_DE_LLENADO"].'"></td>
 </tr>
 </table>
+
 <tr>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <td width="30%"><label><strong style="font-size:22px;"></strong></label></td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <td width="70%" class="align-middle">
+    <td width="30%"> <label><strong style="font-size:22px;"></strong></label></td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <td width="70%">
         <!-- Botón GUARDAR -->
         <button class="btn btn-sm btn-outline-success px-5" type="button" id="clickPAGOP">GUARDAR</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
         <!-- Mensaje/respuesta al lado -->
-      
-        <div id="respuestaser" class="d-inline-block ms-3" style="
+        <div id="respuestaser2" class="d-inline-block ms-3" style="
     color: #f5f5f5;
     text-shadow: 1px 1px 1px #919191,
         1px 2px 1px #919191,
@@ -977,7 +873,7 @@ $opcionesNombresComerciales .= '<option value="' . htmlspecialchars($nombreComer
     1px 22px 10px rgba(16,16,16,0.2),
     1px 25px 35px rgba(16,16,16,0.2),
     1px 30px 60px rgba(16,16,16,0.4);
-        @keyframes fadeIn {
+	@keyframes fadeIn {
   0% { opacity: 0; }
   100% { opacity: 100; }
 }"></div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -985,10 +881,12 @@ $opcionesNombresComerciales .= '<option value="' . htmlspecialchars($nombreComer
         <!-- Botón CERRAR al lado -->
         <button class="btn btn-sm btn-outline-success px-5" type="button" data-bs-dismiss="modal">CERRAR</button>
 
-   <input type="hidden" value="ENVIARPAGOprovee" name="ENVIARPAGOprovee"/>
-        <input type="hidden" value="'.$identioficador.'" name="IPpagoprovee" id="IPpagoprovee"/>
+        <!-- Inputs ocultos -->
+        <input type="hidden" value="ENVIARPAGOprovee" name="ENVIARPAGOprovee"/>
+        <input type="hidden" value="'.$row["id"].'" name="IPpagoprovee" id="IPpagoprovee"/>
     </td>
 </tr>
+
 
 
      ';
@@ -1108,14 +1006,14 @@ $("#clickPAGOP").click(function(){
 				
 
 			
-			$.getScript(load(1));			
+			$.getScript(load2(1));			
 			$("#respuestaser").html("<span id='ACTUALIZADO' >"+data+"</span>");
 			 $('#respuestaser2').html("<span id='ACTUALIZADO' >"+data+"</span>");
                      setTimeout(function() {
-                    $("#respuestaser").fadeOut(300, function() {
+                    $("#respuestaser2").fadeOut(300, function() {
                         $(this).html('').show();
                     });
-                    $("#respuestaser2").fadeOut(300, function() {
+                    $("#respuestaser3").fadeOut(300, function() {
                         $(this).html('').show();
                     });
                 }, 2000);

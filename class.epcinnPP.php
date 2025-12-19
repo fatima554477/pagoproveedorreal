@@ -515,32 +515,14 @@ NoIdentificacionConcepto
 		}
 	}	
 	
-public function listado3(){
-    $conn = $this->db();
+	public function listado3(){
+		$conn = $this->db();
 
-    $var = "
-        SELECT
-            02usuarios.id AS IDDD,
-            02usuarios.nommbrerazon,
+		$var = 'select *,02usuarios.id AS IDDD from 02usuarios left join 02direccionproveedor1 on 02usuarios.id = 02direccionproveedor1.idRelacion order by nommbrerazon asc';		
+		RETURN $query = mysqli_query($conn,$var);
 
-            -- Nombre comercial (toma el que exista)
-            COALESCE(NULLIF(TRIM(02direccionproveedor1.P_NOMBRE_COMERCIAL_EMPRESA), ''), NULLIF(TRIM(02usuarios.nommbrerazon), '')) AS NOMBRE_COMERCIAL,
-
-            -- Razón social (toma el que exista)
-            COALESCE(NULLIF(TRIM(02direccionproveedor1.P_NOMBRE_FISCAL_RS_EMPRESA), ''), NULLIF(TRIM(02usuarios.nommbrerazon), '')) AS RAZON_SOCIAL,
-
-            -- RFC
-            TRIM(COALESCE(02direccionproveedor1.P_RFC_MTDP, 02usuarios.P_RFC_MTDP)) AS RFC_PROV
-
-        FROM 02usuarios
-        LEFT JOIN 02direccionproveedor1
-            ON 02usuarios.id = 02direccionproveedor1.idRelacion
-        ORDER BY 02usuarios.nommbrerazon ASC
-    ";
-
-    return mysqli_query($conn,$var);
-}
-
+		
+	}
 	
 	public function verificar_rfc($conn,$RFC_PROVEEDOR){
 		 $queryrfc = "SELECT * FROM 02direccionproveedor1 WHERE P_RFC_MTDP = '".$RFC_PROVEEDOR."' ";
@@ -902,24 +884,7 @@ public function listado3(){
 		}
     }
 
-         	public function ACTUALIZA_SINXML (
-	    $SINXML_id , $SINXML_text ){
-	
-		$conn = $this->db();
-		$session = isset($_SESSION['idem'])?$_SESSION['idem']:'';    
-		if($session != ''){
-		
-		 $var1 = "update 02SUBETUFACTURA SET STATUS_SINXML = '".$SINXML_text."' WHERE id = '".$SINXML_id."'  ";	
-	
-		//if($pasarpagado_text=='si'){
-		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
-		return "Actualizado^".$SINXML_text;
-		//}
-			
-        }else{
-		echo "NO HAY UN PROVEEDOR SELECCIONADO";	
-		}
-    }
+
 	public function ACTUALIZA_AUDITORIA1 (
 	$AUDITORIA1_id , $AUDITORIA1_text ){
 	
@@ -1101,27 +1066,11 @@ public function Listado_pagoproveedor(){ $conn = $this->db(); $variablequery = "
 
     public function Listado_subefacturadocto($ADJUNTAR_COTIZACION){ $conn = $this->db(); $variablequery = "select id,".$ADJUNTAR_COTIZACION.",fechaingreso from 02SUBETUFACTURADOCTOS where idRelacion = '".$_SESSION['idPROV']."' and idTemporal = 'si' and (".$ADJUNTAR_COTIZACION." is not null or ".$ADJUNTAR_COTIZACION." <> '') ORDER BY id DESC "; return $arrayquery = mysqli_query($conn,$variablequery); }
 	
-  public function delete_subefacturadocto2($id){ $conn = $this->db();
-
-    $query = "SELECT idTemporal, ADJUNTAR_FACTURA_XML FROM 02SUBETUFACTURADOCTOS WHERE id = '".$id."' ";
-    $resultado = mysqli_query($conn,$query);
-    $row = mysqli_fetch_array($resultado, MYSQLI_ASSOC);
-
-    if ($row && $row['ADJUNTAR_FACTURA_XML'] != '') {
-        $variablequery = "DELETE FROM 02XML WHERE ultimo_id = '".$row['idTemporal']."' ";
-        mysqli_query($conn,$variablequery);
-
-
-    }
-
+    public function delete_subefacturadocto2($id){ $conn = $this->db(); 
     $variablequery = "delete from 02SUBETUFACTURADOCTOS where id = '".$id."' ";
-    return $arrayquery = mysqli_query($conn,$variablequery);
+    return $arrayquery = mysqli_query($conn,$variablequery); 
 
 }
-
-
-
-
 
    public function delete_subefactura2nombre($nombre){ $conn = $this->db(); 
    $variablequery = "delete from 02SUBETUFACTURADOCTOS where ADJUNTAR_FACTURA_XML = '".$nombre."' ";
