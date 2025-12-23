@@ -22,6 +22,28 @@ class orders extends accesoclase {
                 $this->mysqli = $this->db();
     }
 
+        /**
+         * Obtiene la configuración de visibilidad de un campo usando caché en memoria
+         * para evitar consultas repetidas a la base de datos durante la misma petición.
+         */
+        public function plantilla_filtro($nombreTabla, $campo, $altaeventos, $DEPARTAMENTO) {
+                static $cache = [];
+                $cacheKey = $nombreTabla.'|'.$campo.'|'.$altaeventos.'|'.$DEPARTAMENTO;
+
+                if (array_key_exists($cacheKey, $cache)) {
+                        return $cache[$cacheKey];
+                }
+
+                $parentClass = get_parent_class($this);
+                if ($parentClass && is_callable([$parentClass, 'plantilla_filtro'])) {
+                        $cache[$cacheKey] = parent::plantilla_filtro($nombreTabla, $campo, $altaeventos, $DEPARTAMENTO);
+                } else {
+                        $cache[$cacheKey] = '';
+                }
+
+                return $cache[$cacheKey];
+        }
+
         private function isValidRfc($rfc){
                 $cleanRfc = trim((string)$rfc);
                 return $cleanRfc !== '' && preg_match('/^[A-Z&Ñ]{3,4}[0-9]{6}[A-Z0-9]{3}$/i', $cleanRfc);
