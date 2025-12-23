@@ -137,10 +137,10 @@ class orders extends accesoclase {
 	
 	
 	
-	//STATUS_EVENTO,NOMBRE_CORTO_EVENTO,NOMBRE_EVENTO
+//STATUS_EVENTO,NOMBRE_CORTO_EVENTO,NOMBRE_EVENTO
 	public function getData($tables3,$campos,$search){
-		$offset=$search['offset'];
-		$per_page=$search['per_page'];
+		$offset = max(0, (int) $search['offset']);
+		$per_page = max(1, (int) $search['per_page']);
 		$tables = '02SUBETUFACTURA';
 		$tables2 = '02XML';	
         $tables4 = '02DATOSBANCARIOS1';			
@@ -397,23 +397,23 @@ class orders extends accesoclase {
 		}
 		if($sWhere3campo == ""){
 			$sWhere3campo.="  $tables.id desc ";		
-		}else{
+	}else{
 			$sWhere3campo = substr($sWhere3campo,0,-2);
 		}
 
+	$sWhereBase = $sWhere3;
+		$countSql = "SELECT COUNT(*) AS total FROM $tables LEFT JOIN $tables2 $sWhere $sWhereBase";
+		$countResult = $this->mysqli->query($countSql);
+		$totalRow = $countResult ? $countResult->fetch_assoc() : ['total' => 0];
+		$nums_row = isset($totalRow['total']) ? (int)$totalRow['total'] : 0;
+
 		$sWhere3 .= " order by ".$sWhere3campo;
 
-              $sql="SELECT SQL_CALC_FOUND_ROWS $campos , 02SUBETUFACTURA.id as 02SUBETUFACTURAid, RFC_PROVEEDOR as RFC_PROVEEDOR1trim FROM $tables LEFT JOIN $tables2 $sWhere $sWhere3 LIMIT $offset,$per_page";
-                $query=$this->mysqli->query($sql);
+		$sql="SELECT $campos , 02SUBETUFACTURA.id as 02SUBETUFACTURAid, RFC_PROVEEDOR as RFC_PROVEEDOR1trim FROM $tables LEFT JOIN $tables2 $sWhere $sWhere3 LIMIT $offset,$per_page";
+		$query=$this->mysqli->query($sql);
 
-                // Use FOUND_ROWS() to avoid ejecutar una consulta completa solo para contar resultados
-                $totalResult = $this->mysqli->query("SELECT FOUND_ROWS() AS total");
-                $totalRow = $totalResult ? $totalResult->fetch_assoc() : ['total' => 0];
-                $nums_row = isset($totalRow['total']) ? (int)$totalRow['total'] : 0;
-
-                //Set counter
-                $this->setCounter($nums_row);
-                return $query;
+		$this->setCounter($nums_row);
+		return $query;
 		
 
 	}
