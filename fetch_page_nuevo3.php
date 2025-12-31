@@ -45,19 +45,26 @@
 				<tr>
 <td width="30%" align="center"> 
     <span id="mostrar">MOSTRAR</span>
+    <?php
+    $perPageRequest = isset($_REQUEST['per_page']) ? $_REQUEST['per_page'] : '';
+    $todosPerPageValue = ($perPageRequest !== '' && (int) $perPageRequest > 200)
+        ? (int) $_REQUEST['per_page']
+        : 10000;
+    ?>
     <select class="form-select mb-3" id="per_page" onchange="load(1);">
-        <option value="10" <?php if($_REQUEST['per_page']=='10') echo 'selected'; ?>>10</option>
-        <option value="15" <?php if($_REQUEST['per_page']=='15') echo 'selected'; ?>>15</option>
+        <option value="10" <?php if($perPageRequest=='10') echo 'selected'; ?>>10</option>
+        <option value="15" <?php if($perPageRequest=='15') echo 'selected'; ?>>15</option>
 
-               <option value="20" <?php if($_REQUEST['per_page']=='20') echo 'selected'; ?>>20</option>
-		<option value="50" <?php if($_REQUEST['per_page']=='50') echo 'selected'; ?>>50</option>
+               <option value="20" <?php if($perPageRequest=='20') echo 'selected'; ?>>20</option>
+		<option value="50" <?php if($perPageRequest=='50') echo 'selected'; ?>>50</option>
 
         
-        <option value="100"<?php if($_REQUEST['per_page']=='100')echo 'selected'; ?>>100</option>		
-		<option value="200" <?php if($_REQUEST['per_page']=='200'){echo 'selected';} ?>>200</option>
-		 <option value="10000"<?php if($_REQUEST['per_page']=='10000')echo 'selected'; ?>>TODOS</option>
+        <option value="100"<?php if($perPageRequest=='100')echo 'selected'; ?>>100</option>		
+		<option value="200" <?php if($perPageRequest=='200'){echo 'selected';} ?>>200</option>
+		 <option id="per_page_todos_option" value="<?php echo $todosPerPageValue; ?>"<?php if($perPageRequest==$todosPerPageValue)echo ' selected'; ?>>TODOS</option>
     </select>
 </td>
+
 
 					<td width="30%" align="center">
 						<button class="btn btn-sm btn-outline-success px-5" type="button" onclick="load(1);">BUSCAR</button>
