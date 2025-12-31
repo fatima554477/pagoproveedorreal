@@ -391,13 +391,13 @@ function showNotify2(msg, ok){
 	},
 		success:function(data){
 		var result = data.split('^');				
-		$('#STATUS_AUDITORIA1').html("ACTUALIZADO").fadeIn().delay(1000).fadeOut();
+		$('#pasarpagado2').html("<span id='ACTUALIZADO' >"+result[0]+"</span>");
 		load(1);
 		
 
-		if(result[1]=='si'){
-		$('#color_AUDITORIA1'+AUDITORIA1_id).css('background-color', '#ceffcc');
-		}
+	if(result[1]=='si'){
+	$('#color_AUDITORIA1'+AUDITORIA1_id).css('background-color', '#ceffcc');
+	}
 		if(result[1]=='no'){
 		$('#color_AUDITORIA1'+AUDITORIA1_id).css('background-color', '#e9d8ee');
 		}
@@ -570,6 +570,7 @@ $("#ID_RELACIONADO_2").val("");
 
 $("#FECHA_DE_PAGO").val("");
 $("#FECHA_DE_PAGO2a").val("");
+$("#FECHA_DE_PAGO_VACIO").prop("checked",false);
 
 $("#FECHA_A_DEPOSITAR_2").val("");
  $("#STATUS_DE_PAGO_2").val("");
@@ -655,6 +656,7 @@ var PFORMADE_PAGO=$("#PFORMADE_PAGO_2").val();
 
 var FECHA_DE_PAGO=$("#FECHA_DE_PAGO").val();
 var FECHA_DE_PAGO2a=$("#FECHA_DE_PAGO2a").val();
+var FECHA_DE_PAGO_VACIO=$("#FECHA_DE_PAGO_VACIO").is(":checked") ? '1' : '';
 
 var FECHA_A_DEPOSITAR=$("#FECHA_A_DEPOSITAR_2").val();
 var STATUS_DE_PAGO=$("#STATUS_DE_PAGO_2").val();
@@ -762,6 +764,8 @@ var ULTIMA_CARGA_DATOBANCA=$("#ULTIMA_CARGA_DATOBANCA").val();
 
 'FECHA_DE_PAGO':FECHA_DE_PAGO,
 'FECHA_DE_PAGO2a':FECHA_DE_PAGO2a,
+'FECHA_DE_PAGO_VACIO':FECHA_DE_PAGO_VACIO,
+
 
 'FECHA_A_DEPOSITAR':FECHA_A_DEPOSITAR,
 'STATUS_DE_PAGO':STATUS_DE_PAGO,
@@ -874,6 +878,17 @@ beforeSend: function(objeto){
 				
 		
             $(".datos_ajax2").html(data).fadeIn('slow');
+			const totalRegistrosInput = document.getElementById('total_registros_filtrados');
+			if (totalRegistrosInput) {
+				const totalRegistros = parseInt(totalRegistrosInput.value, 10);
+				if (!Number.isNaN(totalRegistros)) {
+					const todosOption = document.getElementById('per_page_todos_option');
+					if (todosOption) {
+						todosOption.value = totalRegistros;
+						todosOption.textContent = 'TODOS (' + totalRegistros + ')';
+					}
+				}
+			}
           $('.checkbox').each(function() {
     const id = $(this).data('id');
     if (localStorage.getItem('checkbox_' + id) === 'checked') {
