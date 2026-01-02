@@ -616,10 +616,10 @@ $("#FECHA_A_DEPOSITAR_2").val("");
 }
 
 
-        $(function() {
+         $(function() {
                 const triggerSearch = () => load(1);
 
-                $('#target46').on('keydown', 'thead input, thead select', function(event) {
+                $('#target500').on('keydown', 'thead input, thead select', function(event) {
                         if (event.key === 'Enter' || event.which === 13) {
                                 event.preventDefault();
                                 triggerSearch();
@@ -631,13 +631,13 @@ $("#FECHA_A_DEPOSITAR_2").val("");
 		
 		
 		
-
-
+		function load(page){
 			var query=$("#NOMBRE_EVENTO").val();
 			var DEPARTAMENTO2=$("#DEPARTAMENTO2WE").val();
 			
 			
 			var NUMERO_CONSECUTIVO_PROVEE=$("#NUMERO_CONSECUTIVO_PROVEE_2").val();
+
 var NOMBRE_COMERCIAL=$("#NOMBRE_COMERCIAL_2").val();
 var VIATICOSOPRO=$("#VIATICOSOPRO_2").val();
 var RAZON_SOCIAL=$("#RAZON_SOCIAL_2").val();
@@ -737,10 +737,12 @@ var FOTO_ESTADO_PROVEE=$("#FOTO_ESTADO_PROVEE").val();
 var ULTIMA_CARGA_DATOBANCA=$("#ULTIMA_CARGA_DATOBANCA").val();
 
 
+
+
+
 /*termina copiar y pegar*/
 			
-	
-			var per_page=perPageResolved;
+			var per_page=$("#per_page").val();
 			var parametros = {
 			"action":"ajax",			
 			"page":page,
@@ -860,7 +862,7 @@ var ULTIMA_CARGA_DATOBANCA=$("#ULTIMA_CARGA_DATOBANCA").val();
 beforeSend: function(objeto){
   $("#loader2").html(
     '<div class="msg-actualizando">' +
-      '<span class="loader2"></span> ⏳ ACTUALIZADO...' +
+      '<span class="loader"></span> ⏳ ACTUALIZANDO...' +
     '</div>'
   ).fadeIn();
 
@@ -875,34 +877,16 @@ beforeSend: function(objeto){
 			  
 			  
        success: function (data) {
-			if (opts.append) {
-				appendRowsFromHtml(data);
-			} else {
-				$(".datos_ajax2").html(data).fadeIn('slow');
-			}
+			$(".datos_ajax2").html(data).fadeIn('slow');
 
 			const totalRegistrosInput = document.getElementById('total_registros_filtrados');
 			if (totalRegistrosInput) {
 				const totalRegistros = parseInt(totalRegistrosInput.value, 10);
 				if (!Number.isNaN(totalRegistros)) {
-					loadAllTotalRecords = totalRegistros;
 					const todosOption = document.getElementById('per_page_todos_option');
 					if (todosOption) {
 						todosOption.value = totalRegistros;
 						todosOption.textContent = 'TODOS (' + totalRegistros + ')';
-					}
-					if (loadAllInProgress && loadAllTotalPages === 0) {
-						loadAllTotalPages = Math.ceil(totalRegistros / loadAllBatchSize);
-						if (loadAllTotalPages <= 1) {
-							loadAllInProgress = false;
-							updateHintText(loadAllTotalRecords);
-						} else {
-							updateHintText(loadAllTotalRecords);
-							scheduleNextBatch();
-						}
-					} else if (loadAllInProgress) {
-						updateHintText(loadAllTotalRecords);
-						scheduleNextBatch();
 					}
 				}
 			}
@@ -915,14 +899,18 @@ beforeSend: function(objeto){
 
     }
 
+
 });
 
 
 
 }
-
 });
 
+
+
+
+}
 
 
 
