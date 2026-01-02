@@ -631,10 +631,10 @@ $("#FECHA_A_DEPOSITAR_2").val("");
 		
 		
 		
-		function load(page){
+
+
 			var query=$("#NOMBRE_EVENTO").val();
 			var DEPARTAMENTO2=$("#DEPARTAMENTO2WE").val();
-			
 			
 			
 			var NUMERO_CONSECUTIVO_PROVEE=$("#NUMERO_CONSECUTIVO_PROVEE_2").val();
@@ -739,9 +739,10 @@ var ULTIMA_CARGA_DATOBANCA=$("#ULTIMA_CARGA_DATOBANCA").val();
 
 /*termina copiar y pegar*/
 			
-			var per_page=$("#per_page").val();
+	
+			var per_page=perPageResolved;
 			var parametros = {
-			"action":"ajax",
+			"action":"ajax",			
 			"page":page,
 			'query':query,
 			'per_page':per_page,
@@ -873,19 +874,35 @@ beforeSend: function(objeto){
 			  
 			  
 			  
-        success: function (data) {
-			
-				
-		
-            $(".datos_ajax2").html(data).fadeIn('slow');
+       success: function (data) {
+			if (opts.append) {
+				appendRowsFromHtml(data);
+			} else {
+				$(".datos_ajax2").html(data).fadeIn('slow');
+			}
+
 			const totalRegistrosInput = document.getElementById('total_registros_filtrados');
 			if (totalRegistrosInput) {
 				const totalRegistros = parseInt(totalRegistrosInput.value, 10);
 				if (!Number.isNaN(totalRegistros)) {
+					loadAllTotalRecords = totalRegistros;
 					const todosOption = document.getElementById('per_page_todos_option');
 					if (todosOption) {
 						todosOption.value = totalRegistros;
 						todosOption.textContent = 'TODOS (' + totalRegistros + ')';
+					}
+					if (loadAllInProgress && loadAllTotalPages === 0) {
+						loadAllTotalPages = Math.ceil(totalRegistros / loadAllBatchSize);
+						if (loadAllTotalPages <= 1) {
+							loadAllInProgress = false;
+							updateHintText(loadAllTotalRecords);
+						} else {
+							updateHintText(loadAllTotalRecords);
+							scheduleNextBatch();
+						}
+					} else if (loadAllInProgress) {
+						updateHintText(loadAllTotalRecords);
+						scheduleNextBatch();
 					}
 				}
 			}
@@ -893,16 +910,30 @@ beforeSend: function(objeto){
     const id = $(this).data('id');
     if (localStorage.getItem('checkbox_' + id) === 'checked') {
         this.checked = true;
+
         this.closest('tr').style.filter = 'brightness(65%) sepia(100%) saturate(200%) hue-rotate(0deg)';
+
     }
+
 });
 
+
+
 }
+
 });
-}
+
+
+
+
+
+
 
 
 
 	
+
 		
+
 	</script>
+
