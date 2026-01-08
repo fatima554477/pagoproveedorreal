@@ -10,110 +10,38 @@
  
 */
 
-define("__ROOT1__", dirname(__DIR__));
-include_once (__ROOT1__."/includes/error_reporting.php");
-include_once (__ROOT1__."/class.epcinnPP.php");
+define("__ROOT1__", dirname(dirname(__FILE__)));
+include_once (__ROOT1__."/../includes/error_reporting.php");
+include_once (__ROOT1__."/../pagoproveedores/class.epcinnPP.php");
 
 class orders extends accesoclase {
-        public $mysqli;
-        public $counter;//Propiedad para almacenar el numero de registro devueltos por la consulta
+	public $mysqli;
+	public $counter;//Propiedad para almacenar el numero de registro devueltos por la consulta
 
-        function __construct(){
-                $this->mysqli = $this->db();
+	function __construct(){
+		$this->mysqli = $this->db();
     }
 
-        /**
-         * Obtiene la configuración de visibilidad de un campo usando caché en memoria
-         * para evitar consultas repetidas a la base de datos durante la misma petición.
-         */
-        public function plantilla_filtro($nombreTabla, $campo, $altaeventos, $DEPARTAMENTO) {
-                static $cache = [];
-                $cacheKey = $nombreTabla.'|'.$campo.'|'.$altaeventos.'|'.$DEPARTAMENTO;
+	public function datos_bancarios_xml($rfc){
+		$conn = $this->db();
+		$variable = "select *,02usuarios.id as iddd from 02usuarios left join 02direccionproveedor1 ON 02usuarios.id = 02direccionproveedor1.idRelacion where P_RFC_MTDP = '".$rfc."' ";
+		$query = mysqli_query($conn,$variable);
+		$row = mysqli_fetch_array($query, MYSQLI_ASSOC);
+		return $row['iddd'];
+	}
 
-                if (array_key_exists($cacheKey, $cache)) {
-                        return $cache[$cacheKey];
-                }
-
-                $parentClass = get_parent_class($this);
-                if ($parentClass && is_callable([$parentClass, 'plantilla_filtro'])) {
-                        $cache[$cacheKey] = parent::plantilla_filtro($nombreTabla, $campo, $altaeventos, $DEPARTAMENTO);
-                } else {
-                        $cache[$cacheKey] = '';
-                }
-
-                return $cache[$cacheKey];
-        }
-
-        private function isValidRfc($rfc){
-                $cleanRfc = trim((string)$rfc);
-                return $cleanRfc !== '' && preg_match('/^[A-Z&Ñ]{3,4}[0-9]{6}[A-Z0-9]{3}$/i', $cleanRfc);
-        }
-
-    public function datos_bancarios_xml($rfc, $idRelacion = null, $nombreComercial = null){
-                $conn = $this->db();
-                $filtros = [];
-
-                if($this->isValidRfc($rfc)){
-                        $valueRfc = mysqli_real_escape_string($conn, strtoupper($rfc));
-                        $filtros[] = "P_RFC_MTDP = '".$valueRfc."'";
-                }
-
-                $nombreComercial = trim((string)$nombreComercial);
-                if($nombreComercial !== ''){
-                        $valueNombre = mysqli_real_escape_string($conn, $nombreComercial);
-                        $filtros[] = "02direccionproveedor1.P_NOMBRE_COMERCIAL_EMPRESA = '".$valueNombre."'";
-                }
-
-                if(is_numeric($idRelacion)){
-                        $filtros[] = "02usuarios.id = '".intval($idRelacion)."'";
-                }
-
-                if(empty($filtros)){
-                        return null;
-                }
-
-                $variable = "SELECT 02DATOSBANCARIOS1.idRelacion AS idRelacion FROM 02usuarios "
-                        ."LEFT JOIN 02direccionproveedor1 ON 02usuarios.id = 02direccionproveedor1.idRelacion "
-                        ."LEFT JOIN 02DATOSBANCARIOS1 ON 02DATOSBANCARIOS1.idRelacion = 02usuarios.id "
-                        ."WHERE ".implode(' AND ', $filtros)." "
-                        ."ORDER BY 02DATOSBANCARIOS1.checkbox = 'si' DESC, 02DATOSBANCARIOS1.id DESC LIMIT 1";
-                $query = mysqli_query($conn,$variable);
-                $row = mysqli_fetch_array($query, MYSQLI_ASSOC);
-                return $row ? $row['idRelacion'] : null;
-        }
-
-        public function datos_bancarios_todo($idRelacion, $nombreComercial = null){
-                $conn = $this->db();
-                $filtros = [];
-
-                if(is_numeric($idRelacion)){
-                        $filtros[] = "02DATOSBANCARIOS1.idRelacion = '".intval($idRelacion)."'";
-                }
-
-                $nombreComercial = trim((string)$nombreComercial);
-                if($nombreComercial !== ''){
-                        $valueNombre = mysqli_real_escape_string($conn, $nombreComercial);
-                        $filtros[] = "02direccionproveedor1.P_NOMBRE_COMERCIAL_EMPRESA = '".$valueNombre."'";
-                }
-
-                if(empty($filtros)){
-                        return [];
-                }
-              $variable2 = "SELECT 02DATOSBANCARIOS1.* FROM 02DATOSBANCARIOS1 "
-                        ."LEFT JOIN 02usuarios ON 02usuarios.id = 02DATOSBANCARIOS1.idRelacion "
-                        ."LEFT JOIN 02direccionproveedor1 ON 02usuarios.id = 02direccionproveedor1.idRelacion "
-                        ."WHERE (".implode(' AND ', $filtros).") "
-                        ."AND 02DATOSBANCARIOS1.checkbox = 'si' ORDER BY 02DATOSBANCARIOS1.id DESC LIMIT 1";
-                $query2 = mysqli_query($conn,$variable2);
-                $row2 = mysqli_fetch_array($query2, MYSQLI_ASSOC);
-                return $row2 ? $row2 : [];
-        }
-   
+	public function datos_bancarios_todo($idRelacion){
+		$conn = $this->db();
+		$variable2 = "select * from 02DATOSBANCARIOS1 where idRelacion = '".$idRelacion."' and checkbox = 'si'  ";
+		$query2 = mysqli_query($conn,$variable2);
+		$row2 = mysqli_fetch_array($query2, MYSQLI_ASSOC);
+		return $row2;
+	}
 
 	public function DOCUMENTOSFISCALES_PAGOA($idRelacion, $documento , $documento2=FALSE){
 		$conn = $this->db();
 		$variable2 = "select * from 02DOCUMENTOSFISCALES where idRelacion = '".$idRelacion."' and 
-		(DOCUMENTO_LEGAL = '".$documento."' OR DOCUMENTO_LEGAL = '".$documento2."' ) LIMIT 1  ";
+		(DOCUMENTO_LEGAL = '".$documento."' OR DOCUMENTO_LEGAL = '".$documento2."' ) ORDER BY ID DESC LIMIT 1  ";
 		$query2 = mysqli_query($conn,$variable2);
 		$ADJUNTAR_DOCUMENTO_LEGAL = "";
 		while($row2 = mysqli_fetch_array($query2, MYSQLI_ASSOC)){
@@ -134,13 +62,10 @@ class orders extends accesoclase {
 		$count=$query->num_rows;
 		return $count;
 	}
-	
-	
-	
-//STATUS_EVENTO,NOMBRE_CORTO_EVENTO,NOMBRE_EVENTO
+	//STATUS_EVENTO,NOMBRE_CORTO_EVENTO,NOMBRE_EVENTO
 	public function getData($tables3,$campos,$search){
-		$offset = max(0, (int) $search['offset']);
-		$per_page = max(1, (int) $search['per_page']);
+		$offset=$search['offset'];
+		$per_page=$search['per_page'];
 		$tables = '02SUBETUFACTURA';
 		$tables2 = '02XML';	
         $tables4 = '02DATOSBANCARIOS1';			
@@ -196,21 +121,14 @@ class orders extends accesoclase {
 		if($search['PFORMADE_PAGO']!=""){
 			$sWhere2.="  $tables.PFORMADE_PAGO LIKE '%".$search['PFORMADE_PAGO']."%' and ";}
 
-   if(isset($search['FECHA_DE_PAGO_VACIO']) && $search['FECHA_DE_PAGO_VACIO']!==""){
-   $sWhere2.=" ($tables.FECHA_DE_PAGO IS NULL OR $tables.FECHA_DE_PAGO = '' OR $tables.FECHA_DE_PAGO = '0000-00-00') and ";
-   }elseif($search['FECHA_DE_PAGO']!="" and $search['FECHA_DE_PAGO2a']!=""){
-   //BETWEEN '2022-01-12' AND '2022-01-22' DATE(`ribono_tabla`.fechaamazon) 	
-   $sWhere2.=" $tables.FECHA_DE_PAGO BETWEEN 
-   '".$search['FECHA_DE_PAGO']."' and '".$search['FECHA_DE_PAGO2a']."'  and ";
-   }elseif($search['FECHA_DE_PAGO']!=""){
-
-   $sWhere2.=" $tables.FECHA_DE_PAGO LIKE '%".$search['FECHA_DE_PAGO']."%' and ";
-
-   }elseif($search['FECHA_DE_PAGO2a']!=""){
-
-   $sWhere2.=" $tables.FECHA_DE_PAGO LIKE '%".$search['FECHA_DE_PAGO2a']."%' and ";
-
-   }
+		if($search['FECHA_DE_PAGO']!="" and $search['FECHA_DE_PAGO2a']!=""){
+			$sWhere2.=" $tables.FECHA_DE_PAGO BETWEEN 
+		'".$search['FECHA_DE_PAGO']."' and '".$search['FECHA_DE_PAGO2a']."'  and ";
+		}elseif($search['FECHA_DE_PAGO']!=""){
+			$sWhere2.=" $tables.FECHA_DE_PAGO LIKE '%".$search['FECHA_DE_PAGO']."%' and ";
+		}elseif($search['FECHA_DE_PAGO2a']!=""){
+			$sWhere2.=" $tables.FECHA_DE_PAGO LIKE '%".$search['FECHA_DE_PAGO2a']."%' and ";
+		}
 
 		if($search['FECHA_A_DEPOSITAR']!=""){
 			$sWhere2.="  $tables.FECHA_A_DEPOSITAR LIKE '%".$search['FECHA_A_DEPOSITAR']."%' and ";}
@@ -363,13 +281,59 @@ class orders extends accesoclase {
 			$propina = str_replace(',','',str_replace('$','',$search['propina']));
 			$sWhere2.="  $tables2.propina = '".$propina."' and ";}
 
-		if ($sWhere2 != "") {
-			$sWhere22 = substr($sWhere2, 0, -4);
-			$sWhere3 = ' ' . $sWhereCC . ' WHERE ( (' . $sWhere22 . ') 
-				AND (02SUBETUFACTURA.ID_RELACIONADO IS NULL OR TRIM(02SUBETUFACTURA.ID_RELACIONADO) = "") ) '; 
-		} else {
-			$sWhere3 = ' ' . $sWhereCC . ' WHERE (02SUBETUFACTURA.ID_RELACIONADO IS NULL OR TRIM(02SUBETUFACTURA.ID_RELACIONADO) = "") '; 
-		}
+if ($sWhere2 != "") {
+    $sWhere22 = substr($sWhere2, 0, -4);
+    $sWhere3 = ' ' . $sWhereCC . ' 
+        INNER JOIN 04altaeventos
+            ON 04altaeventos.NUMERO_EVENTO = 02SUBETUFACTURA.NUMERO_EVENTO
+        INNER JOIN 04personal
+            ON 04personal.idRelacion = 04altaeventos.id
+        INNER JOIN 01informacionpersonal
+            ON 01informacionpersonal.idRelacion = 04personal.idPersonal
+        WHERE ( (' . $sWhere22 . ')
+            AND (02SUBETUFACTURA.ID_RELACIONADO IS NULL OR TRIM(02SUBETUFACTURA.ID_RELACIONADO) = "")
+            AND (
+                    -- 1) Responsable del evento
+                    04personal.idPersonal = "' . $_SESSION['idem'] . '"
+
+                 -- 2) NOMBRE_DEL_AYUDO guarda el nombre completo
+                 OR TRIM(02SUBETUFACTURA.NOMBRE_DEL_AYUDO) = TRIM("' . $_SESSION['NOMBREUSUARIO'] . '")
+
+                 -- 3) NOMBRE_DEL_AYUDO guarda el ID de la persona
+                 OR TRIM(02SUBETUFACTURA.NOMBRE_DEL_AYUDO) = TRIM("' . $_SESSION['idem'] . '")
+                )
+            AND 04personal.autoriza = "si"
+        )';
+} else {
+    $sWhere3 = ' ' . $sWhereCC . '
+        INNER JOIN 04altaeventos
+            ON 04altaeventos.NUMERO_EVENTO = 02SUBETUFACTURA.NUMERO_EVENTO
+        INNER JOIN 04personal
+            ON 04personal.idRelacion = 04altaeventos.id
+        INNER JOIN 01informacionpersonal
+            ON 01informacionpersonal.idRelacion = 04personal.idPersonal
+        WHERE
+            (02SUBETUFACTURA.ID_RELACIONADO IS NULL OR TRIM(02SUBETUFACTURA.ID_RELACIONADO) = "")
+            AND (
+                    -- 1) Responsable del evento
+                    04personal.idPersonal = "' . $_SESSION['idem'] . '"
+
+                 -- 2) NOMBRE_DEL_AYUDO guarda el nombre completo
+                 OR TRIM(02SUBETUFACTURA.NOMBRE_DEL_AYUDO) = TRIM("' . $_SESSION['NOMBREUSUARIO'] . '")
+
+                 -- 3) NOMBRE_DEL_AYUDO guarda el ID de la persona
+                 OR TRIM(02SUBETUFACTURA.NOMBRE_DEL_AYUDO) = TRIM("' . $_SESSION['idem'] . '")
+                )
+            AND 04personal.autoriza = "si"
+    ';
+}
+
+
+$campos_eventos = "
+    02SUBETUFACTURA.NUMERO_EVENTO AS NUM_EVENTO_SUBE,
+    04altaeventos.NUMERO_EVENTO   AS NUM_EVENTO_ALTA
+";
+
 
 		$sWhere3campo ="";
 		if($search['RAZON_SOCIAL_orden']=="asc"){
@@ -404,86 +368,74 @@ class orders extends accesoclase {
 		}
 		if($sWhere3campo == ""){
 			$sWhere3campo.="  $tables.id desc ";		
-	}else{
+		}else{
 			$sWhere3campo = substr($sWhere3campo,0,-2);
 		}
 
-		$whereClause = $sWhere3;
-		$orderClause = " order by ".$sWhere3campo;
+		$sWhere3 .= " order by ".$sWhere3campo;
 
-                $sql="SELECT $campos , 02SUBETUFACTURA.id as 02SUBETUFACTURAid, RFC_PROVEEDOR as RFC_PROVEEDOR1trim FROM $tables LEFT JOIN $tables2 $sWhere $whereClause $orderClause LIMIT $offset,$per_page";
-                $query=$this->mysqli->query($sql);
+$sql = "SELECT $campos, $campos_eventos,
+               02SUBETUFACTURA.id AS `02SUBETUFACTURAid`,
+               RFC_PROVEEDOR AS RFC_PROVEEDOR1trim
+        FROM $tables
+        LEFT JOIN $tables2
+        $sWhere
+        $sWhere3
+        LIMIT $offset,$per_page";
 
-                // Consulta de conteo optimizada sin SQL_CALC_FOUND_ROWS
-                $countSql = "SELECT COUNT(*) AS total FROM $tables LEFT JOIN $tables2 $sWhere $whereClause";
-                $totalResult = $this->mysqli->query($countSql);
-                $totalRow = $totalResult ? $totalResult->fetch_assoc() : ['total' => 0];
-                $nums_row = isset($totalRow['total']) ? (int)$totalRow['total'] : 0;
+$query = $this->mysqli->query($sql);
 
-                //Set counter
-                $this->setCounter($nums_row);
-                return $query;
-		
+$sql1 = "SELECT $campos, $campos_eventos,
+                02SUBETUFACTURA.id AS `02SUBETUFACTURAid`,
+                RFC_PROVEEDOR AS RFC_PROVEEDOR1trim
+         FROM $tables
+         LEFT JOIN $tables2
+         $sWhere
+         $sWhere3";
 
+$nums_row = $this->countAll($sql1);
+$this->setCounter($nums_row);
+return $query;
 	}
-
-
-
-public function obtener_rfc_a_id($valor, $nombreComercial = null) {
-    $conn = $this->db();
-
-    // Escapar el valor por seguridad
-    $valor = mysqli_real_escape_string($conn, trim($valor));
-    $nombreComercial = trim((string) $nombreComercial);
-
-    $condiciones = [
-        'dp.P_RFC_MTDP = "'.$valor.'"',
-        'dp.P_NOMBRE_FISCAL_RS_EMPRESA LIKE "%'.$valor.'%"',
-        'dp.P_NOMBRE_COMERCIAL_EMPRESA LIKE "%'.$valor.'%"',
-    ];
-
-    foreach ($condiciones as $condicion) {
-        $filtros = [$condicion];
-
-        if ($nombreComercial !== '') {
-            $nombreComercialEscaped = mysqli_real_escape_string($conn, $nombreComercial);
-            $filtros[] = 'dp.P_NOMBRE_COMERCIAL_EMPRESA = "'.$nombreComercialEscaped.'"';
-        }
-
-        $query = 'SELECT dp.idRelacion AS idRelacion FROM 02direccionproveedor1 dp '
-            .'INNER JOIN 02usuarios u ON u.id = dp.idRelacion '
-            .'WHERE '.implode(' AND ', $filtros).' ORDER BY dp.idRelacion DESC';
-
-        $respuesta = mysqli_query($conn, $query);
-        $fetch_array = mysqli_fetch_array($respuesta, MYSQLI_ASSOC);
-
-        if (!empty($fetch_array['idRelacion'])) { 
-            return $fetch_array['idRelacion'];
-        }
-    }
-
-    // Si no encontró nada, regresar NULL o falso
-    return null;
-}
-
-     public function iralevento($valor) {
+	
+public function obtener_rfc_a_id($valor) {
     $conn = $this->db();
 
     // Escapar el valor por seguridad
     $valor = mysqli_real_escape_string($conn, trim($valor));
 
     // 1. Buscar por RFC exacto
-    $query = 'SELECT id FROM 04altaeventos WHERE NUMERO_EVENTO = "'.$valor.'" LIMIT 1';
+    $query = 'SELECT idRelacion FROM 02direccionproveedor1 WHERE P_RFC_MTDP = "'.$valor.'" LIMIT 1';
     $respuesta = mysqli_query($conn, $query);
     $fetch_array = mysqli_fetch_array($respuesta, MYSQLI_ASSOC);
 
-    if (!empty($fetch_array['id'])) {
-        return $fetch_array['id'];
+    if (!empty($fetch_array['idRelacion'])) {
+        return $fetch_array['idRelacion'];
     }
-	}
-	
-	
-	
+
+    // 2. Buscar por razón social (LIKE)
+    $query2 = 'SELECT idRelacion FROM 02direccionproveedor1 WHERE P_NOMBRE_FISCAL_RS_EMPRESA LIKE "%'.$valor.'%" LIMIT 1';
+    $respuesta2 = mysqli_query($conn, $query2);
+    $fetch_array2 = mysqli_fetch_array($respuesta2, MYSQLI_ASSOC);
+
+    if (!empty($fetch_array2['idRelacion'])) {
+        return $fetch_array2['idRelacion'];
+    }
+
+    // 3. Buscar por nombre comercial (LIKE)
+    $query3 = 'SELECT idRelacion FROM 02direccionproveedor1 WHERE P_NOMBRE_COMERCIAL_EMPRESA LIKE "%'.$valor.'%" LIMIT 1';
+    $respuesta3 = mysqli_query($conn, $query3);
+    $fetch_array3 = mysqli_fetch_array($respuesta3, MYSQLI_ASSOC);
+
+    if (!empty($fetch_array3['idRelacion'])) {
+        return $fetch_array3['idRelacion'];
+    }
+
+    // Si no encontró nada, regresar NULL o falso
+    return null;
+}
+
+
 	public function getTotalAmaunt($rfc,$idrelacioN=false){
 		//PRINT_R($idrelacioN);
 		$query_OR = "";
@@ -497,29 +449,18 @@ public function obtener_rfc_a_id($valor, $nombreComercial = null) {
 		$ROWevento = $this->var_altaeventos();
 		$conn = $this->db();		
 		$NUMERO_EVENTO = isset($ROWevento["NUMERO_EVENTO"])?$ROWevento["NUMERO_EVENTO"]:"";
-                $identificadorProveedor = trim((string)$rfc);
-                $sWhere3  = ' where ( 02SUBETUFACTURA.NUMERO_EVENTO = "'.$NUMERO_EVENTO.'") and (NOMBRE_COMERCIAL = trim("'.$identificadorProveedor.'") or RFC_PROVEEDOR = trim("'.$identificadorProveedor.'"))  ';
-		$sql1="SELECT sum(MONTO_TOTAL_COTIZACION_ADEUDO - MONTO_DEPOSITADO) as MONTO_TOTAL_COTIZACION_ADEUDO1 FROM  02SUBETUFACTURA ".$sWhere3." and (".$query_OR2.") ";
+		$sWhere3  = ' where ( 02SUBETUFACTURA.NUMERO_EVENTO = "'.$NUMERO_EVENTO.'") and RFC_PROVEEDOR = trim("'.trim($rfc).'")  ';
+		echo $sql1="SELECT sum(MONTO_TOTAL_COTIZACION_ADEUDO - MONTO_DEPOSITADO) as MONTO_TOTAL_COTIZACION_ADEUDO1 FROM  02SUBETUFACTURA ".$sWhere3." and (".$query_OR2.") ";
 		$query = mysqli_query($conn,$sql1);
 		$fetch_arrary = mysqli_fetch_array($query);
 		return $fetch_arrary['MONTO_TOTAL_COTIZACION_ADEUDO1'];
 	}
 	
-	public function ingresarTemproal($RFC_PROVEEDOR,$MONTO_TOTAL_COTIZACION_ADEUDO,$MONTO_DEPOSITADO,$idRelacion,$balance){
+	public function ingresarTemproal($RFC_PROVEEDOR,$MONTO_TOTAL_COTIZACION_ADEUDO,$MONTO_DEPOSITADO,$idRelacion){
 		$connn=$this->db();
-		$queryTemporal = 'insert into 02temporalEstadoCuenta (RFC_PROVEEDOR ,MONTO_TOTAL_COTIZACION_ADEUDO, MONTO_DEPOSITADO, idRelacion, BALANCE)values("'.$RFC_PROVEEDOR.'","'.$MONTO_TOTAL_COTIZACION_ADEUDO.'","'.$MONTO_DEPOSITADO.'","'.$idRelacion.'", "'.$balance.'");';
+		$queryTemporal = 'insert into 02temporalEstadoCuenta (RFC_PROVEEDOR ,MONTO_TOTAL_COTIZACION_ADEUDO, MONTO_DEPOSITADO, idRelacion)values("'.$RFC_PROVEEDOR.'","'.$MONTO_TOTAL_COTIZACION_ADEUDO.'","'.$MONTO_DEPOSITADO.'","'.$idRelacion.'");';
 		mysqli_query($connn,$queryTemporal);	
 	}		
-
-	public function resultadoTemproal($idRelacion,$rfc){
-		$connn=$this->db();
-		$identificadorProveedor = trim((string)$rfc);
-		$queryTemporal = 'select * from 02temporalEstadoCuenta where idRelacion = "'.$idRelacion.'" and RFC_PROVEEDOR = "'.$identificadorProveedor.'" ';
-		$query = mysqli_query($connn,$queryTemporal);
-		$fetch_arrary = mysqli_fetch_array($query);
-		return $fetch_arrary['BALANCE'];
-	}
-
 	
 	public function TruncateingresarTemproal(){
 		$connn=$this->db();
@@ -527,45 +468,9 @@ public function obtener_rfc_a_id($valor, $nombreComercial = null) {
 		mysqli_query($connn,$queryTemporal);	
 	}
 
-
-
-
-
-	
-	
-	public function ingresarTemproal2($RFC_PROVEEDOR,$MONTO_TOTAL_COTIZACION_ADEUDO,$MONTO_DEPOSITADO,$idRelacion,$balance){
-		$connn=$this->db();
-		$queryTemporal = 'insert into 02temporalEstadoCuenta2 (RFC_PROVEEDOR ,MONTO_TOTAL_COTIZACION_ADEUDO, MONTO_DEPOSITADO, idRelacion, BALANCE)values("'.$RFC_PROVEEDOR.'","'.$MONTO_TOTAL_COTIZACION_ADEUDO.'","'.$MONTO_DEPOSITADO.'","'.$idRelacion.'", "'.$balance.'");';
-		mysqli_query($connn,$queryTemporal);	
-	}		
-
-	public function resultadoTemproal2(){
-		$connn=$this->db();
-		$queryTemporal = 'select * from 02temporalEstadoCuenta2 order by RFC_PROVEEDOR, id desc; ';
-		return $query = mysqli_query($connn,$queryTemporal);
-
-	}
-
-	
-	public function TruncateingresarTemproal2(){
-		$connn=$this->db();
-		$queryTemporal = 'truncate table 02temporalEstadoCuenta2;';
-		mysqli_query($connn,$queryTemporal);	
-	}
-
-
-
-
-
-
-
-
-
-
 	public function getTotalAmaunt2($rfc){
 		$conn = $this->db();		
-		$identificadorProveedor = trim((string)$rfc);
-		$sWhere3  = ' where RFC_PROVEEDOR = trim("'.$identificadorProveedor.'")  ';
+		$sWhere3  = ' where RFC_PROVEEDOR = trim("'.trim($rfc).'")  ';
 		$sql1="SELECT sum(MONTO_TOTAL_COTIZACION_ADEUDO - MONTO_DEPOSITADO) as MONTO_TOTAL_COTIZACION_ADEUDO1 FROM  02temporalEstadoCuenta ".$sWhere3." ";
 		$query = mysqli_query($conn,$sql1);
 		$fetch_arrary = mysqli_fetch_array($query);
@@ -574,7 +479,6 @@ public function obtener_rfc_a_id($valor, $nombreComercial = null) {
 
 	public function getTotalAmaunt2id($rfc,$idrelacioN,$idactual){
 		$query_OR = "";
-		//EP2
 		foreach($idrelacioN as $etiqueta => $valor){
 			foreach( $valor AS $etiqueta2 => $valor2){
 				if($idactual!=$valor2){
@@ -589,17 +493,13 @@ public function obtener_rfc_a_id($valor, $nombreComercial = null) {
 			return 0;
 		}
 		$conn = $this->db();		
-		$identificadorProveedor = trim((string)$rfc);
-		$sWhere3  = ' where RFC_PROVEEDOR = trim("'.$identificadorProveedor.'")  ';
+		$sWhere3  = ' where RFC_PROVEEDOR = trim("'.trim($rfc).'")  ';
 		$sql12="SELECT sum(MONTO_DEPOSITADO) as MONTO_DEPOSITADO1 FROM  02temporalEstadoCuenta ".$sWhere3.$query_OR3." ";
 		$query2 = mysqli_query($conn,$sql12);
 		$fetch_arrary2 = mysqli_fetch_array($query2);
 		return $fetch_arrary2['MONTO_DEPOSITADO1'];
 	}
-	
-	
-	
-	
+
 	public function diferenciaPorConsecutivo($NUMERO_CONSECUTIVO_PROVEE) {
     $NUMERO_CONSECUTIVO_PROVEE = $this->mysqli->real_escape_string($NUMERO_CONSECUTIVO_PROVEE);
     $NUMERO_CONSECUTIVO_PROVEE = (int)$NUMERO_CONSECUTIVO_PROVEE;
