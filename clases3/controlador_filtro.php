@@ -30,7 +30,7 @@ if($action == "ajax"){
 	$DEPARTAMENTO = !empty($_POST["DEPARTAMENTO2"])?$_POST["DEPARTAMENTO2"]:"DEFAULT";	
 	$nombreTabla = "SELECT * FROM `08pagoproveedoresfiltroDes`, 08altaeventosfiltroPLA WHERE 08pagoproveedoresfiltroDes.id = 08altaeventosfiltroPLA.idRelacion";
 	$altaeventos = "pagoProveedores";
-	$tables = "02SUBETUFACTURADOCTOS,04altaeventos";
+	$tables = "02SUBETUFACTURADOCTOS";
 	
 
 	
@@ -1819,12 +1819,33 @@ $colspan += 1; ?>/>
 
 <?php  if($database->plantilla_filtro($nombreTabla,"NOMBRE_EVENTO",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="text-align:center"><?php $colspan += 1; echo $row['NOMBRE_EVENTO'];?></td>
 <?php } ?>
+<?php  
+if ($database->plantilla_filtro($nombreTabla,"FECHA_INICIO_EVENTO",$altaeventos,$DEPARTAMENTO)=="si") {
+    $colspan += 1;
 
-<?php  if($database->plantilla_filtro($nombreTabla,"FECHA_INICIO_EVENTO",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="text-align:center"><?php $colspan += 1; echo $row['FECHA_INICIO_EVENTO'];?></td>
-<?php } ?>
+    $fecha = isset($row['FECHA_INICIO_EVENTO']) ? trim($row['FECHA_INICIO_EVENTO']) : '';
+    if ($fecha !== '' && $fecha !== '0000-00-00') {
+        echo "<td style='text-align:center'>".date('d/m/Y', strtotime($fecha))."</td>";
+    } else {
+        echo "<td style='text-align:center'></td>";
+    }
+}
+?>
 
-<?php  if($database->plantilla_filtro($nombreTabla,"FECHA_FINAL_EVENTO",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="text-align:center"><?php $colspan += 1; echo $row['FECHA_FINAL_EVENTO'];?></td>
-<?php } ?>
+<?php  
+if ($database->plantilla_filtro($nombreTabla,"FECHA_FINAL_EVENTO",$altaeventos,$DEPARTAMENTO)=="si") {
+    $colspan += 1;
+
+    $fecha2 = isset($row['FECHA_FINAL_EVENTO']) ? trim($row['FECHA_FINAL_EVENTO']) : '';
+    if ($fecha2 !== '' && $fecha2 !== '0000-00-00') {
+        echo "<td style='text-align:center'>".date('d/m/Y', strtotime($fecha2))."</td>";
+    } else {
+        echo "<td style='text-align:center'></td>";
+    }
+}
+?>
+
+
 
 
 <?php  if($database->plantilla_filtro($nombreTabla,"MOTIVO_GASTO",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="text-align:center"><?php $colspan += 1; echo $row['MOTIVO_GASTO'];?></td>

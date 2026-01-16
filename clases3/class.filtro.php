@@ -10,9 +10,9 @@
  
 */
 
-define("__ROOT1__", dirname(__DIR__));
-include_once (__ROOT1__."/includes/error_reporting.php");
-include_once (__ROOT1__."/class.epcinnPP.php");
+define("__ROOT1__", dirname(dirname(__FILE__)));
+	include_once (__ROOT1__."/../includes/error_reporting.php");
+	include_once (__ROOT1__."/../pagoproveedores/class.epcinnPP.php");
 
 class orders extends accesoclase {
         public $mysqli;
@@ -141,12 +141,13 @@ class orders extends accesoclase {
 	public function getData($tables3,$campos,$search){
 		$offset=$search['offset'];
 		$per_page=$search['per_page'];
-		$tables = '02SUBETUFACTURA';
+	    $tables = '02SUBETUFACTURA';
 		$tables2 = '02XML';	
 		$tables5 = '04altaeventos';	
         $tables4 = '02DATOSBANCARIOS1';			
 		//$sWhereCC ="  02XML.`idRelacion` = 02SUBETUFACTURA.id AND ";
-		$sWhereCC =" ON 02SUBETUFACTURA.id = 02XML.`ultimo_id` ";
+		$joinAltaEventos = " LEFT JOIN $tables5 ON $tables.NUMERO_EVENTO = $tables5.NUMERO_EVENTO AND $tables.NOMBRE_EVENTO = $tables5.NOMBRE_EVENTO ";
+		$sWhereCC =" ON 02SUBETUFACTURA.id = 02XML.`ultimo_id` ".$joinAltaEventos;
 		$sWhere2="";$sWhere3="";
 		
 		if($search['NUMERO_CONSECUTIVO_PROVEE']!=""){
