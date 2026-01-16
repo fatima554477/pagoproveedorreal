@@ -643,6 +643,12 @@ var VIATICOSOPRO=$("#VIATICOSOPRO_2").val();
 var RAZON_SOCIAL=$("#RAZON_SOCIAL_2").val();
 var RFC_PROVEEDOR=$("#RFC_PROVEEDOR_2").val();
 var NUMERO_EVENTO=$("#NUMERO_EVENTO_2").val();
+
+var NOMBRE_EVENTO=$("#NOMBRE_EVENTO_2").val();
+var NOMBRE_EVENTO=$("#NOMBRE_EVENTO_2").val();
+var FECHA_INICIO_EVENTO=$("#FECHA_INICIO_EVENTO").val();
+var FECHA_FINAL_EVENTO=$("#FECHA_FINAL_EVENTO").val();
+
 var NOMBRE_EVENTO=$("#NOMBRE_EVENTO_2").val();
 var MOTIVO_GASTO=$("#MOTIVO_GASTO_2").val();
 var CONCEPTO_PROVEE=$("#CONCEPTO_PROVEE_2").val();
@@ -769,6 +775,9 @@ var ULTIMA_CARGA_DATOBANCA=$("#ULTIMA_CARGA_DATOBANCA").val();
 'FECHA_DE_PAGO2a':FECHA_DE_PAGO2a,
 'FECHA_DE_PAGO_VACIO':FECHA_DE_PAGO_VACIO,
 
+'FECHA_FINAL_EVENTO':FECHA_FINAL_EVENTO,
+'FECHA_INICIO_EVENTO':FECHA_INICIO_EVENTO,
+
 
 'FECHA_A_DEPOSITAR':FECHA_A_DEPOSITAR,
 'STATUS_DE_PAGO':STATUS_DE_PAGO,
@@ -877,18 +886,13 @@ beforeSend: function(objeto){
 			  
 			  
        success: function (data) {
-			$(".datos_ajax2").html(data).fadeIn('slow');
+		$(".datos_ajax2").html(data).fadeIn('slow');
 
-			const totalRegistrosInput = document.getElementById('total_registros_filtrados');
-			if (totalRegistrosInput) {
-				const totalRegistros = parseInt(totalRegistrosInput.value, 10);
-				if (!Number.isNaN(totalRegistros)) {
-					const todosOption = document.getElementById('per_page_todos_option');
-					if (todosOption) {
-						todosOption.value = totalRegistros;
-						todosOption.textContent = 'TODOS (' + totalRegistros + ')';
-					}
-				}
+			const todosOption = document.getElementById('per_page_todos_option');
+			if (todosOption) {
+				const todosMax = 500;
+				todosOption.value = todosMax;
+				todosOption.textContent = 'TODOS (máx ' + todosMax + ')';
 			}
           $('.checkbox').each(function() {
     const id = $(this).data('id');
