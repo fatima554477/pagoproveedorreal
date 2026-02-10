@@ -170,7 +170,7 @@ $STATUS_DE_PAGO = '<select required="" name="STATUS_DE_PAGO">
 <?php
 
 
- $output .= '<div id="respuestaser2"></div><form  id="ListadoPAGOPROVEEform"> 
+ $output .= '<form  id="ListadoPAGOPROVEEform"> 
       <div class="table-responsive">  
            <table class="table table-bordered" style="background: #ebf9e9;">';
 		   
@@ -273,7 +273,11 @@ $campos_xml = '
 <td width="30%" style="font-weight:bold;" ><label>METODO DE PAGO</label></td>
 <td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="metodoDePago" value="'.$row2xml["metodoDePago"].'"></td>
 </tr>
+<tr style="background: #fbf696;style="font-weight:bold;">
 
+<td width="30%" style="font-weight:bold;" ><label>FORMA DE PAGO</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="formaDePago" value="'.$row2xml["formaDePago"].'"></td>
+</tr>
 <tr style="background: #fbf696;style="font-weight:bold;">
 
 <td width="30%" style="font-weight:bold;" ><label>CONDICIONES DE PAGO</label></td>
@@ -498,12 +502,12 @@ $campos_xml = '
 
 <tr>
 <td width="30%" style="font-weight:bold;" ><label>IMPUESTOS RETENIDOS  IVA:</label></td>
-<td width="70%"><input type="text" name="TImpuestosRetenidosIVA"  value="'.$row["TImpuestosRetenidosIVA"].'"></td>
+<td width="70%"><input type="text" name="TImpuestosRetenidosIVA"  id="montoRetenidoIVA" value="'.$row["TImpuestosRetenidosIVA"].'"></td>
 </tr> 
 
 <tr >
 <td width="30%" style="font-weight:bold;" ><label>IMPUESTOS RETENIDOS  ISR:</label></td>
-<td width="70%"><input type="text" name="TImpuestosRetenidosISR"  value="'.$row["TImpuestosRetenidosISR"].'"></td>
+<td width="70%"><input type="text" name="TImpuestosRetenidosISR" id="montoRetenidoISR" value="'.$row["TImpuestosRetenidosISR"].'"></td>
 </tr> 
 
 
@@ -519,7 +523,7 @@ $campos_xml = '
 
 <tr>
 <td width="30%" style="font-weight:bold;" ><label>DESCUENTO:</label></td>
-<td width="70%"><input type="text" name="descuentos"  value="'.$row["descuentos"].'"></td>
+<td width="70%"><input type="text" name="descuentos" id="montoDescuentos" value="'.$row["descuentos"].'"></td>
 </tr> 
 
 
@@ -544,18 +548,18 @@ $campos_xml = '
 <tr>
     <td width="30%" style="font-weight:bold;" ><label>FORMA DE PAGO:</label></td>
     <td width="70%" class="form-control">
-        <select name="PFORMADE_PAGO" style="background:#daddf5">
+        <select name="formaDePago" style="background:#daddf5">
             <option style="background:#f2b4f5" value="">SELECCIONA UNA OPCIÓN</option>
-            <option style="background:#f2b4f5" value="03" '.($row["PFORMADE_PAGO"] == "03" ? "selected" : "").'>03 TRANSFERENCIA ELECTRÓNICA</option>
-            <option style="background:#ddf5da" value="01" '.($row["PFORMADE_PAGO"] == "01" ? "selected" : "").'>01 EFECTIVO</option>
-            <option style="background:#fceade" value="02" '.($row["PFORMADE_PAGO"] == "02" ? "selected" : "").'>02 CHEQUE NOMINATIVO</option>
-            <option style="background:#dee6fc" value="04" '.($row["PFORMADE_PAGO"] == "04" ? "selected" : "").'>04 TARJETA DE CRÉDITO</option>
-            <option style="background:#f6fcde" value="05" '.($row["PFORMADE_PAGO"] == "05" ? "selected" : "").'>05 MONEDERO ELECTRÓNICO</option>
-            <option style="background:#dee2fc" value="06" '.($row["PFORMADE_PAGO"] == "06" ? "selected" : "").'>06 DINERO ELECTRÓNICO</option>
-            <option style="background:#f9e5fa" value="08" '.($row["PFORMADE_PAGO"] == "08" ? "selected" : "").'>08 VALES DE DESPENSA</option>
-            <option style="background:#eefcde" value="28" '.($row["PFORMADE_PAGO"] == "28" ? "selected" : "").'>28 TARJETA DE DÉBITO</option>
-            <option style="background:#fcfbde" value="29" '.($row["PFORMADE_PAGO"] == "29" ? "selected" : "").'>29 TARJETA DE SERVICIO</option>
-            <option style="background:#f9e5fa" value="99" '.($row["PFORMADE_PAGO"] == "99" ? "selected" : "").'>99 OTRO</option>
+            <option style="background:#f2b4f5" value="03" '.($row["formaDePago"] == "03" ? "selected" : "").'>03 TRANSFERENCIA ELECTRÓNICA</option>
+            <option style="background:#ddf5da" value="01" '.($row["formaDePago"] == "01" ? "selected" : "").'>01 EFECTIVO</option>
+            <option style="background:#fceade" value="02" '.($row["formaDePago"] == "02" ? "selected" : "").'>02 CHEQUE NOMINATIVO</option>
+            <option style="background:#dee6fc" value="04" '.($row["formaDePago"] == "04" ? "selected" : "").'>04 TARJETA DE CRÉDITO</option>
+            <option style="background:#f6fcde" value="05" '.($row["formaDePago"] == "05" ? "selected" : "").'>05 MONEDERO ELECTRÓNICO</option>
+            <option style="background:#dee2fc" value="06" '.($row["formaDePago"] == "06" ? "selected" : "").'>06 DINERO ELECTRÓNICO</option>
+            <option style="background:#f9e5fa" value="08" '.($row["formaDePago"] == "08" ? "selected" : "").'>08 VALES DE DESPENSA</option>
+            <option style="background:#eefcde" value="28" '.($row["formaDePago"] == "28" ? "selected" : "").'>28 TARJETA DE DÉBITO</option>
+            <option style="background:#fcfbde" value="29" '.($row["formaDePago"] == "29" ? "selected" : "").'>29 TARJETA DE SERVICIO</option>
+            <option style="background:#f9e5fa" value="99" '.($row["formaDePago"] == "99" ? "selected" : "").'>99 OTRO</option>
         </select>
     </td>
 </tr>
@@ -923,13 +927,65 @@ $campos_xml = '
 ?>
 
 
+
 <script>
+(function() {
+		const selectProveedor = document.getElementById('NOMBRE_COMERCIAL_SELECT');
+		const razonSocialInput = document.getElementById('RAZON_SOCIAL_INPUT');
+		const rfcProveedorInput = document.getElementById('RFC_PROVEEDOR_INPUT');
+		const selectEvento = document.getElementById('NUMERO_EVENTO_SELECT');
+		const nombreEventoInput = document.getElementById('NOMBRE_EVENTO_INPUT');
+
+		const actualizarDatosProveedor = () => {
+			if (!selectProveedor) {
+				return;
+			}
+
+			const optionSeleccionada = selectProveedor.options[selectProveedor.selectedIndex];
+			if (!optionSeleccionada) {
+				return;
+			}
+
+			const razonSocial = optionSeleccionada.getAttribute('data-razon') || '';
+			const rfcProveedor = optionSeleccionada.getAttribute('data-rfc') || '';
+
+			if (razonSocialInput) {
+				razonSocialInput.value = razonSocial;
+			}
+
+			if (rfcProveedorInput) {
+				rfcProveedorInput.value = rfcProveedor;
+			}
+		};
+
+		const actualizarDatosEvento = () => {
+			if (!selectEvento || !nombreEventoInput) {
+				return;
+			}
+
+			const opcionSeleccionadaEvento = selectEvento.options[selectEvento.selectedIndex];
+			const nombreEvento = opcionSeleccionadaEvento ? opcionSeleccionadaEvento.getAttribute('data-nombre') || '' : '';
+			nombreEventoInput.value = nombreEvento;
+		};
+
+		if (selectProveedor) {
+			selectProveedor.addEventListener('change', actualizarDatosProveedor);
+			actualizarDatosProveedor();
+		}
+
+		if (selectEvento) {
+			selectEvento.addEventListener('change', actualizarDatosEvento);
+			actualizarDatosEvento();
+		}
+	})();
+
 	var fileobj;
 	function upload_file2(e,name) {
 	    e.preventDefault();
 	    fileobj = e.dataTransfer.files[0];
 	    ajax_file_upload2(fileobj,name);
 	}
+
 	 
 	function file_explorer2(name) {
 	    document.getElementsByName(name)[0].click();
@@ -947,9 +1003,12 @@ function calcularTotal() {
     const montoAvion = parseFloat(document.getElementById('montoTotalAvion').value) || 0;
     const montopropina = parseFloat(document.getElementById('montoTotalpropina').value) || 0;
     const montohospedaje = parseFloat(document.getElementById('montoTotalhospedaje').value) || 0;
+    const montoRetenidoIVA = parseFloat(document.getElementById('montoRetenidoIVA').value) || 0;
+    const montoRetenidoISR = parseFloat(document.getElementById('montoRetenidoISR').value) || 0;
+    const montoDescuentos = parseFloat(document.getElementById('montoDescuentos').value) || 0;
     
     // Calcular suma
-    const total = montoEvento + montoAvion + montopropina + montohospedaje;
+    const total = montoEvento + montoAvion + montopropina + montohospedaje - montoRetenidoIVA - montoRetenidoISR - montoDescuentos;
     
     // Asignar resultado (con 2 decimales)
     document.getElementById('montoTotalEventoResultado').value = total.toFixed(2);
@@ -963,6 +1022,9 @@ document.getElementById('montoTotalEvento').addEventListener('input', calcularTo
 document.getElementById('montoTotalAvion').addEventListener('input', calcularTotal);
 document.getElementById('montoTotalpropina').addEventListener('input', calcularTotal);
 document.getElementById('montoTotalhospedaje').addEventListener('input', calcularTotal);
+document.getElementById('montoRetenidoIVA').addEventListener('input', calcularTotal);
+document.getElementById('montoRetenidoISR').addEventListener('input', calcularTotal);
+document.getElementById('montoDescuentos').addEventListener('input', calcularTotal);
 
 	
 	
@@ -996,9 +1058,13 @@ $('#3'+nombre).html('<p style="color:red;">UUID PREVIAMENTE CARGADO.</p>');
 }
 else{
 	
-		var result = response.split('^^');
+var result = response.split('^^');
 		$('#'+nombre).val(result[1]);
 		$('#3'+nombre).html('<a target="_blank" href="includes/archivos/'+$.trim(result[0])+'">Visualizar!</a>');
+		var formaPago = $.trim(result[2] || '');
+		if(formaPago.length){
+			$('select[name="PFORMADE_PAGO"], input[name="PFORMADE_PAGO"]').val(formaPago);
+		}
 
 		if(result[1].length>1){
 			$('#respuestaser').html('<p style="color:green;font-size:25px;font-weight: bolder;">XML CORRECTAMENTE CARGADO CON EL UUID:<br> '+result[1]+'</p>');
@@ -1022,20 +1088,30 @@ $("#clickPAGOP").click(function(){
     method:"POST",  
     data:$('#ListadoPAGOPROVEEform').serialize(),
 
-    success:function(data){
+ success:function(data){
 	
-		if($.trim(data)=='Ingresado' || $.trim(data)=='Actualizado'){
+		var responseText = $.trim(data);
+		var lowerResponse = responseText.toLowerCase();
+
+		if(
+			responseText === 'Ingresado' ||
+			responseText === 'Actualizado' ||
+			lowerResponse.indexOf('actualizado') !== -1 ||
+			lowerResponse.indexOf('ingresado') !== -1
+		){
 				
 
 			
-			$.getScript(load2(1));			
-			$("#respuestaser").html("<span id='ACTUALIZADO' >"+data+"</span>");
-			 $('#respuestaser2').html("<span id='ACTUALIZADO' >"+data+"</span>");
+					
+			$.getScript(load(1));	
+$.getScript(load2(1));				
+			$("#respuestaser").html("<span id='ACTUALIZADO' >"+responseText+"</span>");
+			 $('#respuestaser2').html("<span id='ACTUALIZADO' >"+responseText+"</span>");
                      setTimeout(function() {
-                    $("#respuestaser2").fadeOut(300, function() {
+                    $("#respuestaser").fadeOut(300, function() {
                         $(this).html('').show();
                     });
-                    $("#respuestaser3").fadeOut(300, function() {
+                    $("#respuestaser2").fadeOut(300, function() {
                         $(this).html('').show();
                     });
                 }, 2000);

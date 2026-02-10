@@ -26,6 +26,8 @@ $queryVISTAPREV = $pagoproveedores->Listado_pagoproveedor2($identioficador);
 <?php
    while($row = mysqli_fetch_array($queryVISTAPREV))
     {
+	
+		
 		$row2xml = $pagoproveedores->busca_02XML($row['id']);
 $SOLICITADO = "";$APROBADO = "";$PAGADO = "";$PAGADO = "";
     if($row['STATUS_DE_PAGO']=="SOLICITADO"){$SOLICITADO = "selected";}
@@ -192,7 +194,7 @@ $STATUS_DE_PAGO = '<select required="" name="STATUS_DE_PAGO">
     }
 
 
- $output .= '<div id="respuestaser"></div><form  id="ListadoPAGOPROVEEform"> 
+ $output .= '<div ></div><form  id="ListadoPAGOPROVEEform"> 
       <div class="table-responsive">  
            <table class="table table-bordered" style="background: #ebf9e9;">';
 		   
@@ -294,6 +296,12 @@ $campos_xml = '
 
 <td width="30%" style="font-weight:bold;" ><label>METODO DE PAGO</label></td>
 <td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="metodoDePago" value="'.$row2xml["metodoDePago"].'"></td>
+</tr>
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+<td width="30%" style="font-weight:bold;" ><label>FORMA DE PAGO</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="formaDePago" value="'.$row2xml["formaDePago"].'"></td>
 </tr>
 
 <tr style="background: #fbf696;style="font-weight:bold;">
@@ -545,7 +553,7 @@ $campos_xml = '
 
 <tr >
 <td width="30%" style="font-weight:bold;" ><label>TOTAL</label></td>
-<td width="70%"><input type="text" style="background:#decaf1" name="MONTO_DEPOSITAR" id="montoTotalEventoResultado" value="'.$row["MONTO_DEPOSITAR"].'"></td>
+<td width="70%"><input type="text" readonly=»readonly» style="background:#decaf1" name="MONTO_DEPOSITAR" id="montoTotalEventoResultado" value="'.$row["MONTO_DEPOSITAR"].'"></td>
 </tr>
 
 
@@ -738,16 +746,7 @@ $campos_xml = '
 <div id="3CONPROBANTE_TRANSFERENCIA">
 '.$CONPROBANTE_TRANSFERENCIA.'
 </tr> 
-<tr>
 
-<td width="30%" style="font-weight:bold;" ><label>COMPLEMENTOS DE PAGO  (FORMATO PDF)</label></td>
-<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'COMPLEMENTOS_PAGO_PDF\')" ondragover="return false" style="width:300px;">
-<p>Suelta aquí o busca tu archivo</p>
-<p><input class="form-control form-control-sm" id="COMPLEMENTOS_PAGO_PDF" type="text" onkeydown="return false" onclick="file_explorer2(\'COMPLEMENTOS_PAGO_PDF\');" style="width:250px;" VALUE="'.$row["COMPLEMENTOS_PAGO_PDF"] .' " required /></p>
-<input type="file" name="COMPLEMENTOS_PAGO_PDF" id="nono"/>
-<div id="3COMPLEMENTOS_PAGO_PDF">
-'.$COMPLEMENTOS_PAGO_PDF.'
-</tr> 
 <tr>
 
 <td width="30%" style="font-weight:bold;" ><label>COMPLEMENTOS DE PAGO  (FORMATO XML)</label></td>
@@ -758,7 +757,16 @@ $campos_xml = '
 <div id="3COMPLEMENTOS_PAGO_XML">
 '.$COMPLEMENTOS_PAGO_XML.'
 </tr> 
+<tr>
 
+<td width="30%" style="font-weight:bold;" ><label>COMPLEMENTOS DE PAGO  (FORMATO PDF)</label></td>
+<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'COMPLEMENTOS_PAGO_PDF\')" ondragover="return false" style="width:300px;">
+<p>Suelta aquí o busca tu archivo</p>
+<p><input class="form-control form-control-sm" id="COMPLEMENTOS_PAGO_PDF" type="text" onkeydown="return false" onclick="file_explorer2(\'COMPLEMENTOS_PAGO_PDF\');" style="width:250px;" VALUE="'.$row["COMPLEMENTOS_PAGO_PDF"] .' " required /></p>
+<input type="file" name="COMPLEMENTOS_PAGO_PDF" id="nono"/>
+<div id="3COMPLEMENTOS_PAGO_PDF">
+'.$COMPLEMENTOS_PAGO_PDF.'
+</tr> 
 <tr>
 
 <td width="30%" style="font-weight:bold;" ><label>ADJUNTAR CANCELACIONES (FORMATO PDF)</label></td>
@@ -1070,9 +1078,13 @@ $('#3'+nombre).html('<p style="color:red;">UUID PREVIAMENTE CARGADO.</p>');
 }
 else{
 	
-		var result = response.split('^^');
+var result = response.split('^^');
 		$('#'+nombre).val(result[1]);
 		$('#3'+nombre).html('<a target="_blank" href="includes/archivos/'+$.trim(result[0])+'">Visualizar!</a>');
+		var formaPago = $.trim(result[2] || '');
+		if(formaPago.length){
+			$('select[name="PFORMADE_PAGO"], input[name="PFORMADE_PAGO"]').val(formaPago);
+		}
 
 		if(result[1].length>1){
 			$('#respuestaser').html('<p style="color:green;font-size:25px;font-weight: bolder;">XML CORRECTAMENTE CARGADO CON EL UUID:<br> '+result[1]+'</p>');
@@ -1096,15 +1108,23 @@ $("#clickPAGOP").click(function(){
     method:"POST",  
     data:$('#ListadoPAGOPROVEEform').serialize(),
 
-    success:function(data){
+ success:function(data){
 	
-		if($.trim(data)=='Ingresado' || $.trim(data)=='Actualizado'){
+		var responseText = $.trim(data);
+		var lowerResponse = responseText.toLowerCase();
+
+		if(
+			responseText === 'Ingresado' ||
+			responseText === 'Actualizado' ||
+			lowerResponse.indexOf('actualizado') !== -1 ||
+			lowerResponse.indexOf('ingresado') !== -1
+		){
 				
 
 			
 			$.getScript(load(1));			
-			$("#respuestaser").html("<span id='ACTUALIZADO' >"+data+"</span>");
-			 $('#respuestaser2').html("<span id='ACTUALIZADO' >"+data+"</span>");
+			$("#respuestaser").html("<span id='ACTUALIZADO' >"+responseText+"</span>");
+			 $('#respuestaser2').html("<span id='ACTUALIZADO' >"+responseText+"</span>");
                      setTimeout(function() {
                     $("#respuestaser").fadeOut(300, function() {
                         $(this).html('').show();
