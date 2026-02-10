@@ -253,6 +253,29 @@ include_once (__ROOT1__."/includes/crea_funciones_filtro_completo.php");*/
 if( $NUMERO_EVENTO == "" OR $NOMBRE_COMERCIAL == ""){
 	echo "<P style='color:red; font-size:23px;'>FAVOR DE LLENAR CAMPOS OBLIGATORIOS</p>";
 }else{		
+	// Evita insertar dos veces el mismo pago cuando se envía el formulario más de una vez (doble clic).
+	$esAltaNueva = ($ENVIARPAGOprovee == 'ENVIARPAGOprovee' && trim((string)$IPpagoprovee) == '');
+	if ($esAltaNueva) {
+		$huellaPago = md5(implode('|', array(
+			trim((string)$NUMERO_EVENTO),
+			trim((string)$NOMBRE_COMERCIAL),
+			trim((string)$RFC_PROVEEDOR),
+			trim((string)$MONTO_TOTAL_COTIZACION_ADEUDO),
+			trim((string)$MONTO_DEPOSITAR),
+			trim((string)$FECHA_DE_PAGO),
+			trim((string)$UUID)
+		)));
+		$ultimoHashPago = isset($_SESSION['pp_ultimo_guardado_hash']) ? $_SESSION['pp_ultimo_guardado_hash'] : '';
+		$ultimoHashTiempo = isset($_SESSION['pp_ultimo_guardado_ts']) ? intval($_SESSION['pp_ultimo_guardado_ts']) : 0;
+
+		if ($ultimoHashPago === $huellaPago && $ultimoHashTiempo > 0 && (time() - $ultimoHashTiempo) <= 8) {
+			echo "Ingresado";
+			exit;
+		}
+
+		$_SESSION['pp_ultimo_guardado_hash'] = $huellaPago;
+		$_SESSION['pp_ultimo_guardado_ts'] = time();
+	}
 	
 	
               // include_once (__ROOT1__."/includes/crea_funciones.php");PFORMADE_PAGO
