@@ -142,7 +142,24 @@ class orders extends accesoclase {
 		$offset=$search['offset'];
 		$per_page=$search['per_page'];
 	    $tables = '02SUBETUFACTURA';
-		$tables2 = '02XML';	
+		$tables2 = "(
+
+			SELECT x.*
+
+			FROM 02XML x
+
+			INNER JOIN (
+
+				SELECT ultimo_id, MAX(id) AS max_id
+
+				FROM 02XML
+
+				GROUP BY ultimo_id
+
+			) xu ON x.id = xu.max_id
+
+		) AS 02XML";
+
 		$tables5 = '04altaeventos';	
         $tables4 = '02DATOSBANCARIOS1';			
 		//$sWhereCC ="  02XML.`idRelacion` = 02SUBETUFACTURA.id AND ";
