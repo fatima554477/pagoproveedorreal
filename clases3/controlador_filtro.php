@@ -154,6 +154,7 @@ $per_page=intval($_POST["per_page"]);
 	}
 	$per_page = min($per_page, $max_per_page);
 	$campos="*";
+	$campos="02SUBETUFACTURA.*, 02XML.*, 04altaeventos.FECHA_INICIO_EVENTO AS FECHA_INICIO_EVENTO, 04altaeventos.FECHA_FINAL_EVENTO AS FECHA_FINAL_EVENTO";
 	//Variables de paginación
 	$page = (isset($_POST["page"]) && !empty($_POST["page"]))?$_POST["page"]:1;
 	$adjacents  = 4; //espacio entre páginas después del número de adyacentes
@@ -1611,20 +1612,24 @@ $colspan += 1; ?>/>
         value="<?php echo $row["02SUBETUFACTURAid"]; ?>"
         onclick="STATUS_VENTAS(<?php echo $row["02SUBETUFACTURAid"]; ?>)"
        <?php
-            $atributosVentas = [];
-            if ($row["STATUS_VENTAS"] == 'si') {
-                $atributosVentas[] = 'checked';
-            }
+$atributosVentas = [];
 
-            $numeroEventoRegistro = isset($row["NUMERO_EVENTO"]) ? strtoupper(trim((string) $row["NUMERO_EVENTO"])) : '';
-            $tienePermisoVenta = $numeroEventoRegistro !== '' && isset($eventosAutorizadosVentas[$numeroEventoRegistro]);
+// 1) Bloqueo total si ya está en "si"
+if ($row["STATUS_VENTAS"] === 'si') {
+    $atributosVentas[] = 'checked';
+    $atributosVentas[] = 'disabled';
+} else {
+    // 2) Si NO está en "si", aquí decides si se puede marcar o no (permiso)
+    $numeroEventoRegistro = isset($row["NUMERO_EVENTO"]) ? strtoupper(trim((string)$row["NUMERO_EVENTO"])) : '';
+    $tienePermisoVenta = $numeroEventoRegistro !== '' && isset($eventosAutorizadosVentas[$numeroEventoRegistro]);
 
-            if (!$tienePermisoVenta) {
-                $atributosVentas[] = 'disabled';
-            }
+    if (!$tienePermisoVenta) {
+        $atributosVentas[] = 'disabled';
+    }
+}
 
-            echo implode(' ', $atributosVentas);
-        ?>
+echo implode(' ', $atributosVentas);
+?>
     />
     <?php $colspan += 1; ?>
 
