@@ -248,7 +248,7 @@ $_SESSION['idusuario12']= '';
 				                               <tr style="background: #d2faf1" id="row-adjuntar-factura-xml">
 
 					<th scope="row">
-						<label style="width:300px" for="formFileSm" class="form-label">ADJUNTAR FACTURA FORMATO &nbsp;<a style="color:red;font:12px">(XML)</a></label>
+						<label style="width:300px" for="formFileSm" class="form-label">ADJUNTAR FACTURA FORMATO &nbsp;<a style="color:red;font:12px">(XML)</a><BR><a style="color:red;font:12px">SI NO TIENES POR EL MOMENTO EL ARCHIVO XML, PRIMERO DEBES CAPTURAR EL NOMBRE COMERCIAL Y DESPUÉS CARGAR EL PDF</a></label>
 					</th>
 					<td>
 						<div id="drop_file_zone" ondrop="upload_file(event,'ADJUNTAR_FACTURA_XML')" ondragover="return false">

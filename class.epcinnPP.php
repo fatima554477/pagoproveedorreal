@@ -52,7 +52,7 @@ $variable = "select * from 02usuarios where
 		return $row2['P_NOMBRE_FISCAL_RS_EMPRESA'].'^^^'.$row2['P_RFC_MTDP'];	
 	}	
 	
-	public function buscarnumero($filtro){
+public function buscarnumero($filtro){
 		$conn = $this->db();
 		$variable = "select * from 04NUMEROevento where NUMERO_DE_EVENTO like '%".$filtro."%' ";
 $variablequery = mysqli_query($conn,$variable);
@@ -61,6 +61,12 @@ $variablequery = mysqli_query($conn,$variable);
 		}
 		return $resultado;
 		
+	}
+
+	public function listadoEventos(){
+		$conn = $this->db();
+		$variablequery = "select NUMERO_EVENTO, NOMBRE_EVENTO from 04altaeventos order by NUMERO_EVENTO";
+		return mysqli_query($conn,$variablequery);
 	}
 
 	public function solocargartemp($archivo)/*new file*/
@@ -429,11 +435,13 @@ NoIdentificacionConcepto
 		$Unidad = $regreso['Unidad'];
 		$Descripcion = $regreso['Descripcion'];
 		$ClaveUnidad = $regreso['ClaveUnidad'];
-		$NoIdentificacion = $regreso['NoIdentificacion'];
+        $NoIdentificacion = $regreso['NoIdentificacion'];
 		$ObjetoImp = $regreso['ObjetoImp'];
 
+		$this->actualizar_forma_pago($ultimo_id, $formaDePago);
+
 		$var3 = "update ".$tabla." set 
-		`Version` = '".$Version."', 
+		`Version` = '".$Version."',  
 		`fechaTimbrado` = '".$FechaTimbrado."', 
 		`tipoDeComprobante` = '".$tipoDeComprobante."', 
 		`metodoDePago` = '".$metodoDePago."', 
@@ -513,6 +521,16 @@ NoIdentificacionConcepto
 				}
 			//}	
 		}
+	}	
+
+	public function actualizar_forma_pago($id, $formaDePago){
+		if($id == '' || $formaDePago == ''){
+			return false;
+		}
+
+		$conn = $this->db();
+		$var1 = "update 02SUBETUFACTURA set PFORMADE_PAGO = '".$formaDePago."' where id = '".$id."' ";
+		return mysqli_query($conn,$var1);
 	}	
 	
 	public function listado3(){
@@ -884,7 +902,24 @@ NoIdentificacionConcepto
 		}
     }
 
-
+         	public function ACTUALIZA_SINXML (
+	    $SINXML_id , $SINXML_text ){
+	
+		$conn = $this->db();
+		$session = isset($_SESSION['idem'])?$_SESSION['idem']:'';    
+		if($session != ''){
+		
+		 $var1 = "update 02SUBETUFACTURA SET STATUS_SINXML = '".$SINXML_text."' WHERE id = '".$SINXML_id."'  ";	
+	
+		//if($pasarpagado_text=='si'){
+		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
+		return "Actualizado^".$SINXML_text;
+		//}
+			
+        }else{
+		echo "NO HAY UN PROVEEDOR SELECCIONADO";	
+		}
+    }
 	public function ACTUALIZA_AUDITORIA1 (
 	$AUDITORIA1_id , $AUDITORIA1_text ){
 	
@@ -1061,16 +1096,49 @@ public function Listado_pagoproveedor(){ $conn = $this->db(); $variablequery = "
 	return $arrayquery = mysqli_query($conn,$variablequery); 
 	}
 //Listado_subefacturadocto
+public function getDoctos_subefactura($ID)
+{
+    $conn = $this->db();
+
+    $sql = "
+        SELECT 
+            COMPLEMENTOS_PAGO_PDF,
+            COMPLEMENTOS_PAGO_XML
+        FROM 02SUBETUFACTURADOCTOS
+        WHERE idTemporal = '".mysqli_real_escape_string($conn,$ID)."'
+        ORDER BY id DESC
+        LIMIT 1
+    ";
+
+    $query = mysqli_query($conn, $sql);
+    return $query ? mysqli_fetch_array($query, MYSQLI_ASSOC) : null;
+}
 
     public function Listado_subefacturaDOCTOS($ID){ $conn = $this->db(); $variablequery = "select * from 02SUBETUFACTURADOCTOS where idTemporal = '".$ID."'  order by id desc "; return $arrayquery = mysqli_query($conn,$variablequery); }
 
     public function Listado_subefacturadocto($ADJUNTAR_COTIZACION){ $conn = $this->db(); $variablequery = "select id,".$ADJUNTAR_COTIZACION.",fechaingreso from 02SUBETUFACTURADOCTOS where idRelacion = '".$_SESSION['idPROV']."' and idTemporal = 'si' and (".$ADJUNTAR_COTIZACION." is not null or ".$ADJUNTAR_COTIZACION." <> '') ORDER BY id DESC "; return $arrayquery = mysqli_query($conn,$variablequery); }
 	
-    public function delete_subefacturadocto2($id){ $conn = $this->db(); 
+  public function delete_subefacturadocto2($id){ $conn = $this->db();
+
+    $query = "SELECT idTemporal, ADJUNTAR_FACTURA_XML FROM 02SUBETUFACTURADOCTOS WHERE id = '".$id."' ";
+    $resultado = mysqli_query($conn,$query);
+    $row = mysqli_fetch_array($resultado, MYSQLI_ASSOC);
+
+    if ($row && $row['ADJUNTAR_FACTURA_XML'] != '') {
+        $variablequery = "DELETE FROM 02XML WHERE ultimo_id = '".$row['idTemporal']."' ";
+        mysqli_query($conn,$variablequery);
+
+
+    }
+
     $variablequery = "delete from 02SUBETUFACTURADOCTOS where id = '".$id."' ";
-    return $arrayquery = mysqli_query($conn,$variablequery); 
+    return $arrayquery = mysqli_query($conn,$variablequery);
 
 }
+
+
+
+
 
    public function delete_subefactura2nombre($nombre){ $conn = $this->db(); 
    $variablequery = "delete from 02SUBETUFACTURADOCTOS where ADJUNTAR_FACTURA_XML = '".$nombre."' ";

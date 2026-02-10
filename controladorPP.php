@@ -15,7 +15,7 @@ fecha fatis : 03/04/2024
 
 define('__ROOT1__', dirname(dirname(__FILE__)));
 include_once (__ROOT1__."/includes/error_reporting.php");
-include_once (__ROOT1__."/ventasoperacionesPP/class.epcinnPP.php");
+include_once (__ROOT1__."/pagoproveedores/class.epcinnPP.php");
 
 $pagoproveedores= NEW accesoclase();
 $conexion = NEW colaboradores();
@@ -43,15 +43,7 @@ $busqueda = isset($_POST["busqueda"])?$_POST["busqueda"]:"";
 
 
 
-$STATUS_VOBOCXP_id = isset($_POST["STATUS_VOBOCXP_id"]) ? $_POST["STATUS_VOBOCXP_id"] : "";
-$STATUS_VOBOCXP_text = isset($_POST["STATUS_VOBOCXP_text"]) ? $_POST["STATUS_VOBOCXP_text"] : "";
 
-if($STATUS_VOBOCXP_id != '' && ($STATUS_VOBOCXP_text == 'si' || $STATUS_VOBOCXP_text == 'no')) {
-    // Primero: ejecutar la actualización en la base de datos
-    echo $pagoproveedores->ACTUALIZA_STATUS_VOBOCXP($STATUS_VOBOCXP_id, $CHECKBOX_text);
-    
- 
-}
 
 
 
@@ -77,6 +69,25 @@ if($CHECKBOX_id != '' && ($CHECKBOX_text == 'si' || $CHECKBOX_text == 'no')) {
     
  
 }
+
+
+
+$AUDITORIA3_id = isset($_POST["AUDITORIA3_id"])?$_POST["AUDITORIA3_id"]:"";
+$AUDITORIA3_text = isset($_POST["AUDITORIA3_text"])?$_POST["AUDITORIA3_text"]:"";
+
+if($AUDITORIA3_id!='' and ($AUDITORIA3_text=='si' or $AUDITORIA3_text=='no') ){	
+echo $pagoproveedores->ACTUALIZA_AUDITORIA3 ($AUDITORIA3_id , $AUDITORIA3_text  );
+}
+
+
+$SINXML_id = isset($_POST["SINXML_id"])?$_POST["SINXML_id"]:"";
+$SINXML_text = isset($_POST["SINXML_text"])?$_POST["SINXML_text"]:"";
+
+if($SINXML_id!='' and ($SINXML_text=='si' or $SINXML_text=='no') ){	
+echo $pagoproveedores->ACTUALIZA_SINXML ($SINXML_id , $SINXML_text  );
+}
+
+
 
 
 $AUDITORIA2_id = isset($_POST["AUDITORIA2_id"])?$_POST["AUDITORIA2_id"]:"";
@@ -239,7 +250,7 @@ include_once (__ROOT1__."/includes/crea_funciones_filtro_completo.php");*/
 	}
 	
 	
-if( $NUMERO_EVENTO == "" OR $MONTO_TOTAL_COTIZACION_ADEUDO == ""){
+if( $NUMERO_EVENTO == "" OR $NOMBRE_COMERCIAL == ""){
 	echo "<P style='color:red; font-size:23px;'>FAVOR DE LLENAR CAMPOS OBLIGATORIOS</p>";
 }else{		
 	
@@ -363,15 +374,18 @@ if( $_FILES["ADJUNTAR_FACTURA_XML"] == true){
 	$regreso = $conexion2->lectorxml($url);
 	$rfcE = $regreso['rfcE'];					
 	$nombreE = $regreso['nombreE'];	
-	$conn = $conexion->db();//verificar_usuario
-		if( $pagoproveedores->verificar_rfc($conn,$rfcE) ==''){
-			$idwebc = $pagoproveedores->ingresar_usuario($conn,TRIM($nombreE));
-			$pagoproveedores->ingresar_rfc($conn,TRIM($rfcE),$idwebc);
-		}elseif($pagoproveedores->verificar_rfc($conn,$rfcE) !=''){
-			$idwebc = $pagoproveedores->verificar_rfc($conn,$rfcE);
-		}else{
-			$idwebc = $pagoproveedores->verificar_usuario($conn,$nombreE);
-		}
+        $conn = $conexion->db();//verificar_usuario
+                $idwebc = '';
+
+                if ($pagoproveedores->verificar_rfc($conn, $rfcE) != '') {
+                        $idwebc = $pagoproveedores->verificar_rfc($conn, $rfcE);
+                } elseif ($pagoproveedores->verificar_usuario($conn, $nombreE) != '') {
+                        $idwebc = $pagoproveedores->verificar_usuario($conn, $nombreE);
+                } elseif (isset($_SESSION["idPROV"]) && $_SESSION["idPROV"] != '') {
+                        $idwebc = $_SESSION["idPROV"];
+                } else {
+                        $idwebc = 1;
+                }
 		//echo $explotado[1];
 //}
 $_SESSION["idPROV"] = $idwebc;
@@ -407,10 +421,10 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 	if( file_exists($url) ){
 		$regreso = $conexion2->lectorxml($url);
 		$resultado = $pagoproveedores->VALIDA02XMLUUID($regreso['UUID']);
-		if($resultado == 'S'){
+	if($resultado == 'S'){
 
 			$pagoproveedores->borrar_xmls(__ROOT1__.'/includes/archivos/',$IPpagoprovee,$ADJUNTAR_FACTURA_XML,'02XML','02SUBETUFACTURADOCTOS');
-			echo $ADJUNTAR_FACTURA_XML.'^^'.$regreso['UUID'];
+			echo $ADJUNTAR_FACTURA_XML.'^^'.$regreso['UUID'].'^^'.$regreso['formaDePago'];
 				ob_start();
 			$pagoproveedores->guardarxmlDB2($IPpagoprovee,$idPROV,'02XML', $url);
 				ob_end_clean();
