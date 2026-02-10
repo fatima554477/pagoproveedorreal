@@ -271,10 +271,16 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 	echo "<a target='_blank' href='includes/archivos/".$rowsube['ADJUNTAR_FACTURA_XML']."' id='A".$rowsube['id']."' >Visualizar!</a> "." <span id='".$rowsube['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowsube['fechaingreso']."</span>".'<br/>';		
 	
 }
-	$NUMERO_CONSECUTIVO_PROVEE = '';	$FECHA_DE_PAGO = '';
-	$regreso = $pagoproveedores->variable_SUBETUFACTURA();
-	$url = __ROOT1__.'/includes/archivos/'.$regreso['ADJUNTAR_FACTURA_XML'];
-    if( file_exists($url) ){
+	$NUMERO_CONSECUTIVO_PROVEE = '';	
+	$FECHA_DE_PAGO = '';
+	
+$regreso = $pagoproveedores->variable_SUBETUFACTURA();
+$url = __ROOT1__.'/includes/archivos/'.$regreso['ADJUNTAR_FACTURA_XML'];
+$xmlFacturaCargada = !empty($regreso['ADJUNTAR_FACTURA_XML']) && file_exists($url);
+$ultimoConsecutivo = $pagoproveedores->select_02XML();
+$NUMERO_CONSECUTIVO_PROVEE = ($ultimoConsecutivo !== null && $ultimoConsecutivo !== '') ? ((int)$ultimoConsecutivo + 1) : 1;
+		
+if($xmlFacturaCargada){
 	$regreso = $conexion2->lectorxml($url);
 	
 	$Version = $regreso['Version'];
@@ -331,18 +337,14 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 	$FECHA_jueves = date('Y-m-d', strtotime('next Thursday', strtotime($FECHA_domingo)));
 	$FECHA_DE_PAGO = $FECHA_jueves;//'2023-08-03';//. $conexion2->fechaEs($FECHA_jueves);
 
-	/*nuevo*/
+
 		
-	$valor_base = (method_exists($pagoproveedores, 'select_02XML')) 
-    ? $pagoproveedores->select_02XML() 
-    : 0;
-    
-$NUMERO_CONSECUTIVO_PROVEE = $valor_base + 1;
+	$NUMERO_CONSECUTIVO_PROVEE = $pagoproveedores->select_02XML() + 1;
 }
-?> </div>
+?></div>
 					</td>
 				</tr>
-			                            <tr style="background: #d2faf1" id="row-adjuntar-factura-pdf">
+  <tr style="background: #d2faf1" id="row-adjuntar-factura-pdf">
 	
 					<th scope="row">
 						<label style="width:300px" for="validationCustom03" class="form-label">ADJUNTAR FACTURA FORMATO (PDF)</label>
@@ -473,11 +475,10 @@ if($rfcE==true){
 				<tr style="background:#fcf3cf">
 
 					<th scope="row">
-                                            <label style="width:300px" for="RAZON_SOCIAL" class="form-label"><span id="label-razon-social-text"><?php echo $labelRazonSocial; ?></span></label>
-					</th>
-					<td>
-                                            <div id="RAZON_SOCIAL2">
-                                                    <input type="text" class="form-control" id="RAZON_SOCIAL" required="" value="<?php echo $nombreE; ?>" name="RAZON_SOCIAL" placeholder="<?php echo $placeholderRazonSocial; ?>"> </div>
+        <label style="width:300px" for="RAZON_SOCIAL" class="form-label"><span id="label-razon-social-text"><?php echo $labelRazonSocial; ?></span></label>
+					</th><td>
+	<div id="RAZON_SOCIAL2">
+    <input type="text" class="form-control" id="RAZON_SOCIAL" required="" value="<?php echo $nombreE; ?>" name="RAZON_SOCIAL" placeholder="<?php echo $placeholderRazonSocial; ?>"  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>> </div>
 					</td>
 				</tr>
 				<tr style="background:#fcf3cf">
@@ -487,7 +488,7 @@ if($rfcE==true){
 					</th>
 					<td>
                                             <div id="RFC_PROVEEDOR2">
-                                                    <input type="text" class="form-control" id="RFC_PROVEEDOR" required="" value="<?php echo $rfcE; ?>" name="RFC_PROVEEDOR" placeholder="<?php echo $placeholderRfc; ?>"> </div>
+                <input type="text" class="form-control" id="RFC_PROVEEDOR" required="" value="<?php echo $rfcE; ?>" name="RFC_PROVEEDOR" placeholder="<?php echo $placeholderRfc; ?>"  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>> </div>
 					</td>
 				</tr>
 				<tr style="background: #d2faf1">
@@ -568,7 +569,7 @@ if($rfcE==true){
 					</th>
 					<td>
 						<div id="CONCEPTO_PROVEE2">
-							<input type="text" class="form-control" id="CONCEPTO_PROVEE" required="" value="<?php echo $Descripcion; ?>" name="CONCEPTO_PROVEE" placeholder="CONCEPTO DE LA FACTURA">
+							<input type="text" class="form-control" id="CONCEPTO_PROVEE" required="" value="<?php echo $Descripcion; ?>" name="CONCEPTO_PROVEE" placeholder="CONCEPTO DE LA FACTURA"  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>>
 						</div>
 					</td>
 				</tr>
@@ -593,7 +594,7 @@ if($rfcE==true){
 					<td>
 						<div id="2MONTO_FACTURA">
 							<div class="input-group mb-3"> <span class="input-group-text">$</span>
-								<input type="text" style="width:300px;height:40px;" id="MONTO_FACTURA" required="" onkeyup="calcular()" value="<?php echo $subTotal; ?>" name="MONTO_FACTURA" class="total" placeholder="SUB TOTAL"> </div>
+								<input type="text" style="width:300px;height:40px;" id="MONTO_FACTURA" required="" onkeyup="calcular()" value="<?php echo $subTotal; ?>" name="MONTO_FACTURA" class="total" placeholder="SUB TOTAL"  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>> </div>
 						</div>
 					</td>
 				</tr>
@@ -605,7 +606,7 @@ if($rfcE==true){
 					<td>
 						<div id="2IVA">
 							<div class="input-group mb-3"> <span class="input-group-text">$</span>
-								<input type="text" style="width:300px;height:40px;" id="IVA" required="" onkeyup="calcular()" name="IVA" class="total" value="<?php echo $TImpuestosTrasladados; ?>" placeholder="IVA"> </div>
+								<input type="text" style="width:300px;height:40px;" id="IVA" required="" onkeyup="calcular()" name="IVA" class="total" value="<?php echo $TImpuestosTrasladados; ?>" placeholder="IVA"  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>> </div>
 						</div>
 					</td>
 				</tr>
@@ -617,7 +618,7 @@ if($rfcE==true){
 					<td>
 						<div id="2TImpuestosRetenidosIVA">
 							<div class="input-group mb-3"> <span class="input-group-text">$</span>
-								<input type="text" style="width:300px;height:40px;" id="TImpuestosRetenidosIVA" required="" name="TImpuestosRetenidosIVA" value="<?php echo $impueRdesglosado002; ?>" placeholder="IMPUESTOS RETENIDOS IVA" class="total"> </div>
+								<input type="text" style="width:300px;height:40px;" id="TImpuestosRetenidosIVA" required="" name="TImpuestosRetenidosIVA" value="<?php echo $impueRdesglosado002; ?>" placeholder="IMPUESTOS RETENIDOS IVA" class="total"  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>> </div>
 						</div>
 					</td>
 				</tr>
@@ -629,7 +630,7 @@ if($rfcE==true){
 					<td>
 						<div id="2TImpuestosRetenidosISR">
 							<div class="input-group mb-3"> <span class="input-group-text">$</span>
-								<input type="text" style="width:300px;height:40px;" id="TImpuestosRetenidosISR" required="" name="TImpuestosRetenidosISR" value="<?php echo $impueRdesglosado001; ?>" placeholder="IMPUESTOS RETENIDOS ISR" class="total"> </div>
+								<input type="text" style="width:300px;height:40px;" id="TImpuestosRetenidosISR" required="" name="TImpuestosRetenidosISR" value="<?php echo $impueRdesglosado001; ?>" placeholder="IMPUESTOS RETENIDOS ISR" class="total"  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>> </div>
 						</div>
 					</td>
 				</tr>
@@ -662,7 +663,7 @@ if($rfcE==true){
 					<td>
 						<div id="2descuentos">
 							<div class="input-group mb-3"> <span class="input-group-text">$</span>
-								<input type="text" style="width:300px;height:40px;" id="descuentos" required="" name="descuentos" value="<?php echo $Descuento; ?>" placeholder="DESCUENTO" class="total"> </div>
+								<input type="text" style="width:300px;height:40px;" id="descuentos" required="" name="descuentos" value="<?php echo $Descuento; ?>" placeholder="DESCUENTO" class="total"  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>> </div>
 						</div>
 					</td>
 				</tr>
@@ -723,19 +724,19 @@ if($rfcE==true){
 					</th>
 					<td>
 						<div id="TIPO_DE_MONEDA2">
-							<select class="form-select mb-3" aria-label="Default select example" id="validationCustom02" required="" name="TIPO_DE_MONEDA">
-								<option style="background: #c9e8e8" name="TIPO_DE_MONEDA" value="MXN" <?php if($Moneda=='MXN' ){echo "selected";} ?>>MXN (Peso mexicano)</option>
-								<option style="background: #a3e4d7" name="TIPO_DE_MONEDA" value="USD" <?php if($Moneda=='USD' ){echo "selected";} ?>>USD (Dolar)</option>
-								<option style="background: #e8f6f3" name="TIPO_DE_MONEDA" value="EUR" <?php if($Moneda=='EUR' ){echo "selected";} ?>>EUR (Euro)</option>
-								<option style="background: #fdf2e9" name="TIPO_DE_MONEDA" value="GBP" <?php if($Moneda=='GBP' ){echo "selected";} ?>>GBP (Libra esterlina)</option>
-								<option style="background: #eaeded" name="TIPO_DE_MONEDA" value="CHF" <?php if($Moneda=='CHF' ){echo "selected";} ?>>CHF (Franco suizo)</option>
-								<option style="background: #fdebd0" name="TIPO_DE_MONEDA" value="CNY" <?php if($Moneda=='CNY' ){echo "selected";} ?>>CNY (Yuan)</option>
-								<option style="background: #ebdef0" name="TIPO_DE_MONEDA" value="JPY" <?php if($Moneda=='JPY' ){echo "selected";} ?>>JPY (Yen japonés)</option>
-								<option style="background: #d6eaf8" name="TIPO_DE_MONEDA" value="HKD" <?php if($Moneda=='HKD' ){echo "selected";} ?>>HKD (Dólar hongkonés)</option>
-								<option style="background: #fef5e7" name="TIPO_DE_MONEDA" value="CAD" <?php if($Moneda=='CAD' ){echo "selected";} ?>>CAD (Dólar canadiense)</option>
-								<option style="background: #ebedef" name="TIPO_DE_MONEDA" value="AUD" <?php if($Moneda=='AUD' ){echo "selected";} ?>>AUD (Dólar australiano)</option>
-								<option style="background: #fbeee6" name="TIPO_DE_MONEDA" value="BRL" <?php if($Moneda=='BRL' ){echo "selected";} ?>>BRL (Real brasileño)</option>
-								<option style="background: #e8f6f3" name="TIPO_DE_MONEDA" value="RUB" <?php if($Moneda=='RUB' ){echo "selected";} ?>>RUB (Rublo ruso)</option>
+							<select class="form-select mb-3" aria-label="Default select example" id="validationCustom02" required="" name="TIPO_DE_MONEDA"  >
+								<option style="background: #c9e8e8" name="TIPO_DE_MONEDA" value="MXN" <?php if($Moneda=='MXN' ){echo "selected";} ?>  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>>MXN (Peso mexicano)</option>
+								<option style="background: #a3e4d7" name="TIPO_DE_MONEDA" value="USD" <?php if($Moneda=='USD' ){echo "selected";} ?>  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>>USD (Dolar)</option>
+								<option style="background: #e8f6f3" name="TIPO_DE_MONEDA" value="EUR" <?php if($Moneda=='EUR' ){echo "selected";} ?>  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>>EUR (Euro)</option>
+								<option style="background: #fdf2e9" name="TIPO_DE_MONEDA" value="GBP" <?php if($Moneda=='GBP' ){echo "selected";} ?>  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>>GBP (Libra esterlina)</option>
+								<option style="background: #eaeded" name="TIPO_DE_MONEDA" value="CHF" <?php if($Moneda=='CHF' ){echo "selected";} ?>  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>>CHF (Franco suizo)</option>
+								<option style="background: #fdebd0" name="TIPO_DE_MONEDA" value="CNY" <?php if($Moneda=='CNY' ){echo "selected";} ?>  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>>CNY (Yuan)</option>
+								<option style="background: #ebdef0" name="TIPO_DE_MONEDA" value="JPY" <?php if($Moneda=='JPY' ){echo "selected";} ?>  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>>JPY (Yen japonés)</option>
+								<option style="background: #d6eaf8" name="TIPO_DE_MONEDA" value="HKD" <?php if($Moneda=='HKD' ){echo "selected";} ?>  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>>HKD (Dólar hongkonés)</option>
+								<option style="background: #fef5e7" name="TIPO_DE_MONEDA" value="CAD" <?php if($Moneda=='CAD' ){echo "selected";} ?>  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>>CAD (Dólar canadiense)</option>
+								<option style="background: #ebedef" name="TIPO_DE_MONEDA" value="AUD" <?php if($Moneda=='AUD' ){echo "selected";} ?>  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>>AUD (Dólar australiano)</option>
+								<option style="background: #fbeee6" name="TIPO_DE_MONEDA" value="BRL" <?php if($Moneda=='BRL' ){echo "selected";} ?>  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>>BRL (Real brasileño)</option>
+								<option style="background: #e8f6f3" name="TIPO_DE_MONEDA" value="RUB" <?php if($Moneda=='RUB' ){echo "selected";} ?>  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>>RUB (Rublo ruso)</option>
 							</select>
 						</div>
 					</td>
@@ -767,23 +768,23 @@ if($rfcE==true){
 					</th>
 					<td style="width: 45%;">
 						<div id="2PFORMADE_PAGO">
-							<select name="PFORMADE_PAGO" class="form-select mb-3" id="validationCustom02" aria-label="Default select example">
+							<select name="PFORMADE_PAGO" class="form-select mb-3" id="validationCustom02" aria-label="Default select example"  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>>
 								<script type="text/javascript">
 								function EFECTIVO(texto) {
 									alert(texto);
 								}
 								</script>
 								<option style="background:#f2b4f5" name="PFORMADE_PAGO" value="03">03 TRANSFERENCIA ELECTRONICA DE FONDOS</option>
-								<option style="background:#f2b4f5" <?php if($formaDePago=='03' ){echo "selected";} ?> value="03" name="PFORMADE_PAGO">03 TRANSFERENCIA ELECTRONICA DE FONDOS</option>
-								<option style="background:#dee6fc" <?php if($formaDePago=='04' ){echo "selected ";} ?> value="04" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');" name="PFORMADE_PAGO">04 TARJETA DE CREDITO</option>
-								<option style="background:#ddf5da" <?php if($formaDePago=='01' ){echo "selected";} ?> value="01 EFECTIVO" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');" name="PFORMADE_PAGO">01 EFECTIVO</option>
-								<option style="background:#fceade" <?php if($formaDePago=='02' ){echo "selected";} ?> value="02" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');" name="PFORMADE_PAGO">02 CHEQUE NOMITATIVO</option>
-								<option style="background:#f6fcde" <?php if($formaDePago=='05' ){echo "selected";} ?> value="05" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');">05 MONEDERO ELECTRONICO</option>
-								<option style="background:#dee2fc" <?php if($formaDePago=='06' ){echo "selected";} ?> value="06" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');">06 DINERO ELECTRONICO</option>
-								<option style="background:#f9e5fa" <?php if($formaDePago=='08' ){echo "selected";} ?> value="08" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');">08 VALES DE DESPENSA</option>
-								<option style="background:#eefcde" <?php if($formaDePago=='28' ){echo "selected";} ?> value="28" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');">28 TARJETA DE DEBITO</option>
-								<option style="background:#fcfbde" <?php if($formaDePago=='29' ){echo "selected";} ?> value="29" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');">29 TARJETA DE SERVICIO</option>
-								<option style="background:#f9e5fa" <?php if($formaDePago=='99' ){echo "selected";} ?> value="99" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');">99 OTRO</option>
+								<option style="background:#f2b4f5" <?php if($formaDePago=='03' ){echo "selected";} ?> value="03" name="PFORMADE_PAGO"  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>>03 TRANSFERENCIA ELECTRONICA DE FONDOS</option>
+								<option style="background:#dee6fc" <?php if($formaDePago=='04' ){echo "selected ";} ?> value="04" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');" name="PFORMADE_PAGO"  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>>04 TARJETA DE CREDITO</option>
+								<option style="background:#ddf5da" <?php if($formaDePago=='01' ){echo "selected";} ?> value="01 EFECTIVO" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');" name="PFORMADE_PAGO"   <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>>01 EFECTIVO</option>
+								<option style="background:#fceade" <?php if($formaDePago=='02' ){echo "selected";} ?> value="02" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');" name="PFORMADE_PAGO"  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>>02 CHEQUE NOMITATIVO</option>
+								<option style="background:#f6fcde" <?php if($formaDePago=='05' ){echo "selected";} ?> value="05" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');"  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>>05 MONEDERO ELECTRONICO</option>
+								<option style="background:#dee2fc" <?php if($formaDePago=='06' ){echo "selected";} ?> value="06" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');"  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>>06 DINERO ELECTRONICO</option>
+								<option style="background:#f9e5fa" <?php if($formaDePago=='08' ){echo "selected";} ?> value="08" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');"  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>>08 VALES DE DESPENSA</option>
+								<option style="background:#eefcde" <?php if($formaDePago=='28' ){echo "selected";} ?> value="28" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');"  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>>28 TARJETA DE DEBITO</option>
+								<option style="background:#fcfbde" <?php if($formaDePago=='29' ){echo "selected";} ?> value="29" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');"  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>>29 TARJETA DE SERVICIO</option>
+								<option style="background:#f9e5fa" <?php if($formaDePago=='99' ){echo "selected";} ?> value="99" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');"  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>>99 OTRO</option>
 							</select>
 							<div/> </td>
 				</tr>
