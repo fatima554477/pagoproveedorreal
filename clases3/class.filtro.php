@@ -438,11 +438,11 @@ class orders extends accesoclase {
 		$whereClause = $sWhere3;
 		$orderClause = " order by ".$sWhere3campo;
 
-                $sql="SELECT $campos , 02SUBETUFACTURA.id as 02SUBETUFACTURAid, RFC_PROVEEDOR as RFC_PROVEEDOR1trim FROM $tables LEFT JOIN $tables2 $sWhere $whereClause $orderClause LIMIT $offset,$per_page";
+                $sql="SELECT DISTINCT $campos , 02SUBETUFACTURA.id as 02SUBETUFACTURAid, RFC_PROVEEDOR as RFC_PROVEEDOR1trim FROM $tables LEFT JOIN $tables2 $sWhere $whereClause $orderClause LIMIT $offset,$per_page";
                 $query=$this->mysqli->query($sql);
 
-                // Consulta de conteo optimizada sin SQL_CALC_FOUND_ROWS
-                $countSql = "SELECT COUNT(*) AS total FROM $tables LEFT JOIN $tables2 $sWhere $whereClause";
+                // Consulta de conteo optimizada sin SQL_CALC_FOUND_ROWS␊
+                $countSql = "SELECT COUNT(DISTINCT 02SUBETUFACTURA.id) AS total FROM $tables LEFT JOIN $tables2 $sWhere $whereClause";
                 $totalResult = $this->mysqli->query($countSql);
                 $totalRow = $totalResult ? $totalResult->fetch_assoc() : ['total' => 0];
                 $nums_row = isset($totalRow['total']) ? (int)$totalRow['total'] : 0;
