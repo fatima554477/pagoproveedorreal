@@ -62,6 +62,42 @@ class accesoclase extends colaboradores{
 		mysqli_query($conn, $insertBitacora);
 	}
 
+	private function valor_actual_campo_subetufactura($conn, $idSubetufactura, $campo){
+		$camposPermitidos = array(
+			'STATUS_RESPONSABLE_EVENTO',
+			'STATUS_DE_PAGO',
+			'STATUS_AUDITORIA3',
+			'STATUS_SINXML',
+			'STATUS_CHECKBOX',
+			'STATUS_AUDITORIA2',
+			'STATUS_FINANZAS',
+			'STATUS_VENTAS'
+		);
+
+		if(!in_array($campo, $camposPermitidos)){
+			return '';
+		}
+
+		$idSubetufactura = intval($idSubetufactura);
+		$consulta = "SELECT ".$campo." AS valor FROM 02SUBETUFACTURA WHERE id = '".$idSubetufactura."' LIMIT 1";
+		$query = mysqli_query($conn, $consulta);
+		if($query){
+			$row = mysqli_fetch_array($query, MYSQLI_ASSOC);
+			if($row && isset($row['valor'])){
+				return $row['valor'];
+			}
+		}
+		return '';
+	}
+
+	private function registrar_cambio_estado_detallado($conn, $idSubetufactura, $campo, $valorAnterior, $valorNuevo, $descripcion = ''){
+		$detalle = 'Se actualizó '.$campo.' de "'.$valorAnterior.'" a "'.$valorNuevo.'".';
+		if($descripcion != ''){
+			$detalle .= ' '.$descripcion;
+		}
+		$this->registrar_bitacora($conn, $idSubetufactura, 'ACTUALIZACION', $detalle, '', $this->nombre_usuario_bitacora());
+	}
+
 	public function var_altaeventos(){
 		$conn = $this->db();
 		$variablequery = "select * from 04altaeventos where id = '".$_SESSION['idevento']."' ";
@@ -805,12 +841,34 @@ NoIdentificacionConcepto
 		$DomicilioFiscalReceptor, $RegimenFiscalReceptor, $UUID, $TImpuestosRetenidos, 
 		$TImpuestosTrasladados, $session, $existe, $TuaTotalCargos, $TUA, $Descuento, $Propina, $conn, $actualiza, $DescripcionConcepto);
 
+		$consultaAnterior = mysqli_query($conn, "SELECT STATUS_DE_PAGO, MONTO_DEPOSITAR, FECHA_DE_PAGO, PFORMADE_PAGO FROM 02SUBETUFACTURA WHERE id = '".intval($IPpagoprovee)."' LIMIT 1");
+		$registroAnterior = $consultaAnterior ? mysqli_fetch_array($consultaAnterior, MYSQLI_ASSOC) : array();
+
 		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
+
+		$detalleActualizacion = 'Se actualizó el registro de pago a proveedor.';
+		$cambiosDetectados = array();
+		if(isset($registroAnterior['STATUS_DE_PAGO']) && $registroAnterior['STATUS_DE_PAGO'] != $STATUS_DE_PAGO){
+			$cambiosDetectados[] = 'STATUS_DE_PAGO de "'.$registroAnterior['STATUS_DE_PAGO'].'" a "'.$STATUS_DE_PAGO.'"';
+		}
+		if(isset($registroAnterior['MONTO_DEPOSITAR']) && $registroAnterior['MONTO_DEPOSITAR'] != $MONTO_DEPOSITAR){
+			$cambiosDetectados[] = 'MONTO_DEPOSITAR de "'.$registroAnterior['MONTO_DEPOSITAR'].'" a "'.$MONTO_DEPOSITAR.'"';
+		}
+		if(isset($registroAnterior['FECHA_DE_PAGO']) && $registroAnterior['FECHA_DE_PAGO'] != $FECHA_DE_PAGO){
+			$cambiosDetectados[] = 'FECHA_DE_PAGO de "'.$registroAnterior['FECHA_DE_PAGO'].'" a "'.$FECHA_DE_PAGO.'"';
+		}
+		if(isset($registroAnterior['PFORMADE_PAGO']) && $registroAnterior['PFORMADE_PAGO'] != $PFORMADE_PAGO){
+			$cambiosDetectados[] = 'PFORMADE_PAGO de "'.$registroAnterior['PFORMADE_PAGO'].'" a "'.$PFORMADE_PAGO.'"';
+		}
+		if(count($cambiosDetectados) > 0){
+			$detalleActualizacion .= ' Cambios: '.implode('; ', $cambiosDetectados).'.';
+		}
+
 		$this->registrar_bitacora(
 			$conn,
 			$IPpagoprovee,
 			'ACTUALIZACION',
-			'Se actualizó el registro de pago a proveedor.',
+			$detalleActualizacion,
 			'',
 			$usuarioBitacora
 		);
@@ -864,11 +922,12 @@ NoIdentificacionConcepto
 		$session = isset($_SESSION['idem'])?$_SESSION['idem']:'';    
 		if($session != ''){
 		
+		$valorAnterior = $this->valor_actual_campo_subetufactura($conn, $RESPONSABLE_EVENTO_id, 'STATUS_RESPONSABLE_EVENTO');
 		$var1 = "update 02SUBETUFACTURA SET STATUS_RESPONSABLE_EVENTO = '".$RESPONSABLE_text."' WHERE id = '".$RESPONSABLE_EVENTO_id."'  ";	
 	
 		
 		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
-		$this->registrar_bitacora($conn, $RESPONSABLE_EVENTO_id, 'ACTUALIZACION', 'Se actualizó STATUS_RESPONSABLE_EVENTO a '.$RESPONSABLE_text.'.', '', $this->nombre_usuario_bitacora());
+		$this->registrar_cambio_estado_detallado($conn, $RESPONSABLE_EVENTO_id, 'STATUS_RESPONSABLE_EVENTO', $valorAnterior, $RESPONSABLE_text);
 		return "Actualizado^".$RESPONSABLE_text;
 	
 			
@@ -933,11 +992,12 @@ NoIdentificacionConcepto
 			}else{
 				$STATUS_DE_PAGO = 'SOLICITADO';				
 			}
+		$valorAnterior = $this->valor_actual_campo_subetufactura($conn, $pasarpagado_id, 'STATUS_DE_PAGO');
 		$var1 = "update 02SUBETUFACTURA SET STATUS_DE_PAGO = '".$STATUS_DE_PAGO."' WHERE id = '".$pasarpagado_id."'  ";	
 	
 		//if($pasarpagado_text=='si'){
 		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
-		$this->registrar_bitacora($conn, $pasarpagado_id, 'ACTUALIZACION', 'Se actualizó STATUS_DE_PAGO a '.$STATUS_DE_PAGO.'.', '', $this->nombre_usuario_bitacora());
+		$this->registrar_cambio_estado_detallado($conn, $pasarpagado_id, 'STATUS_DE_PAGO', $valorAnterior, $STATUS_DE_PAGO);
 		return "Actualizado";
 		//}
 			
@@ -952,12 +1012,12 @@ NoIdentificacionConcepto
 		$conn = $this->db();
 		$session = isset($_SESSION['idem'])?$_SESSION['idem']:'';    
 		if($session != ''){
-		
+		$valorAnterior = $this->valor_actual_campo_subetufactura($conn, $AUDITORIA3_id, 'STATUS_AUDITORIA3');
 		 $var1 = "update 02SUBETUFACTURA SET STATUS_AUDITORIA3 = '".$AUDITORIA3_text."' WHERE id = '".$AUDITORIA3_id."'  ";	
 	
 		//if($pasarpagado_text=='si'){
 		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
-		$this->registrar_bitacora($conn, $AUDITORIA3_id, 'ACTUALIZACION', 'Se actualizó STATUS_AUDITORIA3 a '.$AUDITORIA3_text.'.', '', $this->nombre_usuario_bitacora());
+		$this->registrar_cambio_estado_detallado($conn, $AUDITORIA3_id, 'STATUS_AUDITORIA3', $valorAnterior, $AUDITORIA3_text);
 		return "Actualizado^".$AUDITORIA3_text;
 		//}
 			
@@ -972,12 +1032,12 @@ NoIdentificacionConcepto
 		$conn = $this->db();
 		$session = isset($_SESSION['idem'])?$_SESSION['idem']:'';    
 		if($session != ''){
-		
+		$valorAnterior = $this->valor_actual_campo_subetufactura($conn, $SINXML_id, 'STATUS_SINXML');
 		 $var1 = "update 02SUBETUFACTURA SET STATUS_SINXML = '".$SINXML_text."' WHERE id = '".$SINXML_id."'  ";	
 	
 		//if($pasarpagado_text=='si'){
 		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
-		$this->registrar_bitacora($conn, $SINXML_id, 'ACTUALIZACION', 'Se actualizó STATUS_SINXML a '.$SINXML_text.'.', '', $this->nombre_usuario_bitacora());
+		$this->registrar_cambio_estado_detallado($conn, $SINXML_id, 'STATUS_SINXML', $valorAnterior, $SINXML_text);
 		return "Actualizado^".$SINXML_text;
 		//}
 			
@@ -996,11 +1056,12 @@ NoIdentificacionConcepto
 			}else{
 				$STATUS_DE_PAGO = 'SOLICITADO';				
 			}
+		$valorAnterior = $this->valor_actual_campo_subetufactura($conn, $AUDITORIA1_id, 'STATUS_DE_PAGO');
 		$var1 = "update 02SUBETUFACTURA SET STATUS_DE_PAGO = '".$STATUS_DE_PAGO."' WHERE id = '".$AUDITORIA1_id."'  ";	
 	
 		
 		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
-		$this->registrar_bitacora($conn, $AUDITORIA1_id, 'ACTUALIZACION', 'Se actualizó STATUS_DE_PAGO a '.$STATUS_DE_PAGO.' por auditoría 1.', '', $this->nombre_usuario_bitacora());
+		$this->registrar_cambio_estado_detallado($conn, $AUDITORIA1_id, 'STATUS_DE_PAGO', $valorAnterior, $STATUS_DE_PAGO, 'Cambio realizado por auditoría 1.');
 		return "Actualizado";
 		
 			
@@ -1021,11 +1082,12 @@ NoIdentificacionConcepto
 		$session = isset($_SESSION['idem'])?$_SESSION['idem']:'';    
 		if($session != ''){
 
+		$valorAnterior = $this->valor_actual_campo_subetufactura($conn, $CHECKBOX_id, 'STATUS_CHECKBOX');
 		$var1 = "update 02SUBETUFACTURA SET STATUS_CHECKBOX = '".$CHECKBOX_text."' WHERE id = '".$CHECKBOX_id."'  ";	
 	
 		
 		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
-		$this->registrar_bitacora($conn, $CHECKBOX_id, 'ACTUALIZACION', 'Se actualizó STATUS_CHECKBOX a '.$CHECKBOX_text.'.', '', $this->nombre_usuario_bitacora());
+		$this->registrar_cambio_estado_detallado($conn, $CHECKBOX_id, 'STATUS_CHECKBOX', $valorAnterior, $CHECKBOX_text);
 		return "Actualizado";
 		
 			
@@ -1047,11 +1109,12 @@ NoIdentificacionConcepto
 			}else{
 				$STATUS_DE_PAGO = 'SOLICITADO';				
 			}*/
+		$valorAnterior = $this->valor_actual_campo_subetufactura($conn, $RESPONSABLE_EVENTO_id, 'STATUS_AUDITORIA2');
 		 $var1 = "update 02SUBETUFACTURA SET STATUS_AUDITORIA2 = '".$RESPONSABLE_text."' WHERE id = '".$RESPONSABLE_EVENTO_id."'  ";	
 	
 		//if($pasarpagado_text=='si'){
 		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
-		$this->registrar_bitacora($conn, $RESPONSABLE_EVENTO_id, 'ACTUALIZACION', 'Se actualizó estado a '.$RESPONSABLE_text.'.', '', $this->nombre_usuario_bitacora());
+		$this->registrar_cambio_estado_detallado($conn, $RESPONSABLE_EVENTO_id, 'STATUS_AUDITORIA2', $valorAnterior, $RESPONSABLE_text);
 		return "Actualizado^".$RESPONSABLE_text;
 		//}
 			
@@ -1071,11 +1134,12 @@ NoIdentificacionConcepto
 			}else{
 				$STATUS_DE_PAGO = 'SOLICITADO';				
 			}*/
+		$valorAnterior = $this->valor_actual_campo_subetufactura($conn, $RESPONSABLE_EVENTO_id, 'STATUS_FINANZAS');
 		 $var1 = "update 02SUBETUFACTURA SET STATUS_FINANZAS = '".$RESPONSABLE_text."' WHERE id = '".$RESPONSABLE_EVENTO_id."'  ";	
 	
 		//if($pasarpagado_text=='si'){
 		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
-		$this->registrar_bitacora($conn, $RESPONSABLE_EVENTO_id, 'ACTUALIZACION', 'Se actualizó STATUS_FINANZAS a '.$RESPONSABLE_text.'.', '', $this->nombre_usuario_bitacora());
+		$this->registrar_cambio_estado_detallado($conn, $RESPONSABLE_EVENTO_id, 'STATUS_FINANZAS', $valorAnterior, $RESPONSABLE_text);
 		return "Actualizado^".$RESPONSABLE_text;
 		//}
 			
@@ -1095,11 +1159,12 @@ NoIdentificacionConcepto
 			}else{
 				$STATUS_DE_PAGO = 'SOLICITADO';				
 			}*/
+		$valorAnterior = $this->valor_actual_campo_subetufactura($conn, $RESPONSABLE_EVENTO_id, 'STATUS_VENTAS');
 		 $var1 = "update 02SUBETUFACTURA SET STATUS_VENTAS = '".$RESPONSABLE_text."' WHERE id = '".$RESPONSABLE_EVENTO_id."'  ";	
 	
 		//if($pasarpagado_text=='si'){
 		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
-		$this->registrar_bitacora($conn, $RESPONSABLE_EVENTO_id, 'ACTUALIZACION', 'Se actualizó STATUS_VENTAS a '.$RESPONSABLE_text.'.', '', $this->nombre_usuario_bitacora());
+		$this->registrar_cambio_estado_detallado($conn, $RESPONSABLE_EVENTO_id, 'STATUS_VENTAS', $valorAnterior, $RESPONSABLE_text);
 		return "Actualizado^".$RESPONSABLE_text;
 		//}
 			
@@ -1154,6 +1219,41 @@ if($row['id']==0 or $row['id']==''){
 
 
 public function Listado_pagoproveedor(){ $conn = $this->db(); $variablequery = "select * from 02SUBETUFACTURA where idRelacion = '".$_SESSION['idPROV']."' order by id desc "; return $arrayquery = mysqli_query($conn,$variablequery); } 
+
+public function Listado_bitacora_pagoproveedor_array($idSubetufactura){
+	$conn = $this->db();
+	$idSubetufactura = intval($idSubetufactura);
+
+	$crearTabla = "CREATE TABLE IF NOT EXISTS `02SUBETUFACTURA_BITACORA` (
+		`id` int(11) NOT NULL AUTO_INCREMENT,
+		`id_subetufactura` int(11) NOT NULL DEFAULT 0,
+		`tipo_movimiento` varchar(50) NOT NULL,
+		`detalle` text,
+		`fecha_hora` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		`nombre_quien_ingreso` varchar(255) DEFAULT NULL,
+		`nombre_quien_actualizo` varchar(255) DEFAULT NULL,
+		PRIMARY KEY (`id`),
+		KEY `idx_id_subetufactura` (`id_subetufactura`),
+		KEY `idx_fecha_hora` (`fecha_hora`)
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+	mysqli_query($conn, $crearTabla);
+
+	$variablequery = "SELECT tipo_movimiento, detalle, fecha_hora, nombre_quien_ingreso, nombre_quien_actualizo
+	FROM 02SUBETUFACTURA_BITACORA
+	WHERE id_subetufactura = '".$idSubetufactura."'
+	ORDER BY id DESC";
+
+	$arrayquery = mysqli_query($conn, $variablequery);
+	$resultado = array();
+
+	if($arrayquery){
+		while($row = mysqli_fetch_array($arrayquery, MYSQLI_ASSOC)){
+			$resultado[] = $row;
+		}
+	}
+
+	return $resultado;
+}
 
 
 
