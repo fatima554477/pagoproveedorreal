@@ -15,6 +15,7 @@ fecha fatis : 04/04/2024
         session_start(); 
     }  
 //select.php  CONTRASENA_DE1
+
 $identioficador = isset($_POST["personal_id"])?$_POST["personal_id"]:'';
 if($identioficador != '')
 {
@@ -194,6 +195,14 @@ $STATUS_DE_PAGO = '<select required="" name="STATUS_DE_PAGO">
             $eventosOptions .= '<option value="'.$numeroEvento.'" data-nombre="'.$nombreEvento.'" '.$selectedEvento.'>'.$numeroEvento.'</option>';
         }
     }
+	    $botonBitacora = '';
+
+    if(isset($conexion) && $conexion->variablespermisos('','bitacora','ver') == 'si'){
+
+        $botonBitacora = '<button class="btn btn-sm btn-outline-primary px-3" type="button" id="verBitacoraPAGO">VER BITÁCORA</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+
+    }
+
 
 
  $output .= '<div ></div><form  id="ListadoPAGOPROVEEform"> 
@@ -905,8 +914,9 @@ $campos_xml = '
     <td width="30%"><label><strong style="font-size:22px;"></strong></label></td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <td width="70%" class="align-middle">
         <!-- Botón GUARDAR -->
-        <button class="btn btn-sm btn-outline-success px-5" type="button" id="clickPAGOP">GUARDAR</button>
-        <button class="btn btn-sm btn-outline-primary px-3" type="button" id="verBitacoraPAGO">VER BITÁCORA</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <button class="btn btn-sm btn-outline-success px-5" type="button" id="clickPAGOP">GUARDAR</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        '.$botonBitacora.'
+
         <!-- Mensaje/respuesta al lado -->
       
         <div id="respuestaser" class="d-inline-block ms-3" style="

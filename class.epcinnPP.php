@@ -69,7 +69,7 @@ class accesoclase extends colaboradores{
 			'STATUS_AUDITORIA3',
 			'STATUS_SINXML',
 			'STATUS_CHECKBOX',
-			'STATUS_AUDITORIA2',
+			'STATUS_AUDITORIA2',			
 			'STATUS_FINANZAS',
 			'STATUS_VENTAS'
 		);
@@ -90,12 +90,35 @@ class accesoclase extends colaboradores{
 		return '';
 	}
 
-	private function registrar_cambio_estado_detallado($conn, $idSubetufactura, $campo, $valorAnterior, $valorNuevo, $descripcion = ''){
-		$detalle = 'Se actualizó '.$campo.' de "'.$valorAnterior.'" a "'.$valorNuevo.'".';
+private function registrar_cambio_estado_detallado($conn, $idSubetufactura, $campo, $valorAnterior, $valorNuevo, $descripcion = ''){
+		$detalle = 'Se actualizó '.$this->etiqueta_bitacora_campo($campo).' de "'.$valorAnterior.'" a "'.$valorNuevo.'".';
 		if($descripcion != ''){
 			$detalle .= ' '.$descripcion;
 		}
 		$this->registrar_bitacora($conn, $idSubetufactura, 'ACTUALIZACION', $detalle, '', $this->nombre_usuario_bitacora());
+	}
+
+	private function etiqueta_bitacora_campo($campo){
+		$etiquetas = array(
+			'STATUS_RESPONSABLE_EVENTO' => 'ESTATUS RESPONSABLE DEL EVENTO',
+			'STATUS_DE_PAGO' => 'ESTATUS DE PAGO',
+			'STATUS_AUDITORIA3' => 'CHECK BOX VoBo CxP',
+			'STATUS_SINXML' => 'SIN EFECTO XML',
+			'STATUS_CHECKBOX' => 'SE QUITO EL 46% PERDIDA FISCAL',
+			'STATUS_AUDITORIA2' => 'AUTORIZACIÓN POR AUDITORÍA',
+			'STATUS_FINANZAS' => 'AUTORIZACIÓN POR DIRECCIÓN',
+			'STATUS_VENTAS' => 'AUTORIZACIÓN POR VENTAS',
+			'MONTO_DEPOSITAR' => 'TOTAL A PAGAR',
+			'FECHA_A_DEPOSITAR' => 'FECHA EFECTIVA DE PAGO',
+			'FECHA_DE_PAGO' => 'FECHA DE PROGRAMACIÓN DEL PAGO',
+			'PFORMADE_PAGO' => 'FORMA DE PAGO'
+		);
+
+		if(isset($etiquetas[$campo])){
+			return $etiquetas[$campo];
+		}
+
+		return str_replace('_', ' ', $campo);
 	}
 
 	public function var_altaeventos(){
@@ -841,24 +864,27 @@ NoIdentificacionConcepto
 		$DomicilioFiscalReceptor, $RegimenFiscalReceptor, $UUID, $TImpuestosRetenidos, 
 		$TImpuestosTrasladados, $session, $existe, $TuaTotalCargos, $TUA, $Descuento, $Propina, $conn, $actualiza, $DescripcionConcepto);
 
-		$consultaAnterior = mysqli_query($conn, "SELECT STATUS_DE_PAGO, MONTO_DEPOSITAR, FECHA_DE_PAGO, PFORMADE_PAGO FROM 02SUBETUFACTURA WHERE id = '".intval($IPpagoprovee)."' LIMIT 1");
+		$consultaAnterior = mysqli_query($conn, "SELECT STATUS_DE_PAGO, MONTO_DEPOSITAR, FECHA_DE_PAGO,FECHA_A_DEPOSITAR, PFORMADE_PAGO FROM 02SUBETUFACTURA WHERE id = '".intval($IPpagoprovee)."' LIMIT 1");
 		$registroAnterior = $consultaAnterior ? mysqli_fetch_array($consultaAnterior, MYSQLI_ASSOC) : array();
 
 		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
 
 		$detalleActualizacion = 'Se actualizó el registro de pago a proveedor.';
 		$cambiosDetectados = array();
-		if(isset($registroAnterior['STATUS_DE_PAGO']) && $registroAnterior['STATUS_DE_PAGO'] != $STATUS_DE_PAGO){
-			$cambiosDetectados[] = 'STATUS_DE_PAGO de "'.$registroAnterior['STATUS_DE_PAGO'].'" a "'.$STATUS_DE_PAGO.'"';
+        if(isset($registroAnterior['STATUS_DE_PAGO']) && $registroAnterior['STATUS_DE_PAGO'] != $STATUS_DE_PAGO){
+			$cambiosDetectados[] = $this->etiqueta_bitacora_campo('STATUS_DE_PAGO').' de "'.$registroAnterior['STATUS_DE_PAGO'].'" a "'.$STATUS_DE_PAGO.'"';
 		}
 		if(isset($registroAnterior['MONTO_DEPOSITAR']) && $registroAnterior['MONTO_DEPOSITAR'] != $MONTO_DEPOSITAR){
-			$cambiosDetectados[] = 'MONTO_DEPOSITAR de "'.$registroAnterior['MONTO_DEPOSITAR'].'" a "'.$MONTO_DEPOSITAR.'"';
+			$cambiosDetectados[] = $this->etiqueta_bitacora_campo('MONTO_DEPOSITAR').' de "'.$registroAnterior['MONTO_DEPOSITAR'].'" a "'.$MONTO_DEPOSITAR.'"';
 		}
 		if(isset($registroAnterior['FECHA_DE_PAGO']) && $registroAnterior['FECHA_DE_PAGO'] != $FECHA_DE_PAGO){
-			$cambiosDetectados[] = 'FECHA_DE_PAGO de "'.$registroAnterior['FECHA_DE_PAGO'].'" a "'.$FECHA_DE_PAGO.'"';
+			$cambiosDetectados[] = $this->etiqueta_bitacora_campo('FECHA_DE_PAGO').' de "'.$registroAnterior['FECHA_DE_PAGO'].'" a "'.$FECHA_DE_PAGO.'"';
+		}
+				if(isset($registroAnterior['FECHA_A_DEPOSITAR']) && $registroAnterior['FECHA_A_DEPOSITAR'] != $FECHA_A_DEPOSITAR){
+			$cambiosDetectados[] = $this->etiqueta_bitacora_campo('FECHA_A_DEPOSITAR').' de "'.$registroAnterior['FECHA_A_DEPOSITAR'].'" a "'.$FECHA_A_DEPOSITAR.'"';
 		}
 		if(isset($registroAnterior['PFORMADE_PAGO']) && $registroAnterior['PFORMADE_PAGO'] != $PFORMADE_PAGO){
-			$cambiosDetectados[] = 'PFORMADE_PAGO de "'.$registroAnterior['PFORMADE_PAGO'].'" a "'.$PFORMADE_PAGO.'"';
+			$cambiosDetectados[] = $this->etiqueta_bitacora_campo('PFORMADE_PAGO').' de "'.$registroAnterior['PFORMADE_PAGO'].'" a "'.$PFORMADE_PAGO.'"';
 		}
 		if(count($cambiosDetectados) > 0){
 			$detalleActualizacion .= ' Cambios: '.implode('; ', $cambiosDetectados).'.';
@@ -1246,8 +1272,15 @@ public function Listado_bitacora_pagoproveedor_array($idSubetufactura){
 	$arrayquery = mysqli_query($conn, $variablequery);
 	$resultado = array();
 
-	if($arrayquery){
+if($arrayquery){
 		while($row = mysqli_fetch_array($arrayquery, MYSQLI_ASSOC)){
+			if(isset($row['fecha_hora']) && $row['fecha_hora'] != ''){
+				$fechaBitacora = DateTime::createFromFormat('Y-m-d H:i:s', $row['fecha_hora'], new DateTimeZone('UTC'));
+				if($fechaBitacora){
+					$fechaBitacora->setTimezone(new DateTimeZone('America/Mexico_City'));
+					$row['fecha_hora'] = $fechaBitacora->format('d/m/Y H:i:s');
+				}
+			}
 			$resultado[] = $row;
 		}
 	}
