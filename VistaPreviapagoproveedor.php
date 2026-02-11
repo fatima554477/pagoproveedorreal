@@ -1,3 +1,5 @@
+	
+
 <?php
 /*
 fecha sandor: 
@@ -903,7 +905,8 @@ $campos_xml = '
     <td width="30%"><label><strong style="font-size:22px;"></strong></label></td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <td width="70%" class="align-middle">
         <!-- Botón GUARDAR -->
-        <button class="btn btn-sm btn-outline-success px-5" type="button" id="clickPAGOP">GUARDAR</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <button class="btn btn-sm btn-outline-success px-5" type="button" id="clickPAGOP">GUARDAR</button>
+        <button class="btn btn-sm btn-outline-primary px-3" type="button" id="verBitacoraPAGO">VER BITÁCORA</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <!-- Mensaje/respuesta al lado -->
       
         <div id="respuestaser" class="d-inline-block ms-3" style="
@@ -932,6 +935,7 @@ $campos_xml = '
 
    <input type="hidden" value="ENVIARPAGOprovee" name="ENVIARPAGOprovee"/>
         <input type="hidden" value="'.$identioficador.'" name="IPpagoprovee" id="IPpagoprovee"/>
+        <div id="contenedorBitacoraPago" style="margin-top:10px; max-height:200px; overflow:auto; font-size:12px; background:#f8f9fa; border:1px solid #ddd; padding:8px;"></div>
     </td>
 </tr>
 
@@ -1100,6 +1104,34 @@ var result = response.split('^^');
 	}
     $(document).ready(function(){
 
+$("#verBitacoraPAGO").click(function(){
+	$.ajax({
+		url:"pagoproveedores/controladorPP.php",
+		method:"POST",
+		dataType:"json",
+		data:{ action:'bitacora', idSubetufactura: $('#IPpagoprovee').val() },
+		success:function(data){
+			var html = '';
+			if(!data || data.length===0){
+				html = '<div>No hay registros de bitácora para este pago.</div>';
+			}else{
+				for(var i=0;i<data.length;i++){
+					var ingreso = data[i].nombre_quien_ingreso ? data[i].nombre_quien_ingreso : '-';
+					var actualizo = data[i].nombre_quien_actualizo ? data[i].nombre_quien_actualizo : '-';
+					html += '<div style="margin-bottom:6px;padding-bottom:6px;border-bottom:1px dashed #ccc;">'
+						+ '<strong>' + data[i].tipo_movimiento + '</strong> | ' + data[i].fecha_hora
+						+ '<br><span>' + data[i].detalle + '</span>'
+						+ '<br><small>Ingresó: ' + ingreso + ' | Actualizó: ' + actualizo + '</small>'
+						+ '</div>';
+				}
+			}
+			$('#contenedorBitacoraPago').html(html);
+		},
+		error:function(){
+			$('#contenedorBitacoraPago').html('<div>Error al consultar la bitácora.</div>');
+		}
+	});
+});
 
 $("#clickPAGOP").click(function(){
 	

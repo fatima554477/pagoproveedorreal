@@ -152,6 +152,13 @@ if($action=='ciudad_valor'){
 	$NUMERO_EVENTO = isset($_POST["NUMERO_EVENTO"])?$_POST["NUMERO_EVENTO"]:"";
 	echo $resultado = $pagoproveedores->buscarciudad($NUMERO_EVENTO);
 }
+
+if($action=='bitacora'){
+	$idSubetufactura = isset($_POST["idSubetufactura"])?$_POST["idSubetufactura"]:"";
+	$bitacora = $pagoproveedores->Listado_bitacora_pagoproveedor_array($idSubetufactura);
+	echo json_encode($bitacora);
+	exit;
+}
  
 if($hiddenpagoproveedores == 'hiddenpagoproveedores' or $ENVIARPAGOprovee == 'ENVIARPAGOprovee'){            
 	
