@@ -1841,9 +1841,13 @@ echo implode(' ', $atributosVentas);
 
 
 
+        <?php if($permisoguardarRechazo || $permisomodificarRechazo){ ?>
 
+   <button type="button" title="agregar!"
 
-        <button type="button" title="agregar!"
+            id="agregar_rechazo_<?php echo $row['02SUBETUFACTURAid']; ?>"
+
+            data-rechazo-id="<?php echo $row['02SUBETUFACTURAid']; ?>"
 
             style="border:none;background:transparent;cursor:pointer;color:#007bff;font-size:14px;"
 
@@ -1851,12 +1855,13 @@ echo implode(' ', $atributosVentas);
 
     
 
-
+<?php } ?>
 
 
     <button type="button" title="Ver motivo"
+      id="ver_rechazo_<?php echo $row['02SUBETUFACTURAid']; ?>"
 
-        id="ver_rechazo_<?php echo $row['02SUBETUFACTURAid']; ?>"
+        data-rechazo-id="<?php echo $row['02SUBETUFACTURAid']; ?>"
 
         style="border:none;background:transparent;cursor:pointer;color:#28a745;font-size:14px;<?php echo ($motivoRechazo != '') ? '' : 'display:none;'; ?>"
 

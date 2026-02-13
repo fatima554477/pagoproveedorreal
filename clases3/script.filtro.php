@@ -494,51 +494,41 @@ function STATUS_RECHAZADO(RECHAZADO_id){
 
 
 function abrirFormularioRechazo(RECHAZADO_id){
-
 	var motivoActual = $('#motivo_rechazo_'+RECHAZADO_id).val() || '';
+	$('#modal_rechazo_id').val(RECHAZADO_id);
+	configurarModalRechazo('editar', motivoActual, 'Captura el motivo y presiona Guardar.');
 
-	var motivo = window.prompt('Motivo del rechazo:', motivoActual);
+	$('#btn_guardar_rechazo_modal').off('click').on('click', function(){
+		guardarMotivoRechazoModal();
+	});
 
-	if(motivo === null) return;
+}
 
-	motivo = motivo.trim();
+
+function guardarMotivoRechazoModal(){
+	var RECHAZADO_id = $('#modal_rechazo_id').val();
+	var motivo = ($('#modal_rechazo_texto').val() || '').trim();
 
 	if(motivo === ''){
-
-		alert('Debes capturar un motivo de rechazo.');
-
+		$('#modal_rechazo_mensaje').text('Debes capturar un motivo de rechazo.').css('color', '#b22222');
 		return;
-
 	}
 
 	$.ajax({
-
 		url:'pagoproveedores/controladorPP.php',
-
 		method:'POST',
-
 		data:{RECHAZO_MOTIVO_id:RECHAZADO_id,RECHAZO_MOTIVO_text:motivo},
-
 		success:function(resp){
-
 			if(resp.indexOf('ok') !== -1){
-
 				$('#motivo_rechazo_'+RECHAZADO_id).val(motivo);
-
 				$('#ver_rechazo_'+RECHAZADO_id).show();
-
-				alert('Motivo guardado correctamente.');
-
+				$('#modal_rechazo_mensaje').text('Motivo guardado correctamente.').css('color', '#228b22');
+				setTimeout(function(){ cerrarModalRechazoPago(); }, 400);
 			}else{
-
-				alert('No fue posible guardar el motivo.');
-
+				$('#modal_rechazo_mensaje').text('No fue posible guardar el motivo.').css('color', '#b22222');
 			}
-
 		}
-
 	});
-
 }
 
 
@@ -546,10 +536,10 @@ function abrirFormularioRechazo(RECHAZADO_id){
 function verMotivoRechazo(RECHAZADO_id){
 
 	var motivoLocal = $('#motivo_rechazo_'+RECHAZADO_id).val() || '';
+	$('#modal_rechazo_id').val(RECHAZADO_id);
 
 	if(motivoLocal !== ''){
-
-		alert('Motivo del rechazo:' + motivoLocal);
+		configurarModalRechazo('ver', motivoLocal, 'Consulta del motivo registrado.');
 
 		return;
 
@@ -563,6 +553,8 @@ function verMotivoRechazo(RECHAZADO_id){
 
 		data:{RECHAZO_MOTIVO_VER_id:RECHAZADO_id},
 
+
+
 		success:function(resp){
 
 			var motivo = (resp || '').trim();
@@ -570,19 +562,49 @@ function verMotivoRechazo(RECHAZADO_id){
 			if(motivo !== ''){
 
 				$('#motivo_rechazo_'+RECHAZADO_id).val(motivo);
-
-				alert('Motivo del rechazo: ' + motivo);
+				configurarModalRechazo('ver', motivo, 'Consulta del motivo registrado.');
 
 			}else{
-
-				alert('No hay motivo de rechazo registrado.');
+				configurarModalRechazo('ver', 'No hay motivo de rechazo registrado.', 'Consulta del motivo registrado.');
 
 			}
 
 		}
 
+
 	});
 
+}
+
+function configurarModalRechazo(modo, texto, mensaje){
+	var esVer = (modo === 'ver');
+	$('#modalRechazoPagoLabel').text(esVer ? 'Ver motivo del rechazo' : 'Agregar motivo del rechazo');
+	$('#modal_rechazo_texto').val(texto || '').prop('readonly', esVer);
+	$('#modal_rechazo_mensaje').text(mensaje || '').css('color', '#666');
+	$('#btn_guardar_rechazo_modal').toggle(!esVer);
+	mostrarModalRechazoPago();
+}
+
+function mostrarModalRechazoPago(){
+	if($('#modalRechazoPago').length === 0){
+		return;
+	}
+	if(typeof $('#modalRechazoPago').modal === 'function'){
+		$('#modalRechazoPago').modal('show');
+	} else {
+		$('#modalRechazoPago').show();
+	}
+}
+
+function cerrarModalRechazoPago(){
+	if($('#modalRechazoPago').length === 0){
+		return;
+	}
+	if(typeof $('#modalRechazoPago').modal === 'function'){
+		$('#modalRechazoPago').modal('hide');
+	} else {
+		$('#modalRechazoPago').hide();
+	}
 }
 
 function STATUS_FINANZAS(FINANZAS_id){
