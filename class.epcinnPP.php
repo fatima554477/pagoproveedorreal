@@ -118,7 +118,36 @@ private function registrar_cambio_estado_detallado($conn, $idSubetufactura, $cam
 			return $etiquetas[$campo];
 		}
 
-		return str_replace('_', ' ', $campo);
+	return str_replace('_', ' ', $campo);
+	}
+
+	public function registrar_bitacora_adjuntos($idSubetufactura, $tipoAdjunto, $nombreArchivo){
+		$conn = $this->db();
+		$idSubetufactura = intval($idSubetufactura);
+		if($idSubetufactura <= 0){
+			return;
+		}
+
+		$tipoAdjunto = trim($tipoAdjunto);
+		$nombreArchivo = trim($nombreArchivo);
+		if($tipoAdjunto == ''){
+			return;
+		}
+
+		$detalle = 'Se subió archivo '.$tipoAdjunto;
+		if($nombreArchivo != ''){
+			$detalle .= ': '.$nombreArchivo;
+		}
+		$detalle .= '.';
+
+		$this->registrar_bitacora(
+			$conn,
+			$idSubetufactura,
+			'ADJUNTO',
+			$detalle,
+			'',
+			$this->nombre_usuario_bitacora()
+		);
 	}
 
 	public function var_altaeventos(){

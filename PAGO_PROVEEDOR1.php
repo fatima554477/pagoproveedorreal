@@ -19,71 +19,79 @@ $_SESSION['idusuario12']= '';
 ?>
 		<script type="text/javascript">
 
-		function calcular() {
-			const numberNoCommas = (x) => {
-				return x.toString().replace(/,/g, "");
-			}
-			const numberWithCommas = (x) => {
-			
-				const num = parseFloat(x);
-				if(isNaN(num)) return '';
-				return num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-			}
-
-			function formatInputPreservingCursor(inputElement, value) {
-				const originalValue = inputElement.value;
-				const cursorPos = inputElement.selectionStart;
-				const commasBefore = originalValue.slice(0, cursorPos).split(',').length - 1;
-				const formattedValue = numberWithCommas(value);
-				inputElement.value = formattedValue;
-				let newCursorPos = cursorPos - commasBefore;
-				let i = 0,
-					charsPassed = 0;
-				while(charsPassed < newCursorPos && i < formattedValue.length) {
-					if(formattedValue[i] !== ',') {
-						charsPassed++;
-					}
-					i++;
-				}
-				inputElement.setSelectionRange(i, i);
-			}
-			// Listener para inputs tipo .tol
-			const inputs = document.querySelectorAll(".total");
-			inputs.forEach(input => {
-				input.addEventListener("keydown", function(e) {
-					const keyCode = e.keyCode || e.which;
-					// Teclas numéricas (teclado principal del 0 al 9 o numpad 0 al 9)
-					const isNumberKey = (keyCode >= 48 && keyCode <= 57) || // Teclado principal
-						(keyCode >= 96 && keyCode <= 105) || (keyCode === 46) || (keyCode === 8); // Numpad
-					if(isNumberKey) {
-						// Esperar a que el valor se actualice antes de formatear
-						setTimeout(() => {
-							const arr = document.getElementsByClassName("total");
-							let MONTO_PROPINA_elem = document.getElementsByName("MONTO_PROPINA")[0];
-							let MONTO_FACTURA_elem = document.getElementsByName("MONTO_FACTURA")[0];
-							let MONTO_PROPINA2 = numberNoCommas(MONTO_PROPINA_elem.value);
-							let MONTO_FACTURA2 = numberNoCommas(MONTO_FACTURA_elem.value);
-					
-							let tot = 0;
-							for(let i = 0; i < arr.length; i++) {
-								const inputName = arr[i].getAttribute("name");
-								const value = parseFloat(numberNoCommas(arr[i].value)) || 0;
-								if(["TImpuestosRetenidosIVA", "TImpuestosRetenidosISR", "descuentos"].includes(inputName)) {
-									tot -= value; // Se RESTA
-								} else {
-									tot += value; // Se SUMA
-								}
-							}
-							formatInputPreservingCursor(document.getElementById('MONTO_DEPOSITAR'), tot);
-							formatInputPreservingCursor(MONTO_PROPINA_elem, MONTO_PROPINA2);
-							formatInputPreservingCursor(MONTO_FACTURA_elem, MONTO_FACTURA2);
-
-						}, 0);
-					}
-				});
-			});
+function numberNoCommas(x) {
+			return (x || '').toString().replace(/,/g, "");
 		}
-               document.addEventListener("DOMContentLoaded", calcular);
+
+		function numberWithCommas(x) {
+			const num = parseFloat(x);
+			if(isNaN(num)) return '';
+			return num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+		}
+
+		function formatInputPreservingCursor(inputElement, value) {
+			if(!inputElement) {
+				return;
+			}
+
+			const formattedValue = numberWithCommas(value);
+			const hasCursor = typeof inputElement.selectionStart === 'number' && document.activeElement === inputElement;
+
+			if(!hasCursor) {
+				inputElement.value = formattedValue;
+				return;
+			}
+
+			const originalValue = inputElement.value;
+			const cursorPos = inputElement.selectionStart;
+			const commasBefore = originalValue.slice(0, cursorPos).split(',').length - 1;
+			inputElement.value = formattedValue;
+			let newCursorPos = cursorPos - commasBefore;
+			let i = 0,
+				charsPassed = 0;
+			while(charsPassed < newCursorPos && i < formattedValue.length) {
+				if(formattedValue[i] !== ',') {
+					charsPassed++;
+				}
+				i++;
+			}
+			inputElement.setSelectionRange(i, i);
+		}
+
+		function calcular() {
+			const arr = document.getElementsByClassName("total");
+			const MONTO_PROPINA_elem = document.getElementsByName("MONTO_PROPINA")[0];
+			const MONTO_FACTURA_elem = document.getElementsByName("MONTO_FACTURA")[0];
+
+			let tot = 0;
+			for(let i = 0; i < arr.length; i++) {
+				const inputName = arr[i].getAttribute("name");
+				const value = parseFloat(numberNoCommas(arr[i].value)) || 0;
+				if(["TImpuestosRetenidosIVA", "TImpuestosRetenidosISR", "descuentos"].includes(inputName)) {
+					tot -= value; // Se RESTA
+				} else {
+					tot += value; // Se SUMA
+				}
+			}
+
+			formatInputPreservingCursor(document.getElementById('MONTO_DEPOSITAR'), tot);
+			formatInputPreservingCursor(MONTO_PROPINA_elem, numberNoCommas(MONTO_PROPINA_elem ? MONTO_PROPINA_elem.value : ''));
+			formatInputPreservingCursor(MONTO_FACTURA_elem, numberNoCommas(MONTO_FACTURA_elem ? MONTO_FACTURA_elem.value : ''));
+		}
+
+		function inicializarCalculoTotales() {
+			const inputs = document.querySelectorAll('.total');
+			inputs.forEach(input => {
+				if(input.dataset.totalListenerBound === 'true') {
+					return;
+				}
+				input.addEventListener('input', calcular);
+				input.dataset.totalListenerBound = 'true';
+			});
+			calcular();
+		}
+
+               document.addEventListener("DOMContentLoaded", inicializarCalculoTotales);
                 function toggleFacturaFields() {
                         const select = document.querySelector('select[name="VIATICOSOPRO"]');
                         if(!select) {

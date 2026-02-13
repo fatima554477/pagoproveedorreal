@@ -396,56 +396,10 @@ $.ajax({
     processData: false
 }).done(function(data) {
 		if($.trim(data)=='Ingresado' || $.trim(data)=='Actualizado'){
-			$("#pagoaproveedoresform")[0].reset(); //resetea formulario
-
-			$("#RAZON_SOCIAL").val(''); //borra valores vienen de PHP
-			$("#CONCEPTO_PROVEE").val(''); //borra valores vienen de PHP
-			$("#RFC_PROVEEDOR").val(''); //borra valores vienen de PHP
-			$("#TIPO_DE_MONEDA").val(''); //borra valores vienen de PHP
-			$("#FECHA_DE_PAGO").val(''); //borra valores vienen de PHP
-			$("#NUMERO_CONSECUTIVO_PROVEE").val(''); //borra valores vienen de PHP
-			$("#ADJUNTAR_FACTURA_XML").val(''); //borra valores vienen de PHP
-			$("#2MONTO_FACTURA").val(''); //borra valores vienen de PHP
-			$("#2MONTO_DEPOSITAR").val(''); //borra valores vienen de PHP
-			$("#PFORMADE_PAGO").val(''); //borra valores vienen de PHP
-			$("#2ADJUNTAR_FACTURA_PDF").val(''); //borra valores vienen de PHP
-			$("#2TImpuestosRetenidos").val(''); //borra valores vienen de PHP
-			
-			/*reset multi imagen*/
-			$("#CONCEPTO_PROVEE2").load(location.href + " #CONCEPTO_PROVEE2");
-			$("#2ADJUNTAR_FACTURA_XML").load(location.href + " #2ADJUNTAR_FACTURA_XML");
-			$("#ADJUNTAR_FACTURA_XML").load(location.href + " #ADJUNTAR_FACTURA_XML");
-			$("#1ADJUNTAR_FACTURA_XML").load(location.href + " #1ADJUNTAR_FACTURA_XML");
-			$("#ADJUNTAR_FACTURA_PDF").load(location.href + " #ADJUNTAR_FACTURA_PDF");
-			$("#1ADJUNTAR_FACTURA_PDF").load(location.href + " #1ADJUNTAR_FACTURA_PDF");
-			$("#IMPUESTO_HOSPEDAJE").load(location.href + " #IMPUESTO_HOSPEDAJE");
-			$("#MONTO_PROPINA").load(location.href + " #MONTO_PROPINA");
-			$("#IVA").load(location.href + " #IVA");
-			$("#A").load(location.href + " #A");
-			$("#2ADJUNTAR_FACTURA_PDF").load(location.href + " #2ADJUNTAR_FACTURA_PDF");
-			$("#2ADJUNTAR_COTIZACION").load(location.href + " #2ADJUNTAR_COTIZACION");
-			$("#2CONPROBANTE_TRANSFERENCIA").load(location.href + " #2CONPROBANTE_TRANSFERENCIA");
-			$("#2ADJUNTAR_ARCHIVO_1").load(location.href + " #2ADJUNTAR_ARCHIVO_1");
-			$('#NUMERO_CONSECUTIVO_PROVEE2').load(location.href + ' #NUMERO_CONSECUTIVO_PROVEE2');
-			$('#2MONTO_FACTURA').load(location.href + ' #2MONTO_FACTURA');
-			$('#2MONTO_DEPOSITAR').load(location.href + ' #2MONTO_DEPOSITAR');
-			$('#2IVA').load(location.href + ' #2IVA');
-			$('#2TImpuestosRetenidosIVA').load(location.href + ' #2TImpuestosRetenidosIVA');
-			$('#TImpuestosRetenidosIVA').load(location.href + ' #TImpuestosRetenidosIVA');
-			$('#2TImpuestosRetenidosISR').load(location.href + ' #2TImpuestosRetenidosISR');
-			$('#TImpuestosRetenidosISR').load(location.href + ' #TImpuestosRetenidosISR');
-			$('#2descuentos').load(location.href + ' #2descuentos');
-			$('#descuentos').load(location.href + ' #descuentos');
-			$('#TImpuestosRetenidos').load(location.href + ' #TImpuestosRetenidos');
-			$('#2TImpuestosRetenidos').load(location.href + ' #2TImpuestosRetenidos');
-
-			$('#NOMBRE_COMERCIAL').empty().trigger("change");
-
-			$("#mensajepagoproveedores").html("<span id='ACTUALIZADO' >"+data+"</span>").delay(2000).fadeOut();
-            $('#resettabla').load(location.href + ' #resettabla');	
-
-
-			$.getScript(load(1));
+			$("#mensajepagoproveedores").html("<span id='ACTUALIZADO' >"+data+"</span>");
+			setTimeout(function(){
+				window.location.reload();
+			}, 300);
 	
 
 			

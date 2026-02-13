@@ -446,25 +446,31 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 	
 	/*NUEVO INICIO*///$ADJUNTAR_FACTURA_XML = <------NUEVO
 	$url ='';
-	if($_FILES['ADJUNTAR_FACTURA_XML']==true){
-	$url = __ROOT1__.'/includes/archivos/'.$ADJUNTAR_FACTURA_XML;
-	if( file_exists($url) ){
-		$regreso = $conexion2->lectorxml($url);
-		$resultado = $pagoproveedores->VALIDA02XMLUUID($regreso['UUID']);
-	if($resultado == 'S'){
+if($_FILES['ADJUNTAR_FACTURA_XML']==true){␊
+	$url = __ROOT1__.'/includes/archivos/'.$ADJUNTAR_FACTURA_XML;␊
+	if( file_exists($url) ){␊
+		$regreso = $conexion2->lectorxml($url);␊
+		$resultado = $pagoproveedores->VALIDA02XMLUUID($regreso['UUID']);␊
+	if($resultado == 'S'){␊
 
 			$pagoproveedores->borrar_xmls(__ROOT1__.'/includes/archivos/',$IPpagoprovee,$ADJUNTAR_FACTURA_XML,'02XML','02SUBETUFACTURADOCTOS');
 			echo $ADJUNTAR_FACTURA_XML.'^^'.$regreso['UUID'].'^^'.$regreso['formaDePago'];
 				ob_start();
-			$pagoproveedores->guardarxmlDB2($IPpagoprovee,$idPROV,'02XML', $url);
+		$pagoproveedores->guardarxmlDB2($IPpagoprovee,$idPROV,'02XML', $url);
 				ob_end_clean();
+			$pagoproveedores->registrar_bitacora_adjuntos($IPpagoprovee, 'XML', $ADJUNTAR_FACTURA_XML);
 		}else{
 			echo '3';
 			UNLINK($url);
 			$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
 		}
 	}
-}else{echo $ADJUNTAR_FACTURA_XML;}
+}else{
+	if($ETQIETA == 'ADJUNTAR_FACTURA_PDF' && $ADJUNTAR_FACTURA_XML != ''){
+		$pagoproveedores->registrar_bitacora_adjuntos($IPpagoprovee, 'PDF', $ADJUNTAR_FACTURA_XML);
+	}
+	echo $ADJUNTAR_FACTURA_XML;
+}
 	/*NUEVO FIN*/
 }
 
