@@ -31,12 +31,12 @@
     </style>
 
 <div id="content">
-	<hr/> <strong>	  <p class="mb-0 text-uppercase" ><img src="includes/contraer31.png" id="mostrar500" onclick="load(1);"style="cursor:pointer;"/>
-<img src="includes/contraer41.png" id="ocultar500" style="cursor:pointer;"/>&nbsp;&nbsp;&nbsp; FILTRO PAGO A PROVEEDORES-A  <a style="color:red;font:7px">ORDEN DESCENDENTE </a></p></strong></div>
+	<hr/> <strong>	  <p class="mb-0 text-uppercase" ><img src="includes/contraer31.png" id="mostrar46" onclick="load(1);"style="cursor:pointer;"/>
+<img src="includes/contraer41.png" id="ocultar46" style="cursor:pointer;"/>&nbsp;&nbsp;&nbsp; FILTRO PAGO A PROVEEDORES-A  </p></strong></div>
 <div id="mensajefiltro"></div>
 <div id="pasarpagado2"></div>
 </div>
-<div id="target500" style="display:block;" class="content2">
+<div id="target46" style="display:block;" class="content2">
 	<div class="card">
 		<div class="card-body">
 			<!--aqui inicia filtro-->
@@ -46,11 +46,9 @@
 <td width="30%" align="center"> 
     <span id="mostrar">MOSTRAR</span>
     <?php
-    $perPageRequest = isset($_REQUEST['per_page']) ? $_REQUEST['per_page'] : '';
-    $todosPerPageValue = ($perPageRequest !== '' && (int) $perPageRequest > 200)
-        ? (int) $_REQUEST['per_page']
-        : 10000;
-    ?>
+  $perPageRequest = isset($_REQUEST['per_page']) ? $_REQUEST['per_page'] : '';
+    $todosMaxPerPage = 500;
+?>
     <select class="form-select mb-3" id="per_page" onchange="load(1);">
         <option value="10" <?php if($perPageRequest=='10') echo 'selected'; ?>>10</option>
         <option value="15" <?php if($perPageRequest=='15') echo 'selected'; ?>>15</option>
@@ -58,10 +56,10 @@
                <option value="20" <?php if($perPageRequest=='20') echo 'selected'; ?>>20</option>
 		<option value="50" <?php if($perPageRequest=='50') echo 'selected'; ?>>50</option>
 
-        
+     
         <option value="100"<?php if($perPageRequest=='100')echo 'selected'; ?>>100</option>		
 		<option value="200" <?php if($perPageRequest=='200'){echo 'selected';} ?>>200</option>
-		 <option id="per_page_todos_option" value="<?php echo $todosPerPageValue; ?>"<?php if($perPageRequest==$todosPerPageValue)echo ' selected'; ?>>TODOS</option>
+		 <option id="per_page_todos_option" value="<?php echo $todosMaxPerPage; ?>"<?php if((int)$perPageRequest >= $todosMaxPerPage)echo ' selected'; ?>>TODOS (máx <?php echo $todosMaxPerPage; ?>)</option>
     </select>
 </td>
 
@@ -111,6 +109,31 @@ echo $encabezado . $options . '</select>';
 
 </div>
 </div>
+</div>
+
+<div class="modal fade" id="modalRechazoPago" tabindex="-1" role="dialog" aria-labelledby="modalRechazoPagoLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background:#ebf9e9;">
+                <h5 class="modal-title" id="modalRechazoPagoLabel">Motivo del rechazo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="cerrarModalRechazoPago();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="modal_rechazo_id" value="">
+                <textarea id="modal_rechazo_texto" class="form-control" rows="5" placeholder="Describe el motivo del rechazo"></textarea>
+                <div id="modal_rechazo_mensaje" style="margin-top:10px;font-size:12px;color:#666;"></div>
+            </div>
+            <div class="modal-footer" id="modal_rechazo_footer_editar">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="cerrarModalRechazoPago();">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="btn_guardar_rechazo_modal">Guardar</button>
+            </div>
+            <div class="modal-footer" id="modal_rechazo_footer_ver" style="display:none;">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="cerrarModalRechazoPago();">Cerrar</button>
+            </div>
+        </div>
+    </div>
 </div>
 <?php
 if($_GET['num_evento']==true){
