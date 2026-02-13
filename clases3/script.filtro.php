@@ -458,6 +458,7 @@ function STATUS_RECHAZADO(RECHAZADO_id){
 	var checkBox = document.getElementById("STATUS_RECHAZADO"+RECHAZADO_id);
 
 	var RECHAZADO_text = checkBox.checked ? "si" : "no";
+	actualizarBotonesRechazo(RECHAZADO_id, RECHAZADO_text);
 
 	$.ajax({
 
@@ -479,11 +480,14 @@ function STATUS_RECHAZADO(RECHAZADO_id){
 
 			$('#pasarpagado2').html("Cargando...").fadeIn().delay(500).fadeOut();
 
-			load2(1);
-
-			if(result[1]=='si') $('#color_RECHAZADO'+RECHAZADO_id).css('background-color', '#ceffcc');
+			load(1);
+            if(result[1]=='si') $('#color_RECHAZADO'+RECHAZADO_id).css('background-color', '#ceffcc');
 
 			if(result[1]=='no') $('#color_RECHAZADO'+RECHAZADO_id).css('background-color', '#e9d8ee');
+
+			if(result[1] == 'si' || result[1] == 'no'){
+				actualizarBotonesRechazo(RECHAZADO_id, result[1]);
+			}
 
 		}
 
@@ -519,9 +523,9 @@ function guardarMotivoRechazoModal(){
 		method:'POST',
 		data:{RECHAZO_MOTIVO_id:RECHAZADO_id,RECHAZO_MOTIVO_text:motivo},
 		success:function(resp){
-			if(resp.indexOf('ok') !== -1){
+	if(resp.indexOf('ok') !== -1){
 				$('#motivo_rechazo_'+RECHAZADO_id).val(motivo);
-				$('#ver_rechazo_'+RECHAZADO_id).show();
+				actualizarBotonesRechazo(RECHAZADO_id);
 				$('#modal_rechazo_mensaje').text('Motivo guardado correctamente.').css('color', '#228b22');
 				setTimeout(function(){ cerrarModalRechazoPago(); }, 400);
 			}else{
@@ -583,6 +587,19 @@ function configurarModalRechazo(modo, texto, mensaje){
 	$('#modal_rechazo_mensaje').text(mensaje || '').css('color', '#666');
 	$('#btn_guardar_rechazo_modal').toggle(!esVer);
 	mostrarModalRechazoPago();
+}
+
+function actualizarBotonesRechazo(RECHAZADO_id, statusRechazado){
+	var statusActual = statusRechazado;
+	if(typeof statusActual === 'undefined'){
+		statusActual = $('#STATUS_RECHAZADO'+RECHAZADO_id).is(':checked') ? 'si' : 'no';
+	}
+	var motivo = ($('#motivo_rechazo_'+RECHAZADO_id).val() || '').trim();
+	var mostrarVer = (statusActual === 'si' && motivo !== '');
+	var mostrarAgregar = !mostrarVer;
+
+	$('#agregar_rechazo_'+RECHAZADO_id).toggle(mostrarAgregar);
+	$('#ver_rechazo_'+RECHAZADO_id).toggle(mostrarVer);
 }
 
 function mostrarModalRechazoPago(){

@@ -1795,7 +1795,9 @@ echo implode(' ', $atributosVentas);
 
     <?php
 
-        $motivoRechazo = $database->obtener_motivo_rechazo($row["02SUBETUFACTURAid"]);
+          $motivoRechazo = $database->obtener_motivo_rechazo($row["02SUBETUFACTURAid"]);
+        $mostrarAgregarRechazo = !($statusRechazado == 'si' && $motivoRechazo != '');
+        $mostrarVerRechazo = ($statusRechazado == 'si' && $motivoRechazo != '');
 
       
         $permisoguardarRechazo = $database->variablespermisos('', 'rechazo_pago', 'guardar') == 'si';
@@ -1863,7 +1865,7 @@ echo implode(' ', $atributosVentas);
 
         data-rechazo-id="<?php echo $row['02SUBETUFACTURAid']; ?>"
 
-        style="border:none;background:transparent;cursor:pointer;color:#28a745;font-size:14px;<?php echo ($motivoRechazo != '') ? '' : 'display:none;'; ?>"
+       style="border:none;background:transparent;cursor:pointer;color:#28a745;font-size:14px;<?php echo $mostrarVerRechazo ? '' : 'display:none;'; ?>"
 
         onclick="verMotivoRechazo(<?php echo $row['02SUBETUFACTURAid']; ?>)">ver</button>
 
