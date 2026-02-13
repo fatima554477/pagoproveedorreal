@@ -329,7 +329,9 @@ $countAll=$database->getCounter();
 <th style="background:#c9e8e8">DIRECCIÓN </th><!-antes finanzas y tesoreria->
 <th style="background:#c9e8e8">FINANZAS Y <br>TESORERÍA <br>(PAGADO)</th><!-antes pagado->
 <th style="background:#c9e8e8">AUDITORÍA</th>
-
+<?php if ($database->variablespermisos('', 'rechazo_pago', 'ver') == 'si') { ?>
+<th style="background:#c9e8e8">RECHAZADO</th>
+<?php } ?>
 
 <?php 
 if($database->plantilla_filtro($nombreTabla,"ADJUNTAR_FACTURA_XML",$altaeventos,$DEPARTAMENTO)=="si"){ ?><th style="background:#c9e8e8;text-align:center">FACTURA XML</th>
@@ -721,7 +723,9 @@ if($database->plantilla_filtro($nombreTabla,"FOTO_ESTADO_PROVEE",$altaeventos,$D
 <td style="background:#c9e8e8"></td>
 <td style="background:#c9e8e8"></td>
 <td style="background:#c9e8e8"></td>
-
+<?php if ($database->variablespermisos('', 'rechazo_pago', 'ver') == 'si') { ?>
+<td style="background:#c9e8e8"></td>
+<?php } ?>
 
 
 <?php  
@@ -1779,9 +1783,95 @@ echo implode(' ', $atributosVentas);
 
 </td>
 
+<?php if ($database->variablespermisos('', 'rechazo_pago', 'ver') == 'si') { ?>
+
+<td style="text-align:center; background:
+
+    <?php $statusRechazado = isset($row["STATUS_RECHAZADO"]) ? $row["STATUS_RECHAZADO"] : 'no'; echo ($statusRechazado == 'si') ? '#ceffcc' : '#e9d8ee'; ?>;"
+
+    id="color_RECHAZADO<?php echo $row["02SUBETUFACTURAid"]; ?>">
 
 
 
+    <?php
+
+        $motivoRechazo = $database->obtener_motivo_rechazo($row["02SUBETUFACTURAid"]);
+
+      
+        $permisoguardarRechazo = $database->variablespermisos('', 'rechazo_pago', 'guardar') == 'si';
+        $permisomodificarRechazo = $database->variablespermisos('', 'rechazo_pago', 'modificar') == 'si';
+
+    ?>
+
+    <input type="hidden" id="motivo_rechazo_<?php echo $row["02SUBETUFACTURAid"]; ?>" value="<?php echo htmlspecialchars($motivoRechazo, ENT_QUOTES, 'UTF-8'); ?>" />
+
+
+
+    <input type="checkbox"
+
+        style="width:30px; cursor:pointer;"
+
+        class="form-check-input"
+
+        id="STATUS_RECHAZADO<?php echo $row["02SUBETUFACTURAid"]; ?>"
+
+        name="STATUS_RECHAZADO<?php echo $row["02SUBETUFACTURAid"]; ?>"
+
+        value="<?php echo $row["02SUBETUFACTURAid"]; ?>"
+
+        <?php
+
+        if ($statusRechazado == 'si') {
+
+            echo 'checked disabled style="cursor:not-allowed;" title="Pago rechazado"';
+
+        } else {
+
+            if($permisoguardarRechazo){
+
+                echo 'onclick="STATUS_RECHAZADO('.$row["02SUBETUFACTURAid"].'); this.disabled=true; this.style.cursor=\'not-allowed\';"';
+
+            } else {
+
+                echo 'disabled style="cursor:not-allowed;" title="Sin permiso para modificar"';
+
+            }
+
+        }
+
+        ?>
+
+    />
+
+
+
+    <?php if($permisomodificarRechazo){ ?>
+
+        <button type="button" title="agregar!"
+
+            style="border:none;background:transparent;cursor:pointer;color:#007bff;font-size:14px;"
+
+            onclick="abrirFormularioRechazo(<?php echo $row['02SUBETUFACTURAid']; ?>)">agregar</button>
+
+    
+
+        <button type="button" title="Ver motivo"
+
+            id="ver_rechazo_<?php echo $row['02SUBETUFACTURAid']; ?>"
+
+            style="border:none;background:transparent;cursor:pointer;color:#28a745;font-size:14px;<?php echo ($motivoRechazo != '') ? '' : 'display:none;'; ?>"
+
+            onclick="verMotivoRechazo(<?php echo $row['02SUBETUFACTURAid']; ?>)">ver</button>
+
+
+<?php } ?>
+
+
+    <?php $colspan += 1; ?>
+
+</td>
+
+<?php } ?>
 
 <?php  if($database->plantilla_filtro($nombreTabla,"ADJUNTAR_FACTURA_XML",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="text-align:center"><?php $colspan += 1; echo $ADJUNTAR_FACTURA_XML; ?></td>
 <?php } ?>
@@ -1963,8 +2053,6 @@ $MONTO_DEPOSITADO12 += $row['MONTO_DEPOSITADO'];
 ?></td>
 
 <?php }
-
-
 
 $resultadoEstadoCuenta = $database->resultadoTemproal($idactual,$identificadorProveedor);
  if($database->plantilla_filtro($nombreTabla,"PENDIENTE_PAGO",$altaeventos,$DEPARTAMENTO)=="si"){ ?>

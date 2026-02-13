@@ -452,7 +452,141 @@ function showNotify2(msg, ok){
 
 
 
-	function STATUS_FINANZAS(FINANZAS_id){
+
+function STATUS_RECHAZADO(RECHAZADO_id){
+
+	var checkBox = document.getElementById("STATUS_RECHAZADO"+RECHAZADO_id);
+
+	var RECHAZADO_text = checkBox.checked ? "si" : "no";
+
+	$.ajax({
+
+		url:'pagoproveedores/controladorPP.php',
+
+		method:'POST',
+
+		data:{RECHAZADO_id:RECHAZADO_id,RECHAZADO_text:RECHAZADO_text},
+
+		beforeSend:function(){
+
+			$('#pasarpagado2').html('cargando');
+
+		},
+
+		success:function(data){
+
+			var result = data.split('^');
+
+			$('#pasarpagado2').html("Cargando...").fadeIn().delay(500).fadeOut();
+
+			load2(1);
+
+			if(result[1]=='si') $('#color_RECHAZADO'+RECHAZADO_id).css('background-color', '#ceffcc');
+
+			if(result[1]=='no') $('#color_RECHAZADO'+RECHAZADO_id).css('background-color', '#e9d8ee');
+
+		}
+
+	});
+
+}
+
+
+
+function abrirFormularioRechazo(RECHAZADO_id){
+
+	var motivoActual = $('#motivo_rechazo_'+RECHAZADO_id).val() || '';
+
+	var motivo = window.prompt('Motivo del rechazo:', motivoActual);
+
+	if(motivo === null) return;
+
+	motivo = motivo.trim();
+
+	if(motivo === ''){
+
+		alert('Debes capturar un motivo de rechazo.');
+
+		return;
+
+	}
+
+	$.ajax({
+
+		url:'pagoproveedores/controladorPP.php',
+
+		method:'POST',
+
+		data:{RECHAZO_MOTIVO_id:RECHAZADO_id,RECHAZO_MOTIVO_text:motivo},
+
+		success:function(resp){
+
+			if(resp.indexOf('ok') !== -1){
+
+				$('#motivo_rechazo_'+RECHAZADO_id).val(motivo);
+
+				$('#ver_rechazo_'+RECHAZADO_id).show();
+
+				alert('Motivo guardado correctamente.');
+
+			}else{
+
+				alert('No fue posible guardar el motivo.');
+
+			}
+
+		}
+
+	});
+
+}
+
+
+
+function verMotivoRechazo(RECHAZADO_id){
+
+	var motivoLocal = $('#motivo_rechazo_'+RECHAZADO_id).val() || '';
+
+	if(motivoLocal !== ''){
+
+		alert('Motivo del rechazo:' + motivoLocal);
+
+		return;
+
+	}
+
+	$.ajax({
+
+		url:'pagoproveedores/controladorPP.php',
+
+		method:'POST',
+
+		data:{RECHAZO_MOTIVO_VER_id:RECHAZADO_id},
+
+		success:function(resp){
+
+			var motivo = (resp || '').trim();
+
+			if(motivo !== ''){
+
+				$('#motivo_rechazo_'+RECHAZADO_id).val(motivo);
+
+				alert('Motivo del rechazo: ' + motivo);
+
+			}else{
+
+				alert('No hay motivo de rechazo registrado.');
+
+			}
+
+		}
+
+	});
+
+}
+
+function STATUS_FINANZAS(FINANZAS_id){
+
 
 
 	var checkBox = document.getElementById("STATUS_FINANZAS"+FINANZAS_id);
