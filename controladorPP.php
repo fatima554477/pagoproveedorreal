@@ -97,6 +97,61 @@ if($AUDITORIA2_id!='' and ($AUDITORIA2_text=='si' or $AUDITORIA2_text=='no') ){
 echo $pagoproveedores->ACTUALIZA_AUDITORIA2 ($AUDITORIA2_id , $AUDITORIA2_text  );
 }
 
+
+
+
+
+if($AUDITORIA2_id!='' and ($AUDITORIA2_text=='si' or $AUDITORIA2_text=='no') ){	
+
+echo $pagoproveedores->ACTUALIZA_AUDITORIA2 ($AUDITORIA2_id , $AUDITORIA2_text  );
+
+}
+
+
+
+$RECHAZADO_id = isset($_POST["RECHAZADO_id"])?$_POST["RECHAZADO_id"]:"";
+
+$RECHAZADO_text = isset($_POST["RECHAZADO_text"])?$_POST["RECHAZADO_text"]:"";
+
+
+
+if($RECHAZADO_id!='' and ($RECHAZADO_text=='si' or $RECHAZADO_text=='no') ){
+
+echo $pagoproveedores->ACTUALIZA_RECHAZADO($RECHAZADO_id, $RECHAZADO_text);
+
+}
+
+
+
+$RECHAZO_MOTIVO_id = isset($_POST["RECHAZO_MOTIVO_id"])?$_POST["RECHAZO_MOTIVO_id"]:"";
+
+$RECHAZO_MOTIVO_text = isset($_POST["RECHAZO_MOTIVO_text"])?$_POST["RECHAZO_MOTIVO_text"]:"";
+
+
+
+if($RECHAZO_MOTIVO_id!='' and trim($RECHAZO_MOTIVO_text) != ''){
+
+	echo $pagoproveedores->guardar_motivo_rechazo($RECHAZO_MOTIVO_id, $RECHAZO_MOTIVO_text);
+
+	exit;
+
+}
+
+
+
+$RECHAZO_MOTIVO_VER_id = isset($_POST["RECHAZO_MOTIVO_VER_id"])?$_POST["RECHAZO_MOTIVO_VER_id"]:"";
+
+if($RECHAZO_MOTIVO_VER_id!=''){
+
+	echo $pagoproveedores->obtener_motivo_rechazo($RECHAZO_MOTIVO_VER_id);
+
+	exit;
+
+}
+
+
+
+
 $VENTAS_id = isset($_POST["VENTAS_id"])?$_POST["VENTAS_id"]:"";
 $VENTAS_text = isset($_POST["VENTAS_text"])?$_POST["VENTAS_text"]:"";
 
@@ -446,12 +501,12 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 	
 	/*NUEVO INICIO*///$ADJUNTAR_FACTURA_XML = <------NUEVO
 	$url ='';
-if($_FILES['ADJUNTAR_FACTURA_XML']==true){␊
-	$url = __ROOT1__.'/includes/archivos/'.$ADJUNTAR_FACTURA_XML;␊
-	if( file_exists($url) ){␊
-		$regreso = $conexion2->lectorxml($url);␊
-		$resultado = $pagoproveedores->VALIDA02XMLUUID($regreso['UUID']);␊
-	if($resultado == 'S'){␊
+if($_FILES['ADJUNTAR_FACTURA_XML']==true){
+	$url = __ROOT1__.'/includes/archivos/'.$ADJUNTAR_FACTURA_XML;
+	if( file_exists($url) ){
+		$regreso = $conexion2->lectorxml($url);
+		$resultado = $pagoproveedores->VALIDA02XMLUUID($regreso['UUID']);
+	if($resultado == 'S'){
 
 			$pagoproveedores->borrar_xmls(__ROOT1__.'/includes/archivos/',$IPpagoprovee,$ADJUNTAR_FACTURA_XML,'02XML','02SUBETUFACTURADOCTOS');
 			echo $ADJUNTAR_FACTURA_XML.'^^'.$regreso['UUID'].'^^'.$regreso['formaDePago'];

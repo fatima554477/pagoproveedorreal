@@ -69,7 +69,9 @@ class accesoclase extends colaboradores{
 			'STATUS_AUDITORIA3',
 			'STATUS_SINXML',
 			'STATUS_CHECKBOX',
-			'STATUS_AUDITORIA2',			
+			'STATUS_AUDITORIA2',	
+            'STATUS_RECHAZADO',
+			
 			'STATUS_FINANZAS',
 			'STATUS_VENTAS'
 		);
@@ -106,6 +108,8 @@ private function registrar_cambio_estado_detallado($conn, $idSubetufactura, $cam
 			'STATUS_SINXML' => 'SIN EFECTO XML',
 			'STATUS_CHECKBOX' => 'SE QUITO EL 46% PERDIDA FISCAL',
 			'STATUS_AUDITORIA2' => 'AUTORIZACIÓN POR AUDITORÍA',
+			'STATUS_RECHAZADO' => 'PAGO RECHAZADO',
+
 			'STATUS_FINANZAS' => 'AUTORIZACIÓN POR DIRECCIÓN',
 			'STATUS_VENTAS' => 'AUTORIZACIÓN POR VENTAS',
 			'MONTO_DEPOSITAR' => 'TOTAL A PAGAR',
@@ -1080,6 +1084,150 @@ NoIdentificacionConcepto
 		echo "NO HAY UN PROVEEDOR SELECCIONADO";	
 		}
     }
+	
+	
+	
+	public function ACTUALIZA_RECHAZADO($idSubetufactura, $estatusRechazado){
+
+		$conn = $this->db();
+
+		$session = isset($_SESSION['idem'])?$_SESSION['idem']:'';
+
+		if($session != ''){
+
+			$valorAnterior = $this->valor_actual_campo_subetufactura($conn, $idSubetufactura, 'STATUS_RECHAZADO');
+
+			$var1 = "update 02SUBETUFACTURA SET STATUS_RECHAZADO = '".$estatusRechazado."' WHERE id = '".$idSubetufactura."'";
+
+
+
+			mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
+
+			$this->registrar_cambio_estado_detallado($conn, $idSubetufactura, 'STATUS_RECHAZADO', $valorAnterior, $estatusRechazado);
+
+			return "Actualizado^".$estatusRechazado;
+
+		}else{
+
+			echo "NO HAY UN PROVEEDOR SELECCIONADO";
+
+		}
+
+	}
+
+
+
+	private function crear_tabla_rechazos_si_no_existe($conn){
+
+		$crearTabla = "CREATE TABLE IF NOT EXISTS `02SUBETUFACTURA_RECHAZOS` (
+
+			`id` int(11) NOT NULL AUTO_INCREMENT,
+
+			`id_subetufactura` int(11) NOT NULL,
+
+			`motivo_rechazo` text,
+
+			`usuario_registro` varchar(255) DEFAULT NULL,
+
+			`fecha_registro` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+			PRIMARY KEY (`id`),
+
+			UNIQUE KEY `uniq_subetufactura` (`id_subetufactura`)
+
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+
+		mysqli_query($conn, $crearTabla);
+
+	}
+
+
+
+	public function guardar_motivo_rechazo($idSubetufactura, $motivoRechazo){
+
+		$conn = $this->db();
+
+		$session = isset($_SESSION['idem'])?$_SESSION['idem']:'';
+
+		if($session == ''){
+
+			return "Sesion_invalida";
+
+		}
+
+
+
+		$idSubetufactura = intval($idSubetufactura);
+
+		$motivoRechazo = trim($motivoRechazo);
+
+		if($idSubetufactura <= 0 || $motivoRechazo == ''){
+
+			return "Datos_invalidos";
+
+		}
+
+
+
+		$this->crear_tabla_rechazos_si_no_existe($conn);
+
+		$motivoEscapado = mysqli_real_escape_string($conn, $motivoRechazo);
+
+		$usuario = mysqli_real_escape_string($conn, $this->nombre_usuario_bitacora());
+
+
+
+		$insert = "INSERT INTO 02SUBETUFACTURA_RECHAZOS (id_subetufactura, motivo_rechazo, usuario_registro, fecha_registro)
+
+		VALUES ('".$idSubetufactura."', '".$motivoEscapado."', '".$usuario."', NOW())
+
+		ON DUPLICATE KEY UPDATE motivo_rechazo = VALUES(motivo_rechazo), usuario_registro = VALUES(usuario_registro), fecha_registro = NOW()";
+
+		mysqli_query($conn, $insert) or die('P156'.mysqli_error($conn));
+
+
+
+		$this->registrar_bitacora($conn, $idSubetufactura, 'RECHAZO', 'Se registró motivo de rechazo: "'.$motivoRechazo.'".', '', $this->nombre_usuario_bitacora());
+
+		return "ok";
+	}
+	public function obtener_motivo_rechazo($idSubetufactura){
+
+		$conn = $this->db();
+
+		$idSubetufactura = intval($idSubetufactura);
+
+		if($idSubetufactura <= 0){
+
+			return '';
+
+		}
+
+
+
+		$this->crear_tabla_rechazos_si_no_existe($conn);
+
+		$query = mysqli_query($conn, "SELECT motivo_rechazo FROM 02SUBETUFACTURA_RECHAZOS WHERE id_subetufactura = '".$idSubetufactura."' LIMIT 1");
+
+		if($query){
+
+			$row = mysqli_fetch_array($query, MYSQLI_ASSOC);
+
+			if($row && isset($row['motivo_rechazo'])){
+
+				return $row['motivo_rechazo'];
+
+			}
+		}
+		return '';
+
+	}
+
+	
+	
+	
+	
+	
 
          	public function ACTUALIZA_SINXML (
 	    $SINXML_id , $SINXML_text ){
@@ -1100,6 +1248,9 @@ NoIdentificacionConcepto
 		echo "NO HAY UN PROVEEDOR SELECCIONADO";	
 		}
     }
+	
+	
+	
 	public function ACTUALIZA_AUDITORIA1 (
 	$AUDITORIA1_id , $AUDITORIA1_text ){
 	
