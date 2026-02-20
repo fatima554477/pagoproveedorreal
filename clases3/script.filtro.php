@@ -451,14 +451,37 @@ function showNotify2(msg, ok){
 }
 
 
+function obtenerPaginaActualFiltro(){
+
+	var paginaActual = parseInt($('.pagination li.active a').first().text(), 10);
+
+	if(isNaN(paginaActual) || paginaActual <= 0){
+
+		paginaActual = 1;
+
+	}
+
+	return paginaActual;
+
+}
 
 
 function STATUS_RECHAZADO(RECHAZADO_id){
 
 	var checkBox = document.getElementById("STATUS_RECHAZADO"+RECHAZADO_id);
+	var $checkBox = $(checkBox);
 
 	var RECHAZADO_text = checkBox.checked ? "si" : "no";
+
+	if(RECHAZADO_text === 'no'){
+		$checkBox.data('forzarAgregarMotivo', 'si');
+	} else if(RECHAZADO_text === 'si' && $checkBox.data('forzarAgregarMotivo') !== 'si'){
+		$checkBox.removeData('forzarAgregarMotivo');
+	}
+
 	actualizarBotonesRechazo(RECHAZADO_id, RECHAZADO_text);
+		load(obtenerPaginaActualFiltro());
+
 
 	$.ajax({
 
@@ -485,7 +508,10 @@ function STATUS_RECHAZADO(RECHAZADO_id){
 
 			if(result[1]=='no') $('#color_RECHAZADO'+RECHAZADO_id).css('background-color', '#e9d8ee');
 
-			if(result[1] == 'si' || result[1] == 'no'){
+	        if(result[1] == 'si' || result[1] == 'no'){
+				if(result[1] == 'si' && $checkBox.data('forzarAgregarMotivo') !== 'si'){
+					$checkBox.removeData('forzarAgregarMotivo');
+				}
 				actualizarBotonesRechazo(RECHAZADO_id, result[1]);
 			}
 
@@ -518,13 +544,14 @@ function guardarMotivoRechazoModal(){
 		return;
 	}
 
-	$.ajax({
+$.ajax({
 		url:'pagoproveedores/controladorPP.php',
 		method:'POST',
 		data:{RECHAZO_MOTIVO_id:RECHAZADO_id,RECHAZO_MOTIVO_text:motivo},
 		success:function(resp){
 	if(resp.indexOf('ok') !== -1){
 				$('#motivo_rechazo_'+RECHAZADO_id).val(motivo);
+				$('#STATUS_RECHAZADO'+RECHAZADO_id).removeData('forzarAgregarMotivo');
 				actualizarBotonesRechazo(RECHAZADO_id);
 				$('#modal_rechazo_mensaje').text('Motivo guardado correctamente.').css('color', '#228b22');
 				setTimeout(function(){ cerrarModalRechazoPago(); }, 400);
@@ -595,8 +622,13 @@ function actualizarBotonesRechazo(RECHAZADO_id, statusRechazado){
 		statusActual = $('#STATUS_RECHAZADO'+RECHAZADO_id).is(':checked') ? 'si' : 'no';
 	}
     var motivo = ($('#motivo_rechazo_'+RECHAZADO_id).val() || '').trim();
+	var forzarAgregarMotivo = ($('#STATUS_RECHAZADO'+RECHAZADO_id).data('forzarAgregarMotivo') === 'si');
 	var mostrarVer = (statusActual === 'si' && motivo !== '');
-	var mostrarAgregar = (statusActual === 'si' && motivo === '');
+	var mostrarAgregar = (statusActual === 'si' && (motivo === '' || forzarAgregarMotivo));
+
+	if(forzarAgregarMotivo && statusActual === 'si'){
+		mostrarVer = false;
+	}
 
 	$('#agregar_rechazo_'+RECHAZADO_id).toggle(mostrarAgregar);
 	$('#ver_rechazo_'+RECHAZADO_id).toggle(mostrarVer);

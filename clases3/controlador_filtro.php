@@ -1849,7 +1849,7 @@ echo implode(' ', $atributosVentas);
 
             data-rechazo-id="<?php echo $row['02SUBETUFACTURAid']; ?>"
 
-            style="border:none;background:transparent;cursor:pointer;color:#007bff;font-size:14px;"
+                style="border:none;background:transparent;cursor:pointer;color:#007bff;font-size:14px;<?php echo $mostrarAgregarRechazo ? '' : 'display:none;'; ?>"
 
             onclick="abrirFormularioRechazo(<?php echo $row['02SUBETUFACTURAid']; ?>)">agregar <br>motivo</button>
 
@@ -1863,7 +1863,7 @@ echo implode(' ', $atributosVentas);
 
         data-rechazo-id="<?php echo $row['02SUBETUFACTURAid']; ?>"
 
-       style="border:none;background:transparent;cursor:pointer;color:#28a745;font-size:14px;<?php echo $mostrarVerRechazo ? '' : 'display:none;'; ?>"
+       style="border:none;background:transparent;cursor:pointer;color:#28a745;font-size:16px;<?php echo $mostrarVerRechazo ? '' : 'display:none;'; ?>"
 
         onclick="verMotivoRechazo(<?php echo $row['02SUBETUFACTURAid']; ?>)">ver</button>
 
