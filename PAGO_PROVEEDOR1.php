@@ -16,6 +16,19 @@ $_SESSION['idusuario12']= '';
 
 }
 
+
+$regresoFacturaTemporal = $pagoproveedores->variable_SUBETUFACTURA();
+$urlFacturaTemporalXml = __ROOT1__.'/includes/archivos/'.$regresoFacturaTemporal['ADJUNTAR_FACTURA_XML'];
+$xmlFacturaCargada = !empty($regresoFacturaTemporal['ADJUNTAR_FACTURA_XML']) && file_exists($urlFacturaTemporalXml);
+$atributosBloqueoFacturaXml = $xmlFacturaCargada ? 'disabled="disabled" data-locked="true" style="background:#d7bde2;"' : '';
+
+$listadosubePdf = $pagoproveedores->Listado_subefacturadocto('ADJUNTAR_FACTURA_PDF');
+$rowsubePdf = mysqli_fetch_array($listadosubePdf);
+$archivoPdfSubido = $rowsubePdf ? $rowsubePdf['ADJUNTAR_FACTURA_PDF'] : '';
+$urlFacturaTemporalPdf = __ROOT1.'/includes/archivos/'.$archivoPdfSubido;
+$pdfFacturaCargada = !empty($archivoPdfSubido) && file_exists($urlFacturaTemporalPdf);
+$atributosBloqueoFacturaPdf = $pdfFacturaCargada ? 'disabled="disabled" data-locked="true" style="background:#d7bde2;"' : '';
+
 ?>
 		<script type="text/javascript">
 
@@ -118,6 +131,7 @@ function numberNoCommas(x) {
                                 if(textInput && !textInput.dataset.originalRequired) {
                                         textInput.dataset.originalRequired = textInput.hasAttribute('required') ? 'true' : 'false';
                                 }
+                                const isLocked = textInput && textInput.dataset.locked === 'true';
                                 if(shouldHide) {
                                         if(row) row.style.display = 'none';
                                         if(textInput) {
@@ -130,13 +144,21 @@ function numberNoCommas(x) {
                                 } else {
                                         if(row) row.style.display = '';
                                         if(textInput) {
-                                                textInput.removeAttribute('disabled');
+                                                if(isLocked) {
+                                                        textInput.setAttribute('disabled', 'disabled');
+                                                } else {
+                                                        textInput.removeAttribute('disabled');
+                                                }
                                                 if(textInput.dataset.originalRequired === 'true') {
                                                         textInput.setAttribute('required', '');
                                                 }
                                         }
                                         if(fileInput) {
-                                                fileInput.removeAttribute('disabled');
+                                                if(isLocked) {
+                                                        fileInput.setAttribute('disabled', 'disabled');
+                                                } else {
+                                                        fileInput.removeAttribute('disabled');
+                                                }
                                         }
                                 }
                         });
@@ -259,12 +281,12 @@ function numberNoCommas(x) {
 						<label style="width:300px" for="formFileSm" class="form-label">ADJUNTAR FACTURA FORMATO &nbsp;<a style="color:red;font:12px">(XML)</a><BR><a style="color:red;font:12px">SI NO TIENES POR EL MOMENTO EL ARCHIVO XML, PRIMERO DEBES CAPTURAR EL NOMBRE COMERCIAL Y DESPUÉS CARGAR EL PDF</a></label>
 					</th>
 					<td>
-						<div id="drop_file_zone" ondrop="upload_file(event,'ADJUNTAR_FACTURA_XML')" ondragover="return false">
+						<div id="drop_file_zone" <?php echo $xmlFacturaCargada ? 'ondrop="return false" ondragover="return false" style="pointer-events:none;opacity:0.7;"' : 'ondrop="upload_file(event,\'ADJUNTAR_FACTURA_XML\')" ondragover="return false"'; ?>>
 							<p>Suelta aquí o busca tu archivo</p>
 							<p>
-								<input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_XML" type="text" onkeydown="return false" onclick="file_explorer('ADJUNTAR_FACTURA_XML');" VALUE="<?php echo $ADJUNTAR_FACTURA_XML; ?>" required />
+								<input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_XML" type="text" onkeydown="return false" onclick="file_explorer('ADJUNTAR_FACTURA_XML');" VALUE="<?php echo $ADJUNTAR_FACTURA_XML; ?>" required <?php echo $atributosBloqueoFacturaXml; ?> />
 							</p>
-							<input type="file" name="ADJUNTAR_FACTURA_XML" id="nono" />
+							<input type="file" name="ADJUNTAR_FACTURA_XML" id="nono" <?php echo $atributosBloqueoFacturaXml; ?> />
 							<div id="1ADJUNTAR_FACTURA_XML">
 								<?php
 		if($ADJUNTAR_FACTURA_XML!=""){echo "<a target='_blank' href='includes/archivos/".$ADJUNTAR_FACTURA_XML."'></a>"; 
@@ -274,10 +296,9 @@ function numberNoCommas(x) {
 							<?php 
 
 $listadosube = $pagoproveedores->Listado_subefacturadocto('ADJUNTAR_FACTURA_XML');
-
-while($rowsube=mysqli_fetch_array($listadosube)){
-	echo "<a target='_blank' href='includes/archivos/".$rowsube['ADJUNTAR_FACTURA_XML']."' id='A".$rowsube['id']."' >Visualizar!</a> "." <span id='".$rowsube['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowsube['fechaingreso']."</span>".'<br/>';		
-	
+$rowsube = mysqli_fetch_array($listadosube);
+if($rowsube){
+	echo "<a target='_blank' href='includes/archivos/".$rowsube['ADJUNTAR_FACTURA_XML']."' id='A".$rowsube['id']."' >Visualizar!</a> "." <span id='".$rowsube['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowsube['fechaingreso']."</span>".'<br/>';
 }
 	$NUMERO_CONSECUTIVO_PROVEE = '';	
 	$FECHA_DE_PAGO = '';
@@ -359,22 +380,21 @@ if($xmlFacturaCargada){
 						<label style="width:300px" for="validationCustom03" class="form-label">ADJUNTAR FACTURA FORMATO (PDF)</label>
 					</th>
 					<td>
-						<div id="drop_file_zone" ondrop="upload_file(event,'ADJUNTAR_FACTURA_PDF')" ondragover="return false">
+						<div id="drop_file_zone" <?php echo $pdfFacturaCargada ? 'ondrop="return false" ondragover="return false" style="pointer-events:none;opacity:0.7;"' : 'ondrop="upload_file(event,\'ADJUNTAR_FACTURA_PDF\')" ondragover="return false"'; ?>>
 							<p>Suelta aquí o busca tu archivo</p>
 							<p>
-								<input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_PDF" type="text" onkeydown="return false" onclick="file_explorer('ADJUNTAR_FACTURA_PDF');" VALUE="<?php echo $ADJUNTAR_FACTURA_PDF; ?>" required />
+								<input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_PDF" type="text" onkeydown="return false" onclick="file_explorer('ADJUNTAR_FACTURA_PDF');" VALUE="<?php echo $ADJUNTAR_FACTURA_PDF; ?>" required <?php echo $atributosBloqueoFacturaPdf; ?> />
 							</p>
-							<input type="file" name="ADJUNTAR_FACTURA_PDF" id="nono" />
+							<input type="file" name="ADJUNTAR_FACTURA_PDF" id="nono" <?php echo $atributosBloqueoFacturaPdf; ?> />
 							<div id="1ADJUNTAR_FACTURA_PDF">
 								<?php
 		if($ADJUNTAR_FACTURA_PDF!=""){echo "<a target='_blank' href='includes/archivos/".$ADJUNTAR_FACTURA_PDF."'></a>"; 
 		}?></div>
 						</div>
 						<div id="2ADJUNTAR_FACTURA_PDF">
-							<?php $listadosube = $pagoproveedores->Listado_subefacturadocto('ADJUNTAR_FACTURA_PDF');
-
-while($rowsube=mysqli_fetch_array($listadosube)){
-	echo "<a target='_blank' href='includes/archivos/".$rowsube['ADJUNTAR_FACTURA_PDF']."' id='A".$rowsube['id']."' >Visualizar!</a> "." <span id='".$rowsube['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span><span > ".$rowsube['fechaingreso']."</span>".'<br/>';	
+							<?php
+if($rowsubePdf){
+	echo "<a target='_blank' href='includes/archivos/".$rowsubePdf['ADJUNTAR_FACTURA_PDF']."' id='A".$rowsubePdf['id']."' >Visualizar!</a> "." <span id='".$rowsubePdf['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span><span > ".$rowsubePdf['fechaingreso']."</span>".'<br/>';
 }
 
 

@@ -207,15 +207,17 @@ $variablequery = mysqli_query($conn,$variable);
 
 	public function solocargartemp($archivo)/*new file*/
 	{
-		$nombre_carpeta=__ROOT3__.'/includes/archivos';
+		$nombre_carpeta=__ROOT2__.'/includes/archivos';
 		$filehandle = opendir($nombre_carpeta);
 		$nombretemp = $_FILES[$archivo]["tmp_name"];
 		$nombrearchivo = $_FILES[$archivo]["name"];
 		$tamanyoarchivo = $_FILES[$archivo]["size"];
 		$tipoarchivo = getimagesize($nombretemp);
+        $nombrearchivo = basename($nombrearchivo);
 		$extension = explode('.',$nombrearchivo);
 		$cuenta = count($extension) - 1;
-		$nuevonombre =  $archivo.'_'.date('Y_m_d_h_i_s').'.'.$extension[$cuenta];
+		$nuevonombre = $nombrearchivo;
+		 $extension[$cuenta];
 		//echo '1aaaaaaaaaaaaaaaa2'.$extension[$cuenta].'1aaaaaaaaaaaaaaaa2';
 		
 		if( 
