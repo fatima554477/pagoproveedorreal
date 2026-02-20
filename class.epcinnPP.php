@@ -1107,11 +1107,8 @@ NoIdentificacionConcepto
 
 			$var1 = "update 02SUBETUFACTURA SET ".$camposActualizar." WHERE id = '".$idSubetufactura."'";
 
-			$var1 = "update 02SUBETUFACTURA SET STATUS_RECHAZADO = '".$estatusRechazado."' WHERE id = '".$idSubetufactura."'";
+	mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
 
-
-
-		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
 
 			$this->registrar_cambio_estado_detallado($conn, $idSubetufactura, 'STATUS_RECHAZADO', $valorAnterior, $estatusRechazado);
 			if($estatusRechazado === 'si' && $valorAnteriorStatusPago !== 'RECHAZADO'){
