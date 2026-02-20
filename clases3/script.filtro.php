@@ -594,9 +594,9 @@ function actualizarBotonesRechazo(RECHAZADO_id, statusRechazado){
 	if(typeof statusActual === 'undefined'){
 		statusActual = $('#STATUS_RECHAZADO'+RECHAZADO_id).is(':checked') ? 'si' : 'no';
 	}
-	var motivo = ($('#motivo_rechazo_'+RECHAZADO_id).val() || '').trim();
+    var motivo = ($('#motivo_rechazo_'+RECHAZADO_id).val() || '').trim();
 	var mostrarVer = (statusActual === 'si' && motivo !== '');
-	var mostrarAgregar = !mostrarVer;
+	var mostrarAgregar = (statusActual === 'si' && motivo === '');
 
 	$('#agregar_rechazo_'+RECHAZADO_id).toggle(mostrarAgregar);
 	$('#ver_rechazo_'+RECHAZADO_id).toggle(mostrarVer);
@@ -675,20 +675,33 @@ function STATUS_FINANZAS(FINANZAS_id){
 		beforeSend:function(){
 		$('#pasarpagado2').html('cargando');
 	},
-		success:function(data){
+	success:function(data){
 		var result = data.split('^');				
 		$('#pasarpagado2').html("Cargando...").fadeIn().delay(500).fadeOut();
 		
 		
 		if(result[1]=='si'){
 		$('#color_VENTAS'+VENTAS_id).css('background-color', '#ceffcc');
+		$('#STATUS_RECHAZADO'+VENTAS_id)
+			.prop('checked', false)
+			.prop('disabled', true)
+			.css('cursor', 'not-allowed')
+			.attr('title', 'No se puede rechazar: autorizado por ventas');
+		$('#agregar_rechazo_'+VENTAS_id).hide();
+		$('#ver_rechazo_'+VENTAS_id).hide();
 		}
 		if(result[1]=='no'){
 		$('#color_VENTAS'+VENTAS_id).css('background-color', '#e9d8ee');
+		$('#STATUS_RECHAZADO'+VENTAS_id)
+			.prop('disabled', false)
+			.css('cursor', 'pointer')
+			.attr('title', '');
+		actualizarBotonesRechazo(VENTAS_id);
 		}		
 		
 	}
 	});
+
 }
 
 

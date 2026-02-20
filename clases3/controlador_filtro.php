@@ -1792,8 +1792,9 @@ echo implode(' ', $atributosVentas);
 
     <?php
 
-          $motivoRechazo = $database->obtener_motivo_rechazo($row["02SUBETUFACTURAid"]);
-        $mostrarAgregarRechazo = !($statusRechazado == 'si' && $motivoRechazo != '');
+         $motivoRechazo = $database->obtener_motivo_rechazo($row["02SUBETUFACTURAid"]);
+        $statusVentasAutorizado = isset($row["STATUS_VENTAS"]) && $row["STATUS_VENTAS"] == 'si';
+        $mostrarAgregarRechazo = ($statusRechazado == 'si' && $motivoRechazo == '');
         $mostrarVerRechazo = ($statusRechazado == 'si' && $motivoRechazo != '');
 
       
@@ -1850,7 +1851,7 @@ echo implode(' ', $atributosVentas);
 
             style="border:none;background:transparent;cursor:pointer;color:#007bff;font-size:14px;"
 
-            onclick="abrirFormularioRechazo(<?php echo $row['02SUBETUFACTURAid']; ?>)">agregar</button>
+            onclick="abrirFormularioRechazo(<?php echo $row['02SUBETUFACTURAid']; ?>)">agregar <br>motivo</button>
 
     
 
