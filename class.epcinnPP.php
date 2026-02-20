@@ -1098,14 +1098,25 @@ NoIdentificacionConcepto
 		if($session != ''){
 
 			$valorAnterior = $this->valor_actual_campo_subetufactura($conn, $idSubetufactura, 'STATUS_RECHAZADO');
+			$valorAnteriorStatusPago = $this->valor_actual_campo_subetufactura($conn, $idSubetufactura, 'STATUS_DE_PAGO');
+
+			$camposActualizar = "STATUS_RECHAZADO = '".$estatusRechazado."'";
+			if($estatusRechazado === 'si'){
+				$camposActualizar .= ", STATUS_DE_PAGO = 'RECHAZADO'";
+			}
+
+			$var1 = "update 02SUBETUFACTURA SET ".$camposActualizar." WHERE id = '".$idSubetufactura."'";
 
 			$var1 = "update 02SUBETUFACTURA SET STATUS_RECHAZADO = '".$estatusRechazado."' WHERE id = '".$idSubetufactura."'";
 
 
 
-			mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
+		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
 
 			$this->registrar_cambio_estado_detallado($conn, $idSubetufactura, 'STATUS_RECHAZADO', $valorAnterior, $estatusRechazado);
+			if($estatusRechazado === 'si' && $valorAnteriorStatusPago !== 'RECHAZADO'){
+				$this->registrar_cambio_estado_detallado($conn, $idSubetufactura, 'STATUS_DE_PAGO', $valorAnteriorStatusPago, 'RECHAZADO');
+			}
 
 			return "Actualizado^".$estatusRechazado;
 
