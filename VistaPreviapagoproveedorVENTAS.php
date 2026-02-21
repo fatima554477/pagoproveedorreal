@@ -246,7 +246,11 @@ $campos_xml = '
 <td width="30%" style="font-weight:bold;" ><label>DESCRIPCIÓN</label></td>
 <td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="DescripcionConcepto" value="'.$row2xml["DescripcionConcepto"].'"></td>
 </tr>
+<tr style="background: #fbf696;style="font-weight:bold;">
 
+<td width="30%" style="font-weight:bold;" ><label>CONCEPTO</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="Descripcion" value="'.$row2xml["Descripcion"].'"></td>
+</tr>
 <tr style="background: #fbf696;style="font-weight:bold;">
 
 
@@ -476,14 +480,16 @@ $campos_xml = '
 <tr>
  
 <td width="30%" style="font-weight:bold;" ><label>CONCEPTO</label></td>
-<td width="70%"><input type="text" name="CONCEPTO_PROVEE" value="'.$row["CONCEPTO_PROVEE"].'"></td>
+<td width="70%"><input type="text" id="CONCEPTO_PROVEE" name="CONCEPTO_PROVEE" value="'.(!empty(trim((string)$row2xml["DescripcionConcepto"])) ? $row2xml["DescripcionConcepto"] : $row["CONCEPTO_PROVEE"]).'"></td>
 </tr> 
+
 <tr>
+
 
 <td width="30%" style="font-weight:bold;" ><label>MONTO TOTAL DE LA COTIZACIÓN O DEL ADEUDO</label></td>
 <td width="70%"><input type="text" name="MONTO_TOTAL_COTIZACION_ADEUDO" value="'.$row["MONTO_TOTAL_COTIZACION_ADEUDO"].'"></td>
 </tr> 
-<tr >
+<tr>
 
 <td width="30%" style="font-weight:bold;" ><label>SUB TOTAL:</label></td>
 <td width="70%"><input type="text" name="MONTO_FACTURA" id="montoTotalEvento" value="'.$row["MONTO_FACTURA"].'"></td>
@@ -543,7 +549,7 @@ $campos_xml = '
 <tr>
     <td width="30%" style="font-weight:bold;" ><label>FORMA DE PAGO:</label></td>
     <td width="70%" class="form-control">
-          <select id="formaDePagoSelect" name="PFORMADE_PAGO" data-lock-xml="'.(!empty(trim((string)$row2xml["formaDePago"])) ? '1' : '0').'" style="background:#daddf5">
+         <select id="PFORMADE_PAGO_SELECT" name="PFORMADE_PAGO" data-lock-xml="'.(!empty(trim((string)$row2xml["formaDePago"])) ? '1' : '0').'" style="background:#daddf5">
             <option style="background:#f2b4f5" value="03" '.($row["PFORMADE_PAGO"] == "03" ? "selected" : "").'>03 TRANSFERENCIA ELECTRÓNICA</option>
             <option style="background:#ddf5da" value="01" '.($row["PFORMADE_PAGO"] == "01" ? "selected" : "").'>01 EFECTIVO</option>
             <option style="background:#fceade" value="02" '.($row["PFORMADE_PAGO"] == "02" ? "selected" : "").'>02 CHEQUE NOMINATIVO</option>
@@ -555,7 +561,7 @@ $campos_xml = '
             <option style="background:#fcfbde" value="29" '.($row["PFORMADE_PAGO"] == "29" ? "selected" : "").'>29 TARJETA DE SERVICIO</option>
             <option style="background:#f9e5fa" value="99" '.($row["PFORMADE_PAGO"] == "99" ? "selected" : "").'>99 OTRO</option>
         </select>
-		     <input type="hidden" id="formaDePagoHidden" value="">
+		       <input type="hidden" id="PFORMADE_PAGO_HIDDEN" value="">
     </td>
 </tr>
 
