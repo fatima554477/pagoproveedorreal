@@ -1060,12 +1060,16 @@ $('#3'+nombre).html('<p style="color:red;">UUID PREVIAMENTE CARGADO.</p>');
 }
 else{
 	
-var result = response.split('^^');
-		$('#'+nombre).val(result[1]);
+	$('#'+nombre).val(result[1]);
 		$('#3'+nombre).html('<a target="_blank" href="includes/archivos/'+$.trim(result[0])+'">Visualizar!</a>');
 		var formaPago = $.trim(result[2] || '');
+		var conceptoXml = $.trim(result[3] || '');
 		if(formaPago.length){
 			bloquearFormaPagoDesdeXml(formaPago);
+		}
+
+		if(nombre === 'ADJUNTAR_FACTURA_XML' && conceptoXml.length){
+			$('#CONCEPTO_PROVEE').val(conceptoXml);
 		}
 
 		if(result[1].length>1){
