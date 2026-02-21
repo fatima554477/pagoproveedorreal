@@ -543,7 +543,7 @@ $campos_xml = '
 <tr>
     <td width="30%" style="font-weight:bold;" ><label>FORMA DE PAGO:</label></td>
     <td width="70%" class="form-control">
-          <select id="formaDePagoSelect" name="formaDePago" data-lock-xml="'.(!empty(trim((string)$row2xml["formaDePago"])) ? '1' : '0').'" style="background:#daddf5">
+          <select id="formaDePagoSelect" name="PFORMADE_PAGO" data-lock-xml="'.(!empty(trim((string)$row2xml["formaDePago"])) ? '1' : '0').'" style="background:#daddf5">
             <option style="background:#f2b4f5" value="03" '.($row["PFORMADE_PAGO"] == "03" ? "selected" : "").'>03 TRANSFERENCIA ELECTRÓNICA</option>
             <option style="background:#ddf5da" value="01" '.($row["PFORMADE_PAGO"] == "01" ? "selected" : "").'>01 EFECTIVO</option>
             <option style="background:#fceade" value="02" '.($row["PFORMADE_PAGO"] == "02" ? "selected" : "").'>02 CHEQUE NOMINATIVO</option>
