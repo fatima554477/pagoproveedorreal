@@ -917,7 +917,7 @@ $campos_xml = '
         <button class="btn btn-sm btn-outline-success px-5" type="button" id="clickPAGOP">GUARDAR</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         
 
-        <!-- aqui boton de bitacora -->
+        '.$botonBitacora.'
       
         <div id="respuestaser" class="d-inline-block ms-3" style="
     color: #f5f5f5;

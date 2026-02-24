@@ -1059,6 +1059,7 @@ $('#3'+nombre).html('<p style="color:red;">UUID PREVIAMENTE CARGADO.</p>');
 
 }
 else{
+		var result = response.split('^^');
 	
 	$('#'+nombre).val(result[1]);
 		$('#3'+nombre).html('<a target="_blank" href="includes/archivos/'+$.trim(result[0])+'">Visualizar!</a>');
@@ -1071,6 +1072,8 @@ else{
 		if(nombre === 'ADJUNTAR_FACTURA_XML' && conceptoXml.length){
 			$('#CONCEPTO_PROVEE').val(conceptoXml);
 		}
+
+
 
 		if(result[1].length>1){
 			$('#respuestaser').html('<p style="color:green;font-size:25px;font-weight: bolder;">XML CORRECTAMENTE CARGADO CON EL UUID:<br> '+result[1]+'</p>');

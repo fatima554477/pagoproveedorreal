@@ -165,6 +165,15 @@ $('#'+nombre).val("");
 /*nuevo inicio*/
 
 }
+else if($.trim(response) == 4 ){
+	var formatoEsperado = 'PDF';
+	if(nombre == 'ADJUNTAR_FACTURA_XML'){
+		formatoEsperado = 'XML';
+	}
+	$('#1'+nombre).html('<p style="color:red;">ESTE ARCHIVO TIENE QUE SER EN FORMATO '+formatoEsperado+'.</p>');
+	$('#'+nombre).val("");
+
+}
 else{
 $('#'+nombre).val(response);
 $('#1'+nombre).html('<a target="_blank" href="includes/archivos/'+$.trim(response)+'"></a>');
