@@ -1821,7 +1821,9 @@ echo implode(' ', $atributosVentas);
 
         <?php
 
-    if ($statusRechazado == 'si') {
+   if ($statusVentasAutorizado) {
+            echo 'disabled style="cursor:not-allowed;" title="No se puede rechazar: autorizado por ventas"';
+        } elseif ($statusRechazado == 'si') {
             if($permisomodificarRechazo){
                 echo 'checked onclick="STATUS_RECHAZADO('.$row["02SUBETUFACTURAid"].')" title="Pago rechazado"';
             } else {
