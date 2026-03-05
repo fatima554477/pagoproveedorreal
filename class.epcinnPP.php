@@ -33,7 +33,7 @@ class accesoclase extends colaboradores{
 		return 'SIN_USUARIO';
 	}
 
-	private function registrar_bitacora($conn, $idSubetufactura, $tipoMovimiento, $detalle, $nombreQuienIngreso = '', $nombreQuienActualizo = ''){
+	private function registrar_bitacora($conn, $idcomprobacion, $tipoMovimiento, $detalle, $nombreQuienIngreso = '', $nombreQuienActualizo = ''){
 		$crearTabla = "CREATE TABLE IF NOT EXISTS `02SUBETUFACTURA_BITACORA` (
 			`id` int(11) NOT NULL AUTO_INCREMENT,
 			`id_subetufactura` int(11) NOT NULL DEFAULT 0,
@@ -48,7 +48,7 @@ class accesoclase extends colaboradores{
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
 		mysqli_query($conn, $crearTabla);
 
-		$idSubetufactura = intval($idSubetufactura);
+		$idcomprobacion = intval($idcomprobacion);
 		$tipoMovimiento = mysqli_real_escape_string($conn, $tipoMovimiento);
 		$detalle = mysqli_real_escape_string($conn, $detalle);
 		$nombreQuienIngreso = mysqli_real_escape_string($conn, $nombreQuienIngreso);
@@ -57,12 +57,12 @@ class accesoclase extends colaboradores{
 		$insertBitacora = "INSERT INTO 02SUBETUFACTURA_BITACORA
 		(id_subetufactura, tipo_movimiento, detalle, fecha_hora, nombre_quien_ingreso, nombre_quien_actualizo)
 		VALUES
-		('".$idSubetufactura."', '".$tipoMovimiento."', '".$detalle."', NOW(), '".$nombreQuienIngreso."', '".$nombreQuienActualizo."')";
+		('".$idcomprobacion."', '".$tipoMovimiento."', '".$detalle."', NOW(), '".$nombreQuienIngreso."', '".$nombreQuienActualizo."')";
 
 		mysqli_query($conn, $insertBitacora);
 	}
 
-	private function valor_actual_campo_subetufactura($conn, $idSubetufactura, $campo){
+	private function valor_actual_campo_subetufactura($conn, $idcomprobacion, $campo){
 		$camposPermitidos = array(
 			'STATUS_RESPONSABLE_EVENTO',
 			'STATUS_DE_PAGO',
@@ -80,8 +80,8 @@ class accesoclase extends colaboradores{
 			return '';
 		}
 
-		$idSubetufactura = intval($idSubetufactura);
-		$consulta = "SELECT ".$campo." AS valor FROM 02SUBETUFACTURA WHERE id = '".$idSubetufactura."' LIMIT 1";
+		$idcomprobacion = intval($idcomprobacion);
+		$consulta = "SELECT ".$campo." AS valor FROM 02SUBETUFACTURA WHERE id = '".$idcomprobacion."' LIMIT 1";
 		$query = mysqli_query($conn, $consulta);
 		if($query){
 			$row = mysqli_fetch_array($query, MYSQLI_ASSOC);
@@ -92,12 +92,12 @@ class accesoclase extends colaboradores{
 		return '';
 	}
 
-private function registrar_cambio_estado_detallado($conn, $idSubetufactura, $campo, $valorAnterior, $valorNuevo, $descripcion = ''){
+private function registrar_cambio_estado_detallado($conn, $idcomprobacion, $campo, $valorAnterior, $valorNuevo, $descripcion = ''){
 		$detalle = 'Se actualizó '.$this->etiqueta_bitacora_campo($campo).' de "'.$valorAnterior.'" a "'.$valorNuevo.'".';
 		if($descripcion != ''){
 			$detalle .= ' '.$descripcion;
 		}
-		$this->registrar_bitacora($conn, $idSubetufactura, 'ACTUALIZACION', $detalle, '', $this->nombre_usuario_bitacora());
+		$this->registrar_bitacora($conn, $idcomprobacion, 'ACTUALIZACION', $detalle, '', $this->nombre_usuario_bitacora());
 	}
 
 	private function etiqueta_bitacora_campo($campo){
@@ -125,10 +125,10 @@ private function registrar_cambio_estado_detallado($conn, $idSubetufactura, $cam
 	return str_replace('_', ' ', $campo);
 	}
 
-	public function registrar_bitacora_adjuntos($idSubetufactura, $tipoAdjunto, $nombreArchivo){
+	public function registrar_bitacora_adjuntos($idcomprobacion, $tipoAdjunto, $nombreArchivo){
 		$conn = $this->db();
-		$idSubetufactura = intval($idSubetufactura);
-		if($idSubetufactura <= 0){
+		$idcomprobacion = intval($idcomprobacion);
+		if($idcomprobacion <= 0){
 			return;
 		}
 
@@ -146,7 +146,7 @@ private function registrar_cambio_estado_detallado($conn, $idSubetufactura, $cam
 
 		$this->registrar_bitacora(
 			$conn,
-			$idSubetufactura,
+			$idcomprobacion,
 			'ADJUNTO',
 			$detalle,
 			'',
@@ -207,17 +207,15 @@ $variablequery = mysqli_query($conn,$variable);
 
 	public function solocargartemp($archivo)/*new file*/
 	{
-		$nombre_carpeta=__ROOT2__.'/includes/archivos';
+		$nombre_carpeta=__ROOT3__.'/includes/archivos';
 		$filehandle = opendir($nombre_carpeta);
 		$nombretemp = $_FILES[$archivo]["tmp_name"];
 		$nombrearchivo = $_FILES[$archivo]["name"];
 		$tamanyoarchivo = $_FILES[$archivo]["size"];
 		$tipoarchivo = getimagesize($nombretemp);
-        $nombrearchivo = basename($nombrearchivo);
 		$extension = explode('.',$nombrearchivo);
 		$cuenta = count($extension) - 1;
-		$nuevonombre = $nombrearchivo;
-		 $extension[$cuenta];
+		$nuevonombre =  $archivo.'_'.date('Y_m_d_h_i_s').'.'.$extension[$cuenta];
 		//echo '1aaaaaaaaaaaaaaaa2'.$extension[$cuenta].'1aaaaaaaaaaaaaaaa2';
 		
 		if( 
@@ -1089,7 +1087,7 @@ NoIdentificacionConcepto
 	
 	
 	
-	public function ACTUALIZA_RECHAZADO($idSubetufactura, $estatusRechazado){
+	public function ACTUALIZA_RECHAZADO($idcomprobacion, $estatusRechazado){
 
 		$conn = $this->db();
 
@@ -1097,23 +1095,15 @@ NoIdentificacionConcepto
 
 		if($session != ''){
 
-			$valorAnterior = $this->valor_actual_campo_subetufactura($conn, $idSubetufactura, 'STATUS_RECHAZADO');
-			$valorAnteriorStatusPago = $this->valor_actual_campo_subetufactura($conn, $idSubetufactura, 'STATUS_DE_PAGO');
+			$valorAnterior = $this->valor_actual_campo_subetufactura($conn, $idcomprobacion, 'STATUS_RECHAZADO');
 
-			$camposActualizar = "STATUS_RECHAZADO = '".$estatusRechazado."'";
-			if($estatusRechazado === 'si'){
-				$camposActualizar .= ", STATUS_DE_PAGO = 'RECHAZADO'";
-			}
-
-			$var1 = "update 02SUBETUFACTURA SET ".$camposActualizar." WHERE id = '".$idSubetufactura."'";
-
-	mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
+			$var1 = "update 02SUBETUFACTURA SET STATUS_RECHAZADO = '".$estatusRechazado."' WHERE id = '".$idcomprobacion."'";
 
 
-			$this->registrar_cambio_estado_detallado($conn, $idSubetufactura, 'STATUS_RECHAZADO', $valorAnterior, $estatusRechazado);
-			if($estatusRechazado === 'si' && $valorAnteriorStatusPago !== 'RECHAZADO'){
-				$this->registrar_cambio_estado_detallado($conn, $idSubetufactura, 'STATUS_DE_PAGO', $valorAnteriorStatusPago, 'RECHAZADO');
-			}
+
+			mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
+
+			$this->registrar_cambio_estado_detallado($conn, $idcomprobacion, 'STATUS_RECHAZADO', $valorAnterior, $estatusRechazado);
 
 			return "Actualizado^".$estatusRechazado;
 
@@ -1153,7 +1143,7 @@ NoIdentificacionConcepto
 
 
 
-	public function guardar_motivo_rechazo($idSubetufactura, $motivoRechazo){
+	public function guardar_motivo_rechazo($idcomprobacion, $motivoRechazo){
 
 		$conn = $this->db();
 
@@ -1167,11 +1157,11 @@ NoIdentificacionConcepto
 
 
 
-		$idSubetufactura = intval($idSubetufactura);
+		$idcomprobacion = intval($idcomprobacion);
 
 		$motivoRechazo = trim($motivoRechazo);
 
-		if($idSubetufactura <= 0 || $motivoRechazo == ''){
+		if($idcomprobacion <= 0 || $motivoRechazo == ''){
 
 			return "Datos_invalidos";
 
@@ -1189,7 +1179,7 @@ NoIdentificacionConcepto
 
 		$insert = "INSERT INTO 02SUBETUFACTURA_RECHAZOS (id_subetufactura, motivo_rechazo, usuario_registro, fecha_registro)
 
-		VALUES ('".$idSubetufactura."', '".$motivoEscapado."', '".$usuario."', NOW())
+		VALUES ('".$idcomprobacion."', '".$motivoEscapado."', '".$usuario."', NOW())
 
 		ON DUPLICATE KEY UPDATE motivo_rechazo = VALUES(motivo_rechazo), usuario_registro = VALUES(usuario_registro), fecha_registro = NOW()";
 
@@ -1197,17 +1187,21 @@ NoIdentificacionConcepto
 
 
 
-		$this->registrar_bitacora($conn, $idSubetufactura, 'RECHAZO', 'Se registró motivo de rechazo: "'.$motivoRechazo.'".', '', $this->nombre_usuario_bitacora());
+		$this->registrar_bitacora($conn, $idcomprobacion, 'RECHAZO', 'Se registró motivo de rechazo: "'.$motivoRechazo.'".', '', $this->nombre_usuario_bitacora());
 
 		return "ok";
+
 	}
-	public function obtener_motivo_rechazo($idSubetufactura){
+
+
+
+	public function obtener_motivo_rechazo($idcomprobacion){
 
 		$conn = $this->db();
 
-		$idSubetufactura = intval($idSubetufactura);
+		$idcomprobacion = intval($idcomprobacion);
 
-		if($idSubetufactura <= 0){
+		if($idcomprobacion <= 0){
 
 			return '';
 
@@ -1217,7 +1211,7 @@ NoIdentificacionConcepto
 
 		$this->crear_tabla_rechazos_si_no_existe($conn);
 
-		$query = mysqli_query($conn, "SELECT motivo_rechazo FROM 02SUBETUFACTURA_RECHAZOS WHERE id_subetufactura = '".$idSubetufactura."' LIMIT 1");
+		$query = mysqli_query($conn, "SELECT motivo_rechazo FROM 02SUBETUFACTURA_RECHAZOS WHERE id_subetufactura = '".$idcomprobacion."' LIMIT 1");
 
 		if($query){
 
@@ -1228,7 +1222,11 @@ NoIdentificacionConcepto
 				return $row['motivo_rechazo'];
 
 			}
+
 		}
+
+
+
 		return '';
 
 	}
@@ -1258,9 +1256,6 @@ NoIdentificacionConcepto
 		echo "NO HAY UN PROVEEDOR SELECCIONADO";	
 		}
     }
-	
-	
-	
 	public function ACTUALIZA_AUDITORIA1 (
 	$AUDITORIA1_id , $AUDITORIA1_text ){
 	
@@ -1436,9 +1431,9 @@ if($row['id']==0 or $row['id']==''){
 
 public function Listado_pagoproveedor(){ $conn = $this->db(); $variablequery = "select * from 02SUBETUFACTURA where idRelacion = '".$_SESSION['idPROV']."' order by id desc "; return $arrayquery = mysqli_query($conn,$variablequery); } 
 
-public function Listado_bitacora_pagoproveedor_array($idSubetufactura){
+public function Listado_bitacora_pagoproveedor_array($idcomprobacion){
 	$conn = $this->db();
-	$idSubetufactura = intval($idSubetufactura);
+	$idcomprobacion = intval($idcomprobacion);
 
 	$crearTabla = "CREATE TABLE IF NOT EXISTS `02SUBETUFACTURA_BITACORA` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1456,7 +1451,7 @@ public function Listado_bitacora_pagoproveedor_array($idSubetufactura){
 
 	$variablequery = "SELECT tipo_movimiento, detalle, fecha_hora, nombre_quien_ingreso, nombre_quien_actualizo
 	FROM 02SUBETUFACTURA_BITACORA
-	WHERE id_subetufactura = '".$idSubetufactura."'
+	WHERE id_subetufactura = '".$idcomprobacion."'
 	ORDER BY id DESC";
 
 	$arrayquery = mysqli_query($conn, $variablequery);
