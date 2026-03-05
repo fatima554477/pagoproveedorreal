@@ -55,7 +55,7 @@
 		success:function(data){
 		var result = data.split('^');			
 		$('#pasarpagado2').html("<span 'ACTUALIZADO'</span>").fadeIn().delay(500).fadeOut();
-		
+		load(1);
 
 		
 		if(pasarpagado_text=='si'){
@@ -393,7 +393,7 @@ function showNotify2(msg, ok){
 		var result = data.split('^');				
 		$('#pasarpagado2').html("<span id='ACTUALIZADO' >"+result[0]+"</span>");
 		
-		
+		load(1);
 
 	if(result[1]=='si'){
 	$('#color_AUDITORIA1'+AUDITORIA1_id).css('background-color', '#ceffcc');
@@ -437,7 +437,7 @@ function showNotify2(msg, ok){
 		success:function(data){
 		var result = data.split('^');				
 		$('#pasarpagado2').html("Cargando...").fadeIn().delay(500).fadeOut();
-		
+		load(1);
 
 		if(result[1]=='si'){
 		$('#color_AUDITORIA2'+AUDITORIA2_id).css('background-color', '#ceffcc');
@@ -677,7 +677,7 @@ function STATUS_FINANZAS(FINANZAS_id){
 		success:function(data){
 		var result = data.split('^');				
 		$('#pasarpagado2').html("Cargando...").fadeIn().delay(500).fadeOut();
-		
+		load(1);
 		
 		if(result[1]=='si'){
 		$('#color_FINANZAS'+FINANZAS_id).css('background-color', '#ceffcc');
