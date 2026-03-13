@@ -92,7 +92,7 @@ class accesoclase extends colaboradores{
 		return '';
 	}
 
-private function registrar_cambio_estado_detallado($conn, $idcomprobacion, $campo, $valorAnterior, $valorNuevo, $descripcion = ''){
+	private function registrar_cambio_estado_detallado($conn, $idcomprobacion, $campo, $valorAnterior, $valorNuevo, $descripcion = ''){
 		$detalle = 'Se actualizó '.$this->etiqueta_bitacora_campo($campo).' de "'.$valorAnterior.'" a "'.$valorNuevo.'".';
 		if($descripcion != ''){
 			$detalle .= ' '.$descripcion;
@@ -102,27 +102,57 @@ private function registrar_cambio_estado_detallado($conn, $idcomprobacion, $camp
 
 	private function etiqueta_bitacora_campo($campo){
 		$etiquetas = array(
-			'STATUS_RESPONSABLE_EVENTO' => 'ESTATUS RESPONSABLE DEL EVENTO',
-			'STATUS_DE_PAGO' => 'ESTATUS DE PAGO',
-			'STATUS_AUDITORIA3' => 'CHECK BOX VoBo CxP',
-			'STATUS_SINXML' => 'SIN EFECTO XML',
-			'STATUS_CHECKBOX' => 'SE QUITO EL 46% PERDIDA FISCAL',
-			'STATUS_AUDITORIA2' => 'AUTORIZACIÓN POR AUDITORÍA',
-			'STATUS_RECHAZADO' => 'PAGO RECHAZADO',
-
-			'STATUS_FINANZAS' => 'AUTORIZACIÓN POR DIRECCIÓN',
-			'STATUS_VENTAS' => 'AUTORIZACIÓN POR VENTAS',
-			'MONTO_DEPOSITAR' => 'TOTAL A PAGAR',
-			'FECHA_A_DEPOSITAR' => 'FECHA EFECTIVA DE PAGO',
-			'FECHA_DE_PAGO' => 'FECHA DE PROGRAMACIÓN DEL PAGO',
-			'PFORMADE_PAGO' => 'FORMA DE PAGO'
+			'STATUS_RESPONSABLE_EVENTO'     => 'ESTATUS RESPONSABLE DEL EVENTO',
+			'STATUS_DE_PAGO'                => 'ESTATUS DE PAGO',
+			'STATUS_AUDITORIA3'             => 'CHECK BOX VoBo CxP',
+			'STATUS_SINXML'                 => 'SIN EFECTO XML',
+			'STATUS_CHECKBOX'               => 'SE QUITO EL 46% PERDIDA FISCAL',
+			'STATUS_AUDITORIA2'             => 'AUTORIZACIÓN POR AUDITORÍA',
+			'STATUS_RECHAZADO'              => 'PAGO RECHAZADO',
+			'STATUS_FINANZAS'               => 'AUTORIZACIÓN POR DIRECCIÓN',
+			'STATUS_VENTAS'                 => 'AUTORIZACIÓN POR VENTAS',
+			'MONTO_DEPOSITAR'               => 'TOTAL A PAGAR',
+			'FECHA_A_DEPOSITAR'             => 'FECHA EFECTIVA DE PAGO',
+			'FECHA_DE_PAGO'                 => 'FECHA DE PROGRAMACIÓN DEL PAGO',
+			'PFORMADE_PAGO'                 => 'FORMA DE PAGO',
+			// ─── CAMPOS NUEVOS ───────────────────────────────────────────
+			'NUMERO_EVENTO'                 => 'NÚMERO DE EVENTO',
+			'NOMBRE_EVENTO'                 => 'NOMBRE DEL EVENTO',
+			'NOMBRE_COMERCIAL'              => 'NOMBRE COMERCIAL',
+			'RAZON_SOCIAL'                  => 'RAZÓN SOCIAL',
+			'RFC_PROVEEDOR'                 => 'RFC DEL PROVEEDOR',
+			'MOTIVO_GASTO'                  => 'MOTIVO DEL GASTO',
+			'CONCEPTO_PROVEE'               => 'CONCEPTO',
+			'MONTO_TOTAL_COTIZACION_ADEUDO' => 'MONTO TOTAL / COTIZACIÓN',
+			'MONTO_PROPINA'                 => 'PROPINA',
+			'MONTO_FACTURA'                 => 'MONTO DE FACTURA',
+			'TIPO_DE_MONEDA'                => 'TIPO DE MONEDA',
+			'BANCO_ORIGEN'                  => 'BANCO ORIGEN',
+			'MONTO_DEPOSITADO'              => 'MONTO DEPOSITADO',
+			'CLASIFICACION_GENERAL'         => 'CLASIFICACIÓN GENERAL',
+			'CLASIFICACION_ESPECIFICA'      => 'CLASIFICACIÓN ESPECÍFICA',
+			'MONTO_DE_COMISION'             => 'MONTO DE COMISIÓN',
+			'POLIZA_NUMERO'                 => 'NÚMERO DE PÓLIZA',
+			'NOMBRE_DEL_EJECUTIVO'          => 'NOMBRE DEL EJECUTIVO',
+			'NOMBRE_DEL_AYUDO'              => 'NOMBRE DE QUIEN AYUDÓ',
+			'OBSERVACIONES_1'               => 'OBSERVACIONES',
+			'TIPO_CAMBIOP'                  => 'TIPO DE CAMBIO',
+			'TOTAL_ENPESOS'                 => 'TOTAL EN PESOS',
+			'IMPUESTO_HOSPEDAJE'            => 'IMPUESTO DE HOSPEDAJE',
+			'TImpuestosRetenidosIVA'        => 'IVA RETENIDO',
+			'TImpuestosRetenidosISR'        => 'ISR RETENIDO',
+			'descuentos'                    => 'DESCUENTOS',
+			'IVA'                           => 'IVA',
+			'ACTIVO_FIJO'                   => 'ACTIVO FIJO',
+			'GASTO_FIJO'                    => 'GASTO FIJO',
+			'VIATICOSOPRO'                  => 'VIÁTICOS / PRO',
 		);
 
 		if(isset($etiquetas[$campo])){
 			return $etiquetas[$campo];
 		}
 
-	return str_replace('_', ' ', $campo);
+		return str_replace('_', ' ', $campo);
 	}
 
 	public function registrar_bitacora_adjuntos($idcomprobacion, $tipoAdjunto, $nombreArchivo){
@@ -216,7 +246,6 @@ $variablequery = mysqli_query($conn,$variable);
 		$extension = explode('.',$nombrearchivo);
 		$cuenta = count($extension) - 1;
 		$nuevonombre =  $archivo.'_'.date('Y_m_d_h_i_s').'.'.$extension[$cuenta];
-		//echo '1aaaaaaaaaaaaaaaa2'.$extension[$cuenta].'1aaaaaaaaaaaaaaaa2';
 		
 		if( 
 		strtolower($extension[$cuenta]) == 'pdf' or 
@@ -261,8 +290,6 @@ $variablequery = mysqli_query($conn,$variable);
 		
 		$resultado2 = 'sssssssssssssss';
 		return $total_menos_depositado - $resultado;
-		//return $variable;
-
 	}
 	
 	public function buscarnombre($filtro){
@@ -351,7 +378,7 @@ $variablequery = mysqli_query($conn,$variable);
 		$regimenE, $rfcR, $nombreR, $UsoCFDI, 
 		$DomicilioFiscalReceptor, $RegimenFiscalReceptor, $UUID, $TImpuestosRetenidos, 
 		$TImpuestosTrasladados, $session, $ultimo_id, $TuaTotalCargos, $TUA, $Descuento, $Propina, $conn,  $actualiza,$DescripcionConcepto){
-//DescripcionConcepto
+
 	$var3 = "update `02XML` set 
 	`Version` = 'no', 
 	`fechaTimbrado` = '".$FechaTimbrado."', 
@@ -422,104 +449,8 @@ if($row['ultimo_id']==0 or $row['ultimo_id']==''){
 	$session = isset($_SESSION['idPROV'])?$_SESSION['idPROV']:'';    
 
 	$conexion2->guardar_db_xml($url,$session,$ultimo_id,$conn);
-	
-	/*if( file_exists($url) ){
-	$regreso = $conexion2->lectorxml($url);
-	
-	$Version = $regreso['Version'];
-	$sello = $regreso['selo'];
-	$Certificado = $regreso['Certificado'];
-	$noCertificado = $regreso['noCertificado'];
-	$fecha = $regreso['fecha'];
-	$tipoDeComprobante = $regreso['tipoDeComprobante'];
-	$metodoDePago = $regreso['metodoDePago'];
-	$formaDePago = $regreso['formaDePago'];
-	$condicionesDePago = $regreso['condicionesDePago'];
-	$subTotal = $regreso['subTotal'];
-	$TipoCambio = $regreso['TipoCambio'];
-	$Moneda = $regreso['Moneda'];
-	$total = $regreso['total'];
-	$serie = $regreso['serie'];
-	$folio = $regreso['folio'];
-	$LugarExpedicion = $regreso['LugarExpedicion'];
-	
-	$rfcE = $regreso['rfcE'];					
-	$nombreE = $regreso['nombreE'];	
-	$regimenE = $regreso['regimenE'];
-	
-	$rfcR = $regreso['rfcR'];
-	$nombreR = $regreso['nombreR'];
-	$UsoCFDI = $regreso['UsoCFDI'];
-	$DomicilioFiscalReceptor = $regreso['DomicilioFiscalReceptor'];
-	$RegimenFiscalReceptor = $regreso['RegimenFiscalReceptor'];
-	
-	$UUID = $regreso['UUID'];
-	$selloCFD = $regreso['selloCFD'];
-	$noCertificadoSAT = $regreso['noCertificadoSAT'];	
-	$FechaTimbrado = $regreso['FechaTimbrado'];
-	$RfcProvCertif = $regreso['RfcProvCertif'];	
-	$TImpuestosRetenidos = $regreso['TImpuestosRetenidos'];
-	$TImpuestosTrasladados = $regreso['TImpuestosTrasladados'];
+	}	
 
-	$CantidadConcepto = $regreso['Cantidad'];
-	$ValorUnitarioConcepto = $regreso['ValorUnitario'];
-	$ImporteConcepto = $regreso['Importe'];
-	$ClaveProdServConcepto = $regreso['ClaveProdServ'];
-	$UnidadConcepto = $regreso['Unidad'];
-	$DescripcionConcepto = $regreso['Descripcion'];
-	$ClaveUnidadConcepto = $regreso['ClaveUnidad'];
-	$NoIdentificacionConcepto = $regreso['NoIdentificacion'];
-	
-	
-}
-	$session = isset($_SESSION['idPROV'])?$_SESSION['idPROV']:'';    
-
-	$conn = $this->db();
-$var3 = "INSERT INTO `02XML` (
-`id`, `Version`, `fechaTimbrado`, `tipoDeComprobante`, 
-`metodoDePago`, `formaDePago`, `condicionesDePago`, `subTotal`, 
-`TipoCambio`, `Moneda`, `totalf`, `serie`, 
-`folio`, `LugarExpedicion`, `rfcE`, `nombreE`, 
-`regimenE`, `rfcR`, `nombreR`, `UsoCFDI`, 
-`DomicilioFiscalReceptor`, `RegimenFiscalReceptor`, `UUID`, `TImpuestosRetenidos`, 
-`TImpuestosTrasladados`, `idRelacion`, `ultimo_id`,
-
-CantidadConcepto,
-ValorUnitarioConcepto,
-ImporteConcepto,
-ClaveProdServConcepto,
-UnidadConcepto,
-DescripcionConcepto,
-ClaveUnidadConcepto,
-NoIdentificacionConcepto
-
-) VALUES (
-'', '".$Version."', '".$FechaTimbrado."', '".$tipoDeComprobante."', 
-'".$metodoDePago."', '".$formaDePago."', '".$condicionesDePago."', '".$subTotal."', 
-'".$TipoCambio."', '".$Moneda."', '".$total."', '".$serie."', 
-'".$folio."', '".$LugarExpedicion."', '".$rfcE."', '".$nombreE."', 
-'".$regimenE."', '".$rfcR."', '".$nombreR."', '".$UsoCFDI."', 
-'".$DomicilioFiscalReceptor."', '".$RegimenFiscalReceptor."', '".$UUID."', '".$TImpuestosRetenidos."', 
-'".$TImpuestosTrasladados."', '".$session."', '".$ultimo_id."',
-
-
-'".$CantidadConcepto."',
-'".$ValorUnitarioConcepto."',
-'".$ImporteConcepto."',
-'".$ClaveProdServConcepto."',
-'".$UnidadConcepto."',
-'".$DescripcionConcepto."',
-'".$ClaveUnidadConcepto."',
-'".$NoIdentificacionConcepto."'
-
-
-);  ";	
-		mysqli_query($conn,$var3) or die('P156'.mysqli_error($conn));*/
-		
-		
-		
-	}
-	
 	public function guardarxmlDB2($ultimo_id,$session,$tabla, $url){
 	$conn = $this->db();
 	$conexion2 = new herramientas();   
@@ -599,7 +530,7 @@ NoIdentificacionConcepto
 		`DomicilioFiscalReceptor` = '".$DomicilioFiscalReceptor."', 
 		`RegimenFiscalReceptor` = '".$RegimenFiscalReceptor."', 
 		`UUID` = '".$UUID."',
-		`TuaTotalCargos` = '".$TuaTotalCargos."', /*aaa*/
+		`TuaTotalCargos` = '".$TuaTotalCargos."',
 		`TUA` = '".$TUA."',	
 		`Propina` = '".$Propina."',	
 		`Descuento` = '".$Descuento."',
@@ -645,9 +576,8 @@ NoIdentificacionConcepto
 		
 		
 		);  ";
-//print_r($regreso);
+
 			$row = $this->busca_07XML2($ultimo_id,$tabla);
-			//if($actualiza=='true'){
 				if($row['ultimo_id']==0 or $row['ultimo_id']==''){
 					mysqli_query($conn,$var4) or die('P350'.mysqli_error($conn));
 					echo "Ingresado";					
@@ -655,7 +585,6 @@ NoIdentificacionConcepto
 					mysqli_query($conn,$var3) or die('P352'.mysqli_error($conn));
 					echo "Actualizado";
 				}
-			//}	
 		}
 	}	
 
@@ -712,13 +641,6 @@ NoIdentificacionConcepto
 		return $row = mysqli_fetch_array($arrayquery, MYSQLI_ASSOC);
 	}
 
-	/*public function ingresar_02direccionproveedor1($conn,$idwebc){
-		$queryrfc = "insert into 02direccionproveedor1 (idRelacion)values('".$idwebc."')";
-		$arrayquery = mysqli_query($conn,$queryrfc);
-		return $row = mysqli_fetch_array($arrayquery, MYSQLI_ASSOC);
-	}    */
-//ingresar_02direccionproveedor1
-
 	
 	public function PAGOPRO ($NUMERO_CONSECUTIVO_PROVEE , $ID_RELACIONADO,$NOMBRE_COMERCIAL , $RAZON_SOCIAL ,$VIATICOSOPRO, $RFC_PROVEEDOR , $NUMERO_EVENTO ,$NOMBRE_EVENTO, $MOTIVO_GASTO , $CONCEPTO_PROVEE , $MONTO_TOTAL_COTIZACION_ADEUDO , $MONTO_DEPOSITAR , $MONTO_PROPINA ,$PENDIENTE_PAGO, $FECHA_AUTORIZACION_RESPONSABLE , $FECHA_AUTORIZACION_AUDITORIA , $FECHA_DE_LLENADO , $MONTO_FACTURA , $TIPO_DE_MONEDA , $PFORMADE_PAGO,$FECHA_DE_PAGO , $FECHA_A_DEPOSITAR , $STATUS_DE_PAGO ,$ACTIVO_FIJO, $GASTO_FIJO,$PAGAR_CADA,$FECHA_PPAGO,$FECHA_TPROGRAPAGO,$NUMERO_EVENTOFIJO,$CLASI_GENERAL,$SUB_GENERAL,$BANCO_ORIGEN , $MONTO_DEPOSITADO , $CLASIFICACION_GENERAL , $CLASIFICACION_ESPECIFICA , $PLACAS_VEHICULO , $MONTO_DE_COMISION , $POLIZA_NUMERO , $NOMBRE_DEL_EJECUTIVO ,$NOMBRE_DEL_AYUDO, $OBSERVACIONES_1 , $TIPO_CAMBIOP,  $TOTAL_ENPESOS,$IMPUESTO_HOSPEDAJE,$TImpuestosRetenidosIVA,$TImpuestosRetenidosISR,$descuentos,$IVA, $ENVIARPAGOprovee,$hiddenpagoproveedores,$IPpagoprovee,
 	$FechaTimbrado, $tipoDeComprobante, 
@@ -749,17 +671,6 @@ NoIdentificacionConcepto
 		$row_NOMBRE_COMERCIAL = mysqli_fetch_array($query_NOMBRE_COMERCIAL, MYSQLI_ASSOC);
 		$NOMBRE_COMERCIAL2 = $row_NOMBRE_COMERCIAL['P_NOMBRE_COMERCIAL_EMPRESA'];
                                                                       
-		/*if( $this->verificar_rfc($conn,$RFC_PROVEEDOR) ==''){
-			$idwebc = $this->ingresar_usuario($conn,$NOMBRE_COMERCIAL);
-			$this->ingresar_rfc($conn,$RFC_PROVEEDOR,$idwebc);
-			$this->ingresar_02direccionproveedor1($conn,$idwebc);
-		}
-		
-		$existe2 = $this->revisar_pagoproveedor2($IPpagoprovee);		
-		$existe = $this->revisar_pagoproveedor();		
-		$session = isset($_SESSION['idPROV'])?$_SESSION['idPROV']:$idwebc;
-*/
-		
 		if( $this->verificar_rfc($conn,$RFC_PROVEEDOR)!=''){
 			$session = $this->verificar_rfc($conn,$RFC_PROVEEDOR);
 		}elseif($this->verificar_usuario_comercial($conn,$NOMBRE_COMERCIAL2)!=''){
@@ -767,7 +678,6 @@ NoIdentificacionConcepto
 		}else{$session = 1;}
 		
 		$existe = $this->revisar_pagoproveedor2($IPpagoprovee);		
-
 
 		$idRelacionU = isset($_SESSION['idempermiso'])?$_SESSION['idempermiso']:'';
 
@@ -886,8 +796,7 @@ NoIdentificacionConcepto
 		'".$idRelacionU."'
 		);  ";			
 
-//ENVIARPAGOprovee
-		if($ENVIARPAGOprovee=='ENVIARPAGOprovee' /*AND $IPpagoprovee!=''*/){
+		if($ENVIARPAGOprovee=='ENVIARPAGOprovee'){
 			
 		$this->ActualizaxmlDB($FechaTimbrado, $tipoDeComprobante, 
 		$metodoDePago, $formaDePago, $condicionesDePago, $subTotal, 
@@ -897,30 +806,83 @@ NoIdentificacionConcepto
 		$DomicilioFiscalReceptor, $RegimenFiscalReceptor, $UUID, $TImpuestosRetenidos, 
 		$TImpuestosTrasladados, $session, $existe, $TuaTotalCargos, $TUA, $Descuento, $Propina, $conn, $actualiza, $DescripcionConcepto);
 
-		$consultaAnterior = mysqli_query($conn, "SELECT STATUS_DE_PAGO, MONTO_DEPOSITAR, FECHA_DE_PAGO,FECHA_A_DEPOSITAR, PFORMADE_PAGO FROM 02SUBETUFACTURA WHERE id = '".intval($IPpagoprovee)."' LIMIT 1");
+		// ─── Captura estado ANTERIOR (todos los campos editables) ──────────
+		$consultaAnterior = mysqli_query($conn,
+			"SELECT 
+				STATUS_DE_PAGO, MONTO_DEPOSITAR, FECHA_DE_PAGO, FECHA_A_DEPOSITAR, PFORMADE_PAGO,
+				NUMERO_EVENTO, NOMBRE_EVENTO, NOMBRE_COMERCIAL, RAZON_SOCIAL, RFC_PROVEEDOR,
+				MOTIVO_GASTO, CONCEPTO_PROVEE, MONTO_TOTAL_COTIZACION_ADEUDO, MONTO_FACTURA,
+				MONTO_PROPINA, TIPO_DE_MONEDA, BANCO_ORIGEN, MONTO_DEPOSITADO,
+				CLASIFICACION_GENERAL, CLASIFICACION_ESPECIFICA, MONTO_DE_COMISION,
+				POLIZA_NUMERO, NOMBRE_DEL_EJECUTIVO, NOMBRE_DEL_AYUDO, OBSERVACIONES_1,
+				TIPO_CAMBIOP, TOTAL_ENPESOS, IMPUESTO_HOSPEDAJE,
+				TImpuestosRetenidosIVA, TImpuestosRetenidosISR, descuentos, IVA,
+				ACTIVO_FIJO, GASTO_FIJO, VIATICOSOPRO
+			FROM 02SUBETUFACTURA
+			WHERE id = '".intval($IPpagoprovee)."' LIMIT 1"
+		);
 		$registroAnterior = $consultaAnterior ? mysqli_fetch_array($consultaAnterior, MYSQLI_ASSOC) : array();
 
+		// ─── Ejecutar el UPDATE ────────────────────────────────────────────
 		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
 
-		$detalleActualizacion = 'Se actualizó el registro de pago a proveedor.';
+		// ─── Mapa: campo_bd => valor_nuevo (para comparar) ────────────────
+		$mapaComparacion = array(
+			'STATUS_DE_PAGO'                => $STATUS_DE_PAGO,
+			'MONTO_DEPOSITAR'               => $MONTO_DEPOSITAR,
+			'FECHA_DE_PAGO'                 => $FECHA_DE_PAGO,
+			'FECHA_A_DEPOSITAR'             => $FECHA_A_DEPOSITAR,
+			'PFORMADE_PAGO'                 => $PFORMADE_PAGO,
+			'NUMERO_EVENTO'                 => $NUMERO_EVENTO,
+			'NOMBRE_EVENTO'                 => $NOMBRE_EVENTO,
+			'NOMBRE_COMERCIAL'              => $NOMBRE_COMERCIAL,
+			'RAZON_SOCIAL'                  => $RAZON_SOCIAL,
+			'RFC_PROVEEDOR'                 => $RFC_PROVEEDOR,
+			'MOTIVO_GASTO'                  => $MOTIVO_GASTO,
+			'CONCEPTO_PROVEE'               => $CONCEPTO_PROVEE,
+			'MONTO_TOTAL_COTIZACION_ADEUDO' => $MONTO_TOTAL_COTIZACION_ADEUDO,
+			'MONTO_FACTURA'                 => $MONTO_FACTURA,
+			'MONTO_PROPINA'                 => $MONTO_PROPINA,
+			'TIPO_DE_MONEDA'                => $TIPO_DE_MONEDA,
+			'BANCO_ORIGEN'                  => $BANCO_ORIGEN,
+			'MONTO_DEPOSITADO'              => $MONTO_DEPOSITADO,
+			'CLASIFICACION_GENERAL'         => $CLASIFICACION_GENERAL,
+			'CLASIFICACION_ESPECIFICA'      => $CLASIFICACION_ESPECIFICA,
+			'MONTO_DE_COMISION'             => $MONTO_DE_COMISION,
+			'POLIZA_NUMERO'                 => $POLIZA_NUMERO,
+			'NOMBRE_DEL_EJECUTIVO'          => $NOMBRE_DEL_EJECUTIVO,
+			'NOMBRE_DEL_AYUDO'              => $NOMBRE_DEL_AYUDO,
+			'OBSERVACIONES_1'               => $OBSERVACIONES_1,
+			'TIPO_CAMBIOP'                  => $TIPO_CAMBIOP,
+			'TOTAL_ENPESOS'                 => $TOTAL_ENPESOS,
+			'IMPUESTO_HOSPEDAJE'            => $IMPUESTO_HOSPEDAJE,
+			'TImpuestosRetenidosIVA'        => $TImpuestosRetenidosIVA,
+			'TImpuestosRetenidosISR'        => $TImpuestosRetenidosISR,
+			'descuentos'                    => $descuentos,
+			'IVA'                           => $IVA,
+			'ACTIVO_FIJO'                   => $ACTIVO_FIJO,
+			'GASTO_FIJO'                    => $GASTO_FIJO,
+			'VIATICOSOPRO'                  => $VIATICOSOPRO,
+		);
+
+		// ─── Detectar diferencias ─────────────────────────────────────────
 		$cambiosDetectados = array();
-        if(isset($registroAnterior['STATUS_DE_PAGO']) && $registroAnterior['STATUS_DE_PAGO'] != $STATUS_DE_PAGO){
-			$cambiosDetectados[] = $this->etiqueta_bitacora_campo('STATUS_DE_PAGO').' de "'.$registroAnterior['STATUS_DE_PAGO'].'" a "'.$STATUS_DE_PAGO.'"';
+		foreach($mapaComparacion as $campo => $valorNuevo){
+			$valorViejo = isset($registroAnterior[$campo]) ? $registroAnterior[$campo] : '';
+			// Normalizar para comparación justa
+			$viejoNorm = trim((string)$valorViejo);
+			$nuevoNorm = trim((string)$valorNuevo);
+			if($viejoNorm !== $nuevoNorm && !($viejoNorm === '' && $nuevoNorm === '0')){
+				$etiqueta = $this->etiqueta_bitacora_campo($campo);
+				$cambiosDetectados[] = $etiqueta.': "'.$viejoNorm.'" → "'.$nuevoNorm.'"';
+			}
 		}
-		if(isset($registroAnterior['MONTO_DEPOSITAR']) && $registroAnterior['MONTO_DEPOSITAR'] != $MONTO_DEPOSITAR){
-			$cambiosDetectados[] = $this->etiqueta_bitacora_campo('MONTO_DEPOSITAR').' de "'.$registroAnterior['MONTO_DEPOSITAR'].'" a "'.$MONTO_DEPOSITAR.'"';
-		}
-		if(isset($registroAnterior['FECHA_DE_PAGO']) && $registroAnterior['FECHA_DE_PAGO'] != $FECHA_DE_PAGO){
-			$cambiosDetectados[] = $this->etiqueta_bitacora_campo('FECHA_DE_PAGO').' de "'.$registroAnterior['FECHA_DE_PAGO'].'" a "'.$FECHA_DE_PAGO.'"';
-		}
-				if(isset($registroAnterior['FECHA_A_DEPOSITAR']) && $registroAnterior['FECHA_A_DEPOSITAR'] != $FECHA_A_DEPOSITAR){
-			$cambiosDetectados[] = $this->etiqueta_bitacora_campo('FECHA_A_DEPOSITAR').' de "'.$registroAnterior['FECHA_A_DEPOSITAR'].'" a "'.$FECHA_A_DEPOSITAR.'"';
-		}
-		if(isset($registroAnterior['PFORMADE_PAGO']) && $registroAnterior['PFORMADE_PAGO'] != $PFORMADE_PAGO){
-			$cambiosDetectados[] = $this->etiqueta_bitacora_campo('PFORMADE_PAGO').' de "'.$registroAnterior['PFORMADE_PAGO'].'" a "'.$PFORMADE_PAGO.'"';
-		}
+
+		// ─── Registrar en bitácora ────────────────────────────────────────
 		if(count($cambiosDetectados) > 0){
-			$detalleActualizacion .= ' Cambios: '.implode('; ', $cambiosDetectados).'.';
+			$detalleActualizacion = 'Se actualizó.  Cambios detectados: '.implode(' | ', $cambiosDetectados).'.';
+		} else {
+			$detalleActualizacion = 'Se guardó  sin cambios detectados en los campos monitoreados.';
 		}
 
 		$this->registrar_bitacora(
@@ -933,14 +895,6 @@ NoIdentificacionConcepto
 		);
 		return "Actualizado";
 		}
-		/*	
-		elseif($ENVIARPAGOprovee==''){
-			
-			if($session == ''){
-		echo "NO HAY UN PROVEEDOR SELECCIONADO, SELECCIONA UNO DE LA LISTA";
-		}elseif($idRelacionU==''){
-		echo "TU SESSION CADUCÓ.";			
-		}*/
 		ELSE{
 		mysqli_query($conn,$var2) or die('P160'.mysqli_error($conn));
 		$ultimo_id ='';	
@@ -949,11 +903,10 @@ NoIdentificacionConcepto
 			$conn,
 			$ultimo_id,
 			'INGRESO',
-			'Se ingresó un nuevo registro de pago a proveedor.',
+			'Registro ingresado desde el módulo PAGO A PROVEEDORES.',
 			$usuarioBitacora,
 			''
 		);
-		//$this->guardarxmlDB($ultimo_id,$conn);
 		$regresourl = $this->variable_SUBETUFACTURA2($_SESSION['idPROV']);
 		$url = __ROOT3__.'/includes/archivos/'.$regresourl['ADJUNTAR_FACTURA_XML'];
 		ob_start();
@@ -969,9 +922,6 @@ NoIdentificacionConcepto
 		}
 
     }
-
-
-
 
 
 	public function ACTUALIZA_RESPONSABLE_EVENTO (
@@ -994,17 +944,10 @@ NoIdentificacionConcepto
 		echo "NO HAY UN PROVEEDOR SELECCIONADO";	
 		}
     }
-	
-
-
-
-
 
 
 	public function borrar_xmls($ruta,$id,$nombrearchivo,$tabla1,$tabla2){ 
 		$conn = $this->db();
-		//`07COMPROBACIONDOCT` WHERE `idTemporal`
-		// `07XML` ORDER BY `07XML`.`ultimo_id`
 		$var1 = "delete FROM ".$tabla1." WHERE `ultimo_id` = '".$id."' ";
 		mysqli_query($conn,$var1);
 
@@ -1054,18 +997,18 @@ NoIdentificacionConcepto
 		$valorAnterior = $this->valor_actual_campo_subetufactura($conn, $pasarpagado_id, 'STATUS_DE_PAGO');
 		$var1 = "update 02SUBETUFACTURA SET STATUS_DE_PAGO = '".$STATUS_DE_PAGO."' WHERE id = '".$pasarpagado_id."'  ";	
 	
-		//if($pasarpagado_text=='si'){
-		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
-		$this->registrar_cambio_estado_detallado($conn, $pasarpagado_id, 'STATUS_DE_PAGO', $valorAnterior, $STATUS_DE_PAGO);
+
+		
+				mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
+		$this->registrar_cambio_estado_detallado($conn, $AUDITORIA1_id, 'STATUS_DE_PAGO', $valorAnterior, $STATUS_DE_PAGO, 'Cambio realizado por FINANZAS Y TESORERÍA.');
 		return "Actualizado";
-		//}
 			
         }else{
 		echo "NO HAY UN PROVEEDOR SELECCIONADO";	
 		}
     }
 
-         	public function ACTUALIZA_AUDITORIA3 (
+	public function ACTUALIZA_AUDITORIA3 (
 	$AUDITORIA3_id , $AUDITORIA3_text ){
 	
 		$conn = $this->db();
@@ -1074,11 +1017,9 @@ NoIdentificacionConcepto
 		$valorAnterior = $this->valor_actual_campo_subetufactura($conn, $AUDITORIA3_id, 'STATUS_AUDITORIA3');
 		 $var1 = "update 02SUBETUFACTURA SET STATUS_AUDITORIA3 = '".$AUDITORIA3_text."' WHERE id = '".$AUDITORIA3_id."'  ";	
 	
-		//if($pasarpagado_text=='si'){
 		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
 		$this->registrar_cambio_estado_detallado($conn, $AUDITORIA3_id, 'STATUS_AUDITORIA3', $valorAnterior, $AUDITORIA3_text);
 		return "Actualizado^".$AUDITORIA3_text;
-		//}
 			
         }else{
 		echo "NO HAY UN PROVEEDOR SELECCIONADO";	
@@ -1087,33 +1028,47 @@ NoIdentificacionConcepto
 	
 	
 	
-	public function ACTUALIZA_RECHAZADO($idcomprobacion, $estatusRechazado){
+public function ACTUALIZA_RECHAZADO($idcomprobacion, $estatusRechazado){
 
-		$conn = $this->db();
+    $conn = $this->db();
 
-		$session = isset($_SESSION['idem'])?$_SESSION['idem']:'';
+    $session = isset($_SESSION['idem'])?$_SESSION['idem']:'';
 
-		if($session != ''){
+    if($session != ''){
 
-			$valorAnterior = $this->valor_actual_campo_subetufactura($conn, $idcomprobacion, 'STATUS_RECHAZADO');
+        $valorAnteriorRechazado  = $this->valor_actual_campo_subetufactura($conn, $idcomprobacion, 'STATUS_RECHAZADO');
+        $valorAnteriorStatusPago = $this->valor_actual_campo_subetufactura($conn, $idcomprobacion, 'STATUS_DE_PAGO');
 
-			$var1 = "update 02SUBETUFACTURA SET STATUS_RECHAZADO = '".$estatusRechazado."' WHERE id = '".$idcomprobacion."'";
+        $camposActualizar = "STATUS_RECHAZADO = '".$estatusRechazado."'";
+        if($estatusRechazado === 'si'){
+            $camposActualizar .= ", STATUS_DE_PAGO = 'RECHAZADO'";
+            $nuevoStatusPago = 'RECHAZADO';
+        } elseif($estatusRechazado === 'no'){
+            $camposActualizar .= ", STATUS_DE_PAGO = 'SOLICITADO'";
+            $nuevoStatusPago = 'SOLICITADO';
+        }
 
+        $var1 = "update 02SUBETUFACTURA SET ".$camposActualizar." WHERE id = '".$idcomprobacion."'";
 
+        mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
 
-			mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
+        // Bitácora: cambio de STATUS_RECHAZADO
+        $this->registrar_cambio_estado_detallado($conn, $idcomprobacion, 'STATUS_RECHAZADO', $valorAnteriorRechazado, $estatusRechazado);
 
-			$this->registrar_cambio_estado_detallado($conn, $idcomprobacion, 'STATUS_RECHAZADO', $valorAnterior, $estatusRechazado);
+        // Bitácora: cambio de STATUS_DE_PAGO (solo si realmente cambió)
+        if(isset($nuevoStatusPago) && $valorAnteriorStatusPago !== $nuevoStatusPago){
+            $this->registrar_cambio_estado_detallado($conn, $idcomprobacion, 'STATUS_DE_PAGO', $valorAnteriorStatusPago, $nuevoStatusPago);
+        }
 
-			return "Actualizado^".$estatusRechazado;
+        return "Actualizado^".$estatusRechazado;
 
-		}else{
+    }else{
 
-			echo "NO HAY UN PROVEEDOR SELECCIONADO";
+        echo "NO HAY UN PROVEEDOR SELECCIONADO";
 
-		}
+    }
 
-	}
+}
 
 
 
@@ -1231,13 +1186,8 @@ NoIdentificacionConcepto
 
 	}
 
-	
-	
-	
-	
-	
 
-         	public function ACTUALIZA_SINXML (
+	public function ACTUALIZA_SINXML (
 	    $SINXML_id , $SINXML_text ){
 	
 		$conn = $this->db();
@@ -1246,16 +1196,15 @@ NoIdentificacionConcepto
 		$valorAnterior = $this->valor_actual_campo_subetufactura($conn, $SINXML_id, 'STATUS_SINXML');
 		 $var1 = "update 02SUBETUFACTURA SET STATUS_SINXML = '".$SINXML_text."' WHERE id = '".$SINXML_id."'  ";	
 	
-		//if($pasarpagado_text=='si'){
 		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
 		$this->registrar_cambio_estado_detallado($conn, $SINXML_id, 'STATUS_SINXML', $valorAnterior, $SINXML_text);
 		return "Actualizado^".$SINXML_text;
-		//}
 			
         }else{
 		echo "NO HAY UN PROVEEDOR SELECCIONADO";	
 		}
     }
+
 	public function ACTUALIZA_AUDITORIA1 (
 	$AUDITORIA1_id , $AUDITORIA1_text ){
 	
@@ -1272,7 +1221,7 @@ NoIdentificacionConcepto
 	
 		
 		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
-		$this->registrar_cambio_estado_detallado($conn, $AUDITORIA1_id, 'STATUS_DE_PAGO', $valorAnterior, $STATUS_DE_PAGO, 'Cambio realizado por auditoría 1.');
+		$this->registrar_cambio_estado_detallado($conn, $AUDITORIA1_id, 'STATUS_DE_PAGO', $valorAnterior, $STATUS_DE_PAGO, 'Cambio realizado por CUENTAS POR PAGAR.');
 		return "Actualizado";
 		
 			
@@ -1282,11 +1231,7 @@ NoIdentificacionConcepto
     }
 
 
-
-
-	
-	
-		public function ACTUALIZA_CHECKBOX (
+	public function ACTUALIZA_CHECKBOX (
 	    $CHECKBOX_id , $CHECKBOX_text ){
 	
 		$conn = $this->db();
@@ -1315,19 +1260,12 @@ NoIdentificacionConcepto
 		$conn = $this->db();
 		$session = isset($_SESSION['idem'])?$_SESSION['idem']:'';    
 		if($session != ''){
-			/*if($pasarpagado_text=='si'){
-				$STATUS_DE_PAGO = 'PAGADO';
-			}else{
-				$STATUS_DE_PAGO = 'SOLICITADO';				
-			}*/
 		$valorAnterior = $this->valor_actual_campo_subetufactura($conn, $RESPONSABLE_EVENTO_id, 'STATUS_AUDITORIA2');
 		 $var1 = "update 02SUBETUFACTURA SET STATUS_AUDITORIA2 = '".$RESPONSABLE_text."' WHERE id = '".$RESPONSABLE_EVENTO_id."'  ";	
 	
-		//if($pasarpagado_text=='si'){
 		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
 		$this->registrar_cambio_estado_detallado($conn, $RESPONSABLE_EVENTO_id, 'STATUS_AUDITORIA2', $valorAnterior, $RESPONSABLE_text);
 		return "Actualizado^".$RESPONSABLE_text;
-		//}
 			
         }else{
 		echo "NO HAY UN PROVEEDOR SELECCIONADO";	
@@ -1340,19 +1278,12 @@ NoIdentificacionConcepto
 		$conn = $this->db();
 		$session = isset($_SESSION['idem'])?$_SESSION['idem']:'';    
 		if($session != ''){
-			/*if($pasarpagado_text=='si'){
-				$STATUS_DE_PAGO = 'PAGADO';
-			}else{
-				$STATUS_DE_PAGO = 'SOLICITADO';				
-			}*/
 		$valorAnterior = $this->valor_actual_campo_subetufactura($conn, $RESPONSABLE_EVENTO_id, 'STATUS_FINANZAS');
 		 $var1 = "update 02SUBETUFACTURA SET STATUS_FINANZAS = '".$RESPONSABLE_text."' WHERE id = '".$RESPONSABLE_EVENTO_id."'  ";	
 	
-		//if($pasarpagado_text=='si'){
 		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
 		$this->registrar_cambio_estado_detallado($conn, $RESPONSABLE_EVENTO_id, 'STATUS_FINANZAS', $valorAnterior, $RESPONSABLE_text);
 		return "Actualizado^".$RESPONSABLE_text;
-		//}
 			
         }else{
 		echo "NO HAY UN PROVEEDOR SELECCIONADO";	
@@ -1365,19 +1296,12 @@ NoIdentificacionConcepto
 		$conn = $this->db();
 		$session = isset($_SESSION['idem'])?$_SESSION['idem']:'';    
 		if($session != ''){
-			/*if($pasarpagado_text=='si'){
-				$STATUS_DE_PAGO = 'PAGADO';
-			}else{
-				$STATUS_DE_PAGO = 'SOLICITADO';				
-			}*/
 		$valorAnterior = $this->valor_actual_campo_subetufactura($conn, $RESPONSABLE_EVENTO_id, 'STATUS_VENTAS');
 		 $var1 = "update 02SUBETUFACTURA SET STATUS_VENTAS = '".$RESPONSABLE_text."' WHERE id = '".$RESPONSABLE_EVENTO_id."'  ";	
 	
-		//if($pasarpagado_text=='si'){
 		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
 		$this->registrar_cambio_estado_detallado($conn, $RESPONSABLE_EVENTO_id, 'STATUS_VENTAS', $valorAnterior, $RESPONSABLE_text);
 		return "Actualizado^".$RESPONSABLE_text;
-		//}
 			
         }else{
 		echo "NO HAY UN PROVEEDOR SELECCIONADO";	
@@ -1385,13 +1309,8 @@ NoIdentificacionConcepto
     }
 
 
-	
-	
-
-//Listado_subefacturaDOCTOS
 	public function borrapagoaproveedores($id){ 
 		$conn = $this->db();
-		//papa
 		$var1 = "DELETE FROM 02SUBETUFACTURA where id = '".$id."' "; 
 		mysqli_query($conn,$var1) or die('P44'.mysqli_error($conn));
 		
@@ -1403,6 +1322,7 @@ NoIdentificacionConcepto
 		ECHO "ELEMENTO BORRADO";
 
 	}
+
     public function select_02XML(){
     $conn = $this->db(); 
     $variablequery = "select id from 02XML order by id desc "; 
@@ -1422,11 +1342,6 @@ if($row['id']==0 or $row['id']==''){
 	return $row['id'];	
 }
 }
-
-
-
-
-
 
 
 public function Listado_pagoproveedor(){ $conn = $this->db(); $variablequery = "select * from 02SUBETUFACTURA where idRelacion = '".$_SESSION['idPROV']."' order by id desc "; return $arrayquery = mysqli_query($conn,$variablequery); } 
@@ -1457,7 +1372,7 @@ public function Listado_bitacora_pagoproveedor_array($idcomprobacion){
 	$arrayquery = mysqli_query($conn, $variablequery);
 	$resultado = array();
 
-if($arrayquery){
+	if($arrayquery){
 		while($row = mysqli_fetch_array($arrayquery, MYSQLI_ASSOC)){
 			if(isset($row['fecha_hora']) && $row['fecha_hora'] != ''){
 				$fechaBitacora = DateTime::createFromFormat('Y-m-d H:i:s', $row['fecha_hora'], new DateTimeZone('UTC'));
@@ -1474,16 +1389,12 @@ if($arrayquery){
 }
 
 
-
-
- 
-
     public function Listado_pagoproveedor2($id){ 
 	$conn = $this->db(); 
 	$variablequery = "select * from 02SUBETUFACTURA where id = '".$id."' "; 
 	return $arrayquery = mysqli_query($conn,$variablequery); 
 	}
-//Listado_subefacturadocto
+
 public function getDoctos_subefactura($ID)
 {
     $conn = $this->db();
@@ -1515,8 +1426,6 @@ public function getDoctos_subefactura($ID)
     if ($row && $row['ADJUNTAR_FACTURA_XML'] != '') {
         $variablequery = "DELETE FROM 02XML WHERE ultimo_id = '".$row['idTemporal']."' ";
         mysqli_query($conn,$variablequery);
-
-
     }
 
     $variablequery = "delete from 02SUBETUFACTURADOCTOS where id = '".$id."' ";
@@ -1524,23 +1433,13 @@ public function getDoctos_subefactura($ID)
 
 }
 
-
-
-
-
    public function delete_subefactura2nombre($nombre){ $conn = $this->db(); 
    $variablequery = "delete from 02SUBETUFACTURADOCTOS where ADJUNTAR_FACTURA_XML = '".$nombre."' ";
    mysqli_query($conn,$variablequery); 
-
 }
 
 
-
-
-
-
 /* DATOS BANCARIOS 1 */ 
-
 
 	public function variable_DATOSBANCARIOS1(){
 		$conn = $this->db();
@@ -1586,7 +1485,6 @@ public function getDoctos_subefactura($ID)
     }
 
 
-
 	public function Listado_datos_bancariosPRO(){
 		$conn = $this->db();
 
@@ -1630,6 +1528,7 @@ public function getDoctos_subefactura($ID)
 			TIPOARCHIVO = 'OTR'  ";
 			mysqli_query($conn,$var3) or die('P442'.mysqli_error($conn));
 		}
+
 		public function buscarNOMBRECOMERCIAL22($rfc){
 			$conn = $this->db();
 			$variable = "select *,02direccionproveedor1.idRelacion as idusuario  from 
@@ -1637,8 +1536,6 @@ public function getDoctos_subefactura($ID)
 			on 02direccionproveedor1.idRelacion = 02usuarios.id
 			where P_RFC_MTDP ='".$rfc."' " ;
 
-
-			
 			$variablequery = mysqli_query($conn,$variable);
 			$row2 = mysqli_fetch_array($variablequery, MYSQLI_ASSOC);
 
@@ -1647,7 +1544,6 @@ public function getDoctos_subefactura($ID)
 
 			return $row2['idusuario'].'^^^^'.$row2['P_NOMBRE_COMERCIAL_EMPRESA'];	
 		}
-
 
 
 	

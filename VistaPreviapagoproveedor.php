@@ -39,7 +39,7 @@ elseif($row['STATUS_DE_PAGO']=="PAGADO"){$PAGADO = "selected";}
 elseif($row['STATUS_DE_PAGO']=="RECHAZADO"){$RECHAZADO = "selected";}
 
 $STATUS_DE_PAGO = '<select required="" name="STATUS_DE_PAGO"> 
-<option selected="">SELECCIONA UNA OPCION</option>
+
 <option style="background:#d9f9fa" value="SOLICITADO" '.$SOLICITADO.'>SOLICITADO</option>
 <option style="background:#e1f5de" value="APROBADO" '.$APROBADO.'>APROBADO</option>
 <option style="background:#f5deee" value="PAGADO" '.$PAGADO.'>PAGADO</option>
