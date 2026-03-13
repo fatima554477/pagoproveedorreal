@@ -7,7 +7,7 @@
 	Propietario: EPC
     fecha sandor: 05/JUNIO/2025
     fecha fatis : 05/04/2025
-	OPTIMIZADO: permisos calculados una sola vez fuera del foreach
+
 	----------------------------
 */
 
