@@ -14,23 +14,6 @@
 if(!isset($_SESSION)) { session_start(); }
 define("__ROOT6__", dirname(__FILE__));
 $action = (isset($_POST["action"]) && $_POST["action"] != NULL) ? $_POST["action"] : "";
-
-if($action == "bitacora_pago"){
-	require(__ROOT6__."/class.filtro.php");
-	$database = new orders();
-	$idSubetufactura = isset($_POST['idSubetufactura']) ? intval($_POST['idSubetufactura']) : 0;
-
-	header('Content-Type: application/json; charset=utf-8');
-
-	if($idSubetufactura <= 0){
-		echo json_encode(array());
-		exit;
-	}
-
-	echo json_encode($database->Listado_bitacora_pagoproveedor_array($idSubetufactura));
-	exit;
-}
-
 if($action == "ajax"){
 
 	require(__ROOT6__."/class.filtro.php");
@@ -304,7 +287,6 @@ if($action == "ajax"){
 	$p_pagoprov_borrar      = $database->variablespermisos('', 'VENTAS_Y_OPERACIONES', 'borrar') == 'si';
 	$p_totales_ver          = $database->variablespermisos('', 'totales_VYO', 'ver')         == 'si';
 	$p_cale_sube_ver        = $database->variablespermisos('', 'CALE_SUBE_PAGOVYO', 'ver')   == 'si';
-		$p_bitacora_ver         = $database->variablespermisos('', 'bitacora', 'ver')            == 'si';
 	// ─────────────────────────────────────────────────────────────────────────
 	?>
 
@@ -511,7 +493,6 @@ if($action == "ajax"){
 <?php if($database->plantilla_filtro($nombreTabla,"FOTO_ESTADO_PROVEE",$altaeventos,$DEPARTAMENTO)=="si"){ ?><th style="background:#c9e8e8;text-align:center">FOTO ESTADO DE CUENTA</th>
 <?php } ?>
 
-<th style="background:#c9e8e8"></th>
 <th style="background:#c9e8e8"></th>
 <th style="background:#c9e8e8"></th>
 <th style="background:#c9e8e8"></th>
@@ -1522,12 +1503,6 @@ if ($explodeDatosBancarios['FOTO_ESTADO_PROVEE']==2 or $explodeDatosBancarios['F
 		<button style="text-align:center;width:160px" class="btn btn-info btn-xs" type="button">PAGO PROVEEDOR</button>
 	</a>
 <?php endif; ?>
-</td>
-<!-- BITÁCORA -->
-<td <?php echo $fondo_existe_xml; ?>>
-<?php if ($p_bitacora_ver) { ?>
-	<input type="button" name="view_bitacora" value="BITÁCORA" id="<?php echo $row["02SUBETUFACTURAid"]; ?>" class="btn btn-outline-primary btn-xs view_dataPAGOPROVEEbitacora" />
-<?php } ?>
 </td>
 
 <!-- MODIFICAR -->

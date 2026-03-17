@@ -129,50 +129,10 @@ class orders extends accesoclase {
 		return $ADJUNTAR_DOCUMENTO_LEGAL;
 	}
 
-public function countAll($sql){
+	public function countAll($sql){
 		$query=$this->mysqli->query($sql);
 		$count=$query->num_rows;
 		return $count;
-	}
-
-	public function Listado_bitacora_pagoproveedor_array($idSubetufactura){
-		$conn = $this->db();
-		$idSubetufactura = intval($idSubetufactura);
-
-		if($idSubetufactura <= 0){
-			return array();
-		}
-
-		$variablequery = "SELECT 
-			b.tipo_movimiento,
-			b.detalle,
-			b.fecha_hora,
-			b.nombre_quien_ingreso,
-			b.nombre_quien_actualizo,
-			s.NUMERO_CONSECUTIVO_PROVEE,
-			s.VIATICOSOPRO
-		FROM 02SUBETUFACTURA_BITACORA b
-		LEFT JOIN 02SUBETUFACTURA s ON s.id = b.id_subetufactura
-		WHERE b.id_subetufactura = '".$idSubetufactura."'
-		ORDER BY b.id DESC";
-
-		$arrayquery = mysqli_query($conn, $variablequery);
-		$resultado = array();
-
-		if($arrayquery){
-			while($row = mysqli_fetch_array($arrayquery, MYSQLI_ASSOC)){
-				if(isset($row['fecha_hora']) && $row['fecha_hora'] != ''){
-					$fechaBitacora = DateTime::createFromFormat('Y-m-d H:i:s', $row['fecha_hora'], new DateTimeZone('UTC'));
-					if($fechaBitacora){
-						$fechaBitacora->setTimezone(new DateTimeZone('America/Mexico_City'));
-						$row['fecha_hora'] = $fechaBitacora->format('d/m/Y H:i:s');
-					}
-				}
-				$resultado[] = $row;
-			}
-		}
-
-		return $resultado;
 	}
 	
 	
