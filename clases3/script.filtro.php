@@ -589,6 +589,8 @@ $(function() {
 });
 
 
+var filtroXhr = null;
+
 function load(page){
 	var query=$("#NOMBRE_EVENTO").val();
 	var DEPARTAMENTO2=$("#DEPARTAMENTO2WE").val();
@@ -789,21 +791,24 @@ function load(page){
 		'DEPARTAMENTO2':DEPARTAMENTO2
 	};
 
-	$("#loader2").fadeIn('slow');
-	$.ajax({
+$("#loader2").fadeIn('slow');
+	if (filtroXhr && filtroXhr.readyState !== 4) {
+		// Optimización: evita solapar peticiones anteriores cuando el usuario pagina/filtra rápido.
+		filtroXhr.abort();
+	}
+	filtroXhr = $.ajax({
 		url: 'pagoproveedores/clases3/controlador_filtro.php',
 		type: 'POST',
 		data: parametros,
 		beforeSend: function(objeto){
+			$("#loader2").stop(true, true);
 			$("#loader2").html(
 				'<div class="msg-actualizando"><span class="loader"></span> ⏳ ACTUALIZANDO...</div>'
 			).fadeIn();
-			setTimeout(function(){
-				$("#loader2").fadeOut("slow", function(){ $(this).html(""); });
-			}, 1000);
 		},
 		success: function(data){
 			$(".datos_ajax2").html(data).fadeIn('slow');
+			$("#loader2").html('<div class="msg-actualizando">✅ ACTUALIZADO</div>');
 			const todosOption = document.getElementById('per_page_todos_option');
 			if(todosOption){
 				const todosMax = 500;
@@ -815,8 +820,17 @@ function load(page){
 				if(localStorage.getItem('checkbox_' + id) === 'checked'){
 					this.checked = true;
 					this.closest('tr').style.filter = 'brightness(65%) sepia(100%) saturate(200%) hue-rotate(0deg)';
-				}
+			}
 			});
+		},
+		error: function(xhr, status){
+			if (status !== 'abort') {
+				$("#loader2").html('<div class="msg-actualizando">❌ Error al actualizar</div>');
+			}
+		},
+		complete: function(){
+			// El mensaje permanece visible durante toda la petición y solo se oculta al terminar.
+			$("#loader2").delay(700).fadeOut("slow", function(){ $(this).html(""); });
 		}
 	});
 }

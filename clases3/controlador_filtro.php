@@ -152,7 +152,8 @@ if($action == "ajax"){
 	$per_page = min($per_page, $max_per_page);
 	$campos = "*";
 	$campos = "02SUBETUFACTURA.*, 02XML.*, 04altaeventos.FECHA_INICIO_EVENTO AS FECHA_INICIO_EVENTO, 04altaeventos.FECHA_FINAL_EVENTO AS FECHA_FINAL_EVENTO";
-	$page = (isset($_POST["page"]) && !empty($_POST["page"])) ? $_POST["page"] : 1;
+    $page = (isset($_POST["page"]) && !empty($_POST["page"])) ? intval($_POST["page"]) : 1;
+	if ($page < 1) { $page = 1; }
 	$adjacents = 4;
 	$offset = ($page - 1) * $per_page;
 
