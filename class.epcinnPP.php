@@ -2,8 +2,6 @@
 /*
 clase EPC INNOVA
 CREADO : 10/mayo/2023
-TESTER: FATIMA ARELLANO
-PROGRAMER: SANDOR ACTUALIZACION: 1 MAY 2023
 fecha sandor: 
 fecha fatis : 07/04/2024
 
@@ -115,7 +113,6 @@ class accesoclase extends colaboradores{
 			'FECHA_A_DEPOSITAR'             => 'FECHA EFECTIVA DE PAGO',
 			'FECHA_DE_PAGO'                 => 'FECHA DE PROGRAMACIÓN DEL PAGO',
 			'PFORMADE_PAGO'                 => 'FORMA DE PAGO',
-			// ─── CAMPOS NUEVOS ───────────────────────────────────────────
 			'NUMERO_EVENTO'                 => 'NÚMERO DE EVENTO',
 			'NOMBRE_EVENTO'                 => 'NOMBRE DEL EVENTO',
 			'NOMBRE_COMERCIAL'              => 'NOMBRE COMERCIAL',
@@ -123,18 +120,18 @@ class accesoclase extends colaboradores{
 			'RFC_PROVEEDOR'                 => 'RFC DEL PROVEEDOR',
 			'MOTIVO_GASTO'                  => 'MOTIVO DEL GASTO',
 			'CONCEPTO_PROVEE'               => 'CONCEPTO',
-			'MONTO_TOTAL_COTIZACION_ADEUDO' => 'MONTO TOTAL / COTIZACIÓN',
+			'MONTO_TOTAL_COTIZACION_ADEUDO' => 'COTIZACIÓN',
 			'MONTO_PROPINA'                 => 'PROPINA',
-			'MONTO_FACTURA'                 => 'MONTO DE FACTURA',
+			'MONTO_FACTURA'                 => 'SUB TOTAL',
 			'TIPO_DE_MONEDA'                => 'TIPO DE MONEDA',
-			'BANCO_ORIGEN'                  => 'BANCO ORIGEN',
+			'BANCO_ORIGEN'                  => 'INSTITUCIÓN BANCARIA',
 			'MONTO_DEPOSITADO'              => 'MONTO DEPOSITADO',
 			'CLASIFICACION_GENERAL'         => 'CLASIFICACIÓN GENERAL',
 			'CLASIFICACION_ESPECIFICA'      => 'CLASIFICACIÓN ESPECÍFICA',
 			'MONTO_DE_COMISION'             => 'MONTO DE COMISIÓN',
 			'POLIZA_NUMERO'                 => 'NÚMERO DE PÓLIZA',
 			'NOMBRE_DEL_EJECUTIVO'          => 'NOMBRE DEL EJECUTIVO',
-			'NOMBRE_DEL_AYUDO'              => 'NOMBRE DE QUIEN AYUDÓ',
+			'NOMBRE_DEL_AYUDO'              => 'NOMBRE DE QUIEN INGRESO',
 			'OBSERVACIONES_1'               => 'OBSERVACIONES',
 			'TIPO_CAMBIOP'                  => 'TIPO DE CAMBIO',
 			'TOTAL_ENPESOS'                 => 'TOTAL EN PESOS',
@@ -145,7 +142,7 @@ class accesoclase extends colaboradores{
 			'IVA'                           => 'IVA',
 			'ACTIVO_FIJO'                   => 'ACTIVO FIJO',
 			'GASTO_FIJO'                    => 'GASTO FIJO',
-			'VIATICOSOPRO'                  => 'VIÁTICOS / PRO',
+			'VIATICOSOPRO'                  => 'TIPO DE PAGO',
 		);
 
 		if(isset($etiquetas[$campo])){
@@ -806,7 +803,6 @@ if($row['ultimo_id']==0 or $row['ultimo_id']==''){
 		$DomicilioFiscalReceptor, $RegimenFiscalReceptor, $UUID, $TImpuestosRetenidos, 
 		$TImpuestosTrasladados, $session, $existe, $TuaTotalCargos, $TUA, $Descuento, $Propina, $conn, $actualiza, $DescripcionConcepto);
 
-		// ─── Captura estado ANTERIOR (todos los campos editables) ──────────
 		$consultaAnterior = mysqli_query($conn,
 			"SELECT 
 				STATUS_DE_PAGO, MONTO_DEPOSITAR, FECHA_DE_PAGO, FECHA_A_DEPOSITAR, PFORMADE_PAGO,
@@ -823,10 +819,8 @@ if($row['ultimo_id']==0 or $row['ultimo_id']==''){
 		);
 		$registroAnterior = $consultaAnterior ? mysqli_fetch_array($consultaAnterior, MYSQLI_ASSOC) : array();
 
-		// ─── Ejecutar el UPDATE ────────────────────────────────────────────
 		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
 
-		// ─── Mapa: campo_bd => valor_nuevo (para comparar) ────────────────
 		$mapaComparacion = array(
 			'STATUS_DE_PAGO'                => $STATUS_DE_PAGO,
 			'MONTO_DEPOSITAR'               => $MONTO_DEPOSITAR,
@@ -865,11 +859,9 @@ if($row['ultimo_id']==0 or $row['ultimo_id']==''){
 			'VIATICOSOPRO'                  => $VIATICOSOPRO,
 		);
 
-		// ─── Detectar diferencias ─────────────────────────────────────────
 		$cambiosDetectados = array();
 		foreach($mapaComparacion as $campo => $valorNuevo){
 			$valorViejo = isset($registroAnterior[$campo]) ? $registroAnterior[$campo] : '';
-			// Normalizar para comparación justa
 			$viejoNorm = trim((string)$valorViejo);
 			$nuevoNorm = trim((string)$valorNuevo);
 			if($viejoNorm !== $nuevoNorm && !($viejoNorm === '' && $nuevoNorm === '0')){
@@ -878,7 +870,6 @@ if($row['ultimo_id']==0 or $row['ultimo_id']==''){
 			}
 		}
 
-		// ─── Registrar en bitácora ────────────────────────────────────────
 		if(count($cambiosDetectados) > 0){
 			$detalleActualizacion = 'Se actualizó.  Cambios detectados: '.implode(' | ', $cambiosDetectados).'.';
 		} else {
@@ -997,9 +988,7 @@ if($row['ultimo_id']==0 or $row['ultimo_id']==''){
 		$valorAnterior = $this->valor_actual_campo_subetufactura($conn, $pasarpagado_id, 'STATUS_DE_PAGO');
 		$var1 = "update 02SUBETUFACTURA SET STATUS_DE_PAGO = '".$STATUS_DE_PAGO."' WHERE id = '".$pasarpagado_id."'  ";	
 	
-
-		
-				mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
+		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
 		$this->registrar_cambio_estado_detallado($conn, $AUDITORIA1_id, 'STATUS_DE_PAGO', $valorAnterior, $STATUS_DE_PAGO, 'Cambio realizado por FINANZAS Y TESORERÍA.');
 		return "Actualizado";
 			
@@ -1031,7 +1020,6 @@ if($row['ultimo_id']==0 or $row['ultimo_id']==''){
 public function ACTUALIZA_RECHAZADO($idcomprobacion, $estatusRechazado){
 
     $conn = $this->db();
-
     $session = isset($_SESSION['idem'])?$_SESSION['idem']:'';
 
     if($session != ''){
@@ -1049,13 +1037,10 @@ public function ACTUALIZA_RECHAZADO($idcomprobacion, $estatusRechazado){
         }
 
         $var1 = "update 02SUBETUFACTURA SET ".$camposActualizar." WHERE id = '".$idcomprobacion."'";
-
         mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
 
-        // Bitácora: cambio de STATUS_RECHAZADO
         $this->registrar_cambio_estado_detallado($conn, $idcomprobacion, 'STATUS_RECHAZADO', $valorAnteriorRechazado, $estatusRechazado);
 
-        // Bitácora: cambio de STATUS_DE_PAGO (solo si realmente cambió)
         if(isset($nuevoStatusPago) && $valorAnteriorStatusPago !== $nuevoStatusPago){
             $this->registrar_cambio_estado_detallado($conn, $idcomprobacion, 'STATUS_DE_PAGO', $valorAnteriorStatusPago, $nuevoStatusPago);
         }
@@ -1063,127 +1048,67 @@ public function ACTUALIZA_RECHAZADO($idcomprobacion, $estatusRechazado){
         return "Actualizado^".$estatusRechazado;
 
     }else{
-
-        echo "NO HAY UN PROVEEDOR SELECCIONADO";
-
+		echo "NO HAY UN PROVEEDOR SELECCIONADO";
     }
-
 }
 
 
 
 	private function crear_tabla_rechazos_si_no_existe($conn){
-
 		$crearTabla = "CREATE TABLE IF NOT EXISTS `02SUBETUFACTURA_RECHAZOS` (
-
 			`id` int(11) NOT NULL AUTO_INCREMENT,
-
 			`id_subetufactura` int(11) NOT NULL,
-
 			`motivo_rechazo` text,
-
 			`usuario_registro` varchar(255) DEFAULT NULL,
-
 			`fecha_registro` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
 			PRIMARY KEY (`id`),
-
 			UNIQUE KEY `uniq_subetufactura` (`id_subetufactura`)
-
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
-
 		mysqli_query($conn, $crearTabla);
-
 	}
-
-
 
 	public function guardar_motivo_rechazo($idcomprobacion, $motivoRechazo){
-
 		$conn = $this->db();
-
 		$session = isset($_SESSION['idem'])?$_SESSION['idem']:'';
-
 		if($session == ''){
-
 			return "Sesion_invalida";
-
 		}
-
-
 
 		$idcomprobacion = intval($idcomprobacion);
-
 		$motivoRechazo = trim($motivoRechazo);
-
 		if($idcomprobacion <= 0 || $motivoRechazo == ''){
-
 			return "Datos_invalidos";
-
 		}
 
-
-
 		$this->crear_tabla_rechazos_si_no_existe($conn);
-
 		$motivoEscapado = mysqli_real_escape_string($conn, $motivoRechazo);
-
 		$usuario = mysqli_real_escape_string($conn, $this->nombre_usuario_bitacora());
 
-
-
 		$insert = "INSERT INTO 02SUBETUFACTURA_RECHAZOS (id_subetufactura, motivo_rechazo, usuario_registro, fecha_registro)
-
 		VALUES ('".$idcomprobacion."', '".$motivoEscapado."', '".$usuario."', NOW())
-
 		ON DUPLICATE KEY UPDATE motivo_rechazo = VALUES(motivo_rechazo), usuario_registro = VALUES(usuario_registro), fecha_registro = NOW()";
-
 		mysqli_query($conn, $insert) or die('P156'.mysqli_error($conn));
 
-
-
 		$this->registrar_bitacora($conn, $idcomprobacion, 'RECHAZO', 'Se registró motivo de rechazo: "'.$motivoRechazo.'".', '', $this->nombre_usuario_bitacora());
-
 		return "ok";
-
 	}
 
-
-
 	public function obtener_motivo_rechazo($idcomprobacion){
-
 		$conn = $this->db();
-
 		$idcomprobacion = intval($idcomprobacion);
-
 		if($idcomprobacion <= 0){
-
 			return '';
-
 		}
-
-
 
 		$this->crear_tabla_rechazos_si_no_existe($conn);
-
 		$query = mysqli_query($conn, "SELECT motivo_rechazo FROM 02SUBETUFACTURA_RECHAZOS WHERE id_subetufactura = '".$idcomprobacion."' LIMIT 1");
-
 		if($query){
-
 			$row = mysqli_fetch_array($query, MYSQLI_ASSOC);
-
 			if($row && isset($row['motivo_rechazo'])){
-
 				return $row['motivo_rechazo'];
-
 			}
-
 		}
-
-
-
 		return '';
-
 	}
 
 
@@ -1219,11 +1144,9 @@ public function ACTUALIZA_RECHAZADO($idcomprobacion, $estatusRechazado){
 		$valorAnterior = $this->valor_actual_campo_subetufactura($conn, $AUDITORIA1_id, 'STATUS_DE_PAGO');
 		$var1 = "update 02SUBETUFACTURA SET STATUS_DE_PAGO = '".$STATUS_DE_PAGO."' WHERE id = '".$AUDITORIA1_id."'  ";	
 	
-		
 		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
 		$this->registrar_cambio_estado_detallado($conn, $AUDITORIA1_id, 'STATUS_DE_PAGO', $valorAnterior, $STATUS_DE_PAGO, 'Cambio realizado por CUENTAS POR PAGAR.');
 		return "Actualizado";
-		
 			
         }else{
 		echo "NO HAY UN PROVEEDOR SELECCIONADO";	
@@ -1241,18 +1164,14 @@ public function ACTUALIZA_RECHAZADO($idcomprobacion, $estatusRechazado){
 		$valorAnterior = $this->valor_actual_campo_subetufactura($conn, $CHECKBOX_id, 'STATUS_CHECKBOX');
 		$var1 = "update 02SUBETUFACTURA SET STATUS_CHECKBOX = '".$CHECKBOX_text."' WHERE id = '".$CHECKBOX_id."'  ";	
 	
-		
 		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
 		$this->registrar_cambio_estado_detallado($conn, $CHECKBOX_id, 'STATUS_CHECKBOX', $valorAnterior, $CHECKBOX_text);
 		return "Actualizado";
-		
 			
         }else{
 		echo "NO HAY UN PROVEEDOR SELECCIONADO";	
 		}
     }
-
-
 
 	public function ACTUALIZA_AUDITORIA2 (
 	$RESPONSABLE_EVENTO_id , $RESPONSABLE_text ){
@@ -1320,7 +1239,6 @@ public function ACTUALIZA_RECHAZADO($idcomprobacion, $estatusRechazado){
 		$var3 = "DELETE FROM `02SUBETUFACTURADOCTOS` WHERE `idTemporal` = '".$id."' ";
 		mysqli_query($conn,$var3) or die('P44'.mysqli_error($conn));
 		ECHO "ELEMENTO BORRADO";
-
 	}
 
     public function select_02XML(){
@@ -1331,17 +1249,22 @@ public function ACTUALIZA_RECHAZADO($idcomprobacion, $estatusRechazado){
 	return $row['id'];	
 }
 
-public function VALIDA02XMLUUID($uuid){
-$conn = $this->db(); 
-$variablequery = "select id,UUID from 02XML where UUID = '".$uuid."' "; 
-$arrayquery = mysqli_query($conn,$variablequery);
-$row = mysqli_fetch_array($arrayquery, MYSQLI_ASSOC);
-if($row['id']==0 or $row['id']==''){
-	return 'S';
-}else{
-	return $row['id'];	
-}
-}
+	// ── VALIDA02XMLUUID actualizado — igual que ventasoperaciones ─────────
+	public function VALIDA02XMLUUID($uuid){
+		$conn = $this->db();
+		$variablequery = "select 02XML.id, 02XML.UUID, 02SUBETUFACTURA.NUMERO_CONSECUTIVO_PROVEE
+		from 02XML
+		left join 02SUBETUFACTURA on 02XML.ultimo_id = 02SUBETUFACTURA.id
+		where 02XML.UUID = '".$uuid."' ";
+		$arrayquery = mysqli_query($conn,$variablequery);
+		$row = mysqli_fetch_array($arrayquery, MYSQLI_ASSOC);
+		if($row['id'] == 0 || $row['id'] == ''){
+			return 'S';
+		} else {
+			$numero = ($row['NUMERO_CONSECUTIVO_PROVEE'] != '') ? $row['NUMERO_CONSECUTIVO_PROVEE'] : $row['id'];
+			return 'UUID_DUPLICADO:'.$numero;
+		}
+	}
 
 
 public function Listado_pagoproveedor(){ $conn = $this->db(); $variablequery = "select * from 02SUBETUFACTURA where idRelacion = '".$_SESSION['idPROV']."' order by id desc "; return $arrayquery = mysqli_query($conn,$variablequery); } 
@@ -1364,10 +1287,18 @@ public function Listado_bitacora_pagoproveedor_array($idcomprobacion){
 	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
 	mysqli_query($conn, $crearTabla);
 
-	$variablequery = "SELECT tipo_movimiento, detalle, fecha_hora, nombre_quien_ingreso, nombre_quien_actualizo
-	FROM 02SUBETUFACTURA_BITACORA
-	WHERE id_subetufactura = '".$idcomprobacion."'
-	ORDER BY id DESC";
+$variablequery = "SELECT 
+		b.tipo_movimiento,
+		b.detalle,
+		b.fecha_hora,
+		b.nombre_quien_ingreso,
+		b.nombre_quien_actualizo,
+		s.NUMERO_CONSECUTIVO_PROVEE,
+		s.VIATICOSOPRO
+	FROM 02SUBETUFACTURA_BITACORA b
+	LEFT JOIN 02SUBETUFACTURA s ON s.id = b.id_subetufactura
+	WHERE b.id_subetufactura = '".$idcomprobacion."'
+	ORDER BY b.id DESC";
 
 	$arrayquery = mysqli_query($conn, $variablequery);
 	$resultado = array();
@@ -1398,7 +1329,6 @@ public function Listado_bitacora_pagoproveedor_array($idcomprobacion){
 public function getDoctos_subefactura($ID)
 {
     $conn = $this->db();
-
     $sql = "
         SELECT 
             COMPLEMENTOS_PAGO_PDF,
@@ -1408,7 +1338,6 @@ public function getDoctos_subefactura($ID)
         ORDER BY id DESC
         LIMIT 1
     ";
-
     $query = mysqli_query($conn, $sql);
     return $query ? mysqli_fetch_array($query, MYSQLI_ASSOC) : null;
 }
@@ -1430,80 +1359,15 @@ public function getDoctos_subefactura($ID)
 
     $variablequery = "delete from 02SUBETUFACTURADOCTOS where id = '".$id."' ";
     return $arrayquery = mysqli_query($conn,$variablequery);
+    }
 
-}
-
-   public function delete_subefactura2nombre($nombre){ $conn = $this->db(); 
-   $variablequery = "delete from 02SUBETUFACTURADOCTOS where ADJUNTAR_FACTURA_XML = '".$nombre."' ";
-   mysqli_query($conn,$variablequery); 
-}
-
-
-/* DATOS BANCARIOS 1 */ 
-
-	public function variable_DATOSBANCARIOS1(){
-		$conn = $this->db();
-		$variablequery = "select * from 02DATOSBANCARIOS1 where idRelacion = '".$_SESSION['idPROV']."' ";
-		$arrayquery = mysqli_query($conn,$variablequery);
-		return $row = mysqli_fetch_array($arrayquery, MYSQLI_ASSOC);		
-	}
-
-	public function revisar_DATOSBANCARIOS1(){
-		$conn = $this->db();
-		$var1 = 'select id from 02DATOSBANCARIOS1 where idRelacion =  "'.$_SESSION['idPROV'].'" ';
-		$query = mysqli_query($conn,$var1) or die('P44'.mysqli_error($conn));
-		$row = mysqli_fetch_array($query, MYSQLI_ASSOC);
-		return $row['id'];
-	}
-
-	public function enviarDATOSBANCARIOS1rr(
-	$P_TIPO_DE_MONEDA_1 , $P_INSTITUCION_FINANCIERA_1 , $P_NUMERO_DE_CUENTA_DB_1 , $P_NUMERO_CLABE_1 , 
-	$P_NUMERO_DE_SUCURSAL_1 , $P_NUMERO_IBAN_1 , $P_NUMERO_CUENTA_SWIFT_1,$FOTO_ESTADO_PROVEE,$ULTIMA_CARGA_DATOBANCA, $ENVIARRdatosbancario1p,$IPdatosbancario1p ){
-	
-		$conn = $this->db();
-		$existe = $this->revisar_DATOSBANCARIOS1();
-		$session = isset($_SESSION['idPROV'])?$_SESSION['idPROV']:'';    
-		if($session != ''){
-			
-		$var1 = "update 02DATOSBANCARIOS1 set P_TIPO_DE_MONEDA_1 = '".$P_TIPO_DE_MONEDA_1."' , P_INSTITUCION_FINANCIERA_1 = '".$P_INSTITUCION_FINANCIERA_1."' , P_NUMERO_DE_CUENTA_DB_1 = '".$P_NUMERO_DE_CUENTA_DB_1."' , P_NUMERO_CLABE_1 = '".$P_NUMERO_CLABE_1."' , P_NUMERO_DE_SUCURSAL_1 = '".$P_NUMERO_DE_SUCURSAL_1."' , P_NUMERO_IBAN_1 = '".$P_NUMERO_IBAN_1."' , P_NUMERO_CUENTA_SWIFT_1 = '".$P_NUMERO_CUENTA_SWIFT_1."' ,ULTIMA_CARGA_DATOBANCA = '".$ULTIMA_CARGA_DATOBANCA."'  where id = '".$IPdatosbancario1p."' ; ";
-		
-		
-		$var2 = "insert into 02DATOSBANCARIOS1 (P_TIPO_DE_MONEDA_1, P_INSTITUCION_FINANCIERA_1, P_NUMERO_DE_CUENTA_DB_1, P_NUMERO_CLABE_1, P_NUMERO_DE_SUCURSAL_1, P_NUMERO_IBAN_1, P_NUMERO_CUENTA_SWIFT_1,FOTO_ESTADO_PROVEE, ULTIMA_CARGA_DATOBANCA, idRelacion) values ( '".$P_TIPO_DE_MONEDA_1."' , '".$P_INSTITUCION_FINANCIERA_1."' , '".$P_NUMERO_DE_CUENTA_DB_1."' , '".$P_NUMERO_CLABE_1."' , '".$P_NUMERO_DE_SUCURSAL_1."' , '".$P_NUMERO_IBAN_1."' , '".$P_NUMERO_CUENTA_SWIFT_1."' , '".$FOTO_ESTADO_PROVEE."' , '".$ULTIMA_CARGA_DATOBANCA."' , '".$session."' );  ";			
-	
-		if($ENVIARRdatosbancario1p=='ENVIARRdatosbancario1p'){	
-
-		mysqli_query($conn,$var1) or die('P156'.mysqli_error($conn));
-		return "Actualizado";
-		}else{
-		mysqli_query($conn,$var2) or die('P160'.mysqli_error($conn));
-		return "Ingresado";
-		}
-			
-        }else{
-		echo "NO HAY UN PROVEEDOR SELECCIONADO";	
-		}
+     public function delete_subefactura2nombre($nombre){ $conn = $this->db(); 
+     $variablequery = "delete from 02SUBETUFACTURADOCTOS where ADJUNTAR_FACTURA_XML = '".$nombre."' ";
+     mysqli_query($conn,$variablequery); 
     }
 
 
-	public function Listado_datos_bancariosPRO(){
-		$conn = $this->db();
 
-		$variablequery = "select * from 02DATOSBANCARIOS1 where idRelacion = '".$_SESSION['idPROV']."' order by id desc ";
-		return $arrayquery = mysqli_query($conn,$variablequery);
-	}
-
-
-        public function Listado_datos_bancariosPRO2($id){ $conn = $this->db(); $variablequery = "select * from 02DATOSBANCARIOS1 where id = '".$id."' "; return $arrayquery = mysqli_query($conn,$variablequery); }
-
-
-         function borra_datos_bancario1($id){
-		$conn = $this->db();
-		$variablequery = "delete from 02DATOSBANCARIOS1 where id = '".$id."' ";
-		$arrayquery = mysqli_query($conn,$variablequery);
-		RETURN 
-		
-		"<P style='color:green; font-size:18px;'>ELEMENTO BORRADO</P>";
-	}
 
 		public function borrar_historico_xml($nombretabla,$idusuario){
 			$conn = $this->db();
@@ -1544,10 +1408,5 @@ public function getDoctos_subefactura($ID)
 
 			return $row2['idusuario'].'^^^^'.$row2['P_NOMBRE_COMERCIAL_EMPRESA'];	
 		}
-
-
-	
 }
-
-
-	?>
+?>

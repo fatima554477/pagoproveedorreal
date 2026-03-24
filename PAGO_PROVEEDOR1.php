@@ -826,7 +826,7 @@ if($rfcE==true){
 				<tr style="background:#fcf3cf">
 			
 					<th scope="row">
-						<label style="width:300px" for="validationCustom03" class="form-label">FECHA DE PROGRAMACIÓN DEL PAGO:</label>
+						<label style="width:300px" for="validationCustom03" class="form-label">FECHA DE PROGRAMACIÓN DEL PAGO:<br><a style="color:red;font-size:11px">OBLIGATORIO</a></label>
 					</th>
 					<td>
 						<div id="FECHA_DE_PAGO2">
