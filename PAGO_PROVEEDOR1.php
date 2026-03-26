@@ -11,6 +11,7 @@ $connecDB = $conexion->db();
 if (!isset($_SERVER['HTTP_X_REQUESTED_WITH']) || $_SERVER['HTTP_X_REQUESTED_WITH'] != 'XMLHttpRequest') {
 $idem_usuario = $_SESSION['idem'];
 $pagoproveedores->borrar_historico_xml('02SUBETUFACTURADOCTOS',$idem_usuario);
+$_SESSION['idPROV'] = '';
 $_SESSION['P_NOMBRE_COMERCIAL_EMPRESA12'] = '';
 $_SESSION['idusuario12']= '';
 
