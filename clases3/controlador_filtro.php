@@ -1503,14 +1503,33 @@ if ($mostrarXML) { $TUA12 += $row['TUA']; $totales2 = 'si'; }
 <?php if($database->plantilla_filtro($nombreTabla,"total",$altaeventos,$DEPARTAMENTO)=="si"){ ?>
 <td style="text-align:center" id="montoOriginal_<?php echo $row['02SUBETUFACTURAid']; ?>"><?php
 if ($mostrarXML) {
-	$total123 = isset($row['totalf']) ? $row['totalf'] : '';
-	$MONTO_DEPOSITAR123 = isset($row['MONTO_DEPOSITAR']) ? $row['MONTO_DEPOSITAR'] : '';
-	if ($total123 > 0) { $porfalta = number_format($total123, 2, '.', ','); $porfalta2 = $total123; }
-	else { $porfalta = number_format($MONTO_DEPOSITAR123, 2, '.', ','); $porfalta2 = $MONTO_DEPOSITAR123; }
-	$totalf12 += $porfalta2;
-	echo $porfalta;
-	$totales2 = 'si';
-} else { $porfalta = ''; $porfalta2 = 0; }
+    $STATUS_RECHAZADO = isset($row['STATUS_RECHAZADO']) ? $row['STATUS_RECHAZADO'] : '';
+    if (isset($STATUS_RECHAZADO) && $STATUS_RECHAZADO == "si") {
+        $porfalta  = '0.00';
+        $porfalta2 = 0;
+        $totalf12 += 0;
+        echo $porfalta;
+        $totales2 = 'si';
+    } else {
+        $total123          = isset($row['totalf'])          ? $row['totalf']          : '';
+        $MONTO_DEPOSITAR123 = isset($row['MONTO_DEPOSITAR']) ? $row['MONTO_DEPOSITAR'] : '';
+
+        if ($total123 > 0) { 
+            $porfalta  = number_format($total123, 2, '.', ','); 
+            $porfalta2 = $total123; 
+        } else { 
+            $porfalta  = number_format($MONTO_DEPOSITAR123, 2, '.', ','); 
+            $porfalta2 = $MONTO_DEPOSITAR123; 
+        }
+
+        $totalf12 += $porfalta2;
+        echo $porfalta;
+        $totales2 = 'si';
+    }
+} else { 
+    $porfalta  = ''; 
+    $porfalta2 = 0; 
+}
 ?></td>
 <?php } ?>
 
