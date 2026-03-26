@@ -1035,6 +1035,11 @@ while ($rowDOCTOS = mysqli_fetch_array($querycontrasDOCTOS)) {
 		<?php if($row["STATUS_RESPONSABLE_EVENTO"]=='si') echo "checked"; $colspan += 1; ?>/>
 </td>
 
+<?php
+$statusRechazado = isset($row["STATUS_RECHAZADO"]) ? $row["STATUS_RECHAZADO"] : 'no';
+$numeroEventoRegistro = isset($row["NUMERO_EVENTO"]) ? strtoupper(trim((string)$row["NUMERO_EVENTO"])) : '';
+$tienePermisoVenta = $numeroEventoRegistro !== '' && isset($eventosAutorizadosVentas[$numeroEventoRegistro]);
+?>
 <!-- VENTAS -->
 <td style="text-align:center; background:<?php echo ($row["STATUS_VENTAS"] == 'si') ? '#ceffcc' : '#e9d8ee'; ?>;"
 	id="color_VENTAS<?php echo $row["02SUBETUFACTURAid"]; ?>">
@@ -1042,6 +1047,7 @@ while ($rowDOCTOS = mysqli_fetch_array($querycontrasDOCTOS)) {
 		id="STATUS_VENTAS<?php echo $row["02SUBETUFACTURAid"]; ?>"
 		name="STATUS_VENTAS<?php echo $row["02SUBETUFACTURAid"]; ?>"
 		value="<?php echo $row["02SUBETUFACTURAid"]; ?>"
+		data-permiso-principal="<?php echo $tienePermisoVenta ? 'si' : 'no'; ?>"
 		onclick="STATUS_VENTAS(<?php echo $row["02SUBETUFACTURAid"]; ?>)"
 		<?php
 		$atributosVentas = [];
@@ -1049,9 +1055,13 @@ while ($rowDOCTOS = mysqli_fetch_array($querycontrasDOCTOS)) {
 			$atributosVentas[] = 'checked';
 			$atributosVentas[] = 'disabled';
 		} else {
-			$numeroEventoRegistro = isset($row["NUMERO_EVENTO"]) ? strtoupper(trim((string)$row["NUMERO_EVENTO"])) : '';
-			$tienePermisoVenta = $numeroEventoRegistro !== '' && isset($eventosAutorizadosVentas[$numeroEventoRegistro]);
-			if (!$tienePermisoVenta) $atributosVentas[] = 'disabled';
+			if ($statusRechazado === 'si') {
+				$atributosVentas[] = 'disabled';
+				$atributosVentas[] = 'style="cursor:not-allowed;"';
+				$atributosVentas[] = 'title="No se puede autorizar por ventas: pago rechazado"';
+			} elseif (!$tienePermisoVenta) {
+				$atributosVentas[] = 'disabled';
+			}
 		}
 		echo implode(' ', $atributosVentas);
 		?> />
@@ -1142,11 +1152,9 @@ while ($rowDOCTOS = mysqli_fetch_array($querycontrasDOCTOS)) {
 	<?php $colspan += 1; ?>
 </td>
 
-<!-- RECHAZADO -->
 <?php if ($p_rechazo_ver) { ?>
 <td style="text-align:center; background:
-	<?php $statusRechazado = isset($row["STATUS_RECHAZADO"]) ? $row["STATUS_RECHAZADO"] : 'no';
-	echo ($statusRechazado == 'si') ? '#ceffcc' : '#e9d8ee'; ?>;"
+	<?php echo ($statusRechazado == 'si') ? '#ceffcc' : '#e9d8ee'; ?>;"
 	id="color_RECHAZADO<?php echo $row["02SUBETUFACTURAid"]; ?>">
 	<?php
 	$motivoRechazo = $database->obtener_motivo_rechazo($row["02SUBETUFACTURAid"]);
