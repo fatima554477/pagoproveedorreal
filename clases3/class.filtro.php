@@ -159,7 +159,7 @@ public function DOCUMENTOSFISCALES_PAGOA($idRelacion, $documento, $documento2 = 
         }
     }
 
-    // ✅ Guardar en caché antes de retornar
+
     $cache[$cacheKey] = $ADJUNTAR_DOCUMENTO_LEGAL;
     return $cache[$cacheKey];
 }
@@ -173,11 +173,9 @@ public function DOCUMENTOSFISCALES_PAGOA($idRelacion, $documento, $documento2 = 
 	
 	
 	//STATUS_EVENTO,NOMBRE_CORTO_EVENTO,NOMBRE_EVENTO
-public function getData($tables3,$campos,$search){
+	public function getData($tables3,$campos,$search){
 		$offset=$search['offset'];
 		$per_page=$search['per_page'];
-		$offset = max(0, (int)$offset);
-		$per_page = max(1, (int)$per_page);
 	    $tables = '02SUBETUFACTURA';
 		$tables2 = "(
 
@@ -197,8 +195,9 @@ public function getData($tables3,$campos,$search){
 
 		) AS 02XML";
 
-	$tables5 = "(SELECT NUMERO_EVENTO, NOMBRE_EVENTO, MAX(FECHA_INICIO_EVENTO) AS FECHA_INICIO_EVENTO, MAX(FECHA_FINAL_EVENTO) AS FECHA_FINAL_EVENTO FROM 04altaeventos GROUP BY NUMERO_EVENTO, NOMBRE_EVENTO) AS 04altaeventos";	
+		$tables5 = '04altaeventos';	
         $tables4 = '02DATOSBANCARIOS1';			
+		//$sWhereCC ="  02XML.`idRelacion` = 02SUBETUFACTURA.id AND ";
 		$joinAltaEventos = " LEFT JOIN $tables5 ON $tables.NUMERO_EVENTO = $tables5.NUMERO_EVENTO AND $tables.NOMBRE_EVENTO = $tables5.NOMBRE_EVENTO ";
 		$sWhereCC =" ON 02SUBETUFACTURA.id = 02XML.`ultimo_id` ".$joinAltaEventos;
 		$sWhere2="";$sWhere3="";
@@ -475,14 +474,10 @@ public function getData($tables3,$campos,$search){
 		$orderClause = " order by ".$sWhere3campo;
 
                 $sql="SELECT DISTINCT $campos , 02SUBETUFACTURA.id as 02SUBETUFACTURAid, RFC_PROVEEDOR as RFC_PROVEEDOR1trim FROM $tables LEFT JOIN $tables2 $sWhere $whereClause $orderClause LIMIT $offset,$per_page";
-    // Optimización: se elimina DISTINCT para evitar filesort/temporary costoso.
-                // El LEFT JOIN de 04altaeventos ya llega pre-agrupado para no duplicar filas.
-                $sql="SELECT $campos , 02SUBETUFACTURA.id as 02SUBETUFACTURAid, RFC_PROVEEDOR as RFC_PROVEEDOR1trim FROM $tables LEFT JOIN $tables2 $sWhere $whereClause $orderClause LIMIT $offset,$per_page";
                 $query=$this->mysqli->query($sql);
 
               
-                // Optimización: al evitar duplicados por JOIN, el COUNT(*) reemplaza COUNT(DISTINCT ...).
-                $countSql = "SELECT COUNT(*) AS total FROM $tables LEFT JOIN $tables2 $sWhere $whereClause";$whereClause";
+                $countSql = "SELECT COUNT(DISTINCT 02SUBETUFACTURA.id) AS total FROM $tables LEFT JOIN $tables2 $sWhere $whereClause";
                 $totalResult = $this->mysqli->query($countSql);
                 $totalRow = $totalResult ? $totalResult->fetch_assoc() : ['total' => 0];
                 $nums_row = isset($totalRow['total']) ? (int)$totalRow['total'] : 0;

@@ -16,22 +16,33 @@ define("__ROOT6__", dirname(__FILE__));
 $action = (isset($_POST["action"]) && $_POST["action"] != NULL) ? $_POST["action"] : "";
 
 if($action == "bitacora_pago"){
+	$__bitacora_start = microtime(true);
 	require(__ROOT6__."/class.filtro.php");
 	$database = new orders();
 	$idSubetufactura = isset($_POST['idSubetufactura']) ? intval($_POST['idSubetufactura']) : 0;
 
 	header('Content-Type: application/json; charset=utf-8');
 
-	if($idSubetufactura <= 0){
+if($idSubetufactura <= 0){
+		if (!headers_sent()) {
+			header('X-Server-Time-ms: 0');
+		}
 		echo json_encode(array());
 		exit;
 	}
 
-	echo json_encode($database->Listado_bitacora_pagoproveedor_array($idSubetufactura));
+	$__bitacora_data = $database->Listado_bitacora_pagoproveedor_array($idSubetufactura);
+	$__bitacora_ms = (int) round((microtime(true) - $__bitacora_start) * 1000);
+	if (!headers_sent()) {
+		header('X-Server-Time-ms: '.$__bitacora_ms);
+	}
+	echo json_encode($__bitacora_data);
 	exit;
 }
 
 if($action == "ajax"){
+	$__filtro_start = microtime(true);
+	ob_start();
 
 	require(__ROOT6__."/class.filtro.php");
 	$database = new orders();
@@ -1752,6 +1763,12 @@ if($database->plantilla_filtro($nombreTabla,"PENDIENTE_PAGO",$altaeventos,$DEPAR
 			?>
 		</div>
 	<?php
+		$__filtro_html = ob_get_clean();
+		$__filtro_ms = (int) round((microtime(true) - $__filtro_start) * 1000);
+		if (!headers_sent()) {
+			header('X-Server-Time-ms: '.$__filtro_ms);
+		}
+		echo $__filtro_html;
 	}
 }
 ?>
