@@ -512,6 +512,7 @@ function STATUS_VENTAS(VENTAS_id){
 		success:function(data){
 			var result = data.split('^');
 			$('#pasarpagado2').html("Cargando...").fadeIn().delay(500).fadeOut();
+			load(1);
 			if(result[1]=='si'){
 				$('#color_VENTAS'+VENTAS_id).css('background-color', '#ceffcc');
 				$('#STATUS_RECHAZADO'+VENTAS_id)
@@ -532,50 +533,45 @@ function STATUS_VENTAS(VENTAS_id){
 }
 
 
-function LIMPIAR(){
-	$("#UUID").val(""); $("#metodoDePago").val(""); $("#totalf").val("");
-	$("#serie").val(""); $("#folio").val(""); $("#regimenE").val("");
-	$("#UsoCFDI").val(""); $("#TImpuestosTrasladados").val("");
-	$("#TImpuestosRetenidos").val(""); $("#Version").val("");
-	$("#tipoDeComprobante").val(""); $("#condicionesDePago").val("");
-	$("#fechaTimbrado").val(""); $("#nombreR").val(""); $("#rfcR").val("");
-	$("#Moneda").val(""); $("#TipoCambio").val("");
-	$("#ValorUnitarioConcepto").val(""); $("#DescripcionConcepto").val("");
-	$("#ClaveUnidadConcepto").val(""); $("#ClaveProdServConcepto").val("");
-	$("#CantidadConcepto").val(""); $("#ImporteConcepto").val("");
-	$("#UnidadConcepto").val(""); $("#TUA").val(""); $("#TuaTotalCargos").val("");
-	$("#Descuento").val(""); $("#ID_RELACIONADO").val("");
-	$("#IVA").val(""); $("#IEPS").val("");
-	$("#NUMERO_CONSECUTIVO_PROVEE_2").val(""); $("#NOMBRE_COMERCIAL_2").val("");
-	$("#RAZON_SOCIAL_2").val(""); $("#RFC_PROVEEDOR_2").val("");
-	$("#NUMERO_EVENTO_2").val(""); $("#NOMBRE_EVENTO_2").val("");
-	$("#MOTIVO_GASTO_2").val(""); $("#CONCEPTO_PROVEE_2").val("");
-	$("#MONTO_TOTAL_COTIZACION_ADEUDO_2").val(""); $("#MONTO_FACTURA_2").val("");
-	$("#MONTO_PROPINA_2").val(""); $("#MONTO_DEPOSITAR_2").val("");
-	$("#TIPO_DE_MONEDA_2").val(""); $("#PFORMADE_PAGO_2").val("");
-	$("#ID_RELACIONADO_2").val(""); $("#FECHA_DE_PAGO").val("");
-	$("#FECHA_DE_PAGO2a").val(""); $("#FECHA_DE_PAGO_VACIO").prop("checked",false);
-	$("#FECHA_A_DEPOSITAR_2").val(""); $("#STATUS_DE_PAGO_2").val("");
-	$("#ACTIVO_FIJO_2").val(""); $("#GASTO_FIJO_2").val("");
-	$("#PAGAR_CADA_2").val(""); $("#FECHA_PPAGO_2").val("");
-	$("#FECHA_TPROGRAPAGO_2").val(""); $("#NUMERO_EVENTOFIJO_2").val("");
-	$("#CLASI_GENERAL_2").val(""); $("#SUB_GENERAL_2").val("");
-	$("#MONTO_DEPOSITADO_2").val(""); $("#NUMERO_EVENTO1_2").val("");
-	$("#CLASIFICACION_GENERAL_2").val(""); $("#CLASIFICACION_ESPECIFICA_2").val("");
-	$("#PLACAS_VEHICULO_2").val(""); $("#MONTO_DE_COMISION_2").val("");
-	$("#POLIZA_NUMERO_2").val(""); $("#NOMBRE_DEL_EJECUTIVO_2").val("");
-	$("#NOMBRE_DEL_AYUDO_2").val(""); $("#OBSERVACIONES_2").val("");
-	$("#FECHA_DE_LLENADO_2").val(""); $("#subTotal11").val("");
-	$("#TIPO_CAMBIOP").val(""); $("#TOTAL_ENPESOS").val("");
-	$("#IMPUESTO_HOSPEDAJE").val(""); $("#propina").val("");
-	$("#IVAXML").val(""); $("#IEPSXML").val("");
-	$("#P_TIPO_DE_MONEDA_1").val(""); $("#P_INSTITUCION_FINANCIERA_1").val("");
-	$("#P_NUMERO_DE_CUENTA_DB_1").val(""); $("#P_NUMERO_CLABE_1").val("");
-	$("#P_NUMERO_IBAN_1").val(""); $("#P_NUMERO_CUENTA_SWIFT_1").val("");
-	$("#FOTO_ESTADO_PROVEE").val(""); $("#ULTIMA_CARGA_DATOBANCA").val("");
-	$("#TImpuestosRetenidos").val("");
-}
 
+
+function LIMPIAR_FILTRO(){
+	var filtros = [
+		"NUMERO_CONSECUTIVO_PROVEE_2","NOMBRE_COMERCIAL_2","VIATICOSOPRO_2",
+		"RAZON_SOCIAL_2","RFC_PROVEEDOR_2","NUMERO_EVENTO_2","NOMBRE_EVENTO_2",
+		"MOTIVO_GASTO_2","CONCEPTO_PROVEE_2","MONTO_TOTAL_COTIZACION_ADEUDO_2",
+		"MONTO_FACTURA_2","MONTO_PROPINA_2","MONTO_DEPOSITAR_2","MONTO_DEPOSITADO_2",
+		"TIPO_DE_MONEDA_2","PFORMADE_PAGO_2","FECHA_A_DEPOSITAR_2","STATUS_DE_PAGO_2",
+		"ACTIVO_FIJO_2","GASTO_FIJO_2","PAGAR_CADA_2","FECHA_PPAGO_2",
+		"FECHA_TPROGRAPAGO_2","NUMERO_EVENTOFIJO_2","CLASI_GENERAL_2","SUB_GENERAL_2",
+		"NUMERO_EVENTO1_2","CLASIFICACION_GENERAL_2","CLASIFICACION_ESPECIFICA_2",
+		"PLACAS_VEHICULO_2","MONTO_DE_COMISION_2","POLIZA_NUMERO_2",
+		"NOMBRE_DEL_EJECUTIVO_2","NOMBRE_DEL_AYUDO_2","OBSERVACIONES_1_2",
+		"FECHA_DE_LLENADO_2","FECHA_DE_PAGO","FECHA_DE_PAGO2a",
+		"FECHA_INICIO_EVENTO","FECHA_FINAL_EVENTO",
+		"TIPO_CAMBIOP","TOTAL_ENPESOS","IMPUESTO_HOSPEDAJE","ID_RELACIONADO",
+		"IVA_1","IEPS","TImpuestosRetenidosIVA_3","TImpuestosRetenidosISR_3",
+		"descuentos_3","NUMERO_EVENTO_orden","UUID_1","metodoDePago_1","totalf_1",
+		"serie_1","folio_1","regimenE_1","UsoCFDI_1","TImpuestosTrasladados_1",
+		"TImpuestosRetenidos_1","Version_1","tipoDeComprobante_1","condicionesDePago_1",
+		"fechaTimbrado_1","nombreR_1","rfcR_1","Moneda_1","TipoCambio_1",
+		"ValorUnitarioConcepto_1","DescripcionConcepto_1","ClaveUnidadConcepto_1",
+		"ClaveProdServConcepto_1","CantidadConcepto_1","ImporteConcepto_1",
+		"UnidadConcepto_1","TUA_1","TuaTotalCargos_1","Descuento_1","subTotal11",
+		"propina_1","IVAXML_1","IEPSXML_1","P_TIPO_DE_MONEDA_1",
+		"P_INSTITUCION_FINANCIERA_1","P_NUMERO_DE_CUENTA_DB_1","P_NUMERO_CLABE_1",
+		"P_NUMERO_IBAN_1","P_NUMERO_CUENTA_SWIFT_2","FOTO_ESTADO_PROVEE",
+		"ULTIMA_CARGA_DATOBANCA","RAZON_SOCIAL_orden","RFC_PROVEEDOR_orden",
+		"MONTO_FACTURA_orden","NOMBRE_EVENTO","DEPARTAMENTO2WE",
+		"hiddenpagoproveedores_2"
+	];
+	filtros.forEach(function(id){
+		var el = document.getElementById(id);
+		if(el){ el.value = ''; }
+	});
+	$("#FECHA_DE_PAGO_VACIO").prop("checked", false);
+	load(1);
+}
 
 $(function() {
 	const triggerSearch = () => load(1);
@@ -792,24 +788,39 @@ function load(page){
 	};
 
 $("#loader2").fadeIn('slow');
-	if (filtroXhr && filtroXhr.readyState !== 4) {
-		// Optimización: evita solapar peticiones anteriores cuando el usuario pagina/filtra rápido.
-		filtroXhr.abort();
-	}
-	filtroXhr = $.ajax({
-		url: 'pagoproveedores/clases3/controlador_filtro.php',
-		type: 'POST',
-		data: parametros,
+		if (filtroXhr && filtroXhr.readyState !== 4) {
+			// Optimización: evita solapar peticiones anteriores cuando el usuario pagina/filtra rápido.
+			filtroXhr.abort();
+		}
+		var filtroRequestStart = (window.performance && performance.now) ? performance.now() : Date.now();
+		filtroXhr = $.ajax({
+			url: 'pagoproveedores/clases3/controlador_filtro.php',
+			type: 'POST',
+			data: parametros,
 		beforeSend: function(objeto){
 			$("#loader2").stop(true, true);
 			$("#loader2").html(
 				'<div class="msg-actualizando"><span class="loader"></span> ⏳ ACTUALIZANDO...</div>'
 			).fadeIn();
 		},
-		success: function(data){
-			$(".datos_ajax2").html(data).fadeIn('slow');
-			$("#loader2").html('<div class="msg-actualizando">✅ ACTUALIZADO</div>');
-			const todosOption = document.getElementById('per_page_todos_option');
+	success: function(data, textStatus, jqXHR){
+				var filtroRequestEnd = (window.performance && performance.now) ? performance.now() : Date.now();
+				var clientMs = Math.max(0, Math.round(filtroRequestEnd - filtroRequestStart));
+				var serverMs = parseInt(jqXHR.getResponseHeader('X-Server-Time-ms') || '0', 10);
+				var perfMsg = '<div class="small text-muted">Cliente: ' + clientMs + ' ms';
+				if (!isNaN(serverMs) && serverMs > 0) {
+					perfMsg += ' | Servidor: ' + serverMs + ' ms';
+				}
+				perfMsg += '</div>';
+				$(".datos_ajax2").html(data).fadeIn('slow');
+				$("#loader2").html('<div class="msg-actualizando">✅ ACTUALIZADO</div>');
+				$("#loader2").append(perfMsg);
+				if (window.console && console.info) {
+					console.info('[Filtro PagoProveedores] Cliente:', clientMs + 'ms', '| Servidor:', (isNaN(serverMs) ? 'N/D' : (serverMs + 'ms')));
+				}
+				const todosOption = document.getElementById('per_page_todos_option');
+				if(todosOption){
+					const todosMax = 500;
 			if(todosOption){
 				const todosMax = 500;
 				todosOption.value = todosMax;
@@ -863,8 +874,9 @@ function _bitacoraIcon(path) {
 /* ============================================================
    CLICK — Abrir modal Bitácora (REEMPLAZA el original)
    ============================================================ */
-$(document).on('click', '.view_dataPAGOPROVEEbitacora', function () {
+(document).on('click', '.view_dataPAGOPROVEEbitacora', function () {
 	var idSubetufactura = $(this).attr('id');
+	var bitacoraStart = (window.performance && performance.now) ? performance.now() : Date.now();
 
 	$('#bitacoraSubLabel').html('Solicitud <b>#...</b>');
 	$('#bitacoraStrip').hide().html('');
@@ -880,10 +892,16 @@ $(document).on('click', '.view_dataPAGOPROVEEbitacora', function () {
 		dataType: 'json',
 		data: { action: 'bitacora_pago', idSubetufactura: idSubetufactura },
 
-		success: function (data) {
-			if (!data || data.length === 0) {
-				$('#bitacoraSubLabel').html('Solicitud <b>#' + idSubetufactura + '</b>');
-				$('#bitacoraPagoBody').html(
+	success: function (data) {
+				var bitacoraEnd = (window.performance && performance.now) ? performance.now() : Date.now();
+				var clientMs = Math.max(0, Math.round(bitacoraEnd - bitacoraStart));
+				var serverMs = parseInt(this.getResponseHeader('X-Server-Time-ms') || '0', 10);
+				if (window.console && console.info) {
+					console.info('[Bitácora PagoProveedores] Cliente:', clientMs + 'ms', '| Servidor:', (isNaN(serverMs) ? 'N/D' : (serverMs + 'ms')));
+				}
+				if (!data || data.length === 0) {
+					$('#bitacoraSubLabel').html('Solicitud <b>#' + idSubetufactura + '</b>');
+					$('#bitacoraPagoBody').html(
 					'<div class="alert alert-light border m-3">No hay registros de bitácora para esta solicitud.</div>'
 				);
 				return;
