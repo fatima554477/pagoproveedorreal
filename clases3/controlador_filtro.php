@@ -1378,10 +1378,13 @@ $colspan += 1; ?>/>
         id="STATUS_VENTAS<?php echo $row["02SUBETUFACTURAid"]; ?>"
         name="STATUS_VENTAS<?php echo $row["02SUBETUFACTURAid"]; ?>"
         value="<?php echo $row["02SUBETUFACTURAid"]; ?>"
-        <?php 
+        <?php
             // Si ya está encendido, marcarlo y bloquearlo
             if ($row["STATUS_VENTAS"] == 'si') {
                 echo 'checked disabled';
+            } elseif (isset($row["STATUS_RECHAZADO"]) && $row["STATUS_RECHAZADO"] == 'si') {
+                // Bloqueado porque el pago está rechazado
+                echo 'disabled style="cursor:not-allowed;" title="No se puede autorizar: pago rechazado"';
             } else {
                 // Validar permisos antes de permitir clic
                 $numeroEventoRegistro = isset($row["NUMERO_EVENTO"]) ? strtoupper(trim((string) $row["NUMERO_EVENTO"])) : '';
@@ -1990,7 +1993,9 @@ if ($total123 > 0) {
     $porfalta = number_format($MONTO_DEPOSITAR123, 2, '.', ',');
     $porfalta2 = ($MONTO_DEPOSITAR123);
 } 
-$totalf12  +=$porfalta2;
+if (!isset($row['STATUS_RECHAZADO']) || $row['STATUS_RECHAZADO'] != 'si') {
+    $totalf12 += $porfalta2;
+}
 echo $porfalta;
 $totales2 = 'si';
 	?></td>

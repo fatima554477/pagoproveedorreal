@@ -353,6 +353,13 @@ function STATUS_RECHAZADO(RECHAZADO_id){
 				if(result[1] == 'si' && $checkBox.data('forzarAgregarMotivo') !== 'si'){ $checkBox.removeData('forzarAgregarMotivo'); }
 				actualizarBotonesRechazo(RECHAZADO_id, result[1]);
 			}
+			if(result[1]=='si'){
+				$('#STATUS_VENTAS'+RECHAZADO_id).prop('checked', false).prop('disabled', true).css('cursor', 'not-allowed').attr('title', 'No se puede autorizar: pago rechazado');
+				$('#color_VENTAS'+RECHAZADO_id).css('background-color', '#e9d8ee');
+			}
+			if(result[1]=='no'){
+				$('#STATUS_VENTAS'+RECHAZADO_id).prop('disabled', false).css('cursor', 'pointer').attr('title', '');
+			}
 		}
 	});
 }
