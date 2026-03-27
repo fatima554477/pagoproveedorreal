@@ -22,9 +22,25 @@
   border-radius: 6px;
   padding: 6px 12px;
   display: inline-flex;
-  align-items: center;
+align-items: center;
   box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
 }
+.badge-bitacora { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; display: inline-block; }
+.badge-ingreso       { background:#E6F1FB; color:#0C447C; border:0.5px solid #B5D4F4; }
+.badge-autorizacion  { background:#EAF3DE; color:#27500A; border:0.5px solid #C0DD97; }
+.badge-actualizacion { background:#FAEEDA; color:#633806; border:0.5px solid #FAC775; }
+.badge-pago          { background:#EAF3DE; color:#27500A; border:0.5px solid #C0DD97; }
+.badge-cancelacion   { background:#FCEBEB; color:#501313; border:0.5px solid #F7C1C1; }
+.badge-adjunto       { background:#F3E8FF; color:#5B21B6; border:0.5px solid #C4B5FD; }
+.badge-rechazo       { background:#FEE2E2; color:#991B1B; border:0.5px solid #FCA5A5; }
+.badge-default       { background:#f1f3f5; color:#444; border:0.5px solid #dee2e6; }
+.bitacora-timeline-wrap { max-height: 420px; overflow-y: auto; padding: 1.25rem 1.5rem; }
+.bitacora-dot { width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border-width: 2px; border-style: solid; }
+.bitacora-line { width: 1px; background: #dee2e6; flex: 1; margin: 4px 0; min-height: 28px; }
+.bitacora-avatar { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; flex-shrink: 0; }
+.bitacora-strip { background: #E6F1FB; border-bottom: 0.5px solid #B5D4F4; padding: .55rem 1.25rem; font-size: 12px; color: #185FA5; display: flex; gap: 1.5rem; flex-wrap: wrap; }
+.bitacora-strip b { color: #0C447C; }
+#modalBitacoraPago .modal-body { background: #f8fafc; }
 </style>
 
 <script type="text/javascript">
@@ -536,4 +552,58 @@ function load(page){
 }
 /* terminaB1*/
 
+/* terminaB1*/
+
+function _bitacoraBadgeCfg(tipo) {
+	var t = (tipo || '').toLowerCase();
+	if (t.indexOf('ingres') !== -1) return { cls:'badge-ingreso', bg:'#E6F1FB', border:'#185FA5', iconPath:'M12 5v14M5 12l7-7 7 7' };
+	if (t.indexOf('autori') !== -1) return { cls:'badge-autorizacion', bg:'#EAF3DE', border:'#3B6D11', iconPath:'M20 6L9 17l-5-5' };
+	if (t.indexOf('actualiz') !== -1) return { cls:'badge-actualizacion', bg:'#FAEEDA', border:'#BA7517', iconPath:'M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z' };
+	if (t.indexOf('adjunto') !== -1) return { cls:'badge-adjunto', bg:'#F3E8FF', border:'#5B21B6', iconPath:'M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13' };
+	if (t.indexOf('rechazo') !== -1) return { cls:'badge-rechazo', bg:'#FEE2E2', border:'#991B1B', iconPath:'M18 6L6 18M6 6l12 12' };
+	return { cls:'badge-default', bg:'#f1f3f5', border:'#adb5bd', iconPath:'M12 12m-4 0a4 4 0 108 0 4 4 0 10-8 0' };
+}
+function _bitacoraInitials(name){ if(!name||name==='-') return '?'; return (name.trim().split(/\s+/).slice(0,2).map(function(n){ return n[0]; }).join('')).toUpperCase(); }
+function _bitacoraIcon(path){ return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="' + path + '"/></svg>'; }
+$(document).on('click', '.view_dataPAGOPROVEEbitacora', function () {
+	var idSubetufactura = $(this).attr('id');
+	$('#bitacoraSubLabel').html('Solicitud <b>#...</b>'); $('#bitacoraStrip').hide().html('');
+	$('#bitacoraPagoBody').html('<div class="text-center py-4 text-muted"><span class="spinner-border spinner-border-sm me-2"></span>Cargando bitácora...</div>');
+	$('#modalBitacoraPago').modal('show');
+	$.ajax({
+		url: 'comprobaciones/clases/controlador_filtro.php', method: 'POST', dataType: 'json',
+		data: { action: 'bitacora_pago', idSubetufactura: idSubetufactura },
+		success: function (data) {
+			if (!data || data.length === 0) { $('#bitacoraSubLabel').html('Solicitud <b>#' + idSubetufactura + '</b>'); $('#bitacoraPagoBody').html('<div class="alert alert-light border m-3">No hay registros de bitácora para esta solicitud.</div>'); return; }
+			var numeroSolicitud = (data[0].NUMERO_CONSECUTIVO_PROVEE || idSubetufactura); $('#bitacoraSubLabel').html('Solicitud <b>#' + numeroSolicitud + '</b>');
+			var strip = ''; if (data[0].proveedor) { strip += '<span><b>Proveedor:</b> ' + data[0].proveedor + '</span>'; } if (data[0].monto) { strip += '<span><b>Monto:</b> $' + data[0].monto + '</span>'; } if (data[0].evento) { strip += '<span><b>Evento:</b> ' + data[0].evento + '</span>'; } if (strip !== '') { $('#bitacoraStrip').html(strip).show(); }
+			var html = '<div class="bitacora-timeline-wrap"><div>';
+			for (var i = 0; i < data.length; i++) {
+				var d=data[i], cfg=_bitacoraBadgeCfg(d.tipo_movimiento), usuario=d.nombre_quien_actualizo||d.nombre_quien_ingreso||'-', isLast=(i===data.length-1), initials=_bitacoraInitials(usuario);
+				html += '<div style="display:flex;gap:12px;"><div style="display:flex;flex-direction:column;align-items:center;width:36px;"><div class="bitacora-dot" style="background:' + cfg.bg + ';border-color:' + cfg.border + ';color:' + cfg.border + '">' + _bitacoraIcon(cfg.iconPath) + '</div>' + (!isLast ? '<div class="bitacora-line"></div>' : '') + '</div><div style="flex:1;padding-bottom:' + (isLast ? '0.25rem' : '1.1rem') + ';"><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;"><span class="badge-bitacora ' + cfg.cls + '">' + (d.tipo_movimiento || '-') + '</span><small style="color:#1b4f9c;font-weight:700;font-size:13px;">' + (d.fecha_hora || '-') + '</small></div><div style="font-size:13px;font-weight:500;margin-bottom:4px;color:#212529;">' + (d.detalle || '-') + '</div><div style="display:flex;align-items:center;gap:6px;margin-top:4px;"><div class="bitacora-avatar" style="background:' + cfg.bg + ';color:' + cfg.border + ';">' + initials + '</div><small style="color:#6c757d;">' + usuario + '</small></div></div></div>';
+			}
+			$('#bitacoraPagoBody').html(html + '</div></div>');
+		},
+		error: function () { $('#bitacoraSubLabel').html('Solicitud <b>#' + idSubetufactura + '</b>'); $('#bitacoraPagoBody').html('<div class="alert alert-danger m-3">Error al consultar la bitácora. Intenta nuevamente.</div>'); }
+	});
+});
+
 </script>
+<div class="modal fade" id="modalBitacoraPago" tabindex="-1" aria-labelledby="modalBitacoraPagoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg overflow-hidden">
+      <div class="modal-header border-0 px-4 py-3 text-white" style="background:#185FA5;">
+        <div class="d-flex align-items-center gap-2">
+          <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:34px;height:34px;background:rgba(255,255,255,.2);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div><h6 class="mb-0 fw-bold" id="modalBitacoraPagoLabel">Bitácora de movimientos</h6><small class="opacity-75" id="bitacoraSubLabel">Cargando...</small></div>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div id="bitacoraStrip" class="bitacora-strip" style="display:none;"></div>
+      <div class="modal-body p-0" id="bitacoraPagoBody" style="background:#f8fafc;"><div class="text-center py-4 text-muted"><span class="spinner-border spinner-border-sm me-2"></span>Cargando bitácora...</div></div>
+      <div class="modal-footer border-0 bg-white py-2"><button type="button" class="btn btn-sm btn-light border" data-bs-dismiss="modal">Cerrar</button></div>
+    </div>
+  </div>
+</div>

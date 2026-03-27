@@ -18,6 +18,21 @@ if(!isset($_SESSION)) {
 
 define("__ROOT6__", dirname(__FILE__));
 $action = (isset($_POST["action"]) && $_POST["action"] != NULL) ? $_POST["action"] : "";
+if($action == "bitacora_pago"){
+	require(__ROOT6__."/class.filtro.php");
+	$database = new orders();
+	$idComprobacion = isset($_POST['idSubetufactura']) ? intval($_POST['idSubetufactura']) : 0;
+
+	header('Content-Type: application/json; charset=utf-8');
+
+	if($idComprobacion <= 0){
+		echo json_encode(array());
+		exit;
+	}
+
+	echo json_encode($database->Listado_bitacora_pagoproveedor_array($idComprobacion));
+	exit;
+}
 if($action == "ajax"){
 
 	require(__ROOT6__."/class.filtro.php");
@@ -223,8 +238,11 @@ if($action == "ajax"){
 	$p_contabilidad_mod   = $database->variablespermisos('', 'CONTABILIDADCOM2', 'modificar') == 'si';
 	$p_sincuarenta_ver    = $database->variablespermisos('', 'sincuarenta', 'ver') == 'si';
 	$p_sincuarenta_mod    = $database->variablespermisos('', 'sincuarenta', 'modificar') == 'si';
-	$p_pagoprov_mod       = $database->variablespermisos('', 'PAGO_PROVEEDOR1', 'modificar') == 'si';
+    $p_pagoprov_mod       = $database->variablespermisos('', 'PAGO_PROVEEDOR1', 'modificar') == 'si';
 	$p_pagoprov_borrar    = $database->variablespermisos('', 'PAGO_PROVEEDOR1', 'borrar') == 'si';
+	$p_bitacora_ver       = $database->variablespermisos('', 'bitacora', 'ver') == 'si';
+
+
 
 	?>
 
@@ -1185,6 +1203,12 @@ if (isset($STATUS_RECHAZADO) && $STATUS_RECHAZADO == "si") {
 <?php } ?>
 
 <div id="ajax-notification" style="position:fixed; top:20px; right:20px; padding:15px; background:#4CAF50; color:white; border-radius:5px; display:none; z-index:1000;"></div>
+
+<td <?php echo $fondo_existe_xml; ?>>
+<?php if($p_bitacora_ver){ ?>
+<input type="button" name="view_bitacora" value="BITÁCORA" id="<?php echo $row['07COMPROBACIONid']; ?>" class="btn btn-outline-primary btn-xs view_dataPAGOPROVEEbitacora" />
+<?php } ?>
+</td>
 
 <td <?php echo $fondo_existe_xml; ?>>
 <?php if($p_pagoprov_mod){ ?>
