@@ -574,9 +574,9 @@ $(document).on('click', '.view_dataPAGOPROVEEbitacora', function () {
 		url: 'comprobaciones/clases/controlador_filtro.php', method: 'POST', dataType: 'json',
 		data: { action: 'bitacora_pago', idSubetufactura: idSubetufactura },
 		success: function (data) {
-			if (!data || data.length === 0) { $('#bitacoraSubLabel').html('Solicitud <b>#' + idSubetufactura + '</b>'); $('#bitacoraPagoBody').html('<div class="alert alert-light border m-3">No hay registros de bitácora para esta solicitud.</div>'); return; }
-			var numeroSolicitud = (data[0].NUMERO_CONSECUTIVO_PROVEE || idSubetufactura); $('#bitacoraSubLabel').html('Solicitud <b>#' + numeroSolicitud + '</b>');
-			var strip = ''; if (data[0].proveedor) { strip += '<span><b>Proveedor:</b> ' + data[0].proveedor + '</span>'; } if (data[0].monto) { strip += '<span><b>Monto:</b> $' + data[0].monto + '</span>'; } if (data[0].evento) { strip += '<span><b>Evento:</b> ' + data[0].evento + '</span>'; } if (strip !== '') { $('#bitacoraStrip').html(strip).show(); }
+			if (!data || data.length === 0) { $('#bitacoraSubLabel').html('ID <b>#' + idSubetufactura + '</b>'); $('#bitacoraPagoBody').html('<div class="alert alert-light border m-3">No hay registros de bitácora para esta solicitud.</div>'); return; }
+			var numeroSolicitud = (data[0].NUMERO_CONSECUTIVO_PROVEE || idSubetufactura); $('#bitacoraSubLabel').html('ID <b>#' + numeroSolicitud + '</b>');
+			var strip = ''; if (data[0].proveedor) { strip += '<span><b>Nombre:</b> ' + data[0].proveedor + '</span>'; } if (data[0].monto) { strip += '<span><b>Monto:</b> $' + data[0].monto + '</span>'; } if (data[0].evento) { strip += '<span><b>Evento:</b> ' + data[0].evento + '</span>'; } if (strip !== '') { $('#bitacoraStrip').html(strip).show(); }
 			var html = '<div class="bitacora-timeline-wrap"><div>';
 			for (var i = 0; i < data.length; i++) {
 				var d=data[i], cfg=_bitacoraBadgeCfg(d.tipo_movimiento), usuario=d.nombre_quien_actualizo||d.nombre_quien_ingreso||'-', isLast=(i===data.length-1), initials=_bitacoraInitials(usuario);
@@ -584,7 +584,7 @@ $(document).on('click', '.view_dataPAGOPROVEEbitacora', function () {
 			}
 			$('#bitacoraPagoBody').html(html + '</div></div>');
 		},
-		error: function () { $('#bitacoraSubLabel').html('Solicitud <b>#' + idSubetufactura + '</b>'); $('#bitacoraPagoBody').html('<div class="alert alert-danger m-3">Error al consultar la bitácora. Intenta nuevamente.</div>'); }
+		error: function () { $('#bitacoraSubLabel').html('id. <b>#' + idSubetufactura + '</b>'); $('#bitacoraPagoBody').html('<div class="alert alert-danger m-3">Error al consultar la bitácora. Intenta nuevamente.</div>'); }
 	});
 });
 

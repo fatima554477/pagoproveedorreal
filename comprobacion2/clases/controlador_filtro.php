@@ -19,19 +19,21 @@ if(!isset($_SESSION)) {
 define("__ROOT6__", dirname(__FILE__));
 $action = (isset($_POST["action"]) && $_POST["action"] != NULL) ? $_POST["action"] : "";
 if($action == "bitacora_pago"){
-	require(__ROOT6__."/class.filtro.php");
-	$database = new orders();
-	$idComprobacion = isset($_POST['idSubetufactura']) ? intval($_POST['idSubetufactura']) : 0;
+    require(__ROOT6__."/class.filtro.php");
+    $database = new orders();
+    $idComprobacion = isset($_POST['idSubetufactura']) ? intval($_POST['idSubetufactura']) : 0;
 
-	header('Content-Type: application/json; charset=utf-8');
+    header('Content-Type: application/json; charset=utf-8');
 
-	if($idComprobacion <= 0){
-		echo json_encode(array());
-		exit;
-	}
+    if($idComprobacion <= 0){
+        echo json_encode(array());
+        exit;
+    }
 
-	echo json_encode($database->Listado_bitacora_pagoproveedor_array($idComprobacion));
-	exit;
+    // TEMPORAL: captura errores
+    $resultado = $database->Listado_bitacora_pagoproveedor_array($idComprobacion);
+    echo json_encode($resultado);
+    exit;
 }
 if($action == "ajax"){
 
@@ -275,7 +277,7 @@ if($action == "ajax"){
 		<thead>
             <tr>
 <th style="background:#c9e8e8"></th>
-<th style="background:#c9e8e8">#</th>
+<th style="background:#c9e8e8">ID #</th>
 <th style="background:#c9e8e8">SOLICITANTE</th>
 
 <th style="background:#c9e8e8;text-align:center">VENTAS Y<br> OPERACIONES</th>
