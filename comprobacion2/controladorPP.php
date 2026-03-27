@@ -486,15 +486,10 @@ if($idCG == ''){
 
 if($IPpagoprovee !=''  and ($_FILES["ADJUNTAR_FACTURA_XML"] == true or $_FILES["ADJUNTAR_FACTURA_PDF"] == true or  $_FILES["ADJUNTAR_COTIZACION"] == true  or  $_FILES["CONPROBANTE_TRANSFERENCIA"] == true  or  $_FILES["ADJUNTAR_ARCHIVO_1"] == true or $_FILES["FOTO_ESTADO_PROVEE11"] == true  or  $_FILES["COMPLEMENTOS_PAGO_PDF"] == true or  $_FILES["COMPLEMENTOS_PAGO_XML"] == true or  $_FILES["CANCELACIONES_PDF"] == true or  $_FILES["CANCELACIONES_XML"] == true or  $_FILES ["ADJUNTAR_FACTURA_DE_COMISION_PDF"] == true or  $_FILES ["ADJUNTAR_FACTURA_DE_COMISION_XML"] == true or  $_FILES["CALCULO_DE_COMISION"] == true or  $_FILES["COMPROBANTE_DE_DEVOLUCION"] == true or  $_FILES["NOTA_DE_CREDITO_COMPRA"] == true )){
 if($IPpagoprovee != ''){
-//ECHO "AAAAAAAAAAAA1";
-//print_r($_POST);
-//print_r($_FILES);
+
 foreach($_FILES AS $ETQIETA => $VALOR){
 
-//ECHO $ETQIETA;
-//ECHO "<BR>";
-//ECHO $idPROV;
-//AAAQUI
+
 
 	if($_FILES['ADJUNTAR_FACTURA_XML']==true){
 	$ADJUNTAR_FACTURA_XML = $conexion->sologuardar6($ETQIETA,$ADJUNTAR_FACTURA_XML2,'07COMPROBACIONDOCT',$idCG,$IPpagoprovee);	
@@ -512,19 +507,41 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 		$resultado = $pagoproveedores->VALIDA02XMLUUID($regreso['UUID']);
 		if($resultado == 'S'){
 			
-			$pagoproveedores->borrar_xmls(__ROOT1__.'/includes/archivos/',$IPpagoprovee,$ADJUNTAR_FACTURA_XML,'07XML','07COMPROBACIONDOCT');
+		$pagoproveedores->borrar_xmls(__ROOT1__.'/includes/archivos/',$IPpagoprovee,$ADJUNTAR_FACTURA_XML,'07XML','07COMPROBACIONDOCT');
 			
 		echo $ADJUNTAR_FACTURA_XML;
 				ob_start();
 			$pagoproveedores->guardarxmlDB2($IPpagoprovee,$idCG,'07XML', $url);
 				ob_end_clean();
+			$pagoproveedores->registrar_bitacora_adjuntos($IPpagoprovee, 'XML', $ADJUNTAR_FACTURA_XML);
 		}else{
 			echo '3';
 			UNLINK($url);
 			$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
 		}
 	}
-}else{echo $ADJUNTAR_FACTURA_XML;}
+}else{
+	$tiposAdjuntosBitacora = array(
+		'ADJUNTAR_FACTURA_PDF' => 'PDF',
+		'ADJUNTAR_COTIZACION' => 'COTIZACIÓN',
+		'CONPROBANTE_TRANSFERENCIA' => 'COMPROBANTE DE TRANSFERENCIA',
+		'ADJUNTAR_ARCHIVO_1' => 'ADJUNTO 1',
+		'FOTO_ESTADO_PROVEE11' => 'FOTO ESTADO PROVEEDOR',
+		'COMPLEMENTOS_PAGO_PDF' => 'COMPLEMENTO PAGO PDF',
+		'COMPLEMENTOS_PAGO_XML' => 'COMPLEMENTO PAGO XML',
+		'CANCELACIONES_PDF' => 'CANCELACIÓN PDF',
+		'CANCELACIONES_XML' => 'CANCELACIÓN XML',
+		'ADJUNTAR_FACTURA_DE_COMISION_PDF' => 'FACTURA COMISIÓN PDF',
+		'ADJUNTAR_FACTURA_DE_COMISION_XML' => 'FACTURA COMISIÓN XML',
+		'CALCULO_DE_COMISION' => 'CÁLCULO DE COMISIÓN',
+		'COMPROBANTE_DE_DEVOLUCION' => 'COMPROBANTE DE DEVOLUCIÓN',
+		'NOTA_DE_CREDITO_COMPRA' => 'NOTA DE CRÉDITO COMPRA'
+	);
+	if(isset($tiposAdjuntosBitacora[$ETQIETA]) && $ADJUNTAR_FACTURA_XML != ''){
+		$pagoproveedores->registrar_bitacora_adjuntos($IPpagoprovee, $tiposAdjuntosBitacora[$ETQIETA], $ADJUNTAR_FACTURA_XML);
+	}
+	echo $ADJUNTAR_FACTURA_XML;
+}
 	/*NUEVO FIN*/
 }
 

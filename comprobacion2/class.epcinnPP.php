@@ -73,51 +73,75 @@ feha fatima:  23/03/2023
 			('".$idComprobacion."', '".$tipoMovimiento."', '".$detalle."', NOW(), '".$nombreQuienIngreso."', '".$nombreQuienActualizo."')");
 	}
 
-	private function etiqueta_bitacora_campo($campo) {
-		$etiquetas = array(
-			'STATUS_RESPONSABLE_EVENTO' => 'ESTATUS RESPONSABLE DEL EVENTO',
-			'STATUS_DE_PAGO' => 'ESTATUS DE PAGO',
-			'STATUS_AUDITORIA3' => 'CHECK BOX VoBo CxP',
-			'STATUS_CHECKBOX' => 'SE QUITO EL 46% PERDIDA FISCAL',
-			'STATUS_AUDITORIA2' => 'AUTORIZACIÓN POR AUDITORÍA',
-			'STATUS_RECHAZADO' => 'PAGO RECHAZADO',
-			'STATUS_FINANZAS' => 'AUTORIZACIÓN POR DIRECCIÓN',
-			'STATUS_VENTAS' => 'AUTORIZACIÓN POR VENTAS',
-			'MONTO_DEPOSITAR' => 'TOTAL A PAGAR',
-			'FECHA_A_DEPOSITAR' => 'FECHA EFECTIVA DE PAGO',
-			'FECHA_DE_PAGO' => 'FECHA DE PROGRAMACIÓN DEL PAGO',
-			'PFORMADE_PAGO' => 'FORMA DE PAGO',
-			'NUMERO_EVENTO' => 'NÚMERO DE EVENTO',
-			'NOMBRE_EVENTO' => 'NOMBRE DEL EVENTO',
-			'NOMBRE_COMERCIAL' => 'NOMBRE COMERCIAL',
-			'RAZON_SOCIAL' => 'RAZÓN SOCIAL',
-			'RFC_PROVEEDOR' => 'RFC DEL PROVEEDOR',
-			'MOTIVO_GASTO' => 'MOTIVO DEL GASTO',
-			'CONCEPTO_PROVEE' => 'CONCEPTO',
-			'MONTO_TOTAL_COTIZACION_ADEUDO' => 'COTIZACIÓN',
-			'MONTO_PROPINA' => 'PROPINA',
-			'MONTO_FACTURA' => 'SUB TOTAL',
-			'TIPO_DE_MONEDA' => 'TIPO DE MONEDA',
-			'BANCO_ORIGEN' => 'INSTITUCIÓN BANCARIA',
-			'MONTO_DEPOSITADO' => 'MONTO DEPOSITADO',
-			'CLASIFICACION_GENERAL' => 'CLASIFICACIÓN GENERAL',
-			'CLASIFICACION_ESPECIFICA' => 'CLASIFICACIÓN ESPECÍFICA',
-			'MONTO_DE_COMISION' => 'MONTO DE COMISIÓN',
-			'POLIZA_NUMERO' => 'NÚMERO DE PÓLIZA',
-			'NOMBRE_DEL_EJECUTIVO' => 'NOMBRE DEL EJECUTIVO',
-			'NOMBRE_DEL_AYUDO' => 'NOMBRE DE QUIEN INGRESO',
-			'OBSERVACIONES_1' => 'OBSERVACIONES',
-			'TIPO_CAMBIOP' => 'TIPO DE CAMBIO',
-			'TOTAL_ENPESOS' => 'TOTAL EN PESOS',
-			'IMPUESTO_HOSPEDAJE' => 'IMPUESTO DE HOSPEDAJE',
-			'TImpuestosRetenidosIVA' => 'IVA RETENIDO',
-			'TImpuestosRetenidosISR' => 'ISR RETENIDO',
-			'descuentos' => 'DESCUENTOS',
-			'IVA' => 'IVA',
-			'ACTIVO_FIJO' => 'ACTIVO FIJO',
-			'GASTO_FIJO' => 'GASTO FIJO'
-		);
-		return isset($etiquetas[$campo]) ? $etiquetas[$campo] : str_replace('_', ' ', $campo);
+private function etiqueta_bitacora_campo($campo) {
+    $etiquetas = array(
+        'STATUS_RESPONSABLE_EVENTO' => 'ESTATUS RESPONSABLE DEL EVENTO',
+        'STATUS_DE_PAGO'            => 'ESTATUS DE PAGO',
+        'STATUS_AUDITORIA3'         => 'CHECK BOX VoBo CxP',
+        'STATUS_CHECKBOX'           => 'SE QUITO EL 46% PERDIDA FISCAL',
+        'STATUS_AUDITORIA2'         => 'AUTORIZACIÓN POR AUDITORÍA',
+        'STATUS_RECHAZADO'          => 'PAGO RECHAZADO',
+        'STATUS_FINANZAS'           => 'AUTORIZACIÓN POR DIRECCIÓN',
+        'STATUS_VENTAS'             => 'AUTORIZACIÓN POR VENTAS',
+        'MONTO_DEPOSITAR'           => 'TOTAL A PAGAR',
+        'FECHA_A_DEPOSITAR'         => 'FECHA DE CARGO EN TDC',
+        'FECHA_DE_PAGO'             => 'FECHA DE PROGRAMACIÓN DEL PAGO',
+        'PFORMADE_PAGO'             => 'FORMA DE PAGO',
+        'NUMERO_EVENTO'             => 'NÚMERO DE EVENTO',
+        'NOMBRE_EVENTO'             => 'NOMBRE DEL EVENTO',
+        'NOMBRE_COMERCIAL'          => 'NOMBRE COMERCIAL',
+        'RAZON_SOCIAL'              => 'RAZÓN SOCIAL',
+        'RFC_PROVEEDOR'             => 'RFC DEL PROVEEDOR',
+        'MOTIVO_GASTO'              => 'MOTIVO DEL GASTO',
+        'CONCEPTO_PROVEE'           => 'CONCEPTO DE LA FACTURA',
+        'MONTO_TOTAL_COTIZACION_ADEUDO' => 'COTIZACIÓN',
+        'MONTO_PROPINA'             => 'MONTO DE PROPINA O SERVICIO',
+        'MONTO_FACTURA'             => 'SUB TOTAL',
+        'TIPO_DE_MONEDA'            => 'TIPO DE MONEDA',
+        'BANCO_ORIGEN'              => 'INSTITUCIÓN BANCARIA',
+        'MONTO_DEPOSITADO'          => 'MONTO DEPOSITADO',
+        'CLASIFICACION_GENERAL'     => 'CLASIFICACIÓN GENERAL',
+        'CLASIFICACION_ESPECIFICA'  => 'CLASIFICACIÓN ESPECÍFICA',
+        'MONTO_DE_COMISION'         => 'MONTO DE COMISIÓN',
+        'POLIZA_NUMERO'             => 'NÚMERO DE PÓLIZA',
+        'NOMBRE_DEL_EJECUTIVO'      => 'NOMBRE DEL EJECUTIVO QUE REALIZÓ LA COMPRA',
+        'NOMBRE_DEL_AYUDO'          => 'NOMBRE DEL EJECUTIVO QUE INGRESÓ LA FACTURA',
+        'OBSERVACIONES_1'           => 'OBSERVACIONES',
+        'TIPO_CAMBIOP'              => 'TIPO DE CAMBIO',
+        'TOTAL_ENPESOS'             => 'TOTAL EN PESOS',
+        'IMPUESTO_HOSPEDAJE'        => 'IMPUESTO DE HOSPEDAJE',
+        'TImpuestosRetenidosIVA'    => 'IVA RETENIDO',
+        'TImpuestosRetenidosISR'    => 'ISR RETENIDO',
+        'descuentos'                => 'DESCUENTOS',
+        'IVA'                       => 'IVA',
+        'ACTIVO_FIJO'               => 'ACTIVO FIJO',
+        'GASTO_FIJO'                => 'GASTO FIJO',
+        'PAGAR_CADA'                => 'PAGAR CADA',
+        'FECHA_PPAGO'               => 'FECHA DE PROGRAMACIÓN DE PAGO',
+        'FECHA_TPROGRAPAGO'         => 'FECHA DE TERMINACIÓN DE LA PROGRAMACIÓN',
+        'EJECUTIVOTARJETA'          => 'EJECUTIVO TITULAR DE LA TARJETA',
+        'NUMERO_EVENTOFIJO'         => 'NÚMERO DE EVENTO FIJO',
+        'SUB_GENERAL'               => 'SUB CLASIFICACIÓN GENERAL',
+        'CLASI_GENERAL'             => 'CLASIFICACIÓN GENERAL',
+    );
+	
+
+	return isset($etiquetas[$campo]) ? $etiquetas[$campo] : str_replace('_', ' ', $campo);
+	}
+
+	public function registrar_bitacora_adjuntos($idComprobacion, $tipoAdjunto, $nombreArchivo) {
+		$idComprobacion = intval($idComprobacion);
+		$tipoAdjunto = trim((string)$tipoAdjunto);
+		$nombreArchivo = trim((string)$nombreArchivo);
+
+		if ($idComprobacion <= 0 || $tipoAdjunto === '' || $nombreArchivo === '') {
+			return false;
+		}
+
+		$conn = $this->db();
+		$detalle = 'Se adjuntó archivo '.$tipoAdjunto.': "'.$nombreArchivo.'".';
+		$this->registrar_bitacora($conn, $idComprobacion, 'ADJUNTO', $detalle, '', $this->nombre_usuario_bitacora());
+		return true;
 	}
 
 	public function var_altaeventos(){
@@ -794,40 +818,85 @@ public function PAGOPRO ($NUMERO_CONSECUTIVO_PROVEE , $NOMBRE_COMERCIAL , $RAZON
 		'".$session."' );  ";			
 
 
-		if($ENVIARPAGOprovee=='ENVIARPAGOprovee'){
-			
-		$this->ActualizaxmlDB($FechaTimbrado, $tipoDeComprobante, 
-		$metodoDePago, $formaDePago, $condicionesDePago, $subTotal, 
-		$TipoCambio, $Moneda, $total, $serie, 
-		$folio, $LugarExpedicion, $rfcE, $nombreE, 
-		$regimenE, $rfcR, $nombreR, $UsoCFDI, 
-		$DomicilioFiscalReceptor, $RegimenFiscalReceptor, $UUID, $TImpuestosRetenidos, 
-		$TImpuestosTrasladados, $session, $existe, $TuaTotalCargos, $TUA, $Descuento, $Propina, $conn,  $actualiza);
+if($ENVIARPAGOprovee=='ENVIARPAGOprovee'){
+
+    // 1. PRIMERO obtener valores previos ANTES de cualquier UPDATE
+    $queryPrevioCompleto = mysqli_query($conn, "SELECT * FROM 07COMPROBACION WHERE id = '".intval($IPpagoprovee)."' LIMIT 1");
+    $valoresPreviosCompletos = array();
+    if($queryPrevioCompleto){
+        $valoresPreviosCompletos = mysqli_fetch_array($queryPrevioCompleto, MYSQLI_ASSOC);
+    }
+
+    // 2. Actualizar XML
+    $this->ActualizaxmlDB($FechaTimbrado, $tipoDeComprobante, 
+    $metodoDePago, $formaDePago, $condicionesDePago, $subTotal, 
+    $TipoCambio, $Moneda, $total, $serie, 
+    $folio, $LugarExpedicion, $rfcE, $nombreE, 
+    $regimenE, $rfcR, $nombreR, $UsoCFDI, 
+    $DomicilioFiscalReceptor, $RegimenFiscalReceptor, $UUID, $TImpuestosRetenidos, 
+    $TImpuestosTrasladados, $session, $existe, $TuaTotalCargos, $TUA, $Descuento, $Propina, $conn, $actualiza);
+
+    // 3. Ejecutar el UPDATE principal
+    mysqli_query($conn,$var1) or die('P15622'.mysqli_error($conn));
+
+    // 4. Detectar cambios y registrar bitácora
+    $cambiosDetectados = array();
+    $mapCampos = array(
+        'NUMERO_EVENTO'          => $NUMERO_EVENTO,
+        'NOMBRE_EVENTO'          => $NOMBRE_EVENTO,
+        'RAZON_SOCIAL'           => $RAZON_SOCIAL,
+        'RFC_PROVEEDOR'          => $RFC_PROVEEDOR,
+        'MONTO_DEPOSITAR'        => $MONTO_DEPOSITAR,
+        'PFORMADE_PAGO'          => $PFORMADE_PAGO,
+        'FECHA_A_DEPOSITAR'      => $FECHA_A_DEPOSITAR,
+        'STATUS_DE_PAGO'         => $STATUS_DE_PAGO,
+        'NOMBRE_COMERCIAL'       => $NOMBRE_COMERCIAL,
+        'MONTO_FACTURA'          => $MONTO_FACTURA,
+        'IVA'                    => $IVA,
+        'MONTO_PROPINA'          => $MONTO_PROPINA,
+        'IMPUESTO_HOSPEDAJE'     => $IMPUESTO_HOSPEDAJE,
+        'CONCEPTO_PROVEE'        => $CONCEPTO_PROVEE,
+        'MOTIVO_GASTO'           => $MOTIVO_GASTO,
+        'TIPO_DE_MONEDA'         => $TIPO_DE_MONEDA,
+        'TIPO_CAMBIOP'           => $TIPO_CAMBIOP,
+        'TOTAL_ENPESOS'          => $TOTAL_ENPESOS,
+        'BANCO_ORIGEN'           => $BANCO_ORIGEN,
+        'CLASI_GENERAL'          => $CLASI_GENERAL,
+        'SUB_GENERAL'            => $SUB_GENERAL,
+        'POLIZA_NUMERO'          => $POLIZA_NUMERO,
+        'OBSERVACIONES_1'        => $OBSERVACIONES_1,
+        'EJECUTIVOTARJETA'       => $EJECUTIVOTARJETA,
+        'NOMBRE_DEL_EJECUTIVO'   => $NOMBRE_DEL_EJECUTIVO,
+        'NOMBRE_DEL_AYUDO'       => $NOMBRE_DEL_AYUDO,
+        'ACTIVO_FIJO'            => $ACTIVO_FIJO,
+        'GASTO_FIJO'             => $GASTO_FIJO,
+        'PAGAR_CADA'             => $PAGAR_CADA,
+        'FECHA_PPAGO'            => $FECHA_PPAGO,
+        'FECHA_TPROGRAPAGO'      => $FECHA_TPROGRAPAGO,
+        'MONTO_DE_COMISION'      => $MONTO_DE_COMISION,
+        'TImpuestosRetenidosIVA' => $TImpuestosRetenidosIVA,
+        'TImpuestosRetenidosISR' => $TImpuestosRetenidosISR,
+        'descuentos'             => $descuentos,
+    );
+
+    foreach($mapCampos as $campo => $valorNuevo){
+        $valorViejo = isset($valoresPreviosCompletos[$campo]) ? trim((string)$valoresPreviosCompletos[$campo]) : '';
+        $valorNuevoNorm = trim((string)$valorNuevo);
+        if($valorViejo !== $valorNuevoNorm){
+            $cambiosDetectados[] = $this->etiqueta_bitacora_campo($campo).': "'.$valorViejo.'" → "'.$valorNuevoNorm.'"';
+        }
+    }
+
+    if(count($cambiosDetectados) > 0){
+        $this->registrar_bitacora($conn, $IPpagoprovee, 'ACTUALIZACION', 'Se actualizó: '.implode(' | ', $cambiosDetectados), '', $usuarioBitacora);
+    } else {
+        $this->registrar_bitacora($conn, $IPpagoprovee, 'ACTUALIZACION', 'Se guardó la comprobación sin cambios detectados.', '', $usuarioBitacora);
+    }
+
+    return "Actualizado";
+}
+
 		
-		mysqli_query($conn,$var1) or die('P15622'.mysqli_error($conn));
-		$cambiosDetectados = array();
-		$mapCampos = array(
-			'NUMERO_EVENTO' => $NUMERO_EVENTO,
-			'NOMBRE_EVENTO' => $NOMBRE_EVENTO,
-			'RAZON_SOCIAL' => $RAZON_SOCIAL,
-			'RFC_PROVEEDOR' => $RFC_PROVEEDOR,
-			'MONTO_DEPOSITAR' => $MONTO_DEPOSITAR,
-			'PFORMADE_PAGO' => $PFORMADE_PAGO,
-			'FECHA_A_DEPOSITAR' => $FECHA_A_DEPOSITAR,
-			'STATUS_DE_PAGO' => $STATUS_DE_PAGO
-		);
-		foreach($mapCampos as $campo => $valorNuevo){
-			$valorViejo = isset($valoresPreviosBitacora[$campo]) ? trim((string)$valoresPreviosBitacora[$campo]) : '';
-			$valorNuevoNorm = trim((string)$valorNuevo);
-			if($valorViejo !== $valorNuevoNorm){
-				$cambiosDetectados[] = $this->etiqueta_bitacora_campo($campo).': "'.$valorViejo.'" → "'.$valorNuevoNorm.'"';
-			}
-		}
-		if(count($cambiosDetectados) > 0){
-			$this->registrar_bitacora($conn, $IPpagoprovee, 'ACTUALIZACION', 'Se actualizó comprobación. '.implode(' | ', $cambiosDetectados), '', $usuarioBitacora);
-		}
-		return "Actualizado";
-		}
 		else{
 			//insert into
 		mysqli_query($conn,$var2) or die('P16022'.mysqli_error($conn));
@@ -850,7 +919,7 @@ public function PAGOPRO ($NUMERO_CONSECUTIVO_PROVEE , $NOMBRE_COMERCIAL , $RAZON
 		}
 			
         }
-    }
+    
 
 
 
@@ -1223,6 +1292,9 @@ public function guardar_motivo_rechazo($idComprobacion, $motivoRechazo){
 		mysqli_query($conn,$var2) or die('P44'.mysqli_error($conn));
 		
 		$var3 = "DELETE FROM `07COMPROBACIONDOCT` WHERE `idTemporal` = '".$id."' ";
+		mysqli_query($conn,$var3) or die('P44'.mysqli_error($conn));	
+		
+		$var4 = "DELETE FROM `07COMPROBACION_BITACORA` WHERE `id_comprobacion` = '".$id."' ";
 		mysqli_query($conn,$var3) or die('P44'.mysqli_error($conn));	
 		
 		ECHO "ELEMENTO BORRADO";
