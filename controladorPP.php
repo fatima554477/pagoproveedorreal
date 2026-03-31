@@ -353,7 +353,9 @@ if($IPpagoprovee != ''){
 foreach($_FILES AS $ETQIETA => $VALOR){
 
 	if($_FILES['ADJUNTAR_FACTURA_XML']==true){
-	$ADJUNTAR_FACTURA_XML = $conexion->sologuardar6($ETQIETA,$ADJUNTAR_FACTURA_XML2,'02SUBETUFACTURADOCTOS',$idPROV,$IPpagoprovee);	
+	ob_start();
+	$ADJUNTAR_FACTURA_XML = $conexion->sologuardar6($ETQIETA,$ADJUNTAR_FACTURA_XML2,'02SUBETUFACTURADOCTOS',$idPROV,$IPpagoprovee);
+	ob_end_clean();
 	}else{
 	$ADJUNTAR_FACTURA_XML = $conexion->cargar($ETQIETA,'02SUBETUFACTURADOCTOS','6',$IPpagoprovee,'si',$IPpagoprovee);
 		if($_FILES['ADJUNTAR_FACTURA_PDF']==true){
