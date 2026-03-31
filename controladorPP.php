@@ -353,6 +353,21 @@ if($IPpagoprovee != ''){
 foreach($_FILES AS $ETQIETA => $VALOR){
 
 	if($_FILES['ADJUNTAR_FACTURA_XML']==true){
+		// ── Verificar UUID ANTES de mover el archivo ──────────────────────
+		$_resultadoUUID = $pagoproveedores->VALIDA02XMLUUID($regreso['UUID']);
+		if(strpos($_resultadoUUID, 'UUID_DUPLICADO:') === 0) {
+			$_numSol = str_replace('UUID_DUPLICADO:', '', $_resultadoUUID);
+			UNLINK(__ROOT1__.'/includes/archivos/'.$ADJUNTAR_FACTURA_XML2);
+			$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML2);
+			echo '3^^'.$_numSol;
+			exit;
+		} elseif($_resultadoUUID !== 'S') {
+			UNLINK(__ROOT1__.'/includes/archivos/'.$ADJUNTAR_FACTURA_XML2);
+			$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML2);
+			echo '3^^';
+			exit;
+		}
+		// ──────────────────────────────────────────────────────────────────
 	ob_start();
 	$ADJUNTAR_FACTURA_XML = $conexion->sologuardar6($ETQIETA,$ADJUNTAR_FACTURA_XML2,'02SUBETUFACTURADOCTOS',$idPROV,$IPpagoprovee);
 	ob_end_clean();
