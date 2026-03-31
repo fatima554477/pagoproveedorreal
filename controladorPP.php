@@ -233,7 +233,7 @@ $DescripcionConcepto = isset($_POST["DescripcionConcepto"])?$_POST["DescripcionC
 		$NOMBRE_COMERCIAL = $NOMBRE_COMERCIAL23;
 	}
 	
-if( $NUMERO_EVENTO == "" OR $NOMBRE_COMERCIAL == "" OR $MOTIVO_GASTO == "" OR $FECHA_DE_PAGO == ""){
+if( $NUMERO_EVENTO == "" OR $NOMBRE_COMERCIAL == "" OR $MOTIVO_GASTO == "" OR $FECHA_DE_PAGO == "" OR $MONTO_FACTURA == ""){
 	echo "<P style='color:red; font-size:23px;'>FAVOR DE LLENAR CAMPOS OBLIGATORIOS</p>";
 }else{		
 	$esAltaNueva = ($ENVIARPAGOprovee == 'ENVIARPAGOprovee' && trim((string)$IPpagoprovee) == '');
