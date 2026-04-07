@@ -644,6 +644,41 @@ public function variable_SUBETUFACTURA() {
 
             mysqli_query($conn, $var1) or die('P156' . mysqli_error($conn));
 
+// ── Re-procesar XML si se subió uno nuevo durante la edición ──────────────
+$doctoActual = mysqli_query($conn,
+    "SELECT ADJUNTAR_FACTURA_XML FROM 02SUBETUFACTURADOCTOS 
+     WHERE idTemporal = '{$IPpagoprovee}' 
+     AND ADJUNTAR_FACTURA_XML <> '' 
+     ORDER BY id DESC LIMIT 1"
+);
+if ($doctoActual) {
+    $rowDocto = mysqli_fetch_assoc($doctoActual);
+    if (!empty($rowDocto['ADJUNTAR_FACTURA_XML'])) {
+        $urlXmlEdicion = __ROOT3__ . '/includes/archivos/' . $rowDocto['ADJUNTAR_FACTURA_XML'];
+        if (file_exists($urlXmlEdicion)) {
+            $conexion2edicion = new herramientas();
+            $datosXmlEdicion  = $conexion2edicion->lectorxml($urlXmlEdicion);
+            if (!empty($datosXmlEdicion['UUID'])) {
+                // Solo actualiza si el UUID no está ya registrado para OTRO registro
+                $uuidCheck = mysqli_query($conn,
+                    "SELECT ultimo_id FROM 02XML 
+                     WHERE UUID = '" . mysqli_real_escape_string($conn, $datosXmlEdicion['UUID']) . "' 
+                     AND ultimo_id <> '{$IPpagoprovee}' LIMIT 1"
+                );
+                if (!mysqli_fetch_assoc($uuidCheck)) {
+                    $this->guardarxmlDB2(
+                        $IPpagoprovee,
+                        $session,
+                        '02XML',
+                        $urlXmlEdicion,
+                        $datosXmlEdicion
+                    );
+                }
+            }
+        }
+    }
+}
+
             $mapaComparacion = [
                 'STATUS_DE_PAGO' => $STATUS_DE_PAGO, 'MONTO_DEPOSITAR' => $MONTO_DEPOSITAR,
                 'FECHA_DE_PAGO' => $FECHA_DE_PAGO, 'FECHA_A_DEPOSITAR' => $FECHA_A_DEPOSITAR,

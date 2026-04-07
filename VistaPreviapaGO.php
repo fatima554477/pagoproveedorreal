@@ -1126,7 +1126,7 @@ var result = response.split('^^');
                         lowerResponse.indexOf('actualizado') !== -1 ||
                         lowerResponse.indexOf('ingresado') !== -1
                     ){
-                        $.getScript(load(1));	
+                        recargarPaginaAUTActual();	
                         
                         $("#respuestaser").html("<span id='ACTUALIZADO' >"+responseText+"</span>");
                         $('#respuestaser2').html("<span id='ACTUALIZADO' >"+responseText+"</span>");
@@ -1134,7 +1134,9 @@ var result = response.split('^^');
                             $("#respuestaser").fadeOut(300, function() {
                                 $(this).html('').show();
                             });
-                          
+                            $("#respuestaser2").fadeOut(300, function() {
+                                $(this).html('').show();
+                            });
                         }, 2000);
                     }
                     else{
