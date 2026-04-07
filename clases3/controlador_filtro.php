@@ -1318,9 +1318,20 @@ if($database->plantilla_filtro($nombreTabla,"PENDIENTE_PAGO",$altaeventos,$DEPAR
 <?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"PFORMADE_PAGO",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="text-align:center"><?php echo $row['PFORMADE_PAGO']; $colspan2 += 1; ?></td>
 <?php } ?>
-<?php if($database->plantilla_filtro($nombreTabla,"FECHA_DE_PAGO",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="text-align:center"><?php echo $row['FECHA_DE_PAGO']; $colspan2 += 1; ?></td>
-<?php } ?>
-<?php if($database->plantilla_filtro($nombreTabla,"FECHA_A_DEPOSITAR",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="text-align:center"><?php echo $row['FECHA_A_DEPOSITAR']; $colspan2 += 1; ?></td>
+<td style="text-align:center"><?php 
+$colspan2 += 1;
+$f = $row['FECHA_DE_PAGO'];
+echo ($f && $f !== '0000-00-00') ? date('d/m/Y', strtotime($f)) : '';
+?></td>
+
+
+
+<?php if($database->plantilla_filtro($nombreTabla,"FECHA_A_DEPOSITAR",$altaeventos,$DEPARTAMENTO)=="si"){ ?>
+<td style="text-align:center"><?php 
+    $colspan2 += 1;
+    $f = $row['FECHA_A_DEPOSITAR'];
+    echo ($f && $f !== '0000-00-00') ? date('d/m/Y', strtotime($f)) : '';
+?></td>
 <?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"STATUS_DE_PAGO",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="text-align:center"><?php echo $row['STATUS_DE_PAGO']; $colspan2 += 1; ?></td>
 <?php } ?>

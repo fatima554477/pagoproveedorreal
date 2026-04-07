@@ -464,9 +464,13 @@ public function DOCUMENTOSFISCALES_PAGOA($idRelacion, $documento, $documento2 = 
 		if($search['NUMERO_EVENTO_orden']=="asc"){
 			$sWhere3campo.=" $tables.NUMERO_EVENTO asc, ";
 		}
-		if($sWhere3campo == ""){
-			$sWhere3campo.="  CASE WHEN ($tables.FECHA_DE_PAGO IS NULL OR TRIM($tables.FECHA_DE_PAGO) = '' OR $tables.FECHA_DE_PAGO = '0000-00-00') THEN 1 ELSE 0 END asc, STR_TO_DATE($tables.FECHA_DE_PAGO, '%d/%m/%Y') desc, $tables.id desc ";;		
-	}else{
+if($sWhere3campo == ""){
+    if($search['NUMERO_EVENTO'] != ""){
+        $sWhere3campo .= " STR_TO_DATE($tables.FECHA_DE_PAGO, '%d/%m/%Y') desc, $tables.id desc ";
+    } else {
+        $sWhere3campo .= "  CASE WHEN ($tables.FECHA_DE_PAGO IS NULL OR TRIM($tables.FECHA_DE_PAGO) = '' OR $tables.FECHA_DE_PAGO = '0000-00-00') THEN 1 ELSE 0 END asc, STR_TO_DATE($tables.FECHA_DE_PAGO, '%d/%m/%Y') desc, $tables.id desc ";
+    }
+}else{
 			$sWhere3campo = substr($sWhere3campo,0,-2);
 		}
 
