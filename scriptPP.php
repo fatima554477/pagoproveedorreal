@@ -123,7 +123,7 @@ function ajax_file_upload1(file_obj, nombre) {
 
     $.ajax({
         type: 'POST',
-        url: 'ventasoperaciones3/controladorPP.php',
+        url: 'pagoproveedores/controladorPP.php',
         contentType: false,
         processData: false,
         data: form_data,
@@ -157,7 +157,17 @@ function ajax_file_upload1(file_obj, nombre) {
                 $('#' + nombre).val('');
 
             } else if (resp.indexOf('5^^') === 0) {
+        } else if (resp.indexOf('5^^') === 0) {
                 $('#1' + nombre).html('<p style="color:red;font-weight:600;">⚠️ EL ARCHIVO XML ESTÁ VACÍO O NO CONTIENE INFORMACIÓN VÁLIDA. Verifica que sea un CFDI timbrado correctamente e inténtalo de nuevo.</p>');
+                $('#' + nombre).val('');
+
+            } else if (resp.indexOf('6^^') === 0) {
+                var partesReceptor = resp.split('^^');
+                var receptorXML = partesReceptor[1] ? $.trim(partesReceptor[1]) : '';
+                var msgReceptor = receptorXML !== ''
+                    ? '⚠️ EL RECEPTOR DE LA FACTURA NO ES VÁLIDO: <strong>' + receptorXML + '</strong>. Debe ser EPC, INN o EVE520.'
+                    : '⚠️ EL RECEPTOR DE LA FACTURA NO ES EPC, INN O EVE520.';
+                $('#1' + nombre).html('<p style="color:red;font-weight:600;">' + msgReceptor + '</p>');
                 $('#' + nombre).val('');
 
             } else {
@@ -195,7 +205,7 @@ function myFunction(montoapagar_id) {
     var montoapagar_text = checkBox.checked ? 'enter' : 'none';
 
     $.ajax({
-        url: 'ventasoperaciones3/fetch_pagesPP.php',
+        url: 'pagoproveedores/fetch_pagesPP.php',
         method: 'POST',
         data: { montoapagar_id: montoapagar_id, montoapagar_text: montoapagar_text },
         beforeSend: function () { $('#mensajemontoapagar').html('cargando'); },
@@ -215,7 +225,7 @@ function pasarpagado(pasarpagado_id) {
     var pasarpagado_text = checkBox.checked ? 'si' : 'no';
 
     $.ajax({
-        url: 'ventasoperaciones3/controladorPP.php',
+        url: 'pagoproveedores/controladorPP.php',
         method: 'POST',
         data: { pasarpagado_id: pasarpagado_id, pasarpagado_text: pasarpagado_text },
         beforeSend: function () { $('#pasarpagado').html('cargando'); },
@@ -300,7 +310,7 @@ function guardarYIrATarget2() {
 ------------------------------------------------------- */
 $(document).ready(function () {
 
-    activarTarget(1);
+    activarTarget(null);
 
     var allNums = [];
     for (var n = 1; n <= 15; n++) allNums.push(n);
@@ -379,7 +389,7 @@ $(document).ready(function () {
         var formData = new FormData($('#pagoaproveedoresform')[0]);
 
         $.ajax({
-            url: 'ventasoperaciones3/controladorPP.php',
+            url: 'pagoproveedores/controladorPP.php',
             type: 'POST',
             dataType: 'html',
             data: formData,
@@ -389,12 +399,12 @@ $(document).ready(function () {
         }).done(function (data) {
             var respuesta = $.trim(data).replace(/[\r\n\t]/g, '');
             if (respuesta.indexOf('Ingresado') !== -1 || respuesta.indexOf('Actualizado') !== -1) {
-                $('#mensajeventasoperaciones3').html('<span id="ACTUALIZADO">Ingresado</span>').fadeIn().delay(3000).fadeOut();
+                $('#mensajepagoproveedores').html('<span id="ACTUALIZADO">Ingresado</span>').fadeIn().delay(3000).fadeOut();
                 limpiarFormularioPP();
                 recargarElemento('#resettabla');
                 setTimeout(function () { guardarYIrATarget2(); }, 600);
             } else {
-                $('#mensajeventasoperaciones3').html('<span style="color:red;">' + data + '</span>');
+                $('#mensajepagoproveedores').html('<span style="color:red;">' + data + '</span>');
             }
         }).fail(function (xhr) {
             console.error('[enviarPAGOPROVEEDORES] Error en la petición.', xhr.responseText);
@@ -411,13 +421,13 @@ $(document).ready(function () {
 
         $('#btnYes').off('click').on('click', function () {
             $.ajax({
-                url: 'ventasoperaciones3/controladorPP.php',
+                url: 'pagoproveedores/controladorPP.php',
                 method: 'POST',
                 data: { borra_id_sb: borra_id_sb, borrasbdoc: 'borrasbdoc' },
-                beforeSend: function () { $('#mensajeventasoperaciones3').html('cargando...'); },
+                beforeSend: function () { $('#mensajepagoproveedores').html('cargando...'); },
                 success: function (data) {
                     $('#dataModal3').modal('hide');
-                    $('#mensajeventasoperaciones3').html('<span id="ACTUALIZADO">' + data + '</span>');
+                    $('#mensajepagoproveedores').html('<span id="ACTUALIZADO">' + data + '</span>');
                     recargarElemento('#' + borra_id_sb);
                     recargarElemento('#A' + borra_id_sb);
                 }
@@ -435,13 +445,13 @@ $(document).ready(function () {
 
         $('#btnYes').off('click').on('click', function () {
             $.ajax({
-                url: 'ventasoperaciones3/controladorPP.php',
+                url: 'pagoproveedores/controladorPP.php',
                 method: 'POST',
                 data: { borra_id_PAGOP: borra_id_PAGOP, borrapagoaproveedores: 'borrapagoaproveedores' },
-                beforeSend: function () { $('#mensajeventasoperaciones3').html('cargando...'); },
+                beforeSend: function () { $('#mensajepagoproveedores').html('cargando...'); },
                 success: function (data) {
                     $('#dataModal3').modal('hide');
-                    $('#mensajeventasoperaciones3').html('<span id="ACTUALIZADO">' + data + '</span>');
+                    $('#mensajepagoproveedores').html('<span id="ACTUALIZADO">' + data + '</span>');
                     if (typeof load === 'function') { load(1); }
                 }
             });
@@ -455,10 +465,10 @@ $(document).ready(function () {
     $(document).on('click', '.view_dataPAGOPROVEEmodifica', function () {
         var personal_id = $(this).attr('id');
         $.ajax({
-            url: 'ventasoperaciones3/VistaPreviapagoproveedor.php',
+            url: 'pagoproveedores/VistaPreviapagoproveedor.php',
             method: 'POST',
             data: { personal_id: personal_id },
-            beforeSend: function () { $('#mensajeventasoperaciones3').html('cargando...'); },
+            beforeSend: function () { $('#mensajepagoproveedores').html('cargando...'); },
             success: function (data) {
                 $('#personal_detalles').html(data);
                 $('#dataModal').modal('toggle');
@@ -474,7 +484,7 @@ $(document).ready(function () {
         var formData = new FormData($('#DATOSBANCARIOS1form')[0]);
 
         $.ajax({
-            url: 'ventasoperaciones3/controladorPP.php',
+            url: 'pagoproveedores/controladorPP.php',
             type: 'POST',
             dataType: 'html',
             data: formData,
@@ -496,10 +506,10 @@ $(document).ready(function () {
     $(document).on('click', '.view_dataNUEVO', function () {
         var personal_id = $(this).attr('id');
         $.ajax({
-            url: 'ventasoperaciones3/VistaPreviaDatosBancario1.php',
+            url: 'pagoproveedores/VistaPreviaDatosBancario1.php',
             method: 'POST',
             data: { personal_id: personal_id },
-            beforeSend: function () { $('#mensajeventasoperaciones3').html('cargando...'); },
+            beforeSend: function () { $('#mensajepagoproveedores').html('cargando...'); },
             success: function (data) {
                 $('#personal_detalles2').html(data);
                 $('#dataModal').modal('toggle');
@@ -510,7 +520,7 @@ $(document).ready(function () {
     $(document).on('click', '.view_data_bancario1p_modifica', function () {
         var personal_id = $(this).attr('id');
         $.ajax({
-            url: 'ventasoperaciones3/VistaPreviaDatosBancario1.php',
+            url: 'pagoproveedores/VistaPreviaDatosBancario1.php',
             method: 'POST',
             data: { personal_id: personal_id },
             beforeSend: function () { $('#mensajeDATOSBANCARIOS1').html('cargando...'); },
@@ -527,7 +537,7 @@ $(document).ready(function () {
 
         $('#btnYes').off('click').on('click', function () {
             $.ajax({
-                url: 'ventasoperaciones3/controladorPP.php',
+                url: 'pagoproveedores/controladorPP.php',
                 method: 'POST',
                 data: { borra_id_bancaP: borra_id_bancaP, borra_datos_bancario1: 'borra_datos_bancario1' },
                 beforeSend: function () { $('#mensajeREFERENCIAS').html('cargando...'); },
@@ -545,7 +555,7 @@ $(document).ready(function () {
         var dataString = $('#form_emai_DATOSBpro').serialize();
 
         $.ajax({
-            url: 'ventasoperaciones3/controladorPP.php',
+            url: 'pagoproveedores/controladorPP.php',
             method: 'POST',
             dataType: 'html',
             data: dataString + '&DAbancaPRO_ENVIAR_IMAIL=' + encodeURIComponent(DAbancaPRO_ENVIAR_IMAIL),
@@ -564,11 +574,11 @@ $(document).ready(function () {
 $(document).on('click', '.view_dataPAGOPROVEEmodifica', function(){
 var personal_id = $(this).attr('id');
 $.ajax({
-url:'ventasoperaciones3/VistaPreviapagoproveedor.php',
+url:'pagoproveedores/VistaPreviapagoproveedor.php',
 method:'POST',
 data:{personal_id:personal_id},
 beforeSend:function(){
-$('#mensajeventasoperaciones3').html('cargando');
+$('#mensajepagoproveedores').html('cargando');
 },
 success:function(data){
 $('#personal_detalles').html(data);
@@ -584,7 +594,7 @@ $('#dataModal').modal('toggle');
 $(document).on('click', '.view_dataSUBIRF', function(){
 var personal_id = $(this).attr('id');
 $.ajax({
-url:'ventasoperaciones3/VistaPreviapagoproveedor3.php',
+url:'pagoproveedores/VistaPreviapagoproveedor3.php',
 method:'POST',
 data:{personal_id:personal_id},
 beforeSend:function(){

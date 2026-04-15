@@ -20,6 +20,26 @@ include_once (__ROOT1__."/pagoproveedores/class.epcinnPP.php");
 $pagoproveedores= NEW accesoclase();
 $conexion = NEW colaboradores();
 $conexion2 = new herramientas();
+
+if(!function_exists('normalizarTextoEmpresaVO')){
+	function normalizarTextoEmpresaVO($texto){
+		$texto = mb_strtoupper(trim((string)$texto), 'UTF-8');
+		$texto = preg_replace('/\s+/', ' ', $texto);
+		return $texto;
+	}
+}
+
+if(!function_exists('esReceptorCorporativoVO')){
+	function esReceptorCorporativoVO($nombreReceptor){
+		$nombreNormalizado = normalizarTextoEmpresaVO($nombreReceptor);
+		$empresasCorporativo = array(
+			normalizarTextoEmpresaVO('EVENTOS PROMOCIONES Y CONVENCIONES'),
+			normalizarTextoEmpresaVO('INNOVA CONGRESOS Y CONVENCIONES'),
+			normalizarTextoEmpresaVO('EVENTOS 520')
+		);
+		return $nombreNormalizado !== '' && in_array($nombreNormalizado, $empresasCorporativo);
+	}
+}
                                                
 
 $hiddenpagoproveedores = isset($_POST["hiddenpagoproveedores"])?$_POST["hiddenpagoproveedores"]:"";
@@ -322,7 +342,15 @@ if( $_FILES["ADJUNTAR_FACTURA_XML"] == true){
 		$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML2);
 		exit;
 	}
-	// ─────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────
+
+	$nombreRxml = isset($regreso['nombreR']) ? trim((string)$regreso['nombreR']) : '';
+	if($nombreRxml !== '' && !esReceptorCorporativoVO($nombreRxml)){
+		echo '6^^'.$nombreRxml;
+		UNLINK($url);
+		$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML2);
+		exit;
+	}
 
 	$rfcE = $regreso['rfcE'];					
 	$nombreE = $regreso['nombreE'];	
@@ -387,13 +415,21 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 			$regreso = $conexion2->lectorxml($url);
 
 			// ── VALIDACIÓN: XML vacío ──────────────────────────────────────
-			if(empty($regreso) || !isset($regreso['UUID']) || trim($regreso['UUID']) === '') {
+	if(empty($regreso) || !isset($regreso['UUID']) || trim($regreso['UUID']) === '') {
 				echo '5^^';
 				UNLINK($url);
 				$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
 				continue;
 			}
 			// ──────────────────────────────────────────────────────────────
+
+			$nombreRxml = isset($regreso['nombreR']) ? trim((string)$regreso['nombreR']) : '';
+			if($nombreRxml !== '' && !esReceptorCorporativoVO($nombreRxml)){
+				echo '6^^'.$nombreRxml;
+				UNLINK($url);
+				$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
+				continue;
+			}
 
 			$resultado = $pagoproveedores->VALIDA02XMLUUID($regreso['UUID']);
 			if($resultado == 'S'){
@@ -451,13 +487,21 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 			$regreso = $conexion2->lectorxml($url);
 
 			// ── VALIDACIÓN: XML vacío ──────────────────────────────────────
-			if(empty($regreso) || !isset($regreso['UUID']) || trim($regreso['UUID']) === '') {
+		if(empty($regreso) || !isset($regreso['UUID']) || trim($regreso['UUID']) === '') {
 				echo '5^^';
 				UNLINK($url);
 				$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
 				continue;
 			}
 			// ──────────────────────────────────────────────────────────────
+
+			$nombreRxml = isset($regreso['nombreR']) ? trim((string)$regreso['nombreR']) : '';
+			if($nombreRxml !== '' && !esReceptorCorporativoVO($nombreRxml)){
+				echo '6^^'.$nombreRxml;
+				UNLINK($url);
+				$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
+				continue;
+			}
 
 			$resultado = $pagoproveedores->VALIDA02XMLUUID($regreso['UUID']);
 			if($resultado == 'S'){

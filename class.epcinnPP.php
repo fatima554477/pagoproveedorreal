@@ -447,6 +447,7 @@ public function variable_SUBETUFACTURA() {
         $Propina              = isset($regreso['Propina']) ? $regreso['Propina'] : '';
 
         $this->actualizar_forma_pago($ultimo_id, $formaDePago);
+				$nombreE                  = mysqli_real_escape_string($conn, $nombreE);
 
         $camposComunes = "`Version`='{$Version}',`fechaTimbrado`='{$FechaTimbrado}',`tipoDeComprobante`='{$tipoDeComprobante}',
             `metodoDePago`='{$metodoDePago}',`formaDePago`='{$formaDePago}',`condicionesDePago`='{$condicionesDePago}',
@@ -546,7 +547,13 @@ public function variable_SUBETUFACTURA() {
             $$var = str_replace(',', '', $$var);
         }
 
-        $conn = $this->db();
+            $conn = $this->db();
+
+    // ESCAPAR TEXTOS
+
+    $NOMBRE_COMERCIAL            = mysqli_real_escape_string($conn, $NOMBRE_COMERCIAL);
+    $RAZON_SOCIAL                = mysqli_real_escape_string($conn, $RAZON_SOCIAL);
+	$OBSERVACIONES_1             = mysqli_real_escape_string($conn, $OBSERVACIONES_1);
 
         // Obtener nombre comercial
         $queryNC   = mysqli_query($conn, "SELECT P_NOMBRE_COMERCIAL_EMPRESA FROM 02direccionproveedor1 WHERE idRelacion='{$NOMBRE_COMERCIAL}'") or die('P160' . mysqli_error($conn));
