@@ -1,600 +1,1075 @@
 <?php
 /*
+fecha sandor: 
 fecha fatis : 04/04/2024
-ACTUALIZADO: fixes archivos desde 02SUBETUFACTURADOCTOS — ventasoperaciones3
 */
+?>
 
-if(!isset($_SESSION)) { session_start(); }
 
-$identioficador = isset($_POST["personal_id"]) ? $_POST["personal_id"] : '';
 
-if($identioficador != '') {
-    $output = '';
-    require "controladorPP.php";
+<?php
+    if(!isset($_SESSION)) 
+    { 
+        session_start(); 
+    }  
+//select.php  CONTRASENA_DE1
 
-    $queryVISTAPREV = $pagoproveedores->Listado_pagoproveedor2($identioficador);
+$identioficador = isset($_POST["personal_id"])?$_POST["personal_id"]:'';
+if($identioficador != '')
+{
+ $output = '';
+	require "controladorPP.php";
 
-    while($row = mysqli_fetch_array($queryVISTAPREV)) {
+//$conexion = NEW accesoclase();
+$queryVISTAPREV = $pagoproveedores->Listado_pagoproveedor2($identioficador);
 
-        $row2xml = $pagoproveedores->busca_02XML($row['id']);
-        $conn    = $pagoproveedores->db();
+?>
+<?php
+   while($row = mysqli_fetch_array($queryVISTAPREV))
+    {
+	
+		
+		$row2xml = $pagoproveedores->busca_02XML($row['id']);
+$SOLICITADO = "";$APROBADO = "";$PAGADO = "";$PAGADO = "";
+    if($row['STATUS_DE_PAGO']=="SOLICITADO"){$SOLICITADO = "selected";}
+elseif($row['STATUS_DE_PAGO']=="APROBADO"){$APROBADO = "selected";}
+elseif($row['STATUS_DE_PAGO']=="PAGADO"){$PAGADO = "selected";}
+elseif($row['STATUS_DE_PAGO']=="RECHAZADO"){$RECHAZADO = "selected";}
 
-        // ── Obtener TODOS los archivos desde 02SUBETUFACTURADOCTOS ────────
-        $columnasArchivos = [
-            'ADJUNTAR_FACTURA_XML', 'ADJUNTAR_FACTURA_PDF', 'ADJUNTAR_COTIZACION',
-            'CONPROBANTE_TRANSFERENCIA', 'FOTO_ESTADO_PROVEE11', 'COMPLEMENTOS_PAGO_PDF',
-            'COMPLEMENTOS_PAGO_XML', 'CANCELACIONES_PDF', 'CANCELACIONES_XML',
-            'ADJUNTAR_FACTURA_DE_COMISION_PDF', 'ADJUNTAR_FACTURA_DE_COMISION_XML',
-            'CALCULO_DE_COMISION', 'COMPROBANTE_DE_DEVOLUCION', 'NOTA_DE_CREDITO_COMPRA',
-            'ADJUNTAR_ARCHIVO_1',
-        ];
+$STATUS_DE_PAGO = '<select required="" name="STATUS_DE_PAGO"> 
 
-        $archivosActuales = array_fill_keys($columnasArchivos, '');
-        $listaDoctos      = array_fill_keys($columnasArchivos, '');
+<option style="background:#d9f9fa" value="SOLICITADO" '.$SOLICITADO.'>SOLICITADO</option>
+<option style="background:#e1f5de" value="APROBADO" '.$APROBADO.'>APROBADO</option>
+<option style="background:#f5deee" value="PAGADO" '.$PAGADO.'>PAGADO</option>
+<option style="background:#f5f4de" value="RECHAZADO" '.$RECHAZADO.'>RECHAZADO</option>
+</select>';
+		
 
-        $qArchivos = mysqli_query($conn,
-            "SELECT * FROM 02SUBETUFACTURADOCTOS 
-             WHERE idTemporal = '" . intval($row['id']) . "' 
-             ORDER BY id DESC"
-        );
+	$queryVISTAPREV = $pagoproveedores->Listado_subefacturaDOCTOS($row['id']);		
+	while($rowDOCTOS = mysqli_fetch_array($queryVISTAPREV))
+	{
 
-        if ($qArchivos) {
-            while ($rowDoc = mysqli_fetch_assoc($qArchivos)) {
-                foreach ($columnasArchivos as $col) {
-                    if (!empty($rowDoc[$col])) {
-                        if ($archivosActuales[$col] === '') {
-                            $archivosActuales[$col] = $rowDoc[$col];
-                        }
-                        $listaDoctos[$col] .=
-                            "<a target='_blank' href='includes/archivos/" . $rowDoc[$col] . "'>Visualizar!</a>"
-                            . " <span id='" . $rowDoc['id'] . "' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span>"
-                            . " <span>" . $rowDoc['fechaingreso'] . "</span><br/>";
-                    }
-                }
-            }
+
+
+        if($rowDOCTOS["ADJUNTAR_FACTURA_PDF"]!=""){$ADJUNTAR_FACTURA_PDF .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["ADJUNTAR_FACTURA_PDF"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
+		}	else{
+			
+			//$ADJUNTAR_FACTURA_PDF = "";
+			
+		}
+        
+        
+        if($rowDOCTOS["ADJUNTAR_FACTURA_XML"]!=""){$ADJUNTAR_FACTURA_XML .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["ADJUNTAR_FACTURA_XML"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
+		}	else{
+			
+			//$ADJUNTAR_FACTURA_XML = "";
+			
+		}
+
+         
+        if($rowDOCTOS["ADJUNTAR_COTIZACION"]!=""){$ADJUNTAR_COTIZACION .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["ADJUNTAR_COTIZACION"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
+		}	else{
+			
+			//$ADJUNTAR_COTIZACION = "";
+			
+		}
+        
+        if($rowDOCTOS["CONPROBANTE_TRANSFERENCIA"]!=""){$CONPROBANTE_TRANSFERENCIA =  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["CONPROBANTE_TRANSFERENCIA"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
+		}	else{
+			
+			//$CONPROBANTE_TRANSFERENCIA = "";
+			
+		}
+        
+        if($rowDOCTOS["FOTO_ESTADO_PROVEE"]!=""){$FOTO_ESTADO_PROVEE .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["FOTO_ESTADO_PROVEE"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
+		}	else{
+			
+			//$FOTO_ESTADO_PROVEE = "";
+			
+		}
+        
+        if($rowDOCTOS["COMPLEMENTOS_PAGO_PDF"]!=""){$COMPLEMENTOS_PAGO_PDF .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["COMPLEMENTOS_PAGO_PDF"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
+		}	else{
+			
+			//$COMPLEMENTOS_PAGO_PDF = "";
+			
+		}
+        
+
+        if($rowDOCTOS["COMPLEMENTOS_PAGO_XML"]!=""){$COMPLEMENTOS_PAGO_XML .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["COMPLEMENTOS_PAGO_XML"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
+		}	else{
+			
+			//$COMPLEMENTOS_PAGO_XML = "";
+			
+		}
+
+        if($rowDOCTOS["CANCELACIONES_PDF"]!=""){$CANCELACIONES_PDF .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["CANCELACIONES_PDF"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
+		}	else{
+			
+			//$CANCELACIONES_PDF = "";
+			
+		}
+
+        if($rowDOCTOS["CANCELACIONES_XML"]!=""){$CANCELACIONES_XML .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["CANCELACIONES_XML"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
+		}	else{
+			
+			//$CANCELACIONES_XML = "";
+			
+		}
+
+        
+        if($rowDOCTOS["ADJUNTAR_FACTURA_DE_COMISION_PDF"]!=""){$ADJUNTAR_FACTURA_DE_COMISION_PDF .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["ADJUNTAR_FACTURA_DE_COMISION_PDF"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
+		}	else{
+			
+			//$ADJUNTAR_FACTURA_DE_COMISION_PDF = "";
+			
+		}
+
+        if($rowDOCTOS["ADJUNTAR_ARCHIVO_1"]!=""){$ADJUNTAR_ARCHIVO_1 .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["ADJUNTAR_ARCHIVO_1"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
+		}	else{
+			
+			//$ADJUNTAR_ARCHIVO_1 = "";
+			
+		}
+        
+        if($rowDOCTOS["CALCULO_DE_COMISION"]!=""){$CALCULO_DE_COMISION .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["CALCULO_DE_COMISION"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
+		}	else{
+			
+			//$CALCULO_DE_COMISION = "";
+			
+		}
+
+        if($rowDOCTOS["COMPROBANTE_DE_DEVOLUCION"]!=""){$COMPROBANTE_DE_DEVOLUCION .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["COMPROBANTE_DE_DEVOLUCION"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
+		}	else{
+			
+			//$COMPROBANTE_DE_DEVOLUCION = "";
+			
+		}
+
+        if($rowDOCTOS["NOTA_DE_CREDITO_COMPRA"]!=""){$NOTA_DE_CREDITO_COMPRA .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["NOTA_DE_CREDITO_COMPRA"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
+		}	else{
+			
+			//$NOTA_DE_CREDITO_COMPRA = "";
+			
+		}
+
+      
+        if($rowDOCTOS["ADJUNTAR_FACTURA_DE_COMISION_XML"]!=""){$ADJUNTAR_FACTURA_DE_COMISION_XML .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["ADJUNTAR_FACTURA_DE_COMISION_XML"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
+		}	else{
+			
+			//$ADJUNTAR_FACTURA_DE_COMISION_XML = "";
+			
+		}
+
+}
+
+
+?>
+</div>
+
+<?php
+
+
+   $proveedoresOptions = '<option value="">SELECCIONA UNA OPCIÓN</option>';
+    $listadoProveedores = $pagoproveedores->listado3();
+    if($listadoProveedores){
+        while($rowProveedor = mysqli_fetch_array($listadoProveedores, MYSQLI_ASSOC)){
+            $nombreComercial = $rowProveedor["P_NOMBRE_COMERCIAL_EMPRESA"];
+            $razonSocial = $rowProveedor["P_NOMBRE_FISCAL_RS_EMPRESA"];
+            $rfcProveedor = $rowProveedor["P_RFC_MTDP"];
+            $selectedProveedor = $nombreComercial == $row["NOMBRE_COMERCIAL"] ? 'selected' : '';
+            $proveedoresOptions .= '<option value="'.$nombreComercial.'" data-razon="'.$razonSocial.'" data-rfc="'.$rfcProveedor.'" '.$selectedProveedor.'>'.$nombreComercial.'</option>';
         }
-        // ─────────────────────────────────────────────────────────────────
+    }
 
-        // Status de pago (editable en doc7)
-        $SOLICITADO = $APROBADO = $PAGADO = $RECHAZADO = '';
-        if($row['STATUS_DE_PAGO'] == "SOLICITADO")    { $SOLICITADO = "selected"; }
-        elseif($row['STATUS_DE_PAGO'] == "APROBADO")  { $APROBADO   = "selected"; }
-        elseif($row['STATUS_DE_PAGO'] == "PAGADO")    { $PAGADO     = "selected"; }
-        elseif($row['STATUS_DE_PAGO'] == "RECHAZADO") { $RECHAZADO  = "selected"; }
 
-        $STATUS_DE_PAGO  = '<select required name="STATUS_DE_PAGO">';
-        $STATUS_DE_PAGO .= '<option style="background:#d9f9fa" value="SOLICITADO" '.$SOLICITADO.'>SOLICITADO</option>';
-        $STATUS_DE_PAGO .= '<option style="background:#e1f5de" value="APROBADO"   '.$APROBADO.'>APROBADO</option>';
-        $STATUS_DE_PAGO .= '<option style="background:#f5deee" value="PAGADO"     '.$PAGADO.'>PAGADO</option>';
-        $STATUS_DE_PAGO .= '<option style="background:#f5f4de" value="RECHAZADO"  '.$RECHAZADO.'>RECHAZADO</option>';
-        $STATUS_DE_PAGO .= '</select>';
+    $eventosOptions = '<option value="">SELECCIONA UNA OPCIÓN</option>';
+    $listadoEventos = $pagoproveedores->listadoEventos();
+    if($listadoEventos){
+        while($rowEvento = mysqli_fetch_array($listadoEventos, MYSQLI_ASSOC)){
+            $numeroEvento = $rowEvento["NUMERO_EVENTO"];
+            $nombreEvento = $rowEvento["NOMBRE_EVENTO"];
+            $selectedEvento = $numeroEvento == $row["NUMERO_EVENTO"] ? 'selected' : '';
+            $eventosOptions .= '<option value="'.$numeroEvento.'" data-nombre="'.$nombreEvento.'" '.$selectedEvento.'>'.$numeroEvento.'</option>';
+        }
+    }
 
-        // Bloquear facturas si ID_RELACIONADO vacío
-        $disableFactura   = (empty($row["ID_RELACIONADO"]) || trim($row["ID_RELACIONADO"]) == "");
-        $facturaAttr      = $disableFactura ? ' disabled="disabled"' : '';
-        $facturaZoneStyle = $disableFactura
-            ? 'style="width:300px;pointer-events:none;opacity:0.6;"'
-            : 'style="width:300px;"';
 
-        // Forma de pago: bloquear si viene del XML
-        $lockFormaPago  = (!empty(trim((string)$row2xml["formaDePago"]))) ? '1' : '0';
 
-        // ── Helper zona de carga ──────────────────────────────────────────
-        $zonaArchivo = function($campo, $valor, $historial, $extraAttr = '', $zoneStyle = 'style="width:300px;"') {
-            return '
-            <div id="drop_file_zone" ondrop="upload_file2(event,\''.$campo.'\')" ondragover="return false" '.$zoneStyle.'>
-                <p>Suelta aquí o busca tu archivo</p>
-                <p><input class="form-control form-control-sm" id="'.$campo.'" type="text"
-                    onkeydown="return false"
-                    onclick="file_explorer2(\''.$campo.'\');"
-                    style="width:250px;"
-                    VALUE="'.$valor.'"
-                    required'.$extraAttr.' /></p>
-                <input type="file" name="'.$campo.'" id="nono"'.$extraAttr.'/>
-                <div id="3'.$campo.'">'.$historial.'</div>
-            </div>';
-        };
+ $output .= '<div ></div><form  id="ListadoPAGOPROVEEform"> 
+      <div class="table-responsive">  
+           <table class="table table-bordered" style="background: #ebf9e9;">';
+		   
 
-        // ── Bloque XML ────────────────────────────────────────────────────
+$campos_xml = '';
+
+if($row2xml["Version"]=='no' or $row2xml["Version"]==''){
+
+$campos_xml = '
+
+<!--aqui empieza la lectura BD a XML-->
+<!--aqui empieza la lectura BD a XML-->
+<!--aqui empieza la lectura BD a XML-->
+<!--aqui empieza la lectura BD a XML-->
+<!--aqui empieza la lectura BD a XML-->
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+
+<td width="30%" style="font-weight:bold;" ><label>NOMBRE RECEPTOR</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="nombreR" value="'.$row2xml["nombreR"].'"></td>
+</tr>
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+
+<td width="30%" style="font-weight:bold;" ><label>RFC RECEPTOR</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="rfcR" value="'.$row2xml["rfcR"].'"></td>
+</tr>
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+<td width="30%" style="font-weight:bold;" ><label>REGÍMEN FISCAL</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="regimenE" value="'.$row2xml["regimenE"].'"></td>
+</tr>
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+<td width="30%" style="font-weight:bold;" ><label>UUID</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="UUID" value="'.$row2xml["UUID"].'"></td>
+</tr>
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+<td width="30%" style="font-weight:bold;" ><label>FOLIO</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="folio" value="'.$row2xml["folio"].'"></td>
+</tr>
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+<td width="30%" style="font-weight:bold;" ><label>SERIE</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="serie" value="'.$row2xml["serie"].'"></td>
+</tr>
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+<td width="30%" style="font-weight:bold;" ><label>CLAVE DE UNIDAD</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="ClaveUnidadConcepto" value="'.$row2xml["ClaveUnidadConcepto"].'"></td>
+</tr>
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+<td width="30%" style="font-weight:bold;" ><label>CANTIDAD</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="CantidadConcepto" value="'.$row2xml["CantidadConcepto"].'"></td>
+</tr>
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+<td width="30%" style="font-weight:bold;" ><label>CLAVE DE PRODUCTO O SERVICIO</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="ClaveProdServConcepto" value="'.$row2xml["ClaveProdServConcepto"].'"></td>
+</tr>
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+<td width="30%" style="font-weight:bold;" ><label>DESCRIPCIÓN</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="DescripcionConcepto" value="'.$row2xml["DescripcionConcepto"].'"></td>
+</tr>
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+
+<td width="30%" style="font-weight:bold;" ><label>MONEDA</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="Moneda" value="'.$row2xml["Moneda"].'"></td>
+</tr>
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+<td width="30%" style="font-weight:bold;" ><label>TIPO DE CAMBIO</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="TipoCambio" value="'.$row2xml["TipoCambio"].'"></td>
+</tr>
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+<td width="30%" style="font-weight:bold;" ><label>USO DE CFDI</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="UsoCFDI" value="'.$row2xml["UsoCFDI"].'"></td>
+</tr>
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+<td width="30%" style="font-weight:bold;" ><label>METODO DE PAGO</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="metodoDePago" value="'.$row2xml["metodoDePago"].'"></td>
+</tr>
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+<td width="30%" style="font-weight:bold;" ><label>FORMA DE PAGO</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="formaDePago" value="'.$row2xml["formaDePago"].'"></td>
+</tr>
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+<td width="30%" style="font-weight:bold;" ><label>CONDICIONES DE PAGO</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="condicionesDePago" value="'.$row2xml["condicionesDePago"].'"></td>
+</tr>
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+<td width="30%" style="font-weight:bold;" ><label>TIPO DE COMPROBANTE</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="tipoDeComprobante" value="'.$row2xml["tipoDeComprobante"].'"></td>
+</tr>
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+<td width="30%" style="font-weight:bold;" ><label>VERSIÓN</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="Version" value="'.$row2xml["Version"].'"></td>
+</tr>
+<input type="hidden" name="actualiza" value="true">
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+<td width="30%" style="font-weight:bold;" ><label>FECHA DE TIMBRADO</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="fechaTimbrado" value="'.$row2xml["fechaTimbrado"].'"></td>
+</tr>
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+<td width="30%" style="font-weight:bold;" ><label>SUBTOTAL</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="subTotal" value="'.$row2xml["subTotal"].'"></td>
+</tr>
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+<td width="30%" style="font-weight:bold;" ><label>SERVICIO, PROPINA,ISH Y SANAMIENTO</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="Propina" value="'.$row2xml["Propina"].'"></td>
+</tr>
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+<td width="30%" style="font-weight:bold;" ><label>DESCUENTO</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="DESCUENTO" value="'.$row2xml["DESCUENTO"].'"></td>
+</tr>
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+<td width="30%" style="font-weight:bold;" ><label>TOTAL DE IMPUESTOS TRANSLADADOS</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="TImpuestosTrasladados" value="'.$row2xml["TImpuestosTrasladados"].'"></td>
+</tr>
+ <tr style="background: #fbf696;style="font-weight:bold;">
+
+<td width="30%" style="font-weight:bold;" ><label>TOTAL DE IMPUESTOS RETENIDOS</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="TImpuestosRetenidos" value="'.$row2xml["TImpuestosRetenidos"].'"></td>
+</tr>
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+<td width="30%" style="font-weight:bold;" ><label>TUA</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="TUA" value="'.$row2xml["TUA"].'"></td>
+</tr>
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+<td width="30%" style="font-weight:bold;" ><label>TOTAL</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="totalf" value="'.$row2xml["totalf"].'"></td>
+</tr>
+
+
+
+<tr style="background: #fbf696;style="font-weight:bold;">
+
+<td width="30%" style="font-weight:bold;" ><label>TUA TOTAL CARGOS:</label></td>
+<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="TuaTotalCargos" value="'.$row2xml["TuaTotalCargos"].'"></td>
+</tr>
+
+<!--aqui termina la lectura BD a XML-->
+<!--aqui termina la lectura BD a XML-->
+<!--aqui termina la lectura BD a XML-->
+<!--aqui termina la lectura BD a XML-->
+<!--aqui termina la lectura BD a XML-->
+
+'; 
+
+	}else{
         $campos_xml = '';
-        if ($row2xml["Version"] == 'no' || $row2xml["Version"] == '') {
-            $campos_xml = '
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>NOMBRE RECEPTOR</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="nombreR" value="'.$row2xml["nombreR"].'"></td></tr>
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>RFC RECEPTOR</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="rfcR" value="'.$row2xml["rfcR"].'"></td></tr>
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>RÉGIMEN FISCAL</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="regimenE" value="'.$row2xml["regimenE"].'"></td></tr>
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>UUID</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="UUID" value="'.$row2xml["UUID"].'"></td></tr>
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>FOLIO</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="folio" value="'.$row2xml["folio"].'"></td></tr>
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>SERIE</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="serie" value="'.$row2xml["serie"].'"></td></tr>
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>CLAVE DE UNIDAD</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="ClaveUnidadConcepto" value="'.$row2xml["ClaveUnidadConcepto"].'"></td></tr>
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>CANTIDAD</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="CantidadConcepto" value="'.$row2xml["CantidadConcepto"].'"></td></tr>
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>CLAVE DE PRODUCTO O SERVICIO</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="ClaveProdServConcepto" value="'.$row2xml["ClaveProdServConcepto"].'"></td></tr>
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>DESCRIPCIÓN</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="DescripcionConcepto" value="'.$row2xml["DescripcionConcepto"].'"></td></tr>
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>MONEDA</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="Moneda" value="'.$row2xml["Moneda"].'"></td></tr>
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>TIPO DE CAMBIO</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="TipoCambio" value="'.$row2xml["TipoCambio"].'"></td></tr>
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>USO DE CFDI</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="UsoCFDI" value="'.$row2xml["UsoCFDI"].'"></td></tr>
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>MÉTODO DE PAGO</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="metodoDePago" value="'.$row2xml["metodoDePago"].'"></td></tr>
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>CONDICIONES DE PAGO</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="condicionesDePago" value="'.$row2xml["condicionesDePago"].'"></td></tr>
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>TIPO DE COMPROBANTE</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="tipoDeComprobante" value="'.$row2xml["tipoDeComprobante"].'"></td></tr>
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>VERSIÓN</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="Version" value="'.$row2xml["Version"].'"></td></tr>
-            <input type="hidden" name="actualiza" value="true">
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>FECHA DE TIMBRADO</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="fechaTimbrado" value="'.$row2xml["fechaTimbrado"].'"></td></tr>
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>SUBTOTAL</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="subTotal" value="'.$row2xml["subTotal"].'"></td></tr>
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>SERVICIO, PROPINA, ISH Y SANEAMIENTO</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="Propina" value="'.$row2xml["Propina"].'"></td></tr>
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>DESCUENTO</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="DESCUENTO" value="'.$row2xml["Descuento"].'"></td></tr>
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>TOTAL DE IMPUESTOS TRASLADADOS</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="TImpuestosTrasladados" value="'.$row2xml["TImpuestosTrasladados"].'"></td></tr>
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>TOTAL DE IMPUESTOS RETENIDOS</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="TImpuestosRetenidos" value="'.$row2xml["TImpuestosRetenidos"].'"></td></tr>
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>TUA</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="TUA" value="'.$row2xml["TUA"].'"></td></tr>
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>TOTAL</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="totalf" value="'.$row2xml["totalf"].'"></td></tr>
-            <tr style="background:#fbf696;"><td style="font-weight:bold;"><label>TUA TOTAL CARGOS</label></td>
-                <td><input type="text" readonly style="background:#decaf1" name="TuaTotalCargos" value="'.$row2xml["TuaTotalCargos"].'"></td></tr>';
         }
 
-        $output .= '
-        <div id="respuestaser"></div>
-        <form id="ListadoPAGOPROVEEform">
-        <div class="table-responsive">
-        <table class="table table-bordered" style="background:#ebf9e9;">
 
-        <tr>
-            <td width="30%" style="font-weight:bold;">ADJUNTAR FACTURA (FORMATO XML)</td>
-            <td width="70%">'.$zonaArchivo('ADJUNTAR_FACTURA_XML', $archivosActuales['ADJUNTAR_FACTURA_XML'], $listaDoctos['ADJUNTAR_FACTURA_XML'], $facturaAttr, $facturaZoneStyle).'</td>
-        </tr>
-        <tr>
-            <td width="30%" style="font-weight:bold;">ADJUNTAR FACTURA (FORMATO PDF)</td>
-            <td width="70%">'.$zonaArchivo('ADJUNTAR_FACTURA_PDF', $archivosActuales['ADJUNTAR_FACTURA_PDF'], $listaDoctos['ADJUNTAR_FACTURA_PDF'], $facturaAttr, $facturaZoneStyle).'</td>
-        </tr>
+    $disableFactura = in_array($row["VIATICOSOPRO"], array(
+        "PAGO A PROVEEDOR CON DOS O MAS FACTURAS",
+        "VIATICOS",
+        "REEMBOLSO"
+    ));
+    $facturaInputAttributes = $disableFactura ? ' disabled="disabled"' : '';
+    $facturaDropZoneAttributes = $disableFactura
+        ? ' style="width:300px;pointer-events:none;opacity:0.6;"'
+        : ' style="width:300px;"';
 
-        <tr style="background:#F368E7;">
-            <td style="font-weight:bold;">NÚMERO DE SOLICITUD</td>
-            <td><input type="text" name="NUMERO_CONSECUTIVO_PROVEE" value="'.$row["NUMERO_CONSECUTIVO_PROVEE"].'"></td>
-        </tr>
-        <tr style="background:#F368E7;">
-            <td style="font-weight:bold;">ID RELACIONADO</td>
-            <td><input type="text" name="ID_RELACIONADO" value="'.$row["ID_RELACIONADO"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">TIPO DE PAGO</td>
-            <td>
-                <select name="VIATICOSOPRO" style="background:#daddf5">
-                    <option value="SELECCIONA UNA OPCIÓN">SELECCIONA UNA OPCIÓN</option>
-                    <option value="PAGO A PROVEEDOR"                        '.($row["VIATICOSOPRO"]=="PAGO A PROVEEDOR"?"selected":"").'>PAGO A PROVEEDOR</option>
-                    <option value="PAGO A PROVEEDOR CON DOS O MAS FACTURAS" '.($row["VIATICOSOPRO"]=="PAGO A PROVEEDOR CON DOS O MAS FACTURAS"?"selected":"").'>PAGO A PROVEEDOR CON DOS O MAS FACTURAS</option>
-                    <option value="PAGOS CON UNA SOLA FACTURA"              '.($row["VIATICOSOPRO"]=="PAGOS CON UNA SOLA FACTURA"?"selected":"").'>PAGOS CON UNA SOLA FACTURA</option>
-                    <option value="VIATICOS"                                '.($row["VIATICOSOPRO"]=="VIATICOS"?"selected":"").'>VIATICOS</option>
-                    <option value="REEMBOLSO"                               '.($row["VIATICOSOPRO"]=="REEMBOLSO"?"selected":"").'>REEMBOLSO</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">NOMBRE COMERCIAL</td>
-            <td><input type="text" name="NOMBRE_COMERCIAL" value="'.$row["NOMBRE_COMERCIAL"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">RAZÓN SOCIAL</td>
-            <td><input type="text" name="RAZON_SOCIAL" value="'.$row["RAZON_SOCIAL"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">RFC DEL PROVEEDOR</td>
-            <td><input type="text" name="RFC_PROVEEDOR" value="'.$row["RFC_PROVEEDOR"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">NÚMERO DE EVENTO</td>
-            <td><input type="text" name="NUMERO_EVENTO" value="'.$row["NUMERO_EVENTO"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">NOMBRE DEL EVENTO</td>
-            <td><input type="text" name="NOMBRE_EVENTO" value="'.$row["NOMBRE_EVENTO"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">MOTIVO DEL GASTO</td>
-            <td><input type="text" name="MOTIVO_GASTO" value="'.$row["MOTIVO_GASTO"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">CONCEPTO</td>
-            <td><input type="text" name="CONCEPTO_PROVEE" value="'.$row["CONCEPTO_PROVEE"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">MONTO TOTAL DE LA COTIZACIÓN O DEL ADEUDO</td>
-            <td><input type="text" name="MONTO_TOTAL_COTIZACION_ADEUDO" value="'.$row["MONTO_TOTAL_COTIZACION_ADEUDO"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">SUB TOTAL</td>
-            <td><input type="text" name="MONTO_FACTURA" id="montoTotalEvento" value="'.$row["MONTO_FACTURA"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">IVA</td>
-            <td><input type="text" name="IVA" id="montoTotalAvion" value="'.$row["IVA"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">IMPUESTOS RETENIDOS IVA</td>
-            <td><input type="text" name="TImpuestosRetenidosIVA" id="montoRetenidoIVA" value="'.$row["TImpuestosRetenidosIVA"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">IMPUESTOS RETENIDOS ISR</td>
-            <td><input type="text" name="TImpuestosRetenidosISR" id="montoRetenidoISR" value="'.$row["TImpuestosRetenidosISR"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">MONTO DE LA PROPINA O SERVICIO NO INCLUIDO EN LA FACTURA</td>
-            <td><input type="text" name="MONTO_PROPINA" id="montoTotalpropina" value="'.$row["MONTO_PROPINA"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">IMPUESTO SOBRE HOSPEDAJE MÁS EL IMPUESTO DE SANEAMIENTO</td>
-            <td><input type="text" name="IMPUESTO_HOSPEDAJE" id="montoTotalhospedaje" value="'.$row["IMPUESTO_HOSPEDAJE"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">DESCUENTO</td>
-            <td><input type="text" name="descuentos" id="montoDescuentos" value="'.$row["descuentos"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">TOTAL</td>
-            <td><input type="text" readonly style="background:#decaf1" name="MONTO_DEPOSITAR" id="montoTotalEventoResultado" value="'.$row["MONTO_DEPOSITAR"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">TIPO DE CAMBIO</td>
-            <td><input type="text" name="TIPO_CAMBIOP" value="'.$row["TIPO_CAMBIOP"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">TOTAL DE LA CONVERSIÓN</td>
-            <td><input type="text" name="TOTAL_ENPESOS" value="'.$row["TOTAL_ENPESOS"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">FORMA DE PAGO</td>
-            <td>
-                <select id="formaDePagoSelect" name="PFORMADE_PAGO" data-lock-xml="'.$lockFormaPago.'" style="background:#daddf5">
-                    <option value="03" '.($row["PFORMADE_PAGO"]=="03"?"selected":"").'>03 TRANSFERENCIA ELECTRÓNICA</option>
-                    <option value="01" '.($row["PFORMADE_PAGO"]=="01"?"selected":"").'>01 EFECTIVO</option>
-                    <option value="02" '.($row["PFORMADE_PAGO"]=="02"?"selected":"").'>02 CHEQUE NOMINATIVO</option>
-                    <option value="04" '.($row["PFORMADE_PAGO"]=="04"?"selected":"").'>04 TARJETA DE CRÉDITO</option>
-                    <option value="05" '.($row["PFORMADE_PAGO"]=="05"?"selected":"").'>05 MONEDERO ELECTRÓNICO</option>
-                    <option value="06" '.($row["PFORMADE_PAGO"]=="06"?"selected":"").'>06 DINERO ELECTRÓNICO</option>
-                    <option value="08" '.($row["PFORMADE_PAGO"]=="08"?"selected":"").'>08 VALES DE DESPENSA</option>
-                    <option value="28" '.($row["PFORMADE_PAGO"]=="28"?"selected":"").'>28 TARJETA DE DÉBITO</option>
-                    <option value="29" '.($row["PFORMADE_PAGO"]=="29"?"selected":"").'>29 TARJETA DE SERVICIO</option>
-                    <option value="99" '.($row["PFORMADE_PAGO"]=="99"?"selected":"").'>99 OTRO</option>
-                </select>
-                <input type="hidden" id="formaDePagoHidden" name="" value="">
-            </td>
-        </tr>
-        <tr style="background:#f1a766;">
-            <td style="font-weight:bold;">MONTO DEPOSITADO</td>
-            <td><input type="text" name="MONTO_DEPOSITADO" value="'.$row["MONTO_DEPOSITADO"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">TIPO DE MONEDA O DIVISA</td>
-            <td>
-                <select name="TIPO_DE_MONEDA" style="background:#daddf5">
-                    <option value="SELECCIONA UNA OPCIÓN">SELECCIONA UNA OPCIÓN</option>
-                    <option value="MXN" '.($row["TIPO_DE_MONEDA"]=="MXN"?"selected":"").'>MXN (Peso mexicano)</option>
-                    <option value="USD" '.($row["TIPO_DE_MONEDA"]=="USD"?"selected":"").'>USD (Dólar)</option>
-                    <option value="EUR" '.($row["TIPO_DE_MONEDA"]=="EUR"?"selected":"").'>EUR (Euro)</option>
-                    <option value="GBP" '.($row["TIPO_DE_MONEDA"]=="GBP"?"selected":"").'>GBP (Libra esterlina)</option>
-                    <option value="CHF" '.($row["TIPO_DE_MONEDA"]=="CHF"?"selected":"").'>CHF (Franco suizo)</option>
-                    <option value="CNY" '.($row["TIPO_DE_MONEDA"]=="CNY"?"selected":"").'>CNY (Yuan)</option>
-                    <option value="JPY" '.($row["TIPO_DE_MONEDA"]=="JPY"?"selected":"").'>JPY (Yen japonés)</option>
-                    <option value="HKD" '.($row["TIPO_DE_MONEDA"]=="HKD"?"selected":"").'>HKD (Dólar hongkonés)</option>
-                    <option value="CAD" '.($row["TIPO_DE_MONEDA"]=="CAD"?"selected":"").'>CAD (Dólar canadiense)</option>
-                    <option value="AUD" '.($row["TIPO_DE_MONEDA"]=="AUD"?"selected":"").'>AUD (Dólar australiano)</option>
-                    <option value="BRL" '.($row["TIPO_DE_MONEDA"]=="BRL"?"selected":"").'>BRL (Real brasileño)</option>
-                    <option value="RUB" '.($row["TIPO_DE_MONEDA"]=="RUB"?"selected":"").'>RUB (Rublo ruso)</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">FECHA DE PROGRAMACIÓN DEL PAGO</td>
-            <td><input type="date" name="FECHA_DE_PAGO" value="'.$row["FECHA_DE_PAGO"].'"></td>
-        </tr>
-        <tr style="background:#f1a766;">
-            <td style="font-weight:bold;">FECHA EFECTIVA DE PAGO</td>
-            <td><input type="date" name="FECHA_A_DEPOSITAR" value="'.$row["FECHA_A_DEPOSITAR"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">STATUS DE PAGO</td>
-            <td class="form-control">'.$STATUS_DE_PAGO.'</td>
-        </tr>
-        <tr style="background:#f1a766;">
-            <td style="font-weight:bold;">ADJUNTAR COTIZACIÓN O REPORTE (CUALQUIER FORMATO)</td>
-            <td>'.$zonaArchivo('ADJUNTAR_COTIZACION', $archivosActuales['ADJUNTAR_COTIZACION'], $listaDoctos['ADJUNTAR_COTIZACION']).'</td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">ACTIVO FIJO</td>
-            <td><input type="text" name="ACTIVO_FIJO" value="'.$row["ACTIVO_FIJO"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">GASTO FIJO</td>
-            <td><input type="text" name="GASTO_FIJO" value="'.$row["GASTO_FIJO"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">PAGAR CADA</td>
-            <td><input type="text" name="PAGAR_CADA" value="'.$row["PAGAR_CADA"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">FECHA DE PROGRAMACIÓN DE PAGO</td>
-            <td><input type="date" name="FECHA_PPAGO" value="'.$row["FECHA_PPAGO"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">FECHA DE TERMINACIÓN DE LA PROGRAMACIÓN</td>
-            <td><input type="date" name="FECHA_TPROGRAPAGO" value="'.$row["FECHA_TPROGRAPAGO"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">NÚMERO DE EVENTO (FIJO) PARA PROGRAMACIÓN</td>
-            <td><input type="text" name="NUMERO_EVENTOFIJO" value="'.$row["NUMERO_EVENTOFIJO"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">CLASIFICACIÓN GENERAL</td>
-            <td><input type="text" name="CLASI_GENERAL" value="'.$row["CLASI_GENERAL"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">SUB CLASIFICACIÓN GENERAL</td>
-            <td><input type="text" name="SUB_GENERAL" value="'.$row["SUB_GENERAL"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">INSTITUCIÓN BANCARIA</td>
-            <td><input type="text" name="BANCO_ORIGEN" value="'.$row["BANCO_ORIGEN"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">PLACAS DEL VEHÍCULO</td>
-            <td><input type="text" name="PLACAS_VEHICULO" value="'.$row["PLACAS_VEHICULO"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">COMPROBANTE DE TRANSFERENCIA (FORMATO PDF)</td>
-            <td>'.$zonaArchivo('CONPROBANTE_TRANSFERENCIA', $archivosActuales['CONPROBANTE_TRANSFERENCIA'], $listaDoctos['CONPROBANTE_TRANSFERENCIA']).'</td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">COMPLEMENTOS DE PAGO (FORMATO PDF)</td>
-            <td>'.$zonaArchivo('COMPLEMENTOS_PAGO_PDF', $archivosActuales['COMPLEMENTOS_PAGO_PDF'], $listaDoctos['COMPLEMENTOS_PAGO_PDF']).'</td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">COMPLEMENTOS DE PAGO (FORMATO XML)</td>
-            <td>'.$zonaArchivo('COMPLEMENTOS_PAGO_XML', $archivosActuales['COMPLEMENTOS_PAGO_XML'], $listaDoctos['COMPLEMENTOS_PAGO_XML']).'</td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">ADJUNTAR CANCELACIONES (FORMATO PDF)</td>
-            <td>'.$zonaArchivo('CANCELACIONES_PDF', $archivosActuales['CANCELACIONES_PDF'], $listaDoctos['CANCELACIONES_PDF']).'</td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">ADJUNTAR CANCELACIONES (FORMATO XML)</td>
-            <td>'.$zonaArchivo('CANCELACIONES_XML', $archivosActuales['CANCELACIONES_XML'], $listaDoctos['CANCELACIONES_XML']).'</td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">ADJUNTAR FACTURA DE COMISIÓN DESCONTADA (FORMATO PDF)</td>
-            <td>'.$zonaArchivo('ADJUNTAR_FACTURA_DE_COMISION_PDF', $archivosActuales['ADJUNTAR_FACTURA_DE_COMISION_PDF'], $listaDoctos['ADJUNTAR_FACTURA_DE_COMISION_PDF']).'</td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">ADJUNTAR FACTURA DE COMISIÓN DESCONTADA (FORMATO XML)</td>
-            <td>'.$zonaArchivo('ADJUNTAR_FACTURA_DE_COMISION_XML', $archivosActuales['ADJUNTAR_FACTURA_DE_COMISION_XML'], $listaDoctos['ADJUNTAR_FACTURA_DE_COMISION_XML']).'</td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">ADJUNTAR CÁLCULO DE COMISIÓN</td>
-            <td>'.$zonaArchivo('CALCULO_DE_COMISION', $archivosActuales['CALCULO_DE_COMISION'], $listaDoctos['CALCULO_DE_COMISION']).'</td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">MONTO DE COMISIÓN</td>
-            <td><input type="text" name="MONTO_DE_COMISION" value="'.$row["MONTO_DE_COMISION"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">ADJUNTAR COMPROBANTE DE DEVOLUCIÓN DE DINERO A EPC</td>
-            <td>'.$zonaArchivo('COMPROBANTE_DE_DEVOLUCION', $archivosActuales['COMPROBANTE_DE_DEVOLUCION'], $listaDoctos['COMPROBANTE_DE_DEVOLUCION']).'</td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">ADJUNTAR NOTA DE CRÉDITO DE COMPRA</td>
-            <td>'.$zonaArchivo('NOTA_DE_CREDITO_COMPRA', $archivosActuales['NOTA_DE_CREDITO_COMPRA'], $listaDoctos['NOTA_DE_CREDITO_COMPRA']).'</td>
-        </tr>
-        <tr style="background:#f1a766;">
-            <td style="font-weight:bold;">PÓLIZA NÚMERO</td>
-            <td><input type="text" name="POLIZA_NUMERO" value="'.$row["POLIZA_NUMERO"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">NOMBRE DEL EJECUTIVO QUE INGRESÓ ESTA FACTURA</td>
-            <td><input type="text" name="NOMBRE_DEL_AYUDO" value="'.$row["NOMBRE_DEL_AYUDO"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">NOMBRE DEL EJECUTIVO QUE REALIZÓ LA COMPRA</td>
-            <td><input type="text" name="NOMBRE_DEL_EJECUTIVO" value="'.$row["NOMBRE_DEL_EJECUTIVO"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">OBSERVACIONES</td>
-            <td><input type="text" name="OBSERVACIONES_1" value="'.$row["OBSERVACIONES_1"].'"></td>
-        </tr>
-        <tr>
-            <td style="font-weight:bold;">ADJUNTAR ARCHIVO RELACIONADO A ESTE GASTO</td>
-            <td>'.$zonaArchivo('ADJUNTAR_ARCHIVO_1', $archivosActuales['ADJUNTAR_ARCHIVO_1'], $listaDoctos['ADJUNTAR_ARCHIVO_1']).'</td>
-        </tr>
 
-        <tr>
-            <td colspan="2">
-                <table id="reseteaxml" style="width:100%;">'.$campos_xml.'</table>
-            </td>
-        </tr>
-        <tr>
-            <td><label>FECHA DE ÚLTIMA CARGA</label></td>
-            <td><input type="text" readonly style="background:#decaf1" name="FECHA_DE_LLENADO" value="'.$row["FECHA_DE_LLENADO"].'"></td>
-        </tr>
-        </table>
+     $output .= '
 
-        <tr>
-            <td></td>
-            <td>
-                <button class="btn btn-sm btn-outline-success px-5" type="button" id="clickPAGOP">GUARDAR</button>
-                <div id="respuestaser2" class="d-inline-block ms-3"></div>
-                <button class="btn btn-sm btn-outline-success px-5" type="button" data-bs-dismiss="modal">CERRAR</button>
-                <input type="hidden" value="ENVIARPAGOprovee" name="ENVIARPAGOprovee"/>
-                <input type="hidden" value="'.$row["id"].'" name="IPpagoprovee" id="IPpagoprovee"/>
-            </td>
-        </tr>
-        </div></form>';
+ <tr>
+ 
+<td width="30%" style="font-weight:bold;" ><label>ADJUNTAR FACTURA (FORMATO XML)</label></td>
+<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_FACTURA_XML\')" ondragover="return false"'.$facturaDropZoneAttributes.'>
+<p>Suelta aquí o busca tu archivo</p>
+<p><input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_XML" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_FACTURA_XML\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_FACTURA_XML"] .' " required'.$facturaInputAttributes.' /></p>
+<input type="file" name="ADJUNTAR_FACTURA_XML" id="nono"'.$facturaInputAttributes.'/>
+<div id="3ADJUNTAR_FACTURA_XML">
+'.$ADJUNTAR_FACTURA_XML.'
+</tr> 
+<tr>
+ 
+ 
+<td width="30%" style="font-weight:bold;" ><label>ADJUNTAR FACTURA (FORMATO PDF)</label></td>
+<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_FACTURA_PDF\')" ondragover="return false"'.$facturaDropZoneAttributes.'>
+<p>Suelta aquí o busca tu archivo</p>
+<p><input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_PDF" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_FACTURA_PDF\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_FACTURA_PDF"] .' " required'.$facturaInputAttributes.' /></p>
+<input type="file" name="ADJUNTAR_FACTURA_PDF" id="nono"'.$facturaInputAttributes.'/>
+<div id="3ADJUNTAR_FACTURA_PDF">
+'.$ADJUNTAR_FACTURA_PDF.'
+</tr> 
 
-    } // end while
 
+<tr style="background:#F368E7">
+
+<td width="30%" style="font-weight:bold;" ><label>NÚMERO DE SOLICITUD</label></td>
+<td width="70%"><input type="text"   name="NUMERO_CONSECUTIVO_PROVEE" value="'.$row["NUMERO_CONSECUTIVO_PROVEE"].'"></td>
+</tr>
+
+
+<tr>
+    <td width="30%" style="font-weight:bold;" ><label>PAGO A PROVEEDOR, VIATICO, REEMBOLSO O<br> PAGO A PROVEEDOR CON DOS O MAS FACTURAS:</label></td>
+    <td width="70%" class="form-control">
+        <select name="VIATICOSOPRO" style="background:#daddf5">
+            <option style="background:#f2b4f5" value="SELECCIONA UNA OPCIÓN">SELECCIONA UNA OPCIÓN</option>
+            <option style="background:#f2b4f5" value="PAGO A PROVEEDOR" '.($row["VIATICOSOPRO"] == "PAGO A PROVEEDOR" ? "selected" : "").'>PAGO A PROVEEDOR </option>
+            <option style="background:#ddf5da" value="PAGO A PROVEEDOR CON DOS O MAS FACTURAS" '.($row["VIATICOSOPRO"] == "PAGO A PROVEEDOR CON DOS O MAS FACTURAS" ? "selected" : "").'>PAGO A PROVEEDOR CON DOS O MAS FACTURAS</option>
+			<option style="background:#b3f39b" value="PAGOS CON UNA SOLA FACTURA" '.($row["VIATICOSOPRO"] == "PAGOS CON UNA SOLA FACTURA" ? "selected" : "").'>PAGOS CON UNA SOLA FACTURA</option>
+            <option style="background:#fceade" value="VIATICOS" '.($row["VIATICOSOPRO"] == "VIATICOS" ? "selected" : "").'>VIATICOS</option>
+            <option style="background:#dee6fc" value="REEMBOLSO" '.($row["VIATICOSOPRO"] == "REEMBOLSO" ? "selected" : "").'>REEMBOLSO</option>
+            
+        </select>
+    </td>
+</tr>
+
+ 
+<tr>
+
+
+<td width="30%" style="font-weight:bold;" ><label>NOMBRE COMERCIAL</label></td>
+<td width="70%"><select id="NOMBRE_COMERCIAL_SELECT" name="NOMBRE_COMERCIAL" class="form-control">'.$proveedoresOptions.'</select><br><a style="color:red;font-size:10px">OBLIGATORIO (BUSCAR)</a></td>
+</tr> 
+<tr>
+
+<td width="30%" style="font-weight:bold;" ><label>RAZÓN SOCIAL</label></td>
+<td width="70%"><input type="text" style="width:80%;" id="RAZON_SOCIAL_INPUT"  name="RAZON_SOCIAL" value="'.$row["RAZON_SOCIAL"].'"></td>
+</tr> 
+<tr>
+ 
+<td width="30%" style="font-weight:bold;" ><label>RFC DEL PROVEEDOR</label></td>
+<td width="70%"><input type="text" id="RFC_PROVEEDOR_INPUT" name="RFC_PROVEEDOR" value="'.$row["RFC_PROVEEDOR"].'"></td>
+</tr> 
+
+
+
+ 
+
+<td width="30%" style="font-weight:bold;" ><label>NÚMERO  DE EVENTO </label></td>
+<td width="70%"><select id="NUMERO_EVENTO_SELECT" name="NUMERO_EVENTO" class="form-control">'.$eventosOptions.'</select><br><a style="color:red;font-size:10px">OBLIGATORIO (BUSCAR)  </a></td>
+</tr> 
+<tr>
+
+ 
+<td width="30%" style="font-weight:bold;" ><label>NOMBRE DEL EVENTO</label></td>
+<td width="70%"><input type="text" id="NOMBRE_EVENTO_INPUT" style="width:80%;" name="NOMBRE_EVENTO" value="'.$row["NOMBRE_EVENTO"].'"></td>
+</tr> 
+<tr>
+
+ 
+<td width="30%" style="font-weight:bold;" ><label>MOTIVO DEL GASTO</label></td>
+<td width="70%"><input type="text" name="MOTIVO_GASTO" value="'.$row["MOTIVO_GASTO"].'"></td>
+</tr> 
+<tr>
+ 
+<td width="30%" style="font-weight:bold;" ><label>CONCEPTO</label></td>
+<td width="70%"><input type="text" name="CONCEPTO_PROVEE" value="'.$row["CONCEPTO_PROVEE"].'"></td>
+</tr> 
+<tr>
+
+<td width="30%" style="font-weight:bold;" ><label>MONTO TOTAL DE LA COTIZACIÓN O DEL ADEUDO</label></td>
+<td width="70%"><input type="text" name="MONTO_TOTAL_COTIZACION_ADEUDO" value="'.$row["MONTO_TOTAL_COTIZACION_ADEUDO"].'"></td>
+</tr> 
+<tr >
+
+<td width="30%" style="font-weight:bold;" ><label>SUB TOTAL:</label></td>
+<td width="70%"><input type="text" name="MONTO_FACTURA" id="montoTotalEvento" value="'.$row["MONTO_FACTURA"].'"></td>
+</tr>
+
+ 
+<tr >
+<td width="30%" style="font-weight:bold;" ><label>IVA:</label></td>
+<td width="70%"><input type="text" name="IVA" id="montoTotalAvion" value="'.$row["IVA"].'"></td>
+</tr> 
+
+<tr>
+<td width="30%" style="font-weight:bold;" ><label>IMPUESTOS RETENIDOS  IVA:</label></td>
+<td width="70%"><input type="text" name="TImpuestosRetenidosIVA" id="montoRetenidoIVA" value="'.$row["TImpuestosRetenidosIVA"].'"></td>
+</tr> 
+
+<tr >
+<td width="30%" style="font-weight:bold;" ><label>IMPUESTOS RETENIDOS  ISR:</label></td>
+<td width="70%"><input type="text" name="TImpuestosRetenidosISR" id="montoRetenidoISR" value="'.$row["TImpuestosRetenidosISR"].'"></td>
+</tr> 
+
+<tr >
+<td width="30%" style="font-weight:bold;" ><label>MONTO DE LA PROPINA O SERVICIO NO INCLUIDO EN LA FACTURA</label></td>
+<td width="70%"><input type="text" name="MONTO_PROPINA" id="montoTotalpropina" value="'.$row["MONTO_PROPINA"].'"></td>
+</tr> 
+<tr>
+
+<td width="30%" style="font-weight:bold;" ><label>IMPUESTO SOBRE HOSPEDAJE MÁS EL IMPUESTO DE SANEAMIENTO</label></td>
+<td width="70%"><input type="text" name="IMPUESTO_HOSPEDAJE" id="montoTotalhospedaje" value="'.$row["IMPUESTO_HOSPEDAJE"].'"></td>
+</tr>
+
+<tr>
+<td width="30%" style="font-weight:bold;" ><label>DESCUENTO:</label></td>
+<td width="70%"><input type="text" name="descuentos" id="montoDescuentos" value="'.$row["descuentos"].'"></td>
+</tr> 
+
+
+<tr >
+<td width="30%" style="font-weight:bold;" ><label>TOTAL</label></td>
+<td width="70%"><input type="text" readonly=»readonly» style="background:#decaf1" name="MONTO_DEPOSITAR" id="montoTotalEventoResultado" value="'.$row["MONTO_DEPOSITAR"].'"></td>
+</tr>
+
+
+
+<tr >
+<td width="30%" style="font-weight:bold;" ><label>TIPO DE CAMBIO</label></td>
+<td width="70%"><input type="text" name="TIPO_CAMBIOP" value="'.$row["TIPO_CAMBIOP"].'"></td>
+</tr>
+
+<tr >
+<td width="30%" style="font-weight:bold;" ><label>TOTAL DE LA CONVERSIÓN </label></td>
+<td width="70%"><input type="text" name="TOTAL_ENPESOS" value="'.$row["TOTAL_ENPESOS"].'"></td>
+</tr>
+
+
+<tr>
+    <td width="30%" style="font-weight:bold;" ><label>FORMA DE PAGO:</label></td>
+    <td width="70%" class="form-control">
+        <select name="PFORMADE_PAGO" style="background:#daddf5">
+            <option style="background:#f2b4f5" value="">SELECCIONA UNA OPCIÓN</option>
+            <option style="background:#f2b4f5" value="03" '.($row["PFORMADE_PAGO"] == "03" ? "selected" : "").'>03 TRANSFERENCIA ELECTRÓNICA</option>
+            <option style="background:#ddf5da" value="01" '.($row["PFORMADE_PAGO"] == "01" ? "selected" : "").'>01 EFECTIVO</option>
+            <option style="background:#fceade" value="02" '.($row["PFORMADE_PAGO"] == "02" ? "selected" : "").'>02 CHEQUE NOMINATIVO</option>
+            <option style="background:#dee6fc" value="04" '.($row["PFORMADE_PAGO"] == "04" ? "selected" : "").'>04 TARJETA DE CRÉDITO</option>
+            <option style="background:#f6fcde" value="05" '.($row["PFORMADE_PAGO"] == "05" ? "selected" : "").'>05 MONEDERO ELECTRÓNICO</option>
+            <option style="background:#dee2fc" value="06" '.($row["PFORMADE_PAGO"] == "06" ? "selected" : "").'>06 DINERO ELECTRÓNICO</option>
+            <option style="background:#f9e5fa" value="08" '.($row["PFORMADE_PAGO"] == "08" ? "selected" : "").'>08 VALES DE DESPENSA</option>
+            <option style="background:#eefcde" value="28" '.($row["PFORMADE_PAGO"] == "28" ? "selected" : "").'>28 TARJETA DE DÉBITO</option>
+            <option style="background:#fcfbde" value="29" '.($row["PFORMADE_PAGO"] == "29" ? "selected" : "").'>29 TARJETA DE SERVICIO</option>
+            <option style="background:#f9e5fa" value="99" '.($row["PFORMADE_PAGO"] == "99" ? "selected" : "").'>99 OTRO</option>
+        </select>
+    </td>
+</tr>
+
+<tr style="background: #f1a766">
+<td width="30%" style="font-weight:bold;" ><label>MONTO DEPOSITADO</label></td>
+<td width="70%"><input type="text" name="MONTO_DEPOSITADO" value="'.$row["MONTO_DEPOSITADO"].'"></td>
+</tr>
+
+
+	<tr>
+	
+	<td width="30%" style="font-weight:bold;" ><label>TIPO DE MONEDA O DIVISA:</label></td>
+    <td width="70%" >
+        <select name="TIPO_DE_MONEDA" style="background:#daddf5">
+		
+		
+            <option style="background:#f2b4f5" value="SELECCIONA UNA OPCIÓN">SELECCIONA UNA OPCIÓN</option> 
+			
+			
+            <option style="background:#a3e4d7" value="MXN" '.($row["TIPO_DE_MONEDA"] == "MXN" ? "selected" : "").'>MXN (Peso mexicano) </option>
+			
+            <option style="background:#c9e8e8" value="USD" '.($row["TIPO_DE_MONEDA"] == "USD" ? "selected" : "").'>USD (Dolar) </option>			
+
+             <option style="background:#e8f6f3" value="EUR" '.($row["TIPO_DE_MONEDA"] == "EUR" ? "selected" : "").'>EUR (Euro) </option>     
+
+             <option style="background:#fdf2e9" value="GBP" '.($row["TIPO_DE_MONEDA"] == "GBP" ? "selected" : "").'>GBP (Libra esterlina)</option> 
+	
+
+             <option style="background:#eaeded" value="CHF" '.($row["TIPO_DE_MONEDA"] == "CHF" ? "selected" : "").'>CHF (Franco suizo)</option> 
+
+             <option style="background:#fdebd0" value="CNY" '.($row["TIPO_DE_MONEDA"] == "CNY" ? "selected" : "").'>CNY (Yuan)</option> 
+			 
+             <option style="background:#ebdef0" value="JPY" '.($row["TIPO_DE_MONEDA"] == "JPY" ? "selected" : "").'>JPY (Yen japonés)</option>
+
+             <option style="background:#fef5e7" value="HKD" '.($row["TIPO_DE_MONEDA"] == "HKD" ? "selected" : "").'>HKD (Dólar hongkonés)</option> 
+			 
+             <option style="background:#ebedef" value="CAD" '.($row["TIPO_DE_MONEDA"] == "CAD" ? "selected" : "").'>CAD (Dólar canadiense)</option> 	
+
+
+             <option style="background:#fbeee6" value="AUD" '.($row["TIPO_DE_MONEDA"] == "AUD" ? "selected" : "").'>AUD (Dólar australiano)</option>
+			 			 
+             <option style="background:#f2b4f5" value="BRL" '.($row["TIPO_DE_MONEDA"] == "BRL" ? "selected" : "").'>BRL (Real brasileño)</option>
+			 			 
+             <option style="background:#e8f6f3" value="RUB" '.($row["TIPO_DE_MONEDA"] == "RUB" ? "selected" : "").'>RUB  (Rublo ruso)</option>			 
+        </select>
+    </td>
+</tr> 
+
+
+
+<tr>   
+
+<td width="30%" style="font-weight:bold;" ><label>FECHA DE PROGRAMACIÓN DEL PAGO</label></td>
+<td width="70%"><input type="date" name="FECHA_DE_PAGO" value="'.$row["FECHA_DE_PAGO"].'"></td>
+</tr>  
+
+<tr   style="background: #f1a766">
+
+<td width="30%" style="font-weight:bold;" ><label>FECHA EFECTIVA DE PAGO:</label></td>
+<td width="70%"><input type="date" name="FECHA_A_DEPOSITAR" value="'.$row["FECHA_A_DEPOSITAR"].'"></td>
+</tr> 
+<tr style="background: #f1a766">
+
+<td width="30%" style="font-weight:bold;" ><label>STATUS DE PAGO</label></td>
+<td width="70%" class="form-control">'.$STATUS_DE_PAGO .'</td>
+</tr> 
+<tr style="background: #f1a766">
+
+<td width="30%" style="font-weight:bold;" ><label>ADJUNTAR COTIZACIÓN O REPORTE: (CUAQUIER FORMATO)</label></td>
+
+
+
+
+<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_COTIZACION\')" ondragover="return false" style="width:300px;">
+<p>Suelta aquí o busca tu archivo</p>
+<p><input class="form-control form-control-sm" id="ADJUNTAR_COTIZACION" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_COTIZACION\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_COTIZACION"] .' " required /></p>
+<input type="file" name="ADJUNTAR_COTIZACION" id="nono"/>
+<div id="3ADJUNTAR_COTIZACION">
+'.$ADJUNTAR_COTIZACION.'
+</tr> 
+
+
+
+<tr>
+<td width="30%" style="font-weight:bold;" ><label>ACTIVO FIJO</label></td>
+<td width="70%"><input type="text"   name="ACTIVO_FIJO"  value="'.$row["ACTIVO_FIJO"].'"></td>
+</tr>
+
+
+
+<tr>
+<td width="30%" style="font-weight:bold;" ><label>GASTO FIJO</label></td>
+<td width="70%"><input type="text"   name="GASTO_FIJO"  value="'.$row["GASTO_FIJO"].'"></td>
+</tr>
+
+
+
+<tr>
+<td width="30%" style="font-weight:bold;" ><label>PAGAR CADA:</label></td>
+<td width="70%"><input type="text"   name="PAGAR_CADA"  value="'.$row["PAGAR_CADA"].'"></td>
+</tr>
+
+<tr>
+<td width="30%" style="font-weight:bold;" ><label>FECHA DE PROGRAMACIÓN DE PAGO:</label></td>
+<td width="70%"><input type="date"   name="FECHA_PPAGO"  value="'.$row["FECHA_PPAGO"].'"></td>
+</tr>
+
+              
+<tr>
+<td width="30%" style="font-weight:bold;" ><label>FECHA DE TERMINACIÓN DE LA PROGRAMACIÓN:</label></td>
+<td width="70%"><input type="date"   name="FECHA_TPROGRAPAGO"  value="'.$row["FECHA_TPROGRAPAGO"].'"></td>
+</tr>
+
+
+
+<tr>
+<td width="30%" style="font-weight:bold;" ><label>NÚMERO DE EVENTO (FIJO) PARA PROGRAMACIÓN:</label></td>
+<td width="70%"><input type="text"   name="NUMERO_EVENTOFIJO"  value="'.$row["NUMERO_EVENTOFIJO"].'"></td>
+</tr>
+
+<tr>
+<td width="30%" style="font-weight:bold;" ><label>CLASIFICACIÓN GENERAL:</label></td>
+<td width="70%"><input type="text"   name="CLASI_GENERAL"  value="'.$row["CLASI_GENERAL"].'"></td>
+</tr>
+
+<tr>
+<td width="30%" style="font-weight:bold;" ><label> SUB CLASIFICACIÓN GENERAL:</label></td>
+<td width="70%"><input type="text"   name="SUB_GENERAL"  value="'.$row["SUB_GENERAL"].'"></td>
+</tr>
+
+
+<tr>
+
+<td width="30%" style="font-weight:bold;" ><label>INSTITUCIÓN BANCARIA</label></td>
+<td width="70%"><input type="text" name="BANCO_ORIGEN" value="'.$row["BANCO_ORIGEN"].'"></td>
+</tr>
+
+
+<tr>
+
+<td width="30%" style="font-weight:bold;" ><label>PLACAS DEL VEHICULO</label></td>
+<td width="70%"><input type="text" name="PLACAS_VEHICULO" value="'.$row["PLACAS_VEHICULO"].'"></td>
+</tr>
+<tr  style="background: #f1a766">
+
+<td width="30%" style="font-weight:bold;" ><label>ADJUNTAR COMPROBANTE DE TRANSFERENCIA: (FORMATO PDF)</label></td>
+<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'CONPROBANTE_TRANSFERENCIA\')" ondragover="return false" style="width:300px;">
+<p>Suelta aquí o busca tu archivo</p>
+<p><input class="form-control form-control-sm" id="CONPROBANTE_TRANSFERENCIA" type="text" onkeydown="return false" onclick="file_explorer2(\'CONPROBANTE_TRANSFERENCIA\');" style="width:250px;" VALUE="'.$row["CONPROBANTE_TRANSFERENCIA"] .' " required /></p>
+<input type="file" name="CONPROBANTE_TRANSFERENCIA" id="nono"/>
+<div id="3CONPROBANTE_TRANSFERENCIA">
+'.$CONPROBANTE_TRANSFERENCIA.'
+</tr> 
+
+<tr>
+
+<td width="30%" style="font-weight:bold;" ><label>COMPLEMENTOS DE PAGO  (FORMATO XML)</label></td>
+<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'COMPLEMENTOS_PAGO_XML\')" ondragover="return false" style="width:300px;">
+<p>Suelta aquí o busca tu archivo</p>
+<p><input class="form-control form-control-sm" id="COMPLEMENTOS_PAGO_XML" type="text" onkeydown="return false" onclick="file_explorer2(\'COMPLEMENTOS_PAGO_XML\');" style="width:250px;" VALUE="'.$row["COMPLEMENTOS_PAGO_XML"] .' " required /></p>
+<input type="file" name="COMPLEMENTOS_PAGO_XML" id="nono"/>
+<div id="3COMPLEMENTOS_PAGO_XML">
+'.$COMPLEMENTOS_PAGO_XML.'
+</tr> 
+<tr>
+
+<td width="30%" style="font-weight:bold;" ><label>COMPLEMENTOS DE PAGO  (FORMATO PDF)</label></td>
+<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'COMPLEMENTOS_PAGO_PDF\')" ondragover="return false" style="width:300px;">
+<p>Suelta aquí o busca tu archivo</p>
+<p><input class="form-control form-control-sm" id="COMPLEMENTOS_PAGO_PDF" type="text" onkeydown="return false" onclick="file_explorer2(\'COMPLEMENTOS_PAGO_PDF\');" style="width:250px;" VALUE="'.$row["COMPLEMENTOS_PAGO_PDF"] .' " required /></p>
+<input type="file" name="COMPLEMENTOS_PAGO_PDF" id="nono"/>
+<div id="3COMPLEMENTOS_PAGO_PDF">
+'.$COMPLEMENTOS_PAGO_PDF.'
+</tr> 
+<tr>
+
+<td width="30%" style="font-weight:bold;" ><label>ADJUNTAR CANCELACIONES (FORMATO PDF)</label></td>
+<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'CANCELACIONES_PDF\')" ondragover="return false" style="width:300px;">
+<p>Suelta aquí o busca tu archivo</p>
+<p><input class="form-control form-control-sm" id="CANCELACIONES_PDF" type="text" onkeydown="return false" onclick="file_explorer2(\'CANCELACIONES_PDF\');" style="width:250px;" VALUE="'.$row["CANCELACIONES_PDF"] .' " required /></p>
+<input type="file" name="CANCELACIONES_PDF" id="nono"/>
+<div id="3CANCELACIONES_PDF">
+'.$CANCELACIONES_PDF.'
+</tr> 
+<tr>
+
+<td width="30%" style="font-weight:bold;" ><label>ADJUNTAR CANCELACIONES (FORMATO PDF)</label></td>
+<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'CANCELACIONES_XML\')" ondragover="return false" style="width:300px;">
+<p>Suelta aquí o busca tu archivo</p>
+<p><input class="form-control form-control-sm" id="CANCELACIONES_XML" type="text" onkeydown="return false" onclick="file_explorer2(\'CANCELACIONES_XML\');" style="width:250px;" VALUE="'.$row["CANCELACIONES_XML"] .' " required /></p>
+<input type="file" name="CANCELACIONES_XML" id="nono"/>
+<div id="3CANCELACIONES_XML">
+'.$CANCELACIONES_XML.'
+</tr> 
+
+<tr>
+
+<td width="30%" style="font-weight:bold;" ><label>ADJUNTAR FACTURA DE COMISIÓN :(FORMATO PDF)</label></td>
+<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_FACTURA_DE_COMISION_PDF\')" ondragover="return false" style="width:300px;">
+<p>Suelta aquí o busca tu archivo</p>
+<p><input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_DE_COMISION_PDF" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_FACTURA_DE_COMISION_PDF\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_FACTURA_DE_COMISION_PDF"] .' " required /></p>
+<input type="file" name="ADJUNTAR_FACTURA_DE_COMISION_PDF" id="nono"/>
+<div id="3ADJUNTAR_FACTURA_DE_COMISION_PDF">
+'.$ADJUNTAR_FACTURA_DE_COMISION_PDF.'
+</tr>
+<tr>
+
+<td width="30%" style="font-weight:bold;" ><label>ADJUNTAR FACTURA DE COMISIÓN:(FORMATO XML)</label></td>
+<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_FACTURA_DE_COMISION_XML\')" ondragover="return false" style="width:300px;">
+<p>Suelta aquí o busca tu archivo</p>
+<p><input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_DE_COMISION_XML" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_FACTURA_DE_COMISION_XML\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_FACTURA_DE_COMISION_XML"] .' " required /></p>
+<input type="file" name="ADJUNTAR_FACTURA_DE_COMISION_XML" id="nono"/>
+<div id="3ADJUNTAR_FACTURA_DE_COMISION_XML">
+'.$ADJUNTAR_FACTURA_DE_COMISION_XML.'
+</tr>
+
+<tr>
+
+<td width="30%" style="font-weight:bold;" ><label> ADJUNTAR CALCULO DE COMISIÓN</label></td>
+<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'CALCULO_DE_COMISION\')" ondragover="return false" style="width:300px;">
+<p>Suelta aquí o busca tu archivo</p>
+<p><input class="form-control form-control-sm" id="CALCULO_DE_COMISION" type="text" onkeydown="return false" onclick="file_explorer2(\'CALCULO_DE_COMISION\');" style="width:250px;" VALUE="'.$row["CALCULO_DE_COMISION"] .' " required /></p>
+<input type="file" name="CALCULO_DE_COMISION" id="nono"/>
+<div id="3CALCULO_DE_COMISION">
+'.$CALCULO_DE_COMISION.'
+</tr>
+<tr>
+
+<td width="30%" style="font-weight:bold;" ><label>MONTO DE COMISIÓN</label></td>
+<td width="70%"><input type="text" name="MONTO_DE_COMISION" value="'.$row["MONTO_DE_COMISION"].'"></td>
+</tr>
+
+
+
+<tr>
+<td width="30%" style="font-weight:bold;" ><label> ADJUNTAR COMPROBANTE DE DEVOLUCIÓN DE DINERO A EPC</label></td>
+<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'COMPROBANTE_DE_DEVOLUCION\')" ondragover="return false" style="width:300px;">
+<p>Suelta aquí o busca tu archivo</p>
+<p><input class="form-control form-control-sm" id="COMPROBANTE_DE_DEVOLUCION" type="text" onkeydown="return false" onclick="file_explorer2(\'COMPROBANTE_DE_DEVOLUCION\');" style="width:250px;" VALUE="'.$row["COMPROBANTE_DE_DEVOLUCION"] .' " required /></p>
+<input type="file" name="COMPROBANTE_DE_DEVOLUCION" id="nono"/>
+<div id="3COMPROBANTE_DE_DEVOLUCION">
+'.$COMPROBANTE_DE_DEVOLUCION.'
+</tr>
+
+
+<tr>
+
+<td width="30%" style="font-weight:bold;" ><label> ADJUNTAR NOTA DE CREDITO DE COMPRA</label></td>
+<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'NOTA_DE_CREDITO_COMPRA\')" ondragover="return false" style="width:300px;">
+<p>Suelta aquí o busca tu archivo</p>
+<p><input class="form-control form-control-sm" id="NOTA_DE_CREDITO_COMPRA" type="text" onkeydown="return false" onclick="file_explorer2(\'NOTA_DE_CREDITO_COMPRA\');" style="width:250px;" VALUE="'.$row["NOTA_DE_CREDITO_COMPRA"] .' " required /></p>
+<input type="file" name="NOTA_DE_CREDITO_COMPRA" id="nono"/>
+<div id="3NOTA_DE_CREDITO_COMPRA">
+'.$NOTA_DE_CREDITO_COMPRA.'
+</tr>
+
+<tr style="background: #f1a766">
+
+<td width="30%" style="font-weight:bold;" ><label>PÓLIZA NÚMERO</label></td>
+<td width="70%"><input type="text" name="POLIZA_NUMERO" value="'.$row["POLIZA_NUMERO"].'"></td>
+</tr>
+<tr>
+
+<td width="30%" style="font-weight:bold;" ><label>NOMBRE DEL EJECUTIVO QUE INGRESO ESTA FACTURA</label></td>
+<td width="70%"><input type="text" name="NOMBRE_DEL_AYUDO" value="'.$row["NOMBRE_DEL_AYUDO"].'"></td>
+</tr>
+
+
+<tr>
+
+<td width="30%" style="font-weight:bold;" ><label>NOMBRE DEL EJECUTIVO QUE REALIZÓ LA COMPRA</label></td>
+<td width="70%"><input type="text" name="NOMBRE_DEL_EJECUTIVO" value="'.$row["NOMBRE_DEL_EJECUTIVO"].'"></td>
+</tr>
+
+
+
+<tr>
+
+<td width="30%" style="font-weight:bold;"><label>OBSERVACIONES</label></td>
+<td width="70%"><input type="text" name="OBSERVACIONES_1" value="'.$row["OBSERVACIONES_1"].'"></td>
+</tr>
+<tr>
+
+<td width="30%" style="font-weight:bold;" ><label>ADJUNTAR ARCHIVO RELACIONADO A ESTE GASTO</label></td>
+<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_ARCHIVO_1\')" ondragover="return false" style="width:300px;">
+<p>Suelta aquí o busca tu archivo</p>
+<p><input class="form-control form-control-sm" id="ADJUNTAR_ARCHIVO_1" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_ARCHIVO_1\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_ARCHIVO_1"] .' " required /></p>
+<input type="file" name="ADJUNTAR_ARCHIVO_1" id="nono"/>
+<div id="3ADJUNTAR_ARCHIVO_1">
+'.$ADJUNTAR_ARCHIVO_1.'
+</tr>
+
+
+
+<tr><td colspan=2>
+<table id="reseteaxml" style="width:100%;">'.$campos_xml.'</table>
+</td></tr>
+
+
+<tr>
+<td width="30%" ><label>FECHA DE ÚLTIMA CARGA:</label></td>
+<td width="70%"><input type="text" readonly=»readonly» style="background:#decaf1" name="FECHA_DE_LLENADO" value="'.$row["FECHA_DE_LLENADO"].'"></td>
+</tr>
+</table>
+<tr>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <td width="30%"><label><strong style="font-size:22px;"></strong></label></td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <td width="70%" class="align-middle">
+        <!-- Botón GUARDAR -->
+        <button class="btn btn-sm btn-outline-success px-5" type="button" id="clickPAGOP">GUARDAR</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        
+        <div id="respuestaser" class="d-inline-block ms-3" style="
+    color: #f5f5f5;
+    text-shadow: 1px 1px 1px #919191,
+        1px 2px 1px #919191,
+        1px 3px 1px #919191,
+        1px 4px 1px #919191,
+        1px 5px 1px #919191,
+        1px 6px 1px #919191,
+        1px 7px 1px #919191,
+        1px 8px 1px #919191,
+        1px 9px 1px #919191,
+        1px 10px 1px #919191,
+    1px 18px 6px rgba(16,16,16,0.4),
+    1px 22px 10px rgba(16,16,16,0.2),
+    1px 25px 35px rgba(16,16,16,0.2),
+    1px 30px 60px rgba(16,16,16,0.4);
+        @keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 100; }
+}"></div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+        <!-- Botón CERRAR al lado -->
+        <button class="btn btn-sm btn-outline-success px-5" type="button" data-bs-dismiss="modal">CERRAR</button>
+
+   <input type="hidden" value="ENVIARPAGOprovee" name="ENVIARPAGOprovee"/>
+        <input type="hidden" value="'.$identioficador.'" name="IPpagoprovee" id="IPpagoprovee"/>
+  </td>
+</tr>
+
+
+     ';
+    }
+    $output .= '</table></div></form>';
     echo $output;
 }
+
 ?>
 
 <script>
 (function () {
+    var CLAVE_CAMBIO_PROVEEDOR = "epecinnP123";  
+    var valorProveedorAnterior = '';
 
-    // ── Forma de pago: bloquear si viene del XML ──────────────────────────
-    $(document).ready(function () {
-        var sel = document.getElementById('formaDePagoSelect');
-        if (sel && sel.getAttribute('data-lock-xml') === '1') {
-            sel.disabled = true;
-            document.getElementById('formaDePagoHidden').name  = 'PFORMADE_PAGO';
-            document.getElementById('formaDePagoHidden').value = sel.value;
+    function aplicarDatosProveedor(opcion) {
+        if (!opcion) return;
+
+        var razonSocialInput  = document.getElementById('RAZON_SOCIAL_INPUT');
+        var rfcProveedorInput = document.getElementById('RFC_PROVEEDOR_INPUT');
+
+        var razonSocial  = opcion.getAttribute('data-razon') || '';
+        var rfcProveedor = opcion.getAttribute('data-rfc') || '';
+
+        if (razonSocialInput) {
+            razonSocialInput.value = razonSocial;
         }
-    });
+        if (rfcProveedorInput) {
+            rfcProveedorInput.value = rfcProveedor;
+        }
+    }
 
-    window.bloquearFormaPagoDesdeXml = function(formaPago) {
-        var sel = document.getElementById('formaDePagoSelect');
-        if (!sel || !formaPago) return;
-        sel.value    = formaPago;
-        sel.disabled = true;
-        var hidden   = document.getElementById('formaDePagoHidden');
-        hidden.name  = 'PFORMADE_PAGO';
-        hidden.value = formaPago;
-    };
+    function actualizarDatosEvento() {
+        var selectEvento      = document.getElementById('NUMERO_EVENTO_SELECT');
+        var nombreEventoInput = document.getElementById('NOMBRE_EVENTO_INPUT');
 
-    // ── Calcular total ────────────────────────────────────────────────────
+        if (!selectEvento || !nombreEventoInput) return;
+
+        var opcion = selectEvento.options[selectEvento.selectedIndex];
+        nombreEventoInput.value = opcion ? (opcion.getAttribute('data-nombre') || '') : '';
+    }
+
     function calcularTotal() {
-        var ids = ['montoTotalEvento','montoTotalAvion','montoTotalpropina',
-                   'montoTotalhospedaje','montoRetenidoIVA','montoRetenidoISR','montoDescuentos'];
-        var vals = ids.map(function(id) {
-            var el = document.getElementById(id);
-            return parseFloat((el ? el.value : '0').replace(/,/g,'')) || 0;
-        });
-        var total = vals[0] + vals[1] + vals[2] + vals[3] - vals[4] - vals[5] - vals[6];
-        var res = document.getElementById('montoTotalEventoResultado');
-        if (res) res.value = total.toFixed(2);
+        var montoEventoEl      = document.getElementById('montoTotalEvento');
+        var montoAvionEl       = document.getElementById('montoTotalAvion');
+        var montoPropinaEl     = document.getElementById('montoTotalpropina');
+        var montoHospedajeEl   = document.getElementById('montoTotalhospedaje');
+        var montoRetIVAEl      = document.getElementById('montoRetenidoIVA');
+        var montoRetISREl      = document.getElementById('montoRetenidoISR');
+        var montoDescuentosEl  = document.getElementById('montoDescuentos');
+        var totalResultadoEl   = document.getElementById('montoTotalEventoResultado');
+
+        if (!totalResultadoEl) return;
+
+        var montoEvento      = parseFloat(montoEventoEl ? montoEventoEl.value : 0) || 0;
+        var montoAvion       = parseFloat(montoAvionEl ? montoAvionEl.value : 0) || 0;
+        var montopropina     = parseFloat(montoPropinaEl ? montoPropinaEl.value : 0) || 0;
+        var montohospedaje   = parseFloat(montoHospedajeEl ? montoHospedajeEl.value : 0) || 0;
+        var montoRetenidoIVA = parseFloat(montoRetIVAEl ? montoRetIVAEl.value : 0) || 0;
+        var montoRetenidoISR = parseFloat(montoRetISREl ? montoRetISREl.value : 0) || 0;
+        var montoDescuentos  = parseFloat(montoDescuentosEl ? montoDescuentosEl.value : 0) || 0;
+
+        var total = montoEvento + montoAvion + montopropina + montohospedaje
+                  - montoRetenidoIVA - montoRetenidoISR - montoDescuentos;
+
+        totalResultadoEl.value = total.toFixed(2);
     }
 
-    calcularTotal();
-    ['montoTotalEvento','montoTotalAvion','montoTotalpropina','montoTotalhospedaje',
-     'montoRetenidoIVA','montoRetenidoISR','montoDescuentos'].forEach(function(id) {
-        var el = document.getElementById(id);
-        if (el) el.addEventListener('input', calcularTotal);
-    });
-
-    // ── Subida de archivos (inmediata — ventasoperaciones3) ───────────────
-    window.upload_file2 = function (e, name) {
-        e.preventDefault();
-        ajax_file_upload2(e.dataTransfer.files[0], name);
-    };
-
-    window.file_explorer2 = function (name) {
-        var input = document.getElementsByName(name)[0];
-        if (!input) return;
-        input.click();
-        input.onchange = function () { ajax_file_upload2(input.files[0], name); };
-    };
-
-    function ajax_file_upload2(file_obj, nombre) {
-        if (!file_obj) return;
-        var form_data = new FormData();
-        form_data.append(nombre, file_obj);
-        form_data.append("IPpagoprovee", $("#IPpagoprovee").val());
-
-        $.ajax({
-            type: 'POST',
-            url: "ventasoperaciones3/controladorPP.php",
-            dataType: "html",
-            contentType: false,
-            processData: false,
-            data: form_data,
-            beforeSend: function () {
-                $('#3' + nombre).html('<p style="color:green;"><span class="spinner-border spinner-border-sm"></span> Cargando archivo...</p>');
-                $('#respuestaser').html('<p style="color:green;">Actualizando...</p>');
-            },
-            success: function (response) {
-                var resp  = $.trim(response);
-                var parts = resp.split('^^');
-
-                if (resp === '2') {
-                    $('#3' + nombre).html('<p style="color:red;">Error: archivo diferente a PDF, JPG o GIF.</p>');
-                    $('[name="' + nombre + '"]').val('');
-
-                } else if (parts[0] === '3') {
-                    var numSol = $.trim(parts[1] || '');
-                    $('#3' + nombre).html(numSol
-                        ? '<p style="color:red;font-weight:600;">⚠️ UUID YA REGISTRADO — Solicitud: <strong>' + numSol + '</strong></p>'
-                        : '<p style="color:red;font-weight:600;">⚠️ UUID PREVIAMENTE CARGADO.</p>');
-                    $('[name="' + nombre + '"]').val('');
-
-                } else if (resp === '4') {
-                    var fmt = (nombre === 'ADJUNTAR_FACTURA_XML') ? 'XML' : 'PDF';
-                    $('#3' + nombre).html('<p style="color:red;">ESTE ARCHIVO TIENE QUE SER EN FORMATO ' + fmt + '.</p>');
-                    $('[name="' + nombre + '"]').val('');
-
-                } else if (parts[0] === '5') {
-                    $('#3' + nombre).html('<p style="color:red;font-weight:600;">⚠️ El XML está vacío o no contiene información válida.</p>');
-                    $('[name="' + nombre + '"]').val('');
-
-                } else {
-                    var nombreArchivo = $.trim(parts[0]);
-                    var uuid          = $.trim(parts[1] || '');
-                    var formaPago     = $.trim(parts[2] || '');
-
-                    $('#3' + nombre).html(
-                        '<p style="color:green;">✅ ¡Archivo cargado!</p>' +
-                        '<a target="_blank" href="includes/archivos/' + nombreArchivo + '">Visualizar!</a>'
-                    );
-
-                    if (formaPago.length) {
-                        bloquearFormaPagoDesdeXml(formaPago);
-                    }
-
-                    if (nombre === 'ADJUNTAR_FACTURA_XML' && uuid.length > 1) {
-                        $('#respuestaser').html(
-                            '<p style="color:green;font-size:18px;font-weight:bold;">✅ XML cargado — UUID: ' + uuid + '</p>'
-                        );
-                        $('#reseteaxml').remove();
-                    } else {
-                        $('#respuestaser').html('<p style="color:green;">✅ Actualizado</p>');
-                    }
-                }
-            }
-        });
-    }
-
-    // ── Guardar ───────────────────────────────────────────────────────────
     $(document).ready(function () {
+        var selectProveedor = document.getElementById('NOMBRE_COMERCIAL_SELECT');
+        var selectEvento    = document.getElementById('NUMERO_EVENTO_SELECT');
+
+        if (selectProveedor) {
+            valorProveedorAnterior = selectProveedor.value;
+            aplicarDatosProveedor(selectProveedor.options[selectProveedor.selectedIndex]);
+        }
+
+        if (selectEvento) {
+            actualizarDatosEvento();
+        }
+
+        // Evita eventos duplicados
+        $(document)
+            .off('change', '#NOMBRE_COMERCIAL_SELECT')
+            .on('change', '#NOMBRE_COMERCIAL_SELECT', function () {
+                var nuevoValor  = this.value;
+                var opcionNueva = this.options[this.selectedIndex];
+
+                if (nuevoValor === valorProveedorAnterior) {
+                    return;
+                }
+
+                var clave = prompt(
+                    "CAMBIO DE PROVEEDOR\n\n" +
+                    "Este campo está vinculado a la cuenta bancaria y datos fiscales.\n" +
+                    "Ingresa la contraseña de autorización para continuar:"
+                );
+
+                if (clave === null) {
+                    this.value = valorProveedorAnterior;
+                    return;
+                }
+
+                if (clave !== CLAVE_CAMBIO_PROVEEDOR) {
+                    alert("Contraseña incorrecta. No se realizó el cambio.");
+                    this.value = valorProveedorAnterior;
+                    return;
+                }
+
+                var nombreNuevo = opcionNueva.text;
+                var confirma = confirm(
+                    "Contraseña correcta.\n\n" +
+                    "¿Confirmas cambiar el proveedor a:\n\"" + nombreNuevo + "\"?\n\n" +
+                    "Esto actualizará la Razón Social y el RFC."
+                );
+
+                if (!confirma) {
+                    this.value = valorProveedorAnterior;
+                    return;
+                }
+
+                aplicarDatosProveedor(opcionNueva);
+                valorProveedorAnterior = nuevoValor;
+            });
+
+        $(document)
+            .off('change', '#NUMERO_EVENTO_SELECT')
+            .on('change', '#NUMERO_EVENTO_SELECT', function () {
+                actualizarDatosEvento();
+            });
+
         $(document)
             .off('click', '#clickPAGOP')
-            .on('click',  '#clickPAGOP', function () {
+            .on('click', '#clickPAGOP', function () {
                 $.ajax({
-                    url: "ventasoperaciones3/controladorPP.php",
+                    url: "pagoproveedores/controladorPP.php",
                     method: "POST",
                     data: $('#ListadoPAGOPROVEEform').serialize(),
                     success: function (data) {
-                        var r = $.trim(data).toLowerCase();
-                        if (r.indexOf('actualizado') !== -1 || r.indexOf('ingresado') !== -1) {
-                            if (typeof load === 'function') load(1);
-                            $("#respuestaser").html("<span id='ACTUALIZADO'>" + $.trim(data) + "</span>");
-                            $("#respuestaser2").html("<span id='ACTUALIZADO'>" + $.trim(data) + "</span>");
+                        var responseText = $.trim(data);
+                        var lowerResponse = responseText.toLowerCase();
+
+                        if (
+                            responseText === 'Ingresado' ||
+                            responseText === 'Actualizado' ||
+                            lowerResponse.indexOf('actualizado') !== -1 ||
+                            lowerResponse.indexOf('ingresado') !== -1
+                        ) {
+                            if (typeof load === 'function') {
+                                load(1);
+                            }
+
+                            $("#respuestaser").html("<span id='ACTUALIZADO'>" + responseText + "</span>");
+                            $('#respuestaser2').html("<span id='ACTUALIZADO'>" + responseText + "</span>");
+
                             setTimeout(function () {
-                                $("#respuestaser2").fadeOut(300, function(){ $(this).html('').show(); });
+                                $("#respuestaser").fadeOut(300, function () {
+                                    $(this).html('').show();
+                                });
+                                $("#respuestaser2").fadeOut(300, function () {
+                                    $(this).html('').show();
+                                });
                             }, 2000);
                         } else {
                             $("#respuestaser").html(data);
@@ -602,7 +1077,119 @@ if($identioficador != '') {
                     }
                 });
             });
+
+        $(document)
+            .off('input', '#montoTotalEvento, #montoTotalAvion, #montoTotalpropina, #montoTotalhospedaje, #montoRetenidoIVA, #montoRetenidoISR, #montoDescuentos')
+            .on('input', '#montoTotalEvento, #montoTotalAvion, #montoTotalpropina, #montoTotalhospedaje, #montoRetenidoIVA, #montoRetenidoISR, #montoDescuentos', function () {
+                calcularTotal();
+            });
+
+        calcularTotal();
     });
+
+    var fileobj;
+
+    window.upload_file2 = function (e, name) {
+        e.preventDefault();
+        fileobj = e.dataTransfer.files[0];
+        ajax_file_upload2(fileobj, name);
+    };
+
+    window.file_explorer2 = function (name) {
+        var input = document.getElementsByName(name)[0];
+        if (!input) return;
+
+        input.click();
+        input.onchange = function () {
+            fileobj = input.files[0];
+            ajax_file_upload2(fileobj, name);
+        };
+    };
+
+function ajax_file_upload2(file_obj, nombre) {
+    if (!file_obj) return;
+
+    var form_data = new FormData();
+    form_data.append(nombre, file_obj);
+    form_data.append("IPpagoprovee", $("#IPpagoprovee").val());
+
+    $.ajax({
+        type: 'POST',
+        url: 'pagoproveedores/controladorPP.php',
+        dataType: 'html',
+        contentType: false,
+        processData: false,
+        data: form_data,
+        beforeSend: function () {
+            $('#3' + nombre).html('<p style="color:green;"><span class="spinner-border spinner-border-sm"></span>&nbsp;Cargando archivo...</p>');
+            $('#respuestaser').html('<p style="color:green;"><span class="spinner-border spinner-border-sm"></span>&nbsp;Cargando archivo...</p>');
+        },
+        success: function (response) {
+            var resp = $.trim(response);
+
+            if (resp === '2') {
+                $('#3' + nombre).html('<p style="color:red;">Error, archivo diferente a PDF, JPG o GIF.</p>');
+                $('#' + nombre).val('');
+
+            } else if (resp === '3') {
+                $('#3' + nombre).html('<p style="color:red;font-weight:600;">⚠️ UUID PREVIAMENTE CARGADO.</p>');
+                $('#' + nombre).val('');
+
+            } else if (resp.indexOf('3^^') === 0) {
+                var partes = resp.split('^^');
+                var numeroSolicitud = partes[1] ? $.trim(partes[1]) : '';
+                var msgDuplicado = numeroSolicitud !== ''
+                    ? '<p style="color:red;font-weight:600;">⚠️ UUID YA REGISTRADO — Se encuentra en la solicitud: <strong>' + numeroSolicitud + '</strong></p>'
+                    : '<p style="color:red;font-weight:600;">⚠️ UUID PREVIAMENTE CARGADO.</p>';
+                $('#3' + nombre).html(msgDuplicado);
+                $('#' + nombre).val('');
+
+            } else if (resp.indexOf('5^^') === 0) {
+                $('#3' + nombre).html('<p style="color:red;font-weight:600;">⚠️ EL ARCHIVO XML ESTÁ VACÍO O NO CONTIENE INFORMACIÓN VÁLIDA. Verifica que sea un CFDI timbrado correctamente e inténtalo de nuevo.</p>');
+                $('#' + nombre).val('');
+
+            } else if (resp.indexOf('6^^') === 0) {
+                var partesReceptor = resp.split('^^');
+                var receptorXML = partesReceptor[1] ? $.trim(partesReceptor[1]) : '';
+                var msgReceptor = receptorXML !== ''
+                    ? '⚠️ EL RECEPTOR DE LA FACTURA NO ES VÁLIDO: <strong>' + receptorXML + '</strong>. Debe ser EPC, INN o EVE520.'
+                    : '⚠️ EL RECEPTOR DE LA FACTURA NO ES EPC, INN O EVE520.';
+                $('#3' + nombre).html('<p style="color:red;font-weight:600;">' + msgReceptor + '</p>');
+                $('#' + nombre).val('');
+
+            } else {
+                var result = response.split('^^');
+                $('#' + nombre).val(result[1]);
+                $('#3' + nombre).html('<p style="color:green;">✅ <a target="_blank" href="includes/archivos/' + $.trim(result[0]) + '">Visualizar archivo</a></p>');
+
+                var formaPago = $.trim(result[2] || '');
+                if (formaPago.length) {
+                    $('select[name="PFORMADE_PAGO"], input[name="PFORMADE_PAGO"]').val(formaPago);
+                }
+
+                if ((result[1] || '').length > 1) {
+                    $('#respuestaser').html('<p style="color:green;font-size:25px;font-weight:bolder;">XML CORRECTAMENTE CARGADO CON EL UUID:<br> ' + result[1] + '</p>');
+                    $('#reseteaxml').remove();
+                }
+
+                if (nombre === 'ADJUNTAR_FACTURA_XML') {
+                    recargarElementos([
+                        '#3ADJUNTAR_FACTURA_XML',
+                        '#RAZON_SOCIAL2', '#RFC_PROVEEDOR2', '#CONCEPTO_PROVEE2',
+                        '#TIPO_DE_MONEDA2', '#FECHA_DE_PAGO2', '#NUMERO_CONSECUTIVO_PROVEE2',
+                        '#2MONTO_FACTURA', '#2MONTO_DEPOSITAR', '#2PFORMADE_PAGO',
+                        '#2IVA', '#2TImpuestosRetenidosIVA', '#2TImpuestosRetenidosISR',
+                        '#2descuentos', '#NOMBRE_COMERCIAL2', '#resettabla'
+                    ]);
+                } else {
+                    recargarElemento('#3' + nombre);
+                    recargarElemento('#resettabla');
+                }
+            }
+        }
+    });
+}
+
 
 })();
 </script>
