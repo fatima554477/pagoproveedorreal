@@ -718,11 +718,11 @@ if ($doctoActual) {
                 }
             }
 
-            $detalleActualizacion = count($cambiosDetectados) > 0
-                ? 'Se actualizó. Cambios detectados: ' . implode(' | ', $cambiosDetectados) . '.'
-                : 'Se guardó sin cambios detectados en los campos monitoreados.';
+            if (count($cambiosDetectados) > 0) {
+                $detalleActualizacion = 'Se actualizó. Cambios detectados: ' . implode(' | ', $cambiosDetectados) . '.';
+                $this->registrar_bitacora($conn, $IPpagoprovee, 'ACTUALIZACION', $detalleActualizacion, '', $usuarioBitacora);
+            }
 
-            $this->registrar_bitacora($conn, $IPpagoprovee, 'ACTUALIZACION', $detalleActualizacion, '', $usuarioBitacora);
             return "Actualizado";
 
         } else {
