@@ -455,8 +455,9 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 			}
 		}
 	}else{
-		if($ETQIETA == 'ADJUNTAR_FACTURA_PDF' && $ADJUNTAR_FACTURA_XML != ''){
-			$pagoproveedores->registrar_bitacora_adjuntos($IPpagoprovee, 'PDF', $ADJUNTAR_FACTURA_XML);
+		if($ADJUNTAR_FACTURA_XML != ''){
+			$tipoLabel = ($ETQIETA == 'ADJUNTAR_FACTURA_PDF') ? 'PDF' : $ETQIETA;
+			$pagoproveedores->registrar_bitacora_adjuntos($IPpagoprovee, $tipoLabel, $ADJUNTAR_FACTURA_XML);
 		}
 		echo $ADJUNTAR_FACTURA_XML;
 	}
