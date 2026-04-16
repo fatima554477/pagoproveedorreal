@@ -10,80 +10,90 @@ $connecDB = $conexion->db();
 
 
 if (!isset($_SERVER['HTTP_X_REQUESTED_WITH']) || $_SERVER['HTTP_X_REQUESTED_WITH'] != 'XMLHttpRequest') {
-$idem_usuario = $_SESSION['idem'];
-$ventasoperaciones->borrar_historico_xml('02SUBETUFACTURADOCTOS',$idem_usuario);
-$_SESSION['P_NOMBRE_COMERCIAL_EMPRESA12'] = '';
-$_SESSION['idusuario12']= '';
-
+    $idem_usuario = $_SESSION['idem'];
+    $ahora = time();
+    if (!isset($_SESSION['ultimo_borrado_xml']) || ($ahora - $_SESSION['ultimo_borrado_xml']) > 300) {
+        $ventasoperaciones->borrar_historico_xml('02SUBETUFACTURADOCTOS', $idem_usuario);
+        $_SESSION['ultimo_borrado_xml'] = $ahora;
+    }
+    $_SESSION['P_NOMBRE_COMERCIAL_EMPRESA12'] = '';
+    $_SESSION['idusuario12'] = '';
 }
 
 ?>
 
 		<script type="text/javascript">
 
-		function calcular() {
-			const numberNoCommas = (x) => {
-				return x.toString().replace(/,/g, "");
-			}
-			const numberWithCommas = (x) => {
-			
-				const num = parseFloat(x);
-				if(isNaN(num)) return '';
-				return num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+function numberNoCommas(x) {
+			return (x || '').toString().replace(/,/g, "");
+		}
+
+		function numberWithCommas(x) {
+			const num = parseFloat(x);
+			if(isNaN(num)) return '';
+			return num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+		}
+
+		function formatInputPreservingCursor(inputElement, value) {
+			if(!inputElement) {
+				return;
 			}
 
-			function formatInputPreservingCursor(inputElement, value) {
-				const originalValue = inputElement.value;
-				const cursorPos = inputElement.selectionStart;
-				const commasBefore = originalValue.slice(0, cursorPos).split(',').length - 1;
-				const formattedValue = numberWithCommas(value);
+			const formattedValue = numberWithCommas(value);
+			const hasCursor = typeof inputElement.selectionStart === 'number' && document.activeElement === inputElement;
+
+			if(!hasCursor) {
 				inputElement.value = formattedValue;
-				let newCursorPos = cursorPos - commasBefore;
-				let i = 0,
-					charsPassed = 0;
-				while(charsPassed < newCursorPos && i < formattedValue.length) {
-					if(formattedValue[i] !== ',') {
-						charsPassed++;
-					}
-					i++;
-				}
-				inputElement.setSelectionRange(i, i);
+				return;
 			}
-			// Listener para inputs tipo .tol
-			const inputs = document.querySelectorAll(".total");
-			inputs.forEach(input => {
-				input.addEventListener("keydown", function(e) {
-					const keyCode = e.keyCode || e.which;
-					// Teclas numéricas (teclado principal del 0 al 9 o numpad 0 al 9)
-					const isNumberKey = (keyCode >= 48 && keyCode <= 57) || // Teclado principal
-						(keyCode >= 96 && keyCode <= 105) || (keyCode === 46) || (keyCode === 8); // Numpad
-					if(isNumberKey) {
-						// Esperar a que el valor se actualice antes de formatear
-						setTimeout(() => {
-							const arr = document.getElementsByClassName("total");
-							let MONTO_PROPINA_elem = document.getElementsByName("MONTO_PROPINA")[0];
-							let MONTO_FACTURA_elem = document.getElementsByName("MONTO_FACTURA")[0];
-							let MONTO_PROPINA2 = numberNoCommas(MONTO_PROPINA_elem.value);
-							let MONTO_FACTURA2 = numberNoCommas(MONTO_FACTURA_elem.value);
-					
-							let tot = 0;
-							for(let i = 0; i < arr.length; i++) {
-								const inputName = arr[i].getAttribute("name");
-								const value = parseFloat(numberNoCommas(arr[i].value)) || 0;
-								if(["TImpuestosRetenidosIVA", "TImpuestosRetenidosISR", "descuentos"].includes(inputName)) {
-									tot -= value; // Se RESTA
-								} else {
-									tot += value; // Se SUMA
-								}
-							}
-							formatInputPreservingCursor(document.getElementById('MONTO_DEPOSITAR'), tot);
-							formatInputPreservingCursor(MONTO_PROPINA_elem, MONTO_PROPINA2);
-							formatInputPreservingCursor(MONTO_FACTURA_elem, MONTO_FACTURA2);
 
-						}, 0);
-					}
-				});
+			const originalValue = inputElement.value;
+			const cursorPos = inputElement.selectionStart;
+			const commasBefore = originalValue.slice(0, cursorPos).split(',').length - 1;
+			inputElement.value = formattedValue;
+			let newCursorPos = cursorPos - commasBefore;
+			let i = 0,
+				charsPassed = 0;
+			while(charsPassed < newCursorPos && i < formattedValue.length) {
+				if(formattedValue[i] !== ',') {
+					charsPassed++;
+				}
+				i++;
+			}
+			inputElement.setSelectionRange(i, i);
+		}
+
+		function calcular() {
+			const arr = document.getElementsByClassName("total");
+			const MONTO_PROPINA_elem = document.getElementsByName("MONTO_PROPINA")[0];
+			const MONTO_FACTURA_elem = document.getElementsByName("MONTO_FACTURA")[0];
+
+			let tot = 0;
+			for(let i = 0; i < arr.length; i++) {
+				const inputName = arr[i].getAttribute("name");
+				const value = parseFloat(numberNoCommas(arr[i].value)) || 0;
+				if(["TImpuestosRetenidosIVA", "TImpuestosRetenidosISR", "descuentos"].includes(inputName)) {
+					tot -= value; // Se RESTA
+				} else {
+					tot += value; // Se SUMA
+				}
+			}
+
+			formatInputPreservingCursor(document.getElementById('MONTO_DEPOSITAR'), tot);
+			formatInputPreservingCursor(MONTO_PROPINA_elem, numberNoCommas(MONTO_PROPINA_elem ? MONTO_PROPINA_elem.value : ''));
+			formatInputPreservingCursor(MONTO_FACTURA_elem, numberNoCommas(MONTO_FACTURA_elem ? MONTO_FACTURA_elem.value : ''));
+		}
+
+		function inicializarCalculoTotales() {
+			const inputs = document.querySelectorAll('.total');
+			inputs.forEach(input => {
+				if(input.dataset.totalListenerBound === 'true') {
+					return;
+				}
+				input.addEventListener('input', calcular);
+				input.dataset.totalListenerBound = 'true';
 			});
+			calcular();
 		}
 		             function setCurrentFillingDate() {
                        const fechaInput = document.querySelector('input[name="FECHA_DE_LLENADO"]');
@@ -95,222 +105,250 @@ $_SESSION['idusuario12']= '';
                        const formatted = `${pad(now.getDate())}-${pad(now.getMonth() + 1)}-${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
                        fechaInput.value = formatted;
                }
-               document.addEventListener("DOMContentLoaded", calcular);
-                function toggleFacturaFields() {
-                        const select = document.querySelector('select[name="VIATICOSOPRO"]');
-                        if(!select) {
-                                return;
-                        }
-                        const shouldHideFacturaFields = [
-                                'VIATICOS',
-                                'REEMBOLSO',
-                                'PAGO A PROVEEDOR CON DOS O MAS FACTURAS'
-                        ].includes(select.value);
-                        const shouldHideBeneficiaryFields = [
-                                'VIATICOS',
-                                'REEMBOLSO'
-                        ].includes(select.value);
-           const toggleableItems = [
-        
-                                {
-                                        element: document.getElementById('row-adjuntar-factura-xml'),
-                                        inputs: [
-                                                document.getElementById('ADJUNTAR_FACTURA_XML'),
-                                                document.querySelector('input[type="file"][name="ADJUNTAR_FACTURA_XML"]')
-                                        ]
-                                },
-                                {
-                                        element: document.getElementById('row-adjuntar-factura-pdf'),
-                                        inputs: [
-                                                document.getElementById('ADJUNTAR_FACTURA_PDF'),
-                                                document.querySelector('input[type="file"][name="ADJUNTAR_FACTURA_PDF"]')
-                                        ]
-                                },
-                                {
-                                        element: document.getElementById('row-iva'),
-                                        inputs: [document.getElementById('IVA')]
-                                },
-                                {
-                                        element: document.getElementById('row-ret-iva'),
-                                        inputs: [document.getElementById('TImpuestosRetenidosIVA')]
-                                },
-                                {
-                                        element: document.getElementById('row-ret-isr'),
-                                        inputs: [document.getElementById('TImpuestosRetenidosISR')]
-                                },
-                                {
-                                        element: document.getElementById('row-monto-propina'),
-                                        inputs: [document.getElementById('MONTO_PROPINA')]
-                                },
-                                {
-                                        element: document.getElementById('row-imp-hospedaje'),
-                                        inputs: [document.getElementById('IMPUESTO_HOSPEDAJE')]
-                                },
-                                {
-                                        element: document.getElementById('row-descuentos'),
-                                        inputs: [document.getElementById('descuentos')]
-                                },
-                                {
-                                        element: document.getElementById('row-tipo-cambio'),
-                                        inputs: [document.getElementById('TIPO_CAMBIOP')]
-                                },
-                                {
-                                        element: document.getElementById('row-total-en-pesos'),
-                                        inputs: [document.getElementById('TOTAL_ENPESOS')]
-                                }
-                        ];
+                document.addEventListener("DOMContentLoaded", inicializarCalculoTotales);
+				///////
+function toggleFacturaFields() {
+    const select = document.querySelector('select[name="VIATICOSOPRO"]');
+    if(!select) {
+        return;
+    }
+    const shouldHideFacturaFields = [
+        'VIATICOS',
+        'REEMBOLSO',
+        'PAGO A PROVEEDOR CON DOS O MAS FACTURAS'
+    ].includes(select.value);
+    const shouldHideBeneficiaryFields = [
+        'VIATICOS',
+        'REEMBOLSO'
+    ].includes(select.value);
 
-                        toggleableItems.forEach(({element, inputs = []}) => {
-                                if(!element) {
-                                        return;
-                                }
-                                inputs.forEach(input => {
-                                        if(input && !input.dataset.originalRequired) {
-                                                input.dataset.originalRequired = input.hasAttribute('required') ? 'true' : 'false';
-                                        }
-										
-										
-										
+    const toggleableItems = [
+        {
+            element: document.getElementById('row-adjuntar-factura-xml'),
+            inputs: [
+                document.getElementById('ADJUNTAR_FACTURA_XML'),
+                document.querySelector('input[type="file"][name="ADJUNTAR_FACTURA_XML"]')
+            ]
+        },
+        {
+            element: document.getElementById('row-adjuntar-factura-pdf'),
+            inputs: [
+                document.getElementById('ADJUNTAR_FACTURA_PDF'),
+                document.querySelector('input[type="file"][name="ADJUNTAR_FACTURA_PDF"]')
+            ]
+        },
+        {
+            element: document.getElementById('row-iva'),
+            inputs: [document.getElementById('IVA')]
+        },
+        {
+            element: document.getElementById('row-ret-iva'),
+            inputs: [document.getElementById('TImpuestosRetenidosIVA')]
+        },
+        {
+            element: document.getElementById('row-ret-isr'),
+            inputs: [document.getElementById('TImpuestosRetenidosISR')]
+        },
+        {
+            element: document.getElementById('row-monto-propina'),
+            inputs: [document.getElementById('MONTO_PROPINA')]
+        },
+        {
+            element: document.getElementById('row-imp-hospedaje'),
+            inputs: [document.getElementById('IMPUESTO_HOSPEDAJE')]
+        },
+        {
+            element: document.getElementById('row-descuentos'),
+            inputs: [document.getElementById('descuentos')]
+        },
+        {
+            element: document.getElementById('row-tipo-cambio'),
+            inputs: [document.getElementById('TIPO_CAMBIOP')]
+        },
+        {
+            element: document.getElementById('row-total-en-pesos'),
+            inputs: [document.getElementById('TOTAL_ENPESOS')]
+        }
+    ];
+
+    toggleableItems.forEach(({element, inputs = []}) => {
+        if(!element) {
+            return;
+        }
+        inputs.forEach(input => {
+            if(input && !input.dataset.originalRequired) {
+                input.dataset.originalRequired = input.hasAttribute('required') ? 'true' : 'false';
+            }
+        });
+
+        if(shouldHideFacturaFields) {
+            element.style.display = 'none';
+        } else {
+            element.style.display = '';
+        }
+
+        inputs.forEach(input => {
+            if(!input) {
+                return;
+            }
+            if(shouldHideFacturaFields) {
+                input.setAttribute('disabled', 'disabled');
+                input.removeAttribute('required');
+            } else {
+                input.removeAttribute('disabled');
+                if(input.dataset.originalRequired === 'true') {
+                    input.setAttribute('required', '');
+                }
+            }
+        });
     });
 
-                                if(shouldHideFacturaFields) {
-                                        element.style.display = 'none';
-                                } else {
-                                        element.style.display = '';
-                                }
-
-                                inputs.forEach(input => {
-                                        if(!input) {
-                                                return;
-                                        }
-                                        if(shouldHideFacturaFields) {
-                                                input.setAttribute('disabled', 'disabled');
-                                                input.removeAttribute('required');
-                                        } else {
-                                                input.removeAttribute('disabled');
-                                                if(input.dataset.originalRequired === 'true') {
-                                                        input.setAttribute('required', '');
-                                                }
-                                        }
-                                });
-                        });
-
-                       const resetTable = document.getElementById('resettabla');
-                        if(resetTable) {
-                                const tableFields = resetTable.querySelectorAll('input, select, textarea');
-                                tableFields.forEach(field => {
-                                        if(!field.dataset.originalRequired) {
-                                                field.dataset.originalRequired = field.hasAttribute('required') ? 'true' : 'false';
-                                        }
-                                            if(shouldHideFacturaFields) {
-                                                field.setAttribute('disabled', 'disabled');
-                                                field.removeAttribute('required');
-                                        } else {
-                                                field.removeAttribute('disabled');
-                                                if(field.dataset.originalRequired === 'true') {
-                                                        field.setAttribute('required', '');
-                                                }
-												
-												
-                  }
-                                });
-              resetTable.style.display = shouldHideFacturaFields ? 'none' : '';
-                        }
-
-                        const beneficiaryToggleItems = [
-                                {
-                                        element: document.getElementById('row-rfc-proveedor'),
-                                        inputs: [document.getElementById('RFC_PROVEEDOR')]
-                                },
-								{
-                                        element: document.getElementById('row-monto-total-cotizacion'),
-                                        inputs: [document.querySelector('input[name="MONTO_TOTAL_COTIZACION_ADEUDO"]')]
-                                },
-                                {
-                                        element: document.getElementById('row-concepto-provee'),
-                                        inputs: [document.getElementById('CONCEPTO_PROVEE')]
-                                },
-                                {
-                                        element: document.getElementById('row-comprobante-transferencia'),
-                                        inputs: [
-                                                document.getElementById('CONPROBANTE_TRANSFERENCIA_DISPLAY'),
-                                                document.querySelector('input[type="file"][name="CONPROBANTE_TRANSFERENCIA"]')
-                                        ]
-                                }
-
-                        ];
-
-                        beneficiaryToggleItems.forEach(({ element, inputs }) => {
-                                if(!element) {
-                                        return;
-                                }
-
-                                inputs.forEach(input => {
-                                        if(input && !input.dataset.originalRequired) {
-                                                input.dataset.originalRequired = input.hasAttribute('required') ? 'true' : 'false';
-                                        }
-                                });
-
-                                if(shouldHideBeneficiaryFields) {
-                                        element.style.display = 'none';
-                                } else {
-                                        element.style.display = '';
-                                }
-
-                                inputs.forEach(input => {
-                                        if(!input) {
-                                                return;
-                                        }
-                                        if(shouldHideBeneficiaryFields) {
-                                                input.setAttribute('disabled', 'disabled');
-                                                input.removeAttribute('required');
-                                        } else {
-                                                input.removeAttribute('disabled');
-                                                if(input.dataset.originalRequired === 'true') {
-                                                        input.setAttribute('required', '');
-                                                }
-                                        }
-                                });
-                        });
-
-                        const nombreLabelSpan = document.getElementById('label-nombre-comercial-text');
-                        const rfcLabelSpan = document.getElementById('label-rfc-proveedor-text');
-                        const rfcInput = document.getElementById('RFC_PROVEEDOR');
-
-                        if(nombreLabelSpan && !nombreLabelSpan.dataset.defaultText) {
-                                nombreLabelSpan.dataset.defaultText = nombreLabelSpan.textContent.trim();
-                        }
-                        if(rfcLabelSpan && !rfcLabelSpan.dataset.defaultText) {
-                                rfcLabelSpan.dataset.defaultText = rfcLabelSpan.textContent.trim();
-                        }
-                        if(rfcInput && !rfcInput.dataset.defaultPlaceholder) {
-                                rfcInput.dataset.defaultPlaceholder = rfcInput.getAttribute('placeholder') || '';
-                        }
-
-                        let nombreLabelText = nombreLabelSpan ? nombreLabelSpan.dataset.defaultText : '';
-                        let rfcLabelText = rfcLabelSpan ? rfcLabelSpan.dataset.defaultText : '';
-                        let rfcPlaceholder = rfcInput ? rfcInput.dataset.defaultPlaceholder : '';
-
-                        if(select.value === 'REEMBOLSO') {
-                                nombreLabelText = 'NOMBRE DEL BENEFICIARIO DEL REEMBOLSO';
-                                rfcLabelText = 'RFC DEL BENEFICIARIO DEL REEMBOLSO';
-                                rfcPlaceholder = 'RFC DEL BENEFICIARIO DEL REEMBOLSO';
-                        } else if(select.value === 'VIATICOS') {
-                                nombreLabelText = 'NOMBRE DEL BENEFICIARIO DEL VIATICO';
-                                rfcLabelText = 'RFC DEL BENEFICIARIO DEL VIATICO';
-                                rfcPlaceholder = 'RFC DEL BENEFICIARIO DEL VIATICO';
-                        }
-
-                        if(nombreLabelSpan) {
-                                nombreLabelSpan.textContent = nombreLabelText;
-                        }
-                        if(rfcLabelSpan) {
-                                rfcLabelSpan.textContent = rfcLabelText;
-                        }
-                        if(rfcInput) {
-                                rfcInput.setAttribute('placeholder', rfcPlaceholder);
-                        }
+    const resetTable = document.getElementById('resettabla');
+    if(resetTable) {
+        const tableFields = resetTable.querySelectorAll('input, select, textarea');
+        tableFields.forEach(field => {
+            if(!field.dataset.originalRequired) {
+                field.dataset.originalRequired = field.hasAttribute('required') ? 'true' : 'false';
+            }
+            if(shouldHideFacturaFields) {
+                field.setAttribute('disabled', 'disabled');
+                field.removeAttribute('required');
+            } else {
+                field.removeAttribute('disabled');
+                if(field.dataset.originalRequired === 'true') {
+                    field.setAttribute('required', '');
                 }
+            }
+        });
+        resetTable.style.display = shouldHideFacturaFields ? 'none' : '';
+    }
+
+    const beneficiaryToggleItems = [
+        {
+            element: document.getElementById('row-rfc-proveedor'),
+            inputs: [document.getElementById('RFC_PROVEEDOR')]
+        },
+        {
+            element: document.getElementById('row-monto-total-cotizacion'),
+            inputs: [document.querySelector('input[name="MONTO_TOTAL_COTIZACION_ADEUDO"]')]
+        },
+        {
+            element: document.getElementById('row-concepto-provee'),
+            inputs: [document.getElementById('CONCEPTO_PROVEE')]
+        },
+        {
+            element: document.getElementById('row-comprobante-transferencia'),
+            inputs: [
+                document.getElementById('CONPROBANTE_TRANSFERENCIA_DISPLAY'),
+                document.querySelector('input[type="file"][name="CONPROBANTE_TRANSFERENCIA"]')
+            ]
+        }
+    ];
+
+    beneficiaryToggleItems.forEach(({ element, inputs }) => {
+        if(!element) {
+            return;
+        }
+
+        inputs.forEach(input => {
+            if(input && !input.dataset.originalRequired) {
+                input.dataset.originalRequired = input.hasAttribute('required') ? 'true' : 'false';
+            }
+        });
+
+        if(shouldHideBeneficiaryFields) {
+            element.style.display = 'none';
+        } else {
+            element.style.display = '';
+        }
+
+        inputs.forEach(input => {
+            if(!input) {
+                return;
+            }
+            if(shouldHideBeneficiaryFields) {
+                input.setAttribute('disabled', 'disabled');
+                input.removeAttribute('required');
+            } else {
+                input.removeAttribute('disabled');
+                if(input.dataset.originalRequired === 'true') {
+                    input.setAttribute('required', '');
+                }
+            }
+        });
+    });
+
+    const nombreLabelSpan = document.getElementById('label-nombre-comercial-text');
+    const rfcLabelSpan    = document.getElementById('label-rfc-proveedor-text');
+    const rfcInput        = document.getElementById('RFC_PROVEEDOR');
+
+    if(nombreLabelSpan && !nombreLabelSpan.dataset.defaultText) {
+        nombreLabelSpan.dataset.defaultText = nombreLabelSpan.textContent.trim();
+    }
+    if(rfcLabelSpan && !rfcLabelSpan.dataset.defaultText) {
+        rfcLabelSpan.dataset.defaultText = rfcLabelSpan.textContent.trim();
+    }
+    if(rfcInput && !rfcInput.dataset.defaultPlaceholder) {
+        rfcInput.dataset.defaultPlaceholder = rfcInput.getAttribute('placeholder') || '';
+    }
+
+    let nombreLabelText  = nombreLabelSpan ? nombreLabelSpan.dataset.defaultText : '';
+    let rfcLabelText     = rfcLabelSpan    ? rfcLabelSpan.dataset.defaultText    : '';
+    let rfcPlaceholder   = rfcInput        ? rfcInput.dataset.defaultPlaceholder : '';
+
+    if(select.value === 'REEMBOLSO') {
+        nombreLabelText = 'NOMBRE DEL BENEFICIARIO DEL REEMBOLSO';
+        rfcLabelText    = 'RFC DEL BENEFICIARIO DEL REEMBOLSO';
+        rfcPlaceholder  = 'RFC DEL BENEFICIARIO DEL REEMBOLSO';
+    } else if(select.value === 'VIATICOS') {
+        nombreLabelText = 'NOMBRE DEL BENEFICIARIO DEL VIATICO';
+        rfcLabelText    = 'RFC DEL BENEFICIARIO DEL VIATICO';
+        rfcPlaceholder  = 'RFC DEL BENEFICIARIO DEL VIATICO';
+    }
+
+    if(nombreLabelSpan) { nombreLabelSpan.textContent = nombreLabelText; }
+    if(rfcLabelSpan)    { rfcLabelSpan.textContent    = rfcLabelText;    }
+    if(rfcInput)        { rfcInput.setAttribute('placeholder', rfcPlaceholder); }
+
+    // ── AUTO-ELIMINAR XML y PDF si cambian a VIATICOS o REEMBOLSO ────────
+    if (['VIATICOS', 'REEMBOLSO'].includes(select.value)) {
+
+        ['ADJUNTAR_FACTURA_XML', 'ADJUNTAR_FACTURA_PDF'].forEach(function(nombre) {
+
+            var inputDisplay = document.getElementById(nombre);
+
+            // Borrar cada archivo listado en #2ADJUNTAR_FACTURA_XML / #2ADJUNTAR_FACTURA_PDF
+            $('#2' + nombre + ' .view_dataSBborrar2').each(function() {
+                var borra_id_sb = $(this).attr('id');
+                $.ajax({
+                    url: 'ventasoperaciones/controladorVO.php',
+                    method: 'POST',
+                    data: { borra_id_sb: borra_id_sb, borrasbdoc: 'borrasbdoc' },
+                    success: function() {
+                        recargarElemento('#2' + nombre);
+                    }
+                });
+            });
+
+            // Limpiar el input display y el mensaje
+            if(inputDisplay) { inputDisplay.value = ''; }
+            $('#1' + nombre).html('');
+        });
+
+        // Recargar campos que se llenaron desde el XML
+        var camposXML = [
+            '#RAZON_SOCIAL2', '#RFC_PROVEEDOR2', '#CONCEPTO_PROVEE2',
+            '#TIPO_DE_MONEDA2', '#FECHA_DE_PAGO2', '#NUMERO_CONSECUTIVO_PROVEE2',
+            '#2MONTO_FACTURA', '#2MONTO_DEPOSITAR', '#2PFORMADE_PAGO',
+            '#2TImpuestosRetenidosIVA', '#2TImpuestosRetenidosISR',
+            '#2descuentos', '#2IVA', '#NOMBRE_COMERCIAL2',
+            '#resettabla'
+        ];
+        camposXML.forEach(recargarElemento);
+    }
+    // ─────────────────────────────────────────────────────────────────────
+}
+
 				
 				
                 document.addEventListener('DOMContentLoaded', () => {
@@ -452,8 +490,10 @@ while($rowsube=mysqli_fetch_array($listadosube)){
 $regreso = $ventasoperaciones->variable_SUBETUFACTURA();
 $url = __ROOT1__.'/includes/archivos/'.$regreso['ADJUNTAR_FACTURA_XML'];
 $xmlFacturaCargada = !empty($regreso['ADJUNTAR_FACTURA_XML']) && file_exists($url);
+$atributoBloqueoSelectXml = $xmlFacturaCargada ? 'disabled="disabled" style="background:#d7bde2;"' : '';
+
 $ultimoConsecutivo = $ventasoperaciones->select_02XML();
-$NUMERO_CONSECUTIVO_PROVEE = ($ultimoConsecutivo !== null && $ultimoConsecutivo !== '') ? ((int)$ultimoConsecutivo + 1) : 1;
+$NUMERO_CONSECUTIVO_PROVEE = ((int)$ultimoConsecutivo + 1);
 		
 if($xmlFacturaCargada){
 	$regreso = $conexion2->lectorxml($url);
@@ -479,10 +519,30 @@ if($xmlFacturaCargada){
 	
 	$rfcE = $regreso['rfcE'];					
 	$nombreE = $regreso['nombreE'];	
+
 	$regimenE = $regreso['regimenE'];
 	
 	$rfcR = $regreso['rfcR'];
 	$nombreR = $regreso['nombreR'];
+	$nombreR = isset($regreso['nombreR']) ? trim($regreso['nombreR']) : '';
+
+function normalizarTextoEmpresa($texto) {
+    $texto = mb_strtoupper(trim($texto), 'UTF-8');
+    $texto = preg_replace('/\s+/', ' ', $texto);
+    return $texto;
+}
+
+$empresasCorporativo = array(
+    normalizarTextoEmpresa('EVENTOS PROMOCIONES Y CONVENCIONES'),
+    normalizarTextoEmpresa('INNOVA CONGRESOS Y CONVENCIONES'),
+    normalizarTextoEmpresa('EVENTOS 520')
+);
+
+if ($nombreR !== '' && !in_array(normalizarTextoEmpresa($nombreR), $empresasCorporativo)) {
+    echo '<div class="alert alert-danger mt-2" role="alert" style="font-weight:bold; text-transform:uppercase;">
+            EL RECEPTOR DE LA FACTURA NO ES: EPC, INN, EVE520; FAVOR DE SOLICITAR EL CAMBIO.
+          </div>';
+}
 	$UsoCFDI = $regreso['UsoCFDI'];
 	$DomicilioFiscalReceptor = $regreso['DomicilioFiscalReceptor'];
 	$RegimenFiscalReceptor = $regreso['RegimenFiscalReceptor'];
@@ -516,13 +576,9 @@ if($xmlFacturaCargada){
 
 	/*nuevo*/
 		
-	$valor_base = (method_exists($ventasoperaciones, 'select_02XML')) 
-    ? $ventasoperaciones->select_02XML() 
-    : 0;
-    
-$NUMERO_CONSECUTIVO_PROVEE = $valor_base + 1;
+
 }
-?> </div>		
+?></div>		
 
          
 </td>
@@ -546,6 +602,11 @@ $NUMERO_CONSECUTIVO_PROVEE = $valor_base + 1;
 <p>Suelta aquí o busca tu archivo</p>
 <p><input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_PDF" type="text" onkeydown="return false" onclick="file_explorer('ADJUNTAR_FACTURA_PDF');"  VALUE="<?php echo $ADJUNTAR_FACTURA_PDF; ?>" required /></p>
 <input type="file" name="ADJUNTAR_FACTURA_PDF" id="nono"/>
+		<div id="1ADJUNTAR_FACTURA_PDF">
+		   <?php 
+		if($ADJUNTAR_FACTURA_PDF!=""){echo "<a target='_blank' href='includes/archivos/".$ADJUNTAR_FACTURA_PDF."'>Visualizar!</a>"; 
+		}?>
+		</div>
 
 </div>
 
@@ -927,27 +988,28 @@ echo "<a target='_blank' href='includes/archivos/".$rowsube['ADJUNTAR_COTIZACION
                  <th scope="row"> <label for="validationCustom03" class="form-label">TIPO DE MONEDA O DIVISA:</label></th>
               
 				
-				            
-             <td> <div id="TIPO_DE_MONEDA2"><select class="form-select mb-3" aria-label="Default select example" id="validationCustom02" required="" name="TIPO_DE_MONEDA"  <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?>> 
-                  <option style="background: #c9e8e8" name="TIPO_DE_MONEDA" value="MXN" <?php if($Moneda=='MXN'){echo "selected";} ?>>MXN (Peso mexicano)</option>
-                     <option style="background: #a3e4d7" name="TIPO_DE_MONEDA" value="USD" <?php if($Moneda=='USD'){echo "selected";} ?>>USD (Dolar)</option>
-                     <option style="background: #e8f6f3" name="TIPO_DE_MONEDA" value="EUR" <?php if($Moneda=='EUR'){echo "selected";} ?>>EUR (Euro)</option>
-                     <option style="background: #fdf2e9" name="TIPO_DE_MONEDA"value="GBP" <?php if($Moneda=='GBP'){echo "selected";} ?>>GBP (Libra esterlina)</option>
-                     <option style="background: #eaeded" name="TIPO_DE_MONEDA" value="CHF" <?php if($Moneda=='CHF'){echo "selected";} ?>>CHF (Franco suizo)</option>
-                     <option style="background: #fdebd0" name="TIPO_DE_MONEDA" value="CNY" <?php if($Moneda=='CNY'){echo "selected";} ?>>CNY (Yuan)</option>
-                     <option style="background: #ebdef0" name="TIPO_DE_MONEDA" value="JPY" <?php if($Moneda=='JPY'){echo "selected";} ?>>JPY (Yen japonés)</option>
-                     <option style="background: #d6eaf8" name="TIPO_DE_MONEDA" value="HKD" <?php if($Moneda=='HKD'){echo "selected";} ?>>HKD (Dólar hongkonés)</option>
-                     <option style="background: #fef5e7" name="TIPO_DE_MONEDA" value="CAD" <?php if($Moneda=='CAD'){echo "selected";} ?>>CAD (Dólar canadiense)</option>
-                     <option style="background: #ebedef" name="TIPO_DE_MONEDA" value="AUD" <?php if($Moneda=='AUD'){echo "selected";} ?>>AUD (Dólar australiano)</option>
-                     <option style="background: #fbeee6" name="TIPO_DE_MONEDA" value="BRL" <?php if($Moneda=='BRL'){echo "selected";} ?>>BRL (Real brasileño)</option>
-                     <option style="background: #e8f6f3" name="TIPO_DE_MONEDA" value="RUB" <?php if($Moneda=='RUB'){echo "selected";} ?>>RUB  (Rublo ruso)</option>
-
-                     </select> 
-                        </div>
-                 
-                 </td>                    
-
-             </tr>
+				        <td>    
+						<div id="TIPO_DE_MONEDA2">
+							<select class="form-select mb-3" aria-label="Default select example" id="validationCustom02" required="" name="TIPO_DE_MONEDA" <?php echo $atributoBloqueoSelectXml; ?> >
+								<option style="background: #c9e8e8" name="TIPO_DE_MONEDA" value="MXN" <?php if($Moneda=='MXN' ){echo "selected";} ?>>MXN (Peso mexicano)</option>
+								<option style="background: #a3e4d7" name="TIPO_DE_MONEDA" value="USD" <?php if($Moneda=='USD' ){echo "selected";} ?>>USD (Dolar)</option>
+								<option style="background: #e8f6f3" name="TIPO_DE_MONEDA" value="EUR" <?php if($Moneda=='EUR' ){echo "selected";} ?>>EUR (Euro)</option>
+								<option style="background: #fdf2e9" name="TIPO_DE_MONEDA" value="GBP" <?php if($Moneda=='GBP' ){echo "selected";} ?>>GBP (Libra esterlina)</option>
+								<option style="background: #eaeded" name="TIPO_DE_MONEDA" value="CHF" <?php if($Moneda=='CHF' ){echo "selected";} ?>>CHF (Franco suizo)</option>
+								<option style="background: #fdebd0" name="TIPO_DE_MONEDA" value="CNY" <?php if($Moneda=='CNY' ){echo "selected";} ?>>CNY (Yuan)</option>
+								<option style="background: #ebdef0" name="TIPO_DE_MONEDA" value="JPY" <?php if($Moneda=='JPY' ){echo "selected";} ?>>JPY (Yen japonés)</option>
+								<option style="background: #d6eaf8" name="TIPO_DE_MONEDA" value="HKD" <?php if($Moneda=='HKD' ){echo "selected";} ?>>HKD (Dólar hongkonés)</option>
+								<option style="background: #fef5e7" name="TIPO_DE_MONEDA" value="CAD" <?php if($Moneda=='CAD' ){echo "selected";} ?>>CAD (Dólar canadiense)</option>
+								<option style="background: #ebedef" name="TIPO_DE_MONEDA" value="AUD" <?php if($Moneda=='AUD' ){echo "selected";} ?>>AUD (Dólar australiano)</option>
+								<option style="background: #fbeee6" name="TIPO_DE_MONEDA" value="BRL" <?php if($Moneda=='BRL' ){echo "selected";} ?>>BRL (Real brasileño)</option>
+								<option style="background: #e8f6f3" name="TIPO_DE_MONEDA" value="RUB" <?php if($Moneda=='RUB' ){echo "selected";} ?>>RUB (Rublo ruso)</option>
+							</select>
+							<?php if($xmlFacturaCargada){ ?>
+							<input type="hidden" name="TIPO_DE_MONEDA" value="<?php echo $Moneda; ?>">
+							<?php } ?>
+						</div>
+					</td>
+				</tr>
 				 
 				     <tr id="row-tipo-cambio" style="background:#fcf3cf">				 
                  <th scope="row"> <label  style="width:300px" for="validationCustom03" class="form-label">TIPO DE CAMBIO:</label></th>
@@ -974,59 +1036,39 @@ echo "<a target='_blank' href='includes/archivos/".$rowsube['ADJUNTAR_COTIZACION
 				 
 				 
 				 
-                 <tr style="background:#fcf3cf">
-
-                 <th><label style="width: 300px"  class="form-label">FORMA DE PAGO:</label></th>
-				 
-				 
-             <td style="width: 45%;">
-
-
-
-<div id="2PFORMADE_PAGO">
-
-
-
-       <select name="PFORMADE_PAGO"  class="form-select mb-3"  id="validationCustom02" aria-label="Default select example">
-                  
-					<script type="text/javascript">  function EFECTIVO (texto) {    alert(texto);} </script>
-                   
-				 <option style="background:#f2b4f5"  name="PFORMADE_PAGO" <?php echo $xmlFacturaCargada ? 'readonly="readonly"' : ''; ?> value="03">03 TRANSFERENCIA ELECTRONICA DE FONDOS</option>	
-		     <option style="background:#f2b4f5"  <?php if($formaDePago=='03'){echo "selected";} ?> value="03" name="PFORMADE_PAGO">03 TRANSFERENCIA ELECTRONICA DE FONDOS</option>	
-					
-					
-              <option style="background:#dee6fc"  <?php if($formaDePago=='04'){echo "selected ";} ?> value="04" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');" name="PFORMADE_PAGO">04 TARJETA DE CREDITO</option>
-            
-
-        
-              <option style="background:#ddf5da"   <?php if($formaDePago=='01'){echo "selected";} ?>  value="01 EFECTIVO"   onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');" name="PFORMADE_PAGO">01 EFECTIVO</option>
-        
-              <option style="background:#fceade" <?php if($formaDePago=='02'){echo "selected";} ?> value="02" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');" name="PFORMADE_PAGO">02 CHEQUE NOMITATIVO</option>
-        
-
-        
-              <option style="background:#f6fcde" <?php if($formaDePago=='05'){echo "selected";} ?> value="05" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');">05 MONEDERO ELECTRONICO</option>
-        
-              <option style="background:#dee2fc" <?php if($formaDePago=='06'){echo "selected";} ?> value="06" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');">06 DINERO ELECTRONICO</option>
-        
-              <option style="background:#f9e5fa" <?php if($formaDePago=='08'){echo "selected";} ?> value="08" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');">08 VALES DE DESPENSA</option>
-        
-              <option style="background:#eefcde" <?php if($formaDePago=='28'){echo "selected";} ?> value="28" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');">28 TARJETA DE DEBITO</option>
-        
-              <option style="background:#fcfbde" <?php if($formaDePago=='29'){echo "selected";} ?> value="29" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');">29 TARJETA DE SERVICIO</option>
-        
-              <option style="background:#f9e5fa" <?php if($formaDePago=='99'){echo "selected";} ?> value="99" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');">99 OTRO</option>
-        
-              </select>
-			  
-        
-    <div/>
-        </td>
-
-        </tr>
+			<tr style="background: #fcf3cf">
+				
+					<th>
+						<label style="width: 300px" class="form-label">FORMA DE PAGO:</label>
+					</th>
+				<td style="width: 45%;">
+						<div id="2PFORMADE_PAGO">
+							<select name="PFORMADE_PAGO" class="form-select mb-3" id="validationCustom02" aria-label="Default select example" <?php echo $atributoBloqueoSelectXml; ?>>
+								<script type="text/javascript">
+								function EFECTIVO(texto) {
+									alert(texto);
+								}
+								</script>
+								<option style="background:#f2b4f5" name="PFORMADE_PAGO" value="03">03 TRANSFERENCIA ELECTRONICA DE FONDOS</option>
+								<option style="background:#f2b4f5" <?php if($formaDePago=='03' ){echo "selected";} ?> value="03" name="PFORMADE_PAGO">03 TRANSFERENCIA ELECTRONICA DE FONDOS</option>
+								<option style="background:#dee6fc" <?php if($formaDePago=='04' ){echo "selected ";} ?> value="04" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');" name="PFORMADE_PAGO">04 TARJETA DE CREDITO</option>
+								<option style="background:#ddf5da" <?php if($formaDePago=='01' ){echo "selected";} ?> value="01 EFECTIVO" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');" name="PFORMADE_PAGO">01 EFECTIVO</option>
+								<option style="background:#fceade" <?php if($formaDePago=='02' ){echo "selected";} ?> value="02" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');" name="PFORMADE_PAGO">02 CHEQUE NOMITATIVO</option>
+								<option style="background:#f6fcde" <?php if($formaDePago=='05' ){echo "selected";} ?> value="05" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');">05 MONEDERO ELECTRONICO</option>
+								<option style="background:#dee2fc" <?php if($formaDePago=='06' ){echo "selected";} ?> value="06" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');">06 DINERO ELECTRONICO</option>
+								<option style="background:#f9e5fa" <?php if($formaDePago=='08' ){echo "selected";} ?> value="08" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');">08 VALES DE DESPENSA</option>
+								<option style="background:#eefcde" <?php if($formaDePago=='28' ){echo "selected";} ?> value="28" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');">28 TARJETA DE DEBITO</option>
+								<option style="background:#fcfbde" <?php if($formaDePago=='29' ){echo "selected";} ?> value="29" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');">29 TARJETA DE SERVICIO</option>
+								<option style="background:#f9e5fa" <?php if($formaDePago=='99' ){echo "selected";} ?> value="99" onclick="EFECTIVO('FAVOR DE SOLICITAR EL CAMBIO DE FACTURA POR NO COINCIDIR CON LA FORMA DE PAGO');">99 OTRO</option>
+							</select>
+							<?php if($xmlFacturaCargada){ ?>
+							<input type="hidden" name="PFORMADE_PAGO" value="<?php echo $formaDePago; ?>">
+							<?php } ?>
+							<div/> </td>
+				</tr>
                   <tr style="background:#fcf3cf">  
 
-                 <th scope="row"> <label for="validationCustom03" class="form-label">FECHA DE PROGRAMACIÓN DEL PAGO:</label></th>
+                 <th scope="row"> <label for="validationCustom03" class="form-label">FECHA DE PROGRAMACIÓN DEL PAGO:<br><a style="color:red;font-size:11px">OBLIGATORIO</a></label></th>
                  <td>		 <div id="FECHA_DE_PAGO2"><input type="date" class="form-control" id="validationCustom03" required=""  value="<?php echo $FECHA_DE_PAGO; ?>" name="FECHA_DE_PAGO" placeholder="FECHA DE PAGO" ></div></td>
             </tr> 
                  <!--<tr style="background:#fcf3cf"> 
