@@ -866,13 +866,25 @@ if ($doctoActual) {
     public function VALIDA02XMLUUID($uuid) {
         $conn  = $this->db();
         $uuid  = mysqli_real_escape_string($conn, $uuid);
+
+        // Verificar en tabla 02XML
         $query = mysqli_query($conn, "SELECT 02XML.id, 02XML.UUID, 02SUBETUFACTURA.NUMERO_CONSECUTIVO_PROVEE
             FROM 02XML LEFT JOIN 02SUBETUFACTURA ON 02XML.ultimo_id = 02SUBETUFACTURA.id
             WHERE 02XML.UUID='{$uuid}'");
         $row   = mysqli_fetch_array($query, MYSQLI_ASSOC);
-        if (!$row['id']) return 'S';
-        $numero = ($row['NUMERO_CONSECUTIVO_PROVEE'] != '') ? $row['NUMERO_CONSECUTIVO_PROVEE'] : $row['id'];
-        return 'UUID_DUPLICADO:' . $numero;
+        if ($row['id']) {
+            $numero = ($row['NUMERO_CONSECUTIVO_PROVEE'] != '') ? $row['NUMERO_CONSECUTIVO_PROVEE'] : $row['id'];
+            return 'UUID_DUPLICADO:' . $numero;
+        }
+
+        // Verificar en tabla 07XML
+        $query7 = mysqli_query($conn, "SELECT id FROM 07XML WHERE UUID='{$uuid}'");
+        $row7   = mysqli_fetch_array($query7, MYSQLI_ASSOC);
+        if ($row7['id']) {
+            return 'UUID_DUPLICADO:' . $row7['id'];
+        }
+
+        return 'S';
     }
 
     public function Listado_pagoproveedor() {
