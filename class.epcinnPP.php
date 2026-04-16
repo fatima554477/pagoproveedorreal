@@ -863,17 +863,33 @@ if ($doctoActual) {
         return $row['id'];
     }
 
-    public function VALIDA02XMLUUID($uuid) {
-        $conn  = $this->db();
-        $uuid  = mysqli_real_escape_string($conn, $uuid);
-        $query = mysqli_query($conn, "SELECT 02XML.id, 02XML.UUID, 02SUBETUFACTURA.NUMERO_CONSECUTIVO_PROVEE
-            FROM 02XML LEFT JOIN 02SUBETUFACTURA ON 02XML.ultimo_id = 02SUBETUFACTURA.id
-            WHERE 02XML.UUID='{$uuid}'");
-        $row   = mysqli_fetch_array($query, MYSQLI_ASSOC);
-        if (!$row['id']) return 'S';
+public function VALIDA02XMLUUID($uuid) {
+    $conn  = $this->db();
+    $uuid  = mysqli_real_escape_string($conn, $uuid);
+
+    // ── Verificar en 02XML ──
+    $query = mysqli_query($conn, "SELECT 02XML.id, 02XML.UUID, 02SUBETUFACTURA.NUMERO_CONSECUTIVO_PROVEE
+        FROM 02XML LEFT JOIN 02SUBETUFACTURA ON 02XML.ultimo_id = 02SUBETUFACTURA.id
+        WHERE 02XML.UUID='{$uuid}'");
+    $row = mysqli_fetch_array($query, MYSQLI_ASSOC);
+
+    if ($row['id']) {
         $numero = ($row['NUMERO_CONSECUTIVO_PROVEE'] != '') ? $row['NUMERO_CONSECUTIVO_PROVEE'] : $row['id'];
-        return 'UUID_DUPLICADO:' . $numero;
+        return '3^^' . $numero;
     }
+
+    // ── Verificar en 07XML (Comprobación de Gastos) ──
+    $query7 = mysqli_query($conn, "SELECT id, ultimo_id FROM 07XML WHERE UUID='{$uuid}'");
+    $row7   = mysqli_fetch_array($query7, MYSQLI_ASSOC);
+
+    if ($row7['id']) {
+        $numero7 = ($row7['ultimo_id'] != '') ? $row7['ultimo_id'] : $row7['id'];
+        return '7^^^' . $numero7;
+    }
+
+    return 'S';
+}
+
 
     public function Listado_pagoproveedor() {
         $conn = $this->db();

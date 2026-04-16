@@ -384,10 +384,18 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 		// ── Verificar UUID ANTES de mover el archivo ──────────────────────
 		$_resultadoUUID = $pagoproveedores->VALIDA02XMLUUID($regreso['UUID']);
 		if(strpos($_resultadoUUID, 'UUID_DUPLICADO:') === 0) {
+			// ❌ Duplicado en 02XML (Pago Proveedores)
 			$_numSol = str_replace('UUID_DUPLICADO:', '', $_resultadoUUID);
 			UNLINK(__ROOT1__.'/includes/archivos/'.$ADJUNTAR_FACTURA_XML2);
 			$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML2);
 			echo '3^^'.$_numSol;
+			exit;
+		} elseif(strpos($_resultadoUUID, 'UUID_DUPLICADO_07:') === 0) {
+			// ❌ Duplicado en 07XML (Comprobación de Gastos)
+			$_numSol7 = str_replace('UUID_DUPLICADO_07:', '', $_resultadoUUID);
+			UNLINK(__ROOT1__.'/includes/archivos/'.$ADJUNTAR_FACTURA_XML2);
+			$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML2);
+			echo '7^^^'.$_numSol7;
 			exit;
 		} elseif($_resultadoUUID !== 'S') {
 			UNLINK(__ROOT1__.'/includes/archivos/'.$ADJUNTAR_FACTURA_XML2);
@@ -415,7 +423,7 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 			$regreso = $conexion2->lectorxml($url);
 
 			// ── VALIDACIÓN: XML vacío ──────────────────────────────────────
-	if(empty($regreso) || !isset($regreso['UUID']) || trim($regreso['UUID']) === '') {
+			if(empty($regreso) || !isset($regreso['UUID']) || trim($regreso['UUID']) === '') {
 				echo '5^^';
 				UNLINK($url);
 				$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
@@ -440,16 +448,22 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 				ob_end_clean();
 				$pagoproveedores->registrar_bitacora_adjuntos($IPpagoprovee, 'XML', $_FILES[$ETQIETA]['name']);
 
-
 			} elseif(strpos($resultado, 'UUID_DUPLICADO:') === 0) {
-				// ❌ UUID duplicado — mostrar número de solicitud
+				// ❌ Duplicado en 02XML (Pago Proveedores)
 				$numeroSolicitud = str_replace('UUID_DUPLICADO:', '', $resultado);
 				echo '3^^'.$numeroSolicitud;
 				UNLINK($url);
 				$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
 
+			} elseif(strpos($resultado, 'UUID_DUPLICADO_07:') === 0) {
+				// ❌ Duplicado en 07XML (Comprobación de Gastos)
+				$numeroGasto = str_replace('UUID_DUPLICADO_07:', '', $resultado);
+				echo '7^^^'.$numeroGasto;
+				UNLINK($url);
+				$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
+
 			} else {
-				// ❌ UUID duplicado sin número de solicitud
+				// ❌ UUID duplicado sin número
 				echo '3^^';
 				UNLINK($url);
 				$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
@@ -493,7 +507,7 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 			$regreso = $conexion2->lectorxml($url);
 
 			// ── VALIDACIÓN: XML vacío ──────────────────────────────────────
-		if(empty($regreso) || !isset($regreso['UUID']) || trim($regreso['UUID']) === '') {
+			if(empty($regreso) || !isset($regreso['UUID']) || trim($regreso['UUID']) === '') {
 				echo '5^^';
 				UNLINK($url);
 				$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
@@ -514,14 +528,21 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 				echo $ADJUNTAR_FACTURA_XML;
 
 			} elseif(strpos($resultado, 'UUID_DUPLICADO:') === 0) {
-				// ❌ UUID duplicado — mostrar número de solicitud
+				// ❌ Duplicado en 02XML (Pago Proveedores)
 				$numeroSolicitud = str_replace('UUID_DUPLICADO:', '', $resultado);
 				echo '3^^'.$numeroSolicitud;
 				UNLINK($url);
 				$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
 
+			} elseif(strpos($resultado, 'UUID_DUPLICADO_07:') === 0) {
+				// ❌ Duplicado en 07XML (Comprobación de Gastos)
+				$numeroGasto = str_replace('UUID_DUPLICADO_07:', '', $resultado);
+				echo '7^^^'.$numeroGasto;
+				UNLINK($url);
+				$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
+
 			} else {
-				// ❌ UUID duplicado sin número de solicitud
+				// ❌ UUID duplicado sin número
 				echo '3^^';
 				UNLINK($url);
 				$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);

@@ -157,7 +157,6 @@ function ajax_file_upload1(file_obj, nombre) {
                 $('#' + nombre).val('');
 
             } else if (resp.indexOf('5^^') === 0) {
-        } else if (resp.indexOf('5^^') === 0) {
                 $('#1' + nombre).html('<p style="color:red;font-weight:600;">⚠️ EL ARCHIVO XML ESTÁ VACÍO O NO CONTIENE INFORMACIÓN VÁLIDA. Verifica que sea un CFDI timbrado correctamente e inténtalo de nuevo.</p>');
                 $('#' + nombre).val('');
 
@@ -170,12 +169,21 @@ function ajax_file_upload1(file_obj, nombre) {
                 $('#1' + nombre).html('<p style="color:red;font-weight:600;">' + msgReceptor + '</p>');
                 $('#' + nombre).val('');
 
+            // ── NUEVO: UUID duplicado en 07XML (Comprobación de Gastos) ──
+            } else if (resp.indexOf('7^^^') === 0) {
+                var partesGasto = resp.split('^^^');
+                var numeroGasto = partesGasto[1] ? $.trim(partesGasto[1]) : '';
+                var msgGasto = numeroGasto !== ''
+                    ? '<p style="color:orange;font-weight:600;">⚠️ UUID YA REGISTRADO EN COMPROBACIÓN DE GASTOS — Folio: <strong>' + numeroGasto + '</strong></p>'
+                    : '<p style="color:orange;font-weight:600;">⚠️ UUID PREVIAMENTE CARGADO EN COMPROBACIÓN DE GASTOS.</p>';
+                $('#1' + nombre).html(msgGasto);
+                $('#' + nombre).val('');
+
             } else {
                 $('#' + nombre).val(response);
                 $('#1' + nombre).html('<p style="color:green;">✅ ¡Archivo cargado con éxito!</p>');
                 $('#mensajeADJUNTOCOL').html('<p style="color:green;">✅ ¡Actualizado!</p>');
 
-                // ── FIX: una sola petición en lugar de múltiples $.load() ──
                 if (nombre === 'ADJUNTAR_FACTURA_XML') {
                     recargarElementos([
                         '#2ADJUNTAR_FACTURA_XML',
