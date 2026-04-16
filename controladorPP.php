@@ -438,7 +438,7 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 				ob_start();
 				$pagoproveedores->guardarxmlDB2($IPpagoprovee,$idPROV,'02XML', $url);
 				ob_end_clean();
-				$pagoproveedores->registrar_bitacora_adjuntos($IPpagoprovee, 'XML', $ADJUNTAR_FACTURA_XML);
+				$pagoproveedores->registrar_bitacora_adjuntos($IPpagoprovee, 'XML', $_FILES[$ETQIETA]['name']);
 
 			} elseif(strpos($resultado, 'UUID_DUPLICADO:') === 0) {
 				// ❌ UUID duplicado — mostrar número de solicitud
@@ -457,7 +457,7 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 	}else{
 		if($ADJUNTAR_FACTURA_XML != ''){
 			$tipoLabel = ($ETQIETA == 'ADJUNTAR_FACTURA_PDF') ? 'PDF' : $ETQIETA;
-			$pagoproveedores->registrar_bitacora_adjuntos($IPpagoprovee, $tipoLabel, $ADJUNTAR_FACTURA_XML);
+			$pagoproveedores->registrar_bitacora_adjuntos($IPpagoprovee, $tipoLabel, $_FILES[$ETQIETA]['name']);
 		}
 		echo $ADJUNTAR_FACTURA_XML;
 	}
