@@ -144,17 +144,58 @@ class accesoclase extends colaboradores {
         return isset($etiquetas[$campo]) ? $etiquetas[$campo] : str_replace('_', ' ', $campo);
     }
 
-    public function registrar_bitacora_adjuntos($idcomprobacion, $tipoAdjunto, $nombreArchivo) {
-        $conn = $this->db();
-        $idcomprobacion = intval($idcomprobacion);
-        if ($idcomprobacion <= 0 || trim($tipoAdjunto) == '') return;
+public function registrar_bitacora_adjuntos($idcomprobacion, $tipoAdjunto, $nombreArchivo) {
+    $conn = $this->db();
 
-        $detalle = 'Se subió archivo ' . trim($tipoAdjunto);
-        if (trim($nombreArchivo) != '') $detalle .= ': ' . trim($nombreArchivo);
-        $detalle .= '.';
+    $idcomprobacion = intval($idcomprobacion);
+    $tipoAdjunto    = trim($tipoAdjunto);
+    $nombreArchivo  = trim($nombreArchivo);
 
-        $this->registrar_bitacora($conn, $idcomprobacion, 'ADJUNTO', $detalle, '', $this->nombre_usuario_bitacora());
+    if ($idcomprobacion <= 0 || $tipoAdjunto == '') {
+        return;
     }
+
+    $tipoLegible = $this->nombre_legible_adjunto($tipoAdjunto);
+
+    $detalle = 'Se subió archivo ' . $tipoLegible;
+
+    if ($nombreArchivo != '') {
+        $detalle .= ': ' . $nombreArchivo;
+    }
+
+    $detalle .= '.';
+
+    $this->registrar_bitacora(
+        $conn,
+        $idcomprobacion,
+        'ADJUNTO',
+        $detalle,
+        '',
+        $this->nombre_usuario_bitacora()
+    );
+}
+
+private function nombre_legible_adjunto($tipo) {
+    $map = [
+        'ADJUNTAR_FACTURA_XML'              => 'FACTURA XML',
+        'ADJUNTAR_FACTURA_PDF'              => 'FACTURA PDF',
+        'ADJUNTAR_COTIZACION'               => 'COTIZACIÓN',
+        'CONPROBANTE_TRANSFERENCIA'         => 'COMPROBANTE DE TRANSFERENCIA',
+        'ADJUNTAR_ARCHIVO_1'                => 'ARCHIVO ADICIONAL',
+        'FOTO_ESTADO_PROVEE11'              => 'ESTADO DE CUENTA DEL PROVEEDOR',
+        'COMPLEMENTOS_PAGO_PDF'             => 'COMPLEMENTO DE PAGO PDF',
+        'COMPLEMENTOS_PAGO_XML'             => 'COMPLEMENTO DE PAGO XML',
+        'CANCELACIONES_PDF'                 => 'CANCELACIÓN PDF',
+        'CANCELACIONES_XML'                 => 'CANCELACIÓN XML',
+        'ADJUNTAR_FACTURA_DE_COMISION_PDF'  => 'FACTURA DE COMISIÓN PDF',
+        'ADJUNTAR_FACTURA_DE_COMISION_XML'  => 'FACTURA DE COMISIÓN XML',
+        'CALCULO_DE_COMISION'               => 'CÁLCULO DE COMISIÓN',
+        'COMPROBANTE_DE_DEVOLUCION'         => 'COMPROBANTE DE DEVOLUCIÓN',
+        'NOTA_DE_CREDITO_COMPRA'            => 'NOTA DE CRÉDITO DE COMPRA',
+    ];
+
+    return isset($map[$tipo]) ? $map[$tipo] : str_replace('_', ' ', $tipo);
+}
 
 
 

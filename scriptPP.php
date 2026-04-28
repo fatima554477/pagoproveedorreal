@@ -174,8 +174,8 @@ function ajax_file_upload1(file_obj, nombre) {
                 var partesGasto = resp.split('^^^');
                 var numeroGasto = partesGasto[1] ? $.trim(partesGasto[1]) : '';
                 var msgGasto = numeroGasto !== ''
-                    ? '<p style="color:orange;font-weight:600;">⚠️ UUID YA REGISTRADO EN COMPROBACIÓN DE GASTOS — Folio: <strong>' + numeroGasto + '</strong></p>'
-                    : '<p style="color:orange;font-weight:600;">⚠️ UUID PREVIAMENTE CARGADO EN COMPROBACIÓN DE GASTOS.</p>';
+                    ? '<p style="color:#C82909;font-weight:600;">⚠️ UUID YA REGISTRADO EN COMPROBACIÓN DE GASTOS — CON EL ID: <strong>' + numeroGasto + '</strong></p>'
+                    : '<p style="color:#C82909;font-weight:600;">⚠️ UUID PREVIAMENTE CARGADO EN COMPROBACIÓN DE GASTOS.</p>';
                 $('#1' + nombre).html(msgGasto);
                 $('#' + nombre).val('');
 

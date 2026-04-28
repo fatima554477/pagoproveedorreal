@@ -383,16 +383,18 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 	if($_FILES['ADJUNTAR_FACTURA_XML']==true){
 		// ── Verificar UUID ANTES de mover el archivo ──────────────────────
 		$_resultadoUUID = $pagoproveedores->VALIDA02XMLUUID($regreso['UUID']);
-		if(strpos($_resultadoUUID, 'UUID_DUPLICADO:') === 0) {
-			// ❌ Duplicado en 02XML (Pago Proveedores)
-			$_numSol = str_replace('UUID_DUPLICADO:', '', $_resultadoUUID);
+		
+		// ── CORRECCIÓN: comparar con lo que realmente retorna la función ──
+		if(strpos($_resultadoUUID, '3^^') === 0) {
+			// Duplicado en 02XML (Pago Proveedores)
+			$_numSol = str_replace('3^^', '', $_resultadoUUID);
 			UNLINK(__ROOT1__.'/includes/archivos/'.$ADJUNTAR_FACTURA_XML2);
 			$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML2);
 			echo '3^^'.$_numSol;
 			exit;
-		} elseif(strpos($_resultadoUUID, 'UUID_DUPLICADO_07:') === 0) {
-			// ❌ Duplicado en 07XML (Comprobación de Gastos)
-			$_numSol7 = str_replace('UUID_DUPLICADO_07:', '', $_resultadoUUID);
+		} elseif(strpos($_resultadoUUID, '7^^^') === 0) {
+			// Duplicado en 07XML (Comprobación de Gastos)
+			$_numSol7 = str_replace('7^^^', '', $_resultadoUUID);
 			UNLINK(__ROOT1__.'/includes/archivos/'.$ADJUNTAR_FACTURA_XML2);
 			$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML2);
 			echo '7^^^'.$_numSol7;
@@ -448,22 +450,24 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 				ob_end_clean();
 				$pagoproveedores->registrar_bitacora_adjuntos($IPpagoprovee, 'XML', $_FILES[$ETQIETA]['name']);
 
-			} elseif(strpos($resultado, 'UUID_DUPLICADO:') === 0) {
-				// ❌ Duplicado en 02XML (Pago Proveedores)
-				$numeroSolicitud = str_replace('UUID_DUPLICADO:', '', $resultado);
+			// ── CORRECCIÓN: comparar con '3^^' en vez de 'UUID_DUPLICADO:' ──
+			} elseif(strpos($resultado, '3^^') === 0) {
+				// Duplicado en 02XML (Pago Proveedores)
+				$numeroSolicitud = str_replace('3^^', '', $resultado);
 				echo '3^^'.$numeroSolicitud;
 				UNLINK($url);
 				$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
 
-			} elseif(strpos($resultado, 'UUID_DUPLICADO_07:') === 0) {
-				// ❌ Duplicado en 07XML (Comprobación de Gastos)
-				$numeroGasto = str_replace('UUID_DUPLICADO_07:', '', $resultado);
+			// ── CORRECCIÓN: comparar con '7^^^' en vez de 'UUID_DUPLICADO_07:' ──
+			} elseif(strpos($resultado, '7^^^') === 0) {
+				// Duplicado en 07XML (Comprobación de Gastos)
+				$numeroGasto = str_replace('7^^^', '', $resultado);
 				echo '7^^^'.$numeroGasto;
 				UNLINK($url);
 				$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
 
 			} else {
-				// ❌ UUID duplicado sin número
+				// UUID duplicado sin número
 				echo '3^^';
 				UNLINK($url);
 				$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
@@ -527,22 +531,24 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 			if($resultado == 'S'){
 				echo $ADJUNTAR_FACTURA_XML;
 
-			} elseif(strpos($resultado, 'UUID_DUPLICADO:') === 0) {
-				// ❌ Duplicado en 02XML (Pago Proveedores)
-				$numeroSolicitud = str_replace('UUID_DUPLICADO:', '', $resultado);
+			// ── CORRECCIÓN: comparar con '3^^' en vez de 'UUID_DUPLICADO:' ──
+			} elseif(strpos($resultado, '3^^') === 0) {
+				// Duplicado en 02XML (Pago Proveedores)
+				$numeroSolicitud = str_replace('3^^', '', $resultado);
 				echo '3^^'.$numeroSolicitud;
 				UNLINK($url);
 				$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
 
-			} elseif(strpos($resultado, 'UUID_DUPLICADO_07:') === 0) {
-				// ❌ Duplicado en 07XML (Comprobación de Gastos)
-				$numeroGasto = str_replace('UUID_DUPLICADO_07:', '', $resultado);
+			// ── CORRECCIÓN: comparar con '7^^^' en vez de 'UUID_DUPLICADO_07:' ──
+			} elseif(strpos($resultado, '7^^^') === 0) {
+				// Duplicado en 07XML (Comprobación de Gastos)
+				$numeroGasto = str_replace('7^^^', '', $resultado);
 				echo '7^^^'.$numeroGasto;
 				UNLINK($url);
 				$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
 
 			} else {
-				// ❌ UUID duplicado sin número
+				// UUID duplicado sin número
 				echo '3^^';
 				UNLINK($url);
 				$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
