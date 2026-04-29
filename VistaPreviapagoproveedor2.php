@@ -25,7 +25,7 @@ if($identioficador != '')
 $queryVISTAPREV = $pagoproveedores->Listado_pagoproveedor2($identioficador);
 
 ?>
-<div id="respuestaser2">
+<div id="respuestaser">
 <?php
    while($row = mysqli_fetch_array($queryVISTAPREV))
     {
@@ -1083,35 +1083,57 @@ function ajax_file_upload2(file_obj, nombre) {
                 $('#3' + nombre).html('<p style="color:red;font-weight:600;">' + msgReceptor + '</p>');
                 $('#' + nombre).val('');
 
-            } else {
-                var result = response.split('^^');
-                $('#' + nombre).val(result[1]);
-                $('#3' + nombre).html('<p style="color:green;">✅ <a target="_blank" href="includes/archivos/' + $.trim(result[0]) + '">Visualizar archivo</a></p>');
+} else {
+    var result = response.split('^^');
+    $('#' + nombre).val(result[1]);
 
-                var formaPago = $.trim(result[2] || '');
-                if (formaPago.length) {
-                    $('select[name="PFORMADE_PAGO"], input[name="PFORMADE_PAGO"]').val(formaPago);
-                }
+    // ── Para XML, mostrar UUID ──
+    if (nombre === 'ADJUNTAR_FACTURA_XML') {
+        $('#3' + nombre).html(
+            '<p style="color:green;">✅ <a target="_blank" href="includes/archivos/' 
+            + $.trim(result[0]) + '">Visualizar archivo</a></p>'
+        );
 
-                if ((result[1] || '').length > 1) {
-                    $('#respuestaser').html('<p style="color:green;font-size:25px;font-weight:bolder;">XML CORRECTAMENTE CARGADO CON EL UUID:<br> ' + result[1] + '</p>');
-                    $('#reseteaxml').remove();
-                }
+        var formaPago = $.trim(result[2] || '');
+        if (formaPago.length) {
+            $('select[name="PFORMADE_PAGO"], input[name="PFORMADE_PAGO"]').val(formaPago);
+        }
 
-                if (nombre === 'ADJUNTAR_FACTURA_XML') {
-                    recargarElementos([
-                        '#3ADJUNTAR_FACTURA_XML',
-                        '#RAZON_SOCIAL2', '#RFC_PROVEEDOR2', '#CONCEPTO_PROVEE2',
-                        '#TIPO_DE_MONEDA2', '#FECHA_DE_PAGO2', '#NUMERO_CONSECUTIVO_PROVEE2',
-                        '#2MONTO_FACTURA', '#2MONTO_DEPOSITAR', '#2PFORMADE_PAGO',
-                        '#2IVA', '#2TImpuestosRetenidosIVA', '#2TImpuestosRetenidosISR',
-                        '#2descuentos', '#NOMBRE_COMERCIAL2', '#resettabla'
-                    ]);
-                } else {
-                    recargarElemento('#3' + nombre);
-                    recargarElemento('#resettabla');
-                }
-            }
+        if ((result[1] || '').length > 1) {
+            $('#respuestaser').html(
+                '<p style="color:green;font-size:25px;font-weight:bolder;">XML CORRECTAMENTE CARGADO CON EL UUID:<br> ' 
+                + result[1] + '</p>'
+            );
+            $('#reseteaxml').remove();
+        }
+
+        recargarElementos([
+            '#3ADJUNTAR_FACTURA_XML',
+            '#RAZON_SOCIAL2', '#RFC_PROVEEDOR2', '#CONCEPTO_PROVEE2',
+            '#TIPO_DE_MONEDA2', '#FECHA_DE_PAGO2', '#NUMERO_CONSECUTIVO_PROVEE2',
+            '#2MONTO_FACTURA', '#2MONTO_DEPOSITAR', '#2PFORMADE_PAGO',
+            '#2IVA', '#2TImpuestosRetenidosIVA', '#2TImpuestosRetenidosISR',
+            '#2descuentos', '#NOMBRE_COMERCIAL2', '#resettabla'
+        ]);
+
+    } else {
+        // ── Para todos los demás archivos: mostrar enlace directamente
+        // sin recargar desde el servidor (evita que desaparezca)
+        var nombreArchivo = $.trim(result[0]);
+        var idSB = ''; // el controlador devuelve el id del registro en result[0]
+        
+        $('#3' + nombre).html(
+            '<p style="color:green;">✅ <a target="_blank" href="includes/archivos/' 
+            + nombreArchivo + '">Visualizar!</a> &nbsp;'
+            + '<span style="color:blue;cursor:pointer;" class="view_dataSBborrar2" id="' 
+            + nombreArchivo + '">Borrar!</span></p>'
+        );
+        $('#respuestaser').html('<p style="color:green;">✅ ¡Archivo cargado con éxito!</p>');
+        
+        // Solo recargar la tabla general, NO el div del archivo
+        recargarElemento('#resettabla');
+    }
+}
         }
     });
 }

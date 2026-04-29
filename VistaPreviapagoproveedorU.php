@@ -596,7 +596,7 @@ if($identioficador != '') {
                     beforeSend: function () {
                         $('#mensajepagoproveedores').html('cargando...');
                     },
-                    success: function (data) {
+        success: function (data) {
                         var r = $.trim(data).toLowerCase();
                         if (r.indexOf('actualizado') !== -1 || r.indexOf('ingresado') !== -1) {
                             $('#dataModal').modal('hide');
@@ -604,12 +604,18 @@ if($identioficador != '') {
                             $("#mensajepagoproveedores").html("<span id='ACTUALIZADO'>" + $.trim(data) + "</span>");
                             $("#respuestaser2").html("<span id='ACTUALIZADO'>" + $.trim(data) + "</span>");
                         } else {
-                            $("#mensajepagoproveedores").html(data);
+                            if (r.indexOf('favor de llenar campos obligatorios') !== -1) {
+                                $("#respuestaser2").html("<span id='ACTUALIZADO'>" + $.trim(data) + "</span>");
+                                $("#mensajepagoproveedores").html('');
+                            } else {
+                                $("#mensajepagoproveedores").html(data);
+                            }
                         }
                     }
                 });
             });
     });
+
 
     // ── Subida de archivos (zonas activas: COMPLEMENTOS_PAGO_XML y COMPLEMENTOS_PAGO_PDF) ──
     window.upload_file2 = function (e, name) {
