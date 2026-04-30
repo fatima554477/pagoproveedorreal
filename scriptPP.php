@@ -425,6 +425,7 @@ $(document).ready(function () {
     ------------------------------------------------------- */
     $(document).on('click', '.view_dataSBborrar2', function () {
         var borra_id_sb = $(this).attr('id');
+        var $documentoNodo = $(this);
         $('#dataModal3').modal('show');
 
         $('#btnYes').off('click').on('click', function () {
@@ -436,6 +437,17 @@ $(document).ready(function () {
                 success: function (data) {
                     $('#dataModal3').modal('hide');
                     $('#mensajepagoproveedores').html('<span id="ACTUALIZADO">' + data + '</span>');
+
+                    var $contenedorLinea = $documentoNodo.closest('p');
+                    if ($contenedorLinea.length) {
+                        $contenedorLinea.remove();
+                    } else {
+                        $documentoNodo.prev('a').remove();
+                        $documentoNodo.next('span').remove();
+                        $documentoNodo.next('br').remove();
+                        $documentoNodo.remove();
+                    }
+
                     recargarElemento('#' + borra_id_sb);
                     recargarElemento('#A' + borra_id_sb);
                 }

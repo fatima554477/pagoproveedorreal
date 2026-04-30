@@ -265,7 +265,7 @@ function numberNoCommas(x) {
 						
 						
 						<option style="background:#f571f7" value="PAGO A PROVEEDOR CON DOS O MAS FACTURAS" <?php if($VIATICOSOPRO=='PAGO A PROVEEDOR CON DOS O MAS FACTURAS' ){echo "selected";} ?>>SOLICITUD DE UN SOLO PAGO  CON DOS O MÁS FACTURAS</option>
-							<option style="background:#b3f39b" value="PAGOS CON UNA SOLA FACTURA" <?php if($VIATICOSOPRO=='PAGOS CON UNA SOLA FACTURA' ){echo "selected";} ?>>SOLICITUD DE VARIOS PAGOS CON UNA SOLA FACTURA</option>
+							
                        
 						
 						
