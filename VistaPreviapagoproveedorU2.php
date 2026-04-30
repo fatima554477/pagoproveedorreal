@@ -596,15 +596,20 @@ if($identioficador != '') {
                     beforeSend: function () {
                         $('#mensajepagoproveedores').html('cargando...');
                     },
-                    success: function (data) {
+        success: function (data) {
                         var r = $.trim(data).toLowerCase();
                         if (r.indexOf('actualizado') !== -1 || r.indexOf('ingresado') !== -1) {
-                            $('#dataModal5').modal('hide');
+                            $('#dataModal').modal('hide');
                             if (typeof loadAUT === 'function') loadAUT(1);
                             $("#mensajepagoproveedores").html("<span id='ACTUALIZADO'>" + $.trim(data) + "</span>");
                             $("#respuestaser2").html("<span id='ACTUALIZADO'>" + $.trim(data) + "</span>");
                         } else {
-                            $("#mensajepagoproveedores").html(data);
+                            if (r.indexOf('favor de llenar campos obligatorios') !== -1) {
+                                $("#respuestaser2").html("<span id='ACTUALIZADO'>" + $.trim(data) + "</span>");
+                                $("#mensajepagoproveedores").html('');
+                            } else {
+                                $("#mensajepagoproveedores").html(data);
+                            }
                         }
                     }
                 });
