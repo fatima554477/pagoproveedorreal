@@ -909,14 +909,15 @@ public function VALIDA02XMLUUID($uuid) {
     $uuid  = mysqli_real_escape_string($conn, $uuid);
 
     // ── Verificar en 02XML ──
-    $query = mysqli_query($conn, "SELECT 02XML.id, 02XML.UUID, 02SUBETUFACTURA.NUMERO_CONSECUTIVO_PROVEE
+    $query = mysqli_query($conn, "SELECT 02XML.id, 02XML.UUID, 02SUBETUFACTURA.NUMERO_CONSECUTIVO_PROVEE, 02SUBETUFACTURA.NUMERO_EVENTO
         FROM 02XML LEFT JOIN 02SUBETUFACTURA ON 02XML.ultimo_id = 02SUBETUFACTURA.id
         WHERE 02XML.UUID='{$uuid}'");
     $row = mysqli_fetch_array($query, MYSQLI_ASSOC);
 
     if ($row['id']) {
         $numero = ($row['NUMERO_CONSECUTIVO_PROVEE'] != '') ? $row['NUMERO_CONSECUTIVO_PROVEE'] : $row['id'];
-        return '3^^' . $numero;
+        $numeroEvento = isset($row['NUMERO_EVENTO']) ? trim((string)$row['NUMERO_EVENTO']) : '';
+        return '3^^' . $numero . '^^' . $numeroEvento;
     }
 
     // ── Verificar en 07XML (Comprobación de Gastos) ──

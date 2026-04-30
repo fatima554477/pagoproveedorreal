@@ -141,8 +141,10 @@ function ajax_file_upload1(file_obj, nombre) {
             } else if (resp.indexOf('3^^') === 0) {
                 var partes = resp.split('^^');
                 var numeroSolicitud = partes[1] ? $.trim(partes[1]) : '';
+                var numeroEvento = partes[2] ? $.trim(partes[2]) : '';
+                var detalleEvento = numeroEvento !== '' ? ' — Evento: <strong>' + numeroEvento + '</strong>' : '';
                 var msgDuplicado = numeroSolicitud !== ''
-                    ? '<p style="color:red;font-weight:600;">⚠️ UUID YA REGISTRADO — Se encuentra en la solicitud: <strong>' + numeroSolicitud + '</strong></p>'
+                    ? '<p style="color:red;font-weight:600;">⚠️ UUID YA REGISTRADO — Se encuentra en la solicitud: <strong>' + numeroSolicitud + '</strong>' + detalleEvento + '</p>'
                     : '<p style="color:red;font-weight:600;">⚠️ UUID PREVIAMENTE CARGADO.</p>';
                 $('#1' + nombre).html(msgDuplicado);
                 $('#' + nombre).val('');

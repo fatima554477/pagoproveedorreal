@@ -387,10 +387,9 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 		// ── CORRECCIÓN: comparar con lo que realmente retorna la función ──
 		if(strpos($_resultadoUUID, '3^^') === 0) {
 			// Duplicado en 02XML (Pago Proveedores)
-			$_numSol = str_replace('3^^', '', $_resultadoUUID);
 			UNLINK(__ROOT1__.'/includes/archivos/'.$ADJUNTAR_FACTURA_XML2);
 			$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML2);
-			echo '3^^'.$_numSol;
+			echo $_resultadoUUID;
 			exit;
 		} elseif(strpos($_resultadoUUID, '7^^^') === 0) {
 			// Duplicado en 07XML (Comprobación de Gastos)
@@ -453,8 +452,7 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 			// ── CORRECCIÓN: comparar con '3^^' en vez de 'UUID_DUPLICADO:' ──
 			} elseif(strpos($resultado, '3^^') === 0) {
 				// Duplicado en 02XML (Pago Proveedores)
-				$numeroSolicitud = str_replace('3^^', '', $resultado);
-				echo '3^^'.$numeroSolicitud;
+				echo $resultado;
 				UNLINK($url);
 				$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
 
