@@ -134,44 +134,65 @@ function ajax_file_upload1(file_obj, nombre) {
         success: function (response) {
             var resp = $.trim(response);
 
-            if (resp === '2') {
-                $('#1' + nombre).html('<p style="color:red;">Error, archivo diferente a PDF, JPG o GIF.</p>');
+            // ── Archivo vacío (0 bytes) ───────────────────────────────────
+            if (resp.indexOf('VACIO^^') === 0) {
+                $('#1' + nombre).html(
+                    '<p style="color:red;font-weight:600;">⚠️ EL ARCHIVO ESTÁ VACÍO (0 KB). ' +
+                    'Verifica que el archivo tenga contenido antes de subirlo.</p>'
+                );
                 $('#' + nombre).val('');
 
+            // ── Archivo sin extensión ─────────────────────────────────────
+            } else if (resp.indexOf('SIN_EXTENSION^^') === 0) {
+                $('#1' + nombre).html(
+                    '<p style="color:red;font-weight:600;">⚠️ EL ARCHIVO NO TIENE EXTENSIÓN RECONOCIDA. ' +
+                    'Asegúrate de que el nombre del archivo termine en .xml, .pdf, .jpg, etc.</p>'
+                );
+                $('#' + nombre).val('');
+
+            // ── Error de subida al servidor ───────────────────────────────
+            } else if (resp.indexOf('ERROR_SUBIDA^^') === 0) {
+                $('#1' + nombre).html(
+                    '<p style="color:red;font-weight:600;">⚠️ ERROR AL RECIBIR EL ARCHIVO EN EL SERVIDOR. ' +
+                    'Puede que sea demasiado grande o que la conexión se haya interrumpido. ' +
+                    'Intenta de nuevo.</p>'
+                );
+                $('#' + nombre).val('');
+
+            // ── Formato no permitido genérico ─────────────────────────────
+            } else if (resp === '2') {
+                var exts = (nombre === 'ADJUNTAR_FACTURA_XML') ? 'XML' :
+                           (nombre === 'ADJUNTAR_FACTURA_PDF') ? 'PDF' :
+                           'PDF, JPG, PNG, DOCX, XML, XLSX, MP4, TXT u otro formato de documento';
+                $('#1' + nombre).html(
+                    '<p style="color:red;">⚠️ FORMATO DE ARCHIVO NO PERMITIDO. ' +
+                    'Este campo acepta únicamente archivos en formato: <strong>' + exts + '</strong>.</p>'
+                );
+                $('#' + nombre).val('');
+
+            // ── Error al mover el archivo en disco ────────────────────────
+            } else if (resp === '1') {
+                $('#1' + nombre).html(
+                    '<p style="color:red;font-weight:600;">⚠️ ERROR AL GUARDAR EL ARCHIVO EN EL SERVIDOR. ' +
+                    'Intenta de nuevo o contacta a soporte técnico.</p>'
+                );
+                $('#' + nombre).val('');
+
+            // ── UUID duplicado en Pago Proveedores (02XML) ────────────────
             } else if (resp.indexOf('3^^') === 0) {
                 var partes = resp.split('^^');
                 var numeroSolicitud = partes[1] ? $.trim(partes[1]) : '';
-                var numeroEvento = partes[2] ? $.trim(partes[2]) : '';
-                var detalleEvento = numeroEvento !== '' ? ' — Evento: <strong>' + numeroEvento + '</strong>' : '';
+                var numeroEvento    = partes[2] ? $.trim(partes[2]) : '';
+                var detalleEvento   = numeroEvento !== ''
+                    ? ' — Evento: <strong>' + numeroEvento + '</strong>'
+                    : '';
                 var msgDuplicado = numeroSolicitud !== ''
                     ? '<p style="color:red;font-weight:600;">⚠️ UUID YA REGISTRADO — Se encuentra en la solicitud: <strong>' + numeroSolicitud + '</strong>' + detalleEvento + '</p>'
                     : '<p style="color:red;font-weight:600;">⚠️ UUID PREVIAMENTE CARGADO.</p>';
                 $('#1' + nombre).html(msgDuplicado);
                 $('#' + nombre).val('');
 
-            } else if (resp === '3') {
-                $('#1' + nombre).html('<p style="color:red;font-weight:600;">⚠️ UUID PREVIAMENTE CARGADO.</p>');
-                $('#' + nombre).val('');
-
-            } else if (resp === '4') {
-                var formatoEsperado = (nombre === 'ADJUNTAR_FACTURA_XML') ? 'XML' : 'PDF';
-                $('#1' + nombre).html('<p style="color:red;">ESTE ARCHIVO TIENE QUE SER EN FORMATO ' + formatoEsperado + '.</p>');
-                $('#' + nombre).val('');
-
-            } else if (resp.indexOf('5^^') === 0) {
-                $('#1' + nombre).html('<p style="color:red;font-weight:600;">⚠️ EL ARCHIVO XML ESTÁ VACÍO O NO CONTIENE INFORMACIÓN VÁLIDA. Verifica que sea un CFDI timbrado correctamente e inténtalo de nuevo.</p>');
-                $('#' + nombre).val('');
-
-            } else if (resp.indexOf('6^^') === 0) {
-                var partesReceptor = resp.split('^^');
-                var receptorXML = partesReceptor[1] ? $.trim(partesReceptor[1]) : '';
-                var msgReceptor = receptorXML !== ''
-                    ? '⚠️ EL RECEPTOR DE LA FACTURA NO ES VÁLIDO: <strong>' + receptorXML + '</strong>. Debe ser EPC, INN o EVE520.'
-                    : '⚠️ EL RECEPTOR DE LA FACTURA NO ES EPC, INN O EVE520.';
-                $('#1' + nombre).html('<p style="color:red;font-weight:600;">' + msgReceptor + '</p>');
-                $('#' + nombre).val('');
-
-            // ── NUEVO: UUID duplicado en 07XML (Comprobación de Gastos) ──
+            // ── UUID duplicado en Comprobación de Gastos (07XML) ──────────
             } else if (resp.indexOf('7^^^') === 0) {
                 var partesGasto = resp.split('^^^');
                 var numeroGasto = partesGasto[1] ? $.trim(partesGasto[1]) : '';
@@ -181,6 +202,25 @@ function ajax_file_upload1(file_obj, nombre) {
                 $('#1' + nombre).html(msgGasto);
                 $('#' + nombre).val('');
 
+            // ── XML vacío o sin timbre válido ─────────────────────────────
+            } else if (resp.indexOf('5^^') === 0) {
+                $('#1' + nombre).html(
+                    '<p style="color:red;font-weight:600;">⚠️ EL ARCHIVO XML ESTÁ VACÍO O NO CONTIENE INFORMACIÓN VÁLIDA. ' +
+                    'Verifica que sea un CFDI timbrado correctamente e inténtalo de nuevo.</p>'
+                );
+                $('#' + nombre).val('');
+
+            // ── Receptor de factura no válido (no es EPC/INN/EVE520) ──────
+            } else if (resp.indexOf('6^^') === 0) {
+                var partesReceptor = resp.split('^^');
+                var receptorXML    = partesReceptor[1] ? $.trim(partesReceptor[1]) : '';
+                var msgReceptor = receptorXML !== ''
+                    ? '⚠️ EL RECEPTOR DE LA FACTURA NO ES VÁLIDO: <strong>' + receptorXML + '</strong>. Debe ser EPC, INN o EVE520.'
+                    : '⚠️ EL RECEPTOR DE LA FACTURA NO ES EPC, INN O EVE520.';
+                $('#1' + nombre).html('<p style="color:red;font-weight:600;">' + msgReceptor + '</p>');
+                $('#' + nombre).val('');
+
+            // ── Éxito: archivo cargado correctamente ──────────────────────
             } else {
                 $('#' + nombre).val(response);
                 $('#1' + nombre).html('<p style="color:green;">✅ ¡Archivo cargado con éxito!</p>');

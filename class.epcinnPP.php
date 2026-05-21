@@ -278,17 +278,51 @@ private function nombre_legible_adjunto($tipo) {
         return mysqli_query($conn, "SELECT NUMERO_EVENTO, NOMBRE_EVENTO FROM 04altaeventos ORDER BY NUMERO_EVENTO");
     }
 
-    public function solocargartemp($archivo) {
+     public function solocargartemp($archivo) {
         $nombre_carpeta = __ROOT3__ . '/includes/archivos';
-        $nombretemp     = $_FILES[$archivo]["tmp_name"];
-        $nombrearchivo  = $_FILES[$archivo]["name"];
-        $extension      = explode('.', $nombrearchivo);
-        $cuenta         = count($extension) - 1;
-        $ext            = strtolower($extension[$cuenta]);
-        $nuevonombre    = $archivo . '_' . date('Y_m_d_h_i_s') . '.' . $ext;
+
+        // ── Validar error de subida y archivo vacío ───────────────────────
+        if (!isset($_FILES[$archivo]) || $_FILES[$archivo]['error'] !== UPLOAD_ERR_OK) {
+            return "ERROR_SUBIDA";
+        }
+        if ($_FILES[$archivo]['size'] === 0) {
+            return "VACIO";
+        }
+
+        $nombretemp    = $_FILES[$archivo]["tmp_name"];
+        $nombrearchivo = $_FILES[$archivo]["name"];
+        $extension     = explode('.', $nombrearchivo);
+        $cuenta        = count($extension) - 1;
+        $ext           = strtolower($extension[$cuenta]);
+
+        // ── Validar que tiene extensión real ─────────────────────────────
+        if ($cuenta === 0 || trim($ext) === '') {
+            return "SIN_EXTENSION";
+        }
+
+        // ── Sanitizar nombre ─────────────────────────────────────────────
+        $nombrebase = pathinfo($nombrearchivo, PATHINFO_FILENAME);
+        // Quitar caracteres conflictivos
+        $nombrebase = preg_replace('/[^a-zA-Z0-9_\-áéíóúÁÉÍÓÚñÑüÜ]/', '_', $nombrebase);
+        // Colapsar guiones bajos múltiples
+        $nombrebase = preg_replace('/_+/', '_', $nombrebase);
+        // Quitar guiones bajos al inicio y al final
+        $nombrebase = trim($nombrebase, '_');
+        // Limitar longitud
+        if (strlen($nombrebase) > 60) {
+            $nombrebase = substr($nombrebase, 0, 60);
+        }
+        // Fallback si quedó vacío
+        if ($nombrebase === '') {
+            $nombrebase = 'archivo';
+        }
+
+        $nuevonombre = $archivo . '_' . $nombrebase . '_' . date('Y_m_d_H_i_s') . '.' . $ext;
 
         $permitidos = ['pdf', 'gif', 'jpeg', 'jpg', 'png', 'mp4', 'docx', 'doc', 'xml'];
-        if (!in_array($ext, $permitidos)) return "2";
+        if (!in_array($ext, $permitidos)) {
+            return "2";
+        }
 
         if (move_uploaded_file($nombretemp, $nombre_carpeta . '/' . $nuevonombre)) {
             chmod($nombre_carpeta . '/' . $nuevonombre, 0755);
@@ -524,7 +558,7 @@ public function variable_SUBETUFACTURA() {
             echo "Ingresado";
         } else {
             mysqli_query($conn, "UPDATE {$tabla} SET {$camposComunes} WHERE `ultimo_id`='{$ultimo_id}'") or die('P352' . mysqli_error($conn));
-            echo "Actualizado";
+            echo " ";
         }
     }
 
