@@ -73,6 +73,26 @@
 <!-- ===================== SCRIPT ===================== -->
 <script type="text/javascript">
 
+// ── Variables para preservar posición de scroll y página ─────────────────
+var currentPage = 1;
+var lastTableScrollTop = null;
+
+function getScrollContainer(){
+    return document.getElementById('scroll-container');
+}
+
+function recargarPaginaActual(){
+    var scrollContainer = getScrollContainer();
+    if(scrollContainer){
+        lastTableScrollTop = scrollContainer.scrollTop;
+    } else {
+        lastTableScrollTop = null;
+    }
+    load(currentPage || 1, { preserveScroll: true });
+}
+// ─────────────────────────────────────────────────────────────────────────
+
+
 function pasarpagado2(pasarpagado_id){
 	var checkBox = document.getElementById("pasarpagado1a"+pasarpagado_id);
 	var pasarpagado_text = "";
@@ -91,7 +111,7 @@ function pasarpagado2(pasarpagado_id){
 		success:function(data){
 			var result = data.split('^');
 			$('#pasarpagado2').html("<span 'ACTUALIZADO'</span>").fadeIn().delay(500).fadeOut();
-			load(1);
+			recargarPaginaActual();
 			if(pasarpagado_text=='si'){
 				$('#color_pagado1a'+pasarpagado_id).css('background-color', '#ceffcc');
 			}
@@ -308,7 +328,7 @@ function STATUS_AUDITORIA1(AUDITORIA1_id){
 		success:function(data){
 			var result = data.split('^');
 			$('#pasarpagado2').html("<span id='ACTUALIZADO' >"+result[0]+"</span>");
-			load(1);
+			recargarPaginaActual();
 			if(result[1]=='si'){ $('#color_AUDITORIA1'+AUDITORIA1_id).css('background-color', '#ceffcc'); }
 			if(result[1]=='no'){ $('#color_AUDITORIA1'+AUDITORIA1_id).css('background-color', '#e9d8ee'); }
 		}
@@ -327,7 +347,7 @@ function STATUS_AUDITORIA2(AUDITORIA2_id){
 		success:function(data){
 			var result = data.split('^');
 			$('#pasarpagado2').html("Cargando...").fadeIn().delay(500).fadeOut();
-			load(1);
+			recargarPaginaActual();
 			if(result[1]=='si'){ $('#color_AUDITORIA2'+AUDITORIA2_id).css('background-color', '#ceffcc'); }
 			if(result[1]=='no'){ $('#color_AUDITORIA2'+AUDITORIA2_id).css('background-color', '#e9d8ee'); }
 		}
@@ -351,11 +371,11 @@ function STATUS_RECHAZADO(RECHAZADO_id){
 		$checkBox.data('forzarAgregarMotivo', 'si');
 	} else if(RECHAZADO_text === 'si' && $checkBox.data('forzarAgregarMotivo') !== 'si'){
 		$checkBox.removeData('forzarAgregarMotivo');
-}
+	}
 
 	actualizarBotonesRechazo(RECHAZADO_id, RECHAZADO_text);
 	actualizarEstadoVentasPorRechazo(RECHAZADO_id, RECHAZADO_text);
-	load(obtenerPaginaActualFiltro());
+	recargarPaginaActual();
 
 	$.ajax({
 		url:'pagoproveedores/controladorPP.php',
@@ -523,7 +543,7 @@ function STATUS_FINANZAS(FINANZAS_id){
 		success:function(data){
 			var result = data.split('^');
 			$('#pasarpagado2').html("Cargando...").fadeIn().delay(500).fadeOut();
-			load(1);
+			recargarPaginaActual();
 			if(result[1]=='si'){ $('#color_FINANZAS'+FINANZAS_id).css('background-color', '#ceffcc'); }
 			if(result[1]=='no'){ $('#color_FINANZAS'+FINANZAS_id).css('background-color', '#e9d8ee'); }
 		}
@@ -542,7 +562,7 @@ function STATUS_VENTAS(VENTAS_id){
 		success:function(data){
 			var result = data.split('^');
 			$('#pasarpagado2').html("Cargando...").fadeIn().delay(500).fadeOut();
-			load(1);
+			recargarPaginaActual();
 			if(result[1]=='si'){
 				$('#color_VENTAS'+VENTAS_id).css('background-color', '#ceffcc');
 				$('#STATUS_RECHAZADO'+VENTAS_id)
@@ -561,8 +581,6 @@ function STATUS_VENTAS(VENTAS_id){
 		}
 	});
 }
-
-
 
 
 function LIMPIAR_FILTRO(){
@@ -617,7 +635,10 @@ $(function() {
 
 var filtroXhr = null;
 
-function load(page){
+function load(page, options){
+	options = options || {};
+	currentPage = parseInt(page, 10) || 1;
+
 	var query=$("#NOMBRE_EVENTO").val();
 	var DEPARTAMENTO2=$("#DEPARTAMENTO2WE").val();
 	var NUMERO_CONSECUTIVO_PROVEE=$("#NUMERO_CONSECUTIVO_PROVEE_2").val();
@@ -817,9 +838,8 @@ function load(page){
 		'DEPARTAMENTO2':DEPARTAMENTO2
 	};
 
-$("#loader2").fadeIn('slow');
+	$("#loader2").fadeIn('slow');
 	if (filtroXhr && filtroXhr.readyState !== 4) {
-		// Optimización: evita solapar peticiones anteriores cuando el usuario pagina/filtra rápido.
 		filtroXhr.abort();
 	}
 	filtroXhr = $.ajax({
@@ -846,8 +866,16 @@ $("#loader2").fadeIn('slow');
 				if(localStorage.getItem('checkbox_' + id) === 'checked'){
 					this.checked = true;
 					this.closest('tr').style.filter = 'brightness(65%) sepia(100%) saturate(200%) hue-rotate(0deg)';
-			}
+				}
 			});
+
+			// ── Restaurar posición de scroll tras recarga ─────────────────
+			if(options.preserveScroll && lastTableScrollTop !== null){
+				var sc = getScrollContainer();
+				if(sc){ sc.scrollTop = lastTableScrollTop; }
+				lastTableScrollTop = null;
+			}
+			// ─────────────────────────────────────────────────────────────
 		},
 		error: function(xhr, status){
 			if (status !== 'abort') {
@@ -855,7 +883,6 @@ $("#loader2").fadeIn('slow');
 			}
 		},
 		complete: function(){
-			// El mensaje permanece visible durante toda la petición y solo se oculta al terminar.
 			$("#loader2").delay(700).fadeOut("slow", function(){ $(this).html(""); });
 		}
 	});
@@ -887,7 +914,7 @@ function _bitacoraIcon(path) {
 }
 
 /* ============================================================
-   CLICK — Abrir modal Bitácora (REEMPLAZA el original)
+   CLICK — Abrir modal Bitácora
    ============================================================ */
 $(document).on('click', '.view_dataPAGOPROVEEbitacora', function () {
 	var idSubetufactura = $(this).attr('id');
@@ -921,34 +948,18 @@ $(document).on('click', '.view_dataPAGOPROVEEbitacora', function () {
 			if (tipoPago === '') {
 				for (var idx = 0; idx < data.length; idx++) {
 					var tipoTmp = data[idx].VIATICOSOPRO || data[idx].viaticosopro || '';
-					if (tipoTmp !== '') {
-						tipoPago = tipoTmp;
-						break;
-					}
+					if (tipoTmp !== '') { tipoPago = tipoTmp; break; }
 				}
 			}
-			var tituloBitacora = 'Solicitud <b>#' + numeroSolicitud + '</b>';
 
-			$('#bitacoraSubLabel').html(tituloBitacora);
+			$('#bitacoraSubLabel').html('Solicitud <b>#' + numeroSolicitud + '</b>');
 
-			/* Franja superior informativa */
 			var strip = '';
-		
-			if (tipoPago) {
-				strip += '<span><b>Tipo:</b> ' + tipoPago + '</span>';
-			}
-			if (data[0].proveedor) {
-				strip += '<span><b>Proveedor:</b> ' + data[0].proveedor + '</span>';
-			}
-			if (data[0].monto) {
-				strip += '<span><b>Monto:</b> $' + data[0].monto + '</span>';
-			}
-			if (data[0].evento) {
-				strip += '<span><b>Evento:</b> ' + data[0].evento + '</span>';
-			}
-			if (strip !== '') {
-				$('#bitacoraStrip').html(strip).show();
-			}
+			if (tipoPago)         strip += '<span><b>Tipo:</b> ' + tipoPago + '</span>';
+			if (data[0].proveedor) strip += '<span><b>Proveedor:</b> ' + data[0].proveedor + '</span>';
+			if (data[0].monto)     strip += '<span><b>Monto:</b> $' + data[0].monto + '</span>';
+			if (data[0].evento)    strip += '<span><b>Evento:</b> ' + data[0].evento + '</span>';
+			if (strip !== '') { $('#bitacoraStrip').html(strip).show(); }
 
 			var html = '<div class="bitacora-timeline-wrap"><div>';
 
@@ -961,14 +972,12 @@ $(document).on('click', '.view_dataPAGOPROVEEbitacora', function () {
 
 				html +=
 					'<div style="display:flex;gap:12px;">' +
-
 						'<div style="display:flex;flex-direction:column;align-items:center;width:36px;">' +
 							'<div class="bitacora-dot" style="background:' + cfg.bg + ';border-color:' + cfg.border + ';color:' + cfg.border + '">' +
 								_bitacoraIcon(cfg.iconPath) +
 							'</div>' +
 							(!isLast ? '<div class="bitacora-line"></div>' : '') +
 						'</div>' +
-
 						'<div style="flex:1;padding-bottom:' + (isLast ? '0.25rem' : '1.1rem') + ';">' +
 							'<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;">' +
 								'<span class="badge-bitacora ' + cfg.cls + '">' + (d.tipo_movimiento || '-') + '</span>' +
@@ -980,7 +989,6 @@ $(document).on('click', '.view_dataPAGOPROVEEbitacora', function () {
 								'<small style="color:#6c757d;">' + usuario + '</small>' +
 							'</div>' +
 						'</div>' +
-
 					'</div>';
 			}
 
@@ -996,8 +1004,6 @@ $(document).on('click', '.view_dataPAGOPROVEEbitacora', function () {
 		}
 	});
 });
-
-
 
 </script>
 
@@ -1023,7 +1029,7 @@ $(document).on('click', '.view_dataPAGOPROVEEbitacora', function () {
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
 
-      <!-- Strip info rápida (oculto por defecto, se activa desde JS si hay datos) -->
+      <!-- Strip info rápida -->
       <div id="bitacoraStrip" class="bitacora-strip" style="display:none;"></div>
 
       <!-- Body timeline -->

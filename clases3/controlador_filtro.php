@@ -1409,7 +1409,15 @@ if ($database->plantilla_filtro($nombreTabla,"FECHA_DE_LLENADO",$altaeventos,$DE
 ?>
 
 <?php
-$id_relacion_bancario = $database->datos_bancarios_xml($row['RFC_PROVEEDOR'], null, $row['NOMBRE_COMERCIAL']);
+$statusPagoFila = strtoupper(trim((string)$row['STATUS_DE_PAGO']));
+$bloquearActualizacionBancaria = ($statusPagoFila === 'PAGADO');
+$explodeDatosBancarios = $bloquearActualizacionBancaria
+	? $database->datos_bancarios_pagado($row['RFC_PROVEEDOR'], $row['NOMBRE_COMERCIAL'], $row['FECHA_DE_PAGO'])
+	: $database->datos_bancarios_todo(
+		$database->datos_bancarios_xml($row['RFC_PROVEEDOR'], null, $row['NOMBRE_COMERCIAL']),
+		$row['NOMBRE_COMERCIAL']
+	);
+$id_relacion_bancario = isset($explodeDatosBancarios['idRelacion']) ? $explodeDatosBancarios['idRelacion'] : null;
 $mostrarXML = ($row['STATUS_SINXML'] !== 'si');
 ?>
 <?php if($database->plantilla_filtro($nombreTabla,"CSF",$altaeventos,$DEPARTAMENTO)=="si"){ ?>
@@ -1638,30 +1646,30 @@ $habilitado = (!$estaSi && ($p_vobo_guardar || $p_vobo_mod)) || ($estaSi && $p_v
 <div id="ajax-notification" style="position:fixed; top:20px; right:20px; padding:15px; background:#4CAF50; color:white; border-radius:5px; display:none; z-index:1000;"></div>
 
 <?php if($database->plantilla_filtro($nombreTabla,"P_TIPO_DE_MONEDA_1",$altaeventos,$DEPARTAMENTO)=="si"){ ?>
-<td style="text-align:center"><?php $explodeDatosBancarios = $database->datos_bancarios_todo($id_relacion_bancario, $row['NOMBRE_COMERCIAL']); echo $P_TIPO_DE_MONEDA_1; echo $explodeDatosBancarios['P_TIPO_DE_MONEDA_1']; ?></td>
+<td style="text-align:center"><?php echo $P_TIPO_DE_MONEDA_1; echo isset($explodeDatosBancarios['P_TIPO_DE_MONEDA_1']) ? $explodeDatosBancarios['P_TIPO_DE_MONEDA_1'] : ''; ?></td>
 <?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"P_INSTITUCION_FINANCIERA_1",$altaeventos,$DEPARTAMENTO)=="si"){ ?>
-<td style="text-align:center"><?php $explodeDatosBancarios = $database->datos_bancarios_todo($id_relacion_bancario, $row['NOMBRE_COMERCIAL']); echo $P_INSTITUCION_FINANCIERA_1; echo $explodeDatosBancarios['P_INSTITUCION_FINANCIERA_1']; ?></td>
+<td style="text-align:center"><?php echo $P_INSTITUCION_FINANCIERA_1; echo isset($explodeDatosBancarios['P_INSTITUCION_FINANCIERA_1']) ? $explodeDatosBancarios['P_INSTITUCION_FINANCIERA_1'] : ''; ?></td>
 <?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"P_NUMERO_DE_CUENTA_DB_1",$altaeventos,$DEPARTAMENTO)=="si"){ ?>
-<td style="text-align:center"><?php $explodeDatosBancarios = $database->datos_bancarios_todo($id_relacion_bancario, $row['NOMBRE_COMERCIAL']); echo $P_NUMERO_DE_CUENTA_DB_1; echo $explodeDatosBancarios['P_NUMERO_DE_CUENTA_DB_1']; ?></td>
+<td style="text-align:center"><?php echo $P_NUMERO_DE_CUENTA_DB_1; echo isset($explodeDatosBancarios['P_NUMERO_DE_CUENTA_DB_1']) ? $explodeDatosBancarios['P_NUMERO_DE_CUENTA_DB_1'] : ''; ?></td>
 <?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"P_NUMERO_CLABE_1",$altaeventos,$DEPARTAMENTO)=="si"){ ?>
-<td style="text-align:center"><?php $explodeDatosBancarios = $database->datos_bancarios_todo($id_relacion_bancario, $row['NOMBRE_COMERCIAL']); echo $P_NUMERO_CLABE_1; echo $explodeDatosBancarios['P_NUMERO_CLABE_1']; ?></td>
+<td style="text-align:center"><?php echo $P_NUMERO_CLABE_1; echo isset($explodeDatosBancarios['P_NUMERO_CLABE_1']) ? $explodeDatosBancarios['P_NUMERO_CLABE_1'] : ''; ?></td>
 <?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"P_NUMERO_IBAN_1",$altaeventos,$DEPARTAMENTO)=="si"){ ?>
-<td style="text-align:center"><?php $explodeDatosBancarios = $database->datos_bancarios_todo($id_relacion_bancario, $row['NOMBRE_COMERCIAL']); echo $P_NUMERO_IBAN_1; echo $explodeDatosBancarios['P_NUMERO_IBAN_1']; ?></td>
+<td style="text-align:center"><?php echo $P_NUMERO_IBAN_1; echo isset($explodeDatosBancarios['P_NUMERO_IBAN_1']) ? $explodeDatosBancarios['P_NUMERO_IBAN_1'] : ''; ?></td>
 <?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"P_NUMERO_CUENTA_SWIFT_1",$altaeventos,$DEPARTAMENTO)=="si"){ ?>
-<td style="text-align:center"><?php $explodeDatosBancarios = $database->datos_bancarios_todo($id_relacion_bancario, $row['NOMBRE_COMERCIAL']); echo $P_NUMERO_CUENTA_SWIFT_1; echo $explodeDatosBancarios['P_NUMERO_CUENTA_SWIFT_1']; ?></td>
+<td style="text-align:center"><?php echo $P_NUMERO_CUENTA_SWIFT_1; echo isset($explodeDatosBancarios['P_NUMERO_CUENTA_SWIFT_1']) ? $explodeDatosBancarios['P_NUMERO_CUENTA_SWIFT_1'] : ''; ?></td>
 <?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"FOTO_ESTADO_PROVEE",$altaeventos,$DEPARTAMENTO)=="si"){ ?>
 <td style="text-align:center"><?php
-$explodeDatosBancarios = $database->datos_bancarios_todo($id_relacion_bancario, $row['NOMBRE_COMERCIAL']);
-if ($explodeDatosBancarios['FOTO_ESTADO_PROVEE']==2 or $explodeDatosBancarios['FOTO_ESTADO_PROVEE']=='' or $explodeDatosBancarios['FOTO_ESTADO_PROVEE']==1) {
+$fotoEstadoProvee = isset($explodeDatosBancarios['FOTO_ESTADO_PROVEE']) ? $explodeDatosBancarios['FOTO_ESTADO_PROVEE'] : '';
+if ($fotoEstadoProvee==2 or $fotoEstadoProvee=='' or $fotoEstadoProvee==1) {
 	echo "<br>";
 } else {
-	echo "<a target='_blank' href='includes/archivos/".$explodeDatosBancarios['FOTO_ESTADO_PROVEE']."'>ver</a><br>";
+	echo "<a target='_blank' href='includes/archivos/".$fotoEstadoProvee."'>ver</a><br>";
 }
 ?></td>
 <?php } ?>
