@@ -87,16 +87,63 @@ if($identioficador != '') {
             $fechaProgramacionColor = '#dfd9f3';
         }
 
-        // ── Bloqueo de importes si el pago ya está APROBADO ───────────────
+
         $bloqueoAuditoria1 = '';
+
+        $bloqueoTotalAuditoria1 = '';
+
         $styleBloqueoAuditoria1 = '';
+
         $styleTotalAuditoria1 = 'style="background:#decaf1"';
 
-        if (isset($row['STATUS_DE_PAGO']) && trim(strtoupper($row['STATUS_DE_PAGO'])) == 'APROBADO') {
-            $bloqueoAuditoria1 = ' readonly="readonly"';
-            $styleBloqueoAuditoria1 = ' style="background:#d7bde2"';
-            $styleTotalAuditoria1 = 'style="background:#d7bde2"';
+    $styleLabelMontos = 'style="background:#39FF14"';
+
+        $hiddenMontosBloqueados = '';
+
+        $statusVentasConfirmado = isset($row['STATUS_VENTAS'])
+
+            && trim(strtolower($row['STATUS_VENTAS'])) == 'si';
+
+        $statusPagoBloqueado = isset($row['STATUS_DE_PAGO'])
+
+            && in_array(trim(strtoupper($row['STATUS_DE_PAGO'])), ['APROBADO', 'PAGADO']);
+
+
+
+        if ($statusVentasConfirmado || $statusPagoBloqueado) {
+
+            $bloqueoAuditoria1 = ' readonly="readonly" disabled="disabled"';
+
+            $bloqueoTotalAuditoria1 = ' disabled="disabled"';
+
+            $styleBloqueoAuditoria1 = ' style="background:#dfd9f3"';
+
+            $styleTotalAuditoria1 = 'style="background:#dfd9f3"';
+
+            $styleLabelMontos = 'style="background:#dfd9f3"';
+
+            $hiddenMontosBloqueados = '
+
+                <input type="hidden" name="MONTO_FACTURA" value="'.$row["MONTO_FACTURA"].'">
+
+                <input type="hidden" name="IVA" value="'.$row["IVA"].'">
+
+                <input type="hidden" name="TImpuestosRetenidosIVA" value="'.$row["TImpuestosRetenidosIVA"].'">
+
+                <input type="hidden" name="TImpuestosRetenidosISR" value="'.$row["TImpuestosRetenidosISR"].'">
+
+                <input type="hidden" name="MONTO_PROPINA" value="'.$row["MONTO_PROPINA"].'">
+
+                <input type="hidden" name="IMPUESTO_HOSPEDAJE" value="'.$row["IMPUESTO_HOSPEDAJE"].'">
+
+                <input type="hidden" name="descuentos" value="'.$row["descuentos"].'">
+
+                <input type="hidden" name="MONTO_DEPOSITAR" value="'.$row["MONTO_DEPOSITAR"].'">';
+
         }
+
+
+
 
         // ── Disable factura según tipo de pago ────────────────────────────
         $disableFactura   = in_array($row["VIATICOSOPRO"], [
@@ -363,37 +410,37 @@ if($identioficador != '') {
         </tr>
 
         <tr>
-            <td style="background:#39FF14;"><label>SUB TOTAL<br><a style="color:red;font-size:11px">OBLIGATORIO</a></label></td>
+            <td '.$styleLabelMontos.'><label>SUB TOTAL<br><a style="color:red;font-size:11px">OBLIGATORIO</a></label></td>
             <td><input type="text" name="MONTO_FACTURA" id="montoTotalEvento" value="'.$row["MONTO_FACTURA"].'"'.$bloqueoAuditoria1.$styleBloqueoAuditoria1.'></td>
         </tr>
 
         <tr>
-            <td style="background:#39FF14;"><label>IVA</label></td>
+            <td '.$styleLabelMontos.'><label>IVA</label></td>
             <td><input type="text" name="IVA" id="montoTotalAvion" value="'.$row["IVA"].'"'.$bloqueoAuditoria1.$styleBloqueoAuditoria1.'></td>
         </tr>
 
         <tr>
-            <td style="background:#39FF14;"><label>IMPUESTOS RETENIDOS IVA</label></td>
+            <td '.$styleLabelMontos.'><label>IMPUESTOS RETENIDOS IVA</label></td>
             <td><input type="text" name="TImpuestosRetenidosIVA" id="montoRetenidoIVA" value="'.$row["TImpuestosRetenidosIVA"].'"'.$bloqueoAuditoria1.$styleBloqueoAuditoria1.'></td>
         </tr>
 
         <tr>
-            <td style="background:#39FF14;"><label>IMPUESTOS RETENIDOS ISR</label></td>
+            <td '.$styleLabelMontos.'><label>IMPUESTOS RETENIDOS ISR</label></td>
             <td><input type="text" name="TImpuestosRetenidosISR" id="montoRetenidoISR" value="'.$row["TImpuestosRetenidosISR"].'"'.$bloqueoAuditoria1.$styleBloqueoAuditoria1.'></td>
         </tr>
 
         <tr>
-            <td style="background:#39FF14;"><label>MONTO DE LA PROPINA O SERVICIO NO INCLUIDO EN LA FACTURA</label></td>
+            <td '.$styleLabelMontos.'><label>MONTO DE LA PROPINA O SERVICIO NO INCLUIDO EN LA FACTURA</label></td>
             <td><input type="text" name="MONTO_PROPINA" id="montoTotalpropina" value="'.$row["MONTO_PROPINA"].'"'.$bloqueoAuditoria1.$styleBloqueoAuditoria1.'></td>
         </tr>
 
         <tr>
-            <td style="background:#39FF14;"><label>IMPUESTO SOBRE HOSPEDAJE MÁS EL IMPUESTO DE SANEAMIENTO</label></td>
+            <td '.$styleLabelMontos.'><label>IMPUESTO SOBRE HOSPEDAJE MÁS EL IMPUESTO DE SANEAMIENTO</label></td>
             <td><input type="text" name="IMPUESTO_HOSPEDAJE" id="montoTotalhospedaje" value="'.$row["IMPUESTO_HOSPEDAJE"].'"'.$bloqueoAuditoria1.$styleBloqueoAuditoria1.'></td>
         </tr>
 
         <tr>
-            <td style="background:#39FF14;"><label>DESCUENTO</label></td>
+            <td '.$styleLabelMontos.'><label>DESCUENTO</label></td>
             <td><input type="text" name="descuentos" id="montoDescuentos" value="'.$row["descuentos"].'"'.$bloqueoAuditoria1.$styleBloqueoAuditoria1.'></td>
         </tr>
 

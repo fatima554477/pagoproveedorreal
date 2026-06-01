@@ -88,15 +88,49 @@ if($identioficador != '') {
         }
 
 
-        // ── Bloqueo de campos de montos si el pago está APROBADO ──────────
-        // Aplica desde MONTO_FACTURA hasta MONTO_DEPOSITAR.
+
+
+     
+
         $bloquearMontosAttr  = '';
+
         $bloquearMontosStyle = '';
 
-        if ($row['STATUS_DE_PAGO'] == 'APROBADO') {
+
+
+        
+
+        $styleMontoDepositar = 'style="background:#d7bde2"';
+
+        $styleLabelMontos = 'style="background:#39FF14"';
+
+        $statusVentasConfirmado = isset($row['STATUS_VENTAS'])
+
+            && trim(strtolower($row['STATUS_VENTAS'])) == 'si';
+
+        $statusPagoBloqueado = isset($row['STATUS_DE_PAGO'])
+
+            && in_array(trim(strtoupper($row['STATUS_DE_PAGO'])), ['APROBADO', 'PAGADO']);
+
+
+
+        if ($statusVentasConfirmado || $statusPagoBloqueado) {
+
             $bloquearMontosAttr  = ' readonly="readonly"';
-            $bloquearMontosStyle = ' style="background:#d7bde2"';
+
+           
+
+            $bloquearMontosStyle = ' style="background:#dfd9f3"';
+
+            $styleMontoDepositar = 'style="background:#dfd9f3"';
+
+            $styleLabelMontos = 'style="background:#dfd9f3"';
+
         }
+
+
+
+
 
         // ── Disable factura según tipo de pago ────────────────────────────
         $disableFactura   = in_array($row["VIATICOSOPRO"], [
@@ -362,38 +396,38 @@ if($identioficador != '') {
             <td><input type="text" name="MONTO_TOTAL_COTIZACION_ADEUDO" value="'.$row["MONTO_TOTAL_COTIZACION_ADEUDO"].'"></td>
         </tr>
 
-        <tr>
-            <td style="background:#39FF14;"><label>SUB TOTAL<br><a style="color:red;font-size:11px">OBLIGATORIO</a></label></td>
+        <tr>    
+            <td '.$styleLabelMontos.'><label>SUB TOTAL<br><a style="color:red;font-size:11px">OBLIGATORIO</a></label></td>
             <td><input type="text" name="MONTO_FACTURA" id="montoTotalEvento" value="'.$row["MONTO_FACTURA"].'"'.$bloquearMontosAttr.$bloquearMontosStyle.'></td>
         </tr>
 
         <tr>
-            <td style="background:#39FF14;"><label>IVA</label></td>
+            <td '.$styleLabelMontos.'><label>IVA</label></td>
             <td><input type="text" name="IVA" id="montoTotalAvion" value="'.$row["IVA"].'"'.$bloquearMontosAttr.$bloquearMontosStyle.'></td>
         </tr>
 
         <tr>
-            <td style="background:#39FF14;"><label>IMPUESTOS RETENIDOS IVA</label></td>
+            <td '.$styleLabelMontos.'><label>IMPUESTOS RETENIDOS IVA</label></td>
             <td><input type="text" name="TImpuestosRetenidosIVA" id="montoRetenidoIVA" value="'.$row["TImpuestosRetenidosIVA"].'"'.$bloquearMontosAttr.$bloquearMontosStyle.'></td>
         </tr>
 
         <tr>
-            <td style="background:#39FF14;"><label>IMPUESTOS RETENIDOS ISR</label></td>
+            <td '.$styleLabelMontos.'><label>IMPUESTOS RETENIDOS ISR</label></td>
             <td><input type="text" name="TImpuestosRetenidosISR" id="montoRetenidoISR" value="'.$row["TImpuestosRetenidosISR"].'"'.$bloquearMontosAttr.$bloquearMontosStyle.'></td>
         </tr>
 
         <tr>
-            <td style="background:#39FF14;"><label>MONTO DE LA PROPINA O SERVICIO NO INCLUIDO EN LA FACTURA</label></td>
+            <td '.$styleLabelMontos.'><label>MONTO DE LA PROPINA O SERVICIO NO INCLUIDO EN LA FACTURA</label></td>
             <td><input type="text" name="MONTO_PROPINA" id="montoTotalpropina" value="'.$row["MONTO_PROPINA"].'"'.$bloquearMontosAttr.$bloquearMontosStyle.'></td>
         </tr>
 
         <tr>
-            <td style="background:#39FF14;"><label>IMPUESTO SOBRE HOSPEDAJE MÁS EL IMPUESTO DE SANEAMIENTO</label></td>
+            <td '.$styleLabelMontos.'><label>IMPUESTO SOBRE HOSPEDAJE MÁS EL IMPUESTO DE SANEAMIENTO</label></td>
             <td><input type="text" name="IMPUESTO_HOSPEDAJE" id="montoTotalhospedaje" value="'.$row["IMPUESTO_HOSPEDAJE"].'"'.$bloquearMontosAttr.$bloquearMontosStyle.'></td>
         </tr>
 
         <tr>
-            <td style="background:#39FF14;"><label>DESCUENTO</label></td>
+            <td '.$styleLabelMontos.'><label>DESCUENTO</label></td>
             <td><input type="text" name="descuentos" id="montoDescuentos" value="'.$row["descuentos"].'"'.$bloquearMontosAttr.$bloquearMontosStyle.'></td>
         </tr>
 
