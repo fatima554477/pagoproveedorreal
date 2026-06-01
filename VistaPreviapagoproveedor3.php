@@ -744,9 +744,12 @@ function ajax_file_upload2(file_obj, nombre) {
 
                 // ── Para XML, mostrar UUID ──
                 if (nombre === 'ADJUNTAR_FACTURA_XML') {
+                    var nombreArchivoXml = $.trim(result[0]);
                     $('#3' + nombre).html(
                         '<p style="color:green;">✅ <a target="_blank" href="includes/archivos/'
-                        + $.trim(result[0]) + '">Visualizar archivo</a></p>'
+                        + nombreArchivoXml + '">Visualizar archivo</a> &nbsp;'
+                        + '<span style="color:blue;cursor:pointer;" class="view_dataSBborrar2" id="'
+                        + nombreArchivoXml + '">Borrar!</span></p>'
                     );
 
                  var formaPago = $.trim(result[2] || '');
