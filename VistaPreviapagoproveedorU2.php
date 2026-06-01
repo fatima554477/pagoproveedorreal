@@ -629,73 +629,170 @@ if($identioficador != '') {
         input.onchange = function () { ajax_file_upload2(input.files[0], name); };
     };
 
-    function ajax_file_upload2(file_obj, nombre) {
-        if (!file_obj) return;
-        var form_data = new FormData();
-        form_data.append(nombre, file_obj);
-        form_data.append("IPpagoprovee", $("#IPpagoprovee").val());
+function ajax_file_upload2(file_obj, nombre) {
+    if (!file_obj) return;
 
-        $.ajax({
-            type: 'POST',
-            url: "pagoproveedores/controladorPP.php",
-            dataType: "html",
-            contentType: false,
-            processData: false,
-            data: form_data,
-            beforeSend: function () {
-                $('#3' + nombre).html('<p style="color:green;"><span class="spinner-border spinner-border-sm"></span> Cargando archivo...</p>');
-                $('#respuestaser').html('<p style="color:green;">Actualizando...</p>');
-            },
-            success: function (response) {
-                var resp  = $.trim(response);
-                var parts = resp.split('^^');
+    var form_data = new FormData();
+    form_data.append(nombre, file_obj);
+    form_data.append("IPpagoprovee", $("#IPpagoprovee").val());
 
-                if (resp === '2') {
-                    $('#3' + nombre).html('<p style="color:red;">Error: archivo diferente a PDF, JPG o GIF.</p>');
-                    $('[name="' + nombre + '"]').val('');
+    $.ajax({
+        type: 'POST',
+        url: 'pagoproveedores/controladorPP.php',
+        dataType: 'html',
+        contentType: false,
+        processData: false,
+        data: form_data,
+        beforeSend: function () {
+            $('#3' + nombre).html('<p style="color:green;"><span class="spinner-border spinner-border-sm"></span>&nbsp;Cargando archivo...</p>');
+            $('#respuestaser').html('<p style="color:green;"><span class="spinner-border spinner-border-sm"></span>&nbsp;Cargando archivo...</p>');
+        },
+        success: function (response) {
+            var resp = $.trim(response);
 
-                } else if (parts[0] === '3') {
-                    var numSol = $.trim(parts[1] || '');
-                    $('#3' + nombre).html(numSol
-                        ? '<p style="color:red;font-weight:600;">⚠️ UUID YA REGISTRADO — Solicitud: <strong>' + numSol + '</strong></p>'
-                        : '<p style="color:red;font-weight:600;">⚠️ UUID PREVIAMENTE CARGADO.</p>');
-                    $('[name="' + nombre + '"]').val('');
+            // ── Archivo vacío (0 bytes) ───────────────────────────────────
+            if (resp.indexOf('VACIO^^') === 0) {
+                $('#3' + nombre).html(
+                    '<p style="color:red;font-weight:600;">⚠️ EL ARCHIVO ESTÁ VACÍO (0 KB). ' +
+                    'Verifica que el archivo tenga contenido antes de subirlo.</p>'
+                );
+                $('#' + nombre).val('');
 
-                } else if (resp === '4') {
-                    var fmt = (nombre.indexOf('XML') !== -1) ? 'XML' : 'PDF';
-                    $('#3' + nombre).html('<p style="color:red;">ESTE ARCHIVO TIENE QUE SER EN FORMATO ' + fmt + '.</p>');
-                    $('[name="' + nombre + '"]').val('');
+            // ── Archivo sin extensión ─────────────────────────────────────
+            } else if (resp.indexOf('SIN_EXTENSION^^') === 0) {
+                $('#3' + nombre).html(
+                    '<p style="color:red;font-weight:600;">⚠️ EL ARCHIVO NO TIENE EXTENSIÓN RECONOCIDA. ' +
+                    'Asegúrate de que el nombre del archivo termine en .xml, .pdf, .jpg, etc.</p>'
+                );
+                $('#' + nombre).val('');
 
-                } else if (parts[0] === '5') {
-                    $('#3' + nombre).html('<p style="color:red;font-weight:600;">⚠️ El XML está vacío o no contiene información válida.</p>');
-                    $('[name="' + nombre + '"]').val('');
+            // ── Error de subida al servidor ───────────────────────────────
+            } else if (resp.indexOf('ERROR_SUBIDA^^') === 0) {
+                $('#3' + nombre).html(
+                    '<p style="color:red;font-weight:600;">⚠️ ERROR AL RECIBIR EL ARCHIVO EN EL SERVIDOR. ' +
+                    'Puede que sea demasiado grande o que la conexión se haya interrumpido. ' +
+                    'Intenta de nuevo.</p>'
+                );
+                $('#' + nombre).val('');
 
-                } else {
-                    var nombreArchivo = parts[0];
-                    var uuid          = $.trim(parts[1] || '');
-                    var formaPago     = $.trim(parts[2] || '');
+            // ── Formato no permitido genérico ─────────────────────────────
+            } else if (resp === '2') {
+                var exts = (nombre === 'ADJUNTAR_FACTURA_XML') ? 'XML' :
+                           (nombre === 'ADJUNTAR_FACTURA_PDF') ? 'PDF' :
+                           'PDF, JPG, PNG, DOCX, XML, XLSX, MP4, TXT u otro formato de documento';
+                $('#3' + nombre).html(
+                    '<p style="color:red;">⚠️ FORMATO DE ARCHIVO NO PERMITIDO. ' +
+                    'Este campo acepta únicamente archivos en formato: <strong>' + exts + '</strong>.</p>'
+                );
+                $('#' + nombre).val('');
 
+            // ── Error al mover el archivo en disco ────────────────────────
+            } else if (resp === '1') {
+                $('#3' + nombre).html(
+                    '<p style="color:red;font-weight:600;">⚠️ ERROR AL GUARDAR EL ARCHIVO EN EL SERVIDOR. ' +
+                    'Intenta de nuevo o contacta a soporte técnico.</p>'
+                );
+                $('#' + nombre).val('');
+				
+
+            // ── UUID duplicado en Pago Proveedores (02XML) ────────────────
+            }
+
+			else if (resp.indexOf('3^^') === 0) {
+                var partes = resp.split('^^');
+                var numeroSolicitud = partes[1] ? $.trim(partes[1]) : '';
+                var numeroEvento    = partes[2] ? $.trim(partes[2]) : '';
+                var detalleEvento   = numeroEvento !== ''
+                    ? ' — Evento: <strong>' + numeroEvento + '</strong>'
+                    : '';
+                var msgDuplicado = numeroSolicitud !== ''
+                    ? '<p style="color:red;font-weight:600;">⚠️ UUID YA REGISTRADO — Se encuentra en la solicitud: <strong>' + numeroSolicitud + '</strong>' + detalleEvento + '</p>'
+                    : '<p style="color:red;font-weight:600;">⚠️ UUID PREVIAMENTE CARGADO.</p>';
+                $('#3' + nombre).html(msgDuplicado);
+                $('#' + nombre).val('');
+
+            // ── UUID duplicado en Comprobación de Gastos (07XML) ──────────
+            } else if (resp.indexOf('7^^^') === 0) {
+                var partesGasto = resp.split('^^^');
+                var numeroGasto = partesGasto[1] ? $.trim(partesGasto[1]) : '';
+                var msgGasto = numeroGasto !== ''
+                    ? '<p style="color:#C82909;font-weight:600;">⚠️ UUID YA REGISTRADO EN COMPROBACIÓN DE GASTOS — CON EL ID: <strong>' + numeroGasto + '</strong></p>'
+                    : '<p style="color:#C82909;font-weight:600;">⚠️ UUID PREVIAMENTE CARGADO EN COMPROBACIÓN DE GASTOS.</p>';
+                $('#3' + nombre).html(msgGasto);
+                $('#' + nombre).val('');
+
+            // ── XML vacío o sin timbre válido ─────────────────────────────
+            } else if (resp.indexOf('5^^') === 0) {
+                $('#3' + nombre).html(
+                    '<p style="color:red;font-weight:600;">⚠️ EL ARCHIVO XML ESTÁ VACÍO O NO CONTIENE INFORMACIÓN VÁLIDA. ' +
+                    'Verifica que sea un CFDI timbrado correctamente e inténtalo de nuevo.</p>'
+                );
+                $('#' + nombre).val('');
+
+            // ── Receptor de factura no válido (no es EPC/INN/EVE520) ──────
+            } else if (resp.indexOf('6^^') === 0) {
+                var partesReceptor = resp.split('^^');
+                var receptorXML    = partesReceptor[1] ? $.trim(partesReceptor[1]) : '';
+                var msgReceptor = receptorXML !== ''
+                    ? '⚠️ EL RECEPTOR DE LA FACTURA NO ES VÁLIDO: <strong>' + receptorXML + '</strong>. Debe ser EPC, INN o EVE520.'
+                    : '⚠️ EL RECEPTOR DE LA FACTURA NO ES EPC, INN O EVE520.';
+                $('#3' + nombre).html('<p style="color:red;font-weight:600;">' + msgReceptor + '</p>');
+                $('#' + nombre).val('');
+
+            // ── Éxito: archivo cargado correctamente ──────────────────────
+            } else {
+                var result = response.split('^^');
+                $('#' + nombre).val(result[1]);
+                $('#3' + nombre).html('<p style="color:green;">✅ <a target="_blank" href="includes/archivos/' + $.trim(result[0]) + '">Visualizar archivo</a></p>');
+
+                // ── Para XML, mostrar UUID ──
+                   if (nombre === 'ADJUNTAR_FACTURA_XML') {
+                    var nombreArchivoXml = $.trim(result[0]);
                     $('#3' + nombre).html(
-                        '<p style="color:green;">✅ ¡Archivo cargado con éxito!</p>' +
-                        '<a target="_blank" href="includes/archivos/' + nombreArchivo + '">Visualizar!</a>'
+                        '<p style="color:green;">✅ <a target="_blank" href="includes/archivos/'
+                        + nombreArchivoXml + '">Visualizar archivo</a> &nbsp;'
+                        + '<span style="color:blue;cursor:pointer;" class="view_dataSBborrar2" id="'
+                        + nombreArchivoXml + '">Borrar!</span></p>'
                     );
 
+                    var formaPago = $.trim(result[2] || '');
                     if (formaPago.length) {
-                        $('input[name="PFORMADE_PAGO"]').val(formaPago);
+                        $('select[name="PFORMADE_PAGO"], input[name="PFORMADE_PAGO"]').val(formaPago);
                     }
 
-                    if (nombre === 'ADJUNTAR_FACTURA_XML' && uuid.length > 1) {
+                    if ((result[1] || '').length > 1) {
                         $('#respuestaser').html(
-                            '<p style="color:green;font-size:14px;font-weight:bold;">✅ XML cargado — UUID: ' + uuid + '</p>'
+                            '<p style="color:green;font-size:25px;font-weight:bolder;">XML CORRECTAMENTE CARGADO CON EL UUID:<br> '
+                            + result[1] + '</p>'
                         );
                         $('#reseteaxml').remove();
-                    } else {
-                        $('#respuestaser').html('<p style="color:green;">✅ Actualizado</p>');
                     }
+
+                    recargarElementos([
+                        '#3ADJUNTAR_FACTURA_XML',
+                        '#RAZON_SOCIAL2', '#RFC_PROVEEDOR2', '#CONCEPTO_PROVEE2',
+                        '#TIPO_DE_MONEDA2', '#FECHA_DE_PAGO2', '#NUMERO_CONSECUTIVO_PROVEE2',
+                        '#2MONTO_FACTURA', '#2MONTO_DEPOSITAR', '#2PFORMADE_PAGO',
+                        '#2IVA', '#2TImpuestosRetenidosIVA', '#2TImpuestosRetenidosISR',
+                        '#2descuentos', '#NOMBRE_COMERCIAL2', '#resettabla'
+                    ]);
+
+                } else {
+                    // ── Para todos los demás archivos ──
+                    var nombreArchivo = $.trim(result[0]);
+                    $('#3' + nombre).html(
+                        '<p style="color:green;">✅ <a target="_blank" href="includes/archivos/'
+                        + nombreArchivo + '">Visualizar!</a> &nbsp;'
+                        + '<span style="color:blue;cursor:pointer;" class="view_dataSBborrar2" id="'
+                        + nombreArchivo + '">Borrar!</span></p>'
+                    );
+                    $('#respuestaser').html('<p style="color:green;">✅ ¡Archivo cargado con éxito!</p>');
+                    recargarElemento('#resettabla');
                 }
             }
-        });
-    }
+        }
+    });
+}
 
 })();
 </script>
