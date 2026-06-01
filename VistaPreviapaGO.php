@@ -5,21 +5,18 @@ fecha fatis : 04/04/2024
 */
 ?>
 
-
-
 <?php
     if(!isset($_SESSION)) 
     { 
         session_start(); 
     }  
-//select.php  CONTRASENA_DE1
+
 $identioficador = isset($_POST["personal_id"])?$_POST["personal_id"]:'';
 if($identioficador != '')
 {
  $output = '';
 	require "controladorPP.php";
 
-//$conexion = NEW accesoclase();
 $queryVISTAPREV = $pagoproveedores->Listado_pagoproveedor2($identioficador);
 
 ?>
@@ -41,329 +38,170 @@ $STATUS_DE_PAGO = '<select required="" name="STATUS_DE_PAGO">
 <option style="background:#f5deee" value="PAGADO" '.$PAGADO.'>PAGADO</option>
 <option style="background:#f5f4de" value="RECHAZADO" '.$RECHAZADO.'>RECHAZADO</option>
 </select>';
-		
+
+// Inicializar variables de archivos
+$ADJUNTAR_FACTURA_PDF = "";
+$ADJUNTAR_FACTURA_XML = "";
+$ADJUNTAR_COTIZACION = "";
+$CONPROBANTE_TRANSFERENCIA = "";
+$FOTO_ESTADO_PROVEE = "";
+$COMPLEMENTOS_PAGO_PDF = "";
+$COMPLEMENTOS_PAGO_XML = "";
+$CANCELACIONES_PDF = "";
+$CANCELACIONES_XML = "";
+$ADJUNTAR_FACTURA_DE_COMISION_PDF = "";
+$ADJUNTAR_FACTURA_DE_COMISION_XML = "";
+$ADJUNTAR_ARCHIVO_1 = "";
+$CALCULO_DE_COMISION = "";
+$COMPROBANTE_DE_DEVOLUCION = "";
+$NOTA_DE_CREDITO_COMPRA = "";
 
 	$queryVISTAPREV = $pagoproveedores->Listado_subefacturaDOCTOS($row['id']);		
 	while($rowDOCTOS = mysqli_fetch_array($queryVISTAPREV))
 	{
-
-
-
-        if($rowDOCTOS["ADJUNTAR_FACTURA_PDF"]!=""){$ADJUNTAR_FACTURA_PDF .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["ADJUNTAR_FACTURA_PDF"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
-		}	else{
-			
-			//$ADJUNTAR_FACTURA_PDF = "";
-			
-		}
-        
-        
-        if($rowDOCTOS["ADJUNTAR_FACTURA_XML"]!=""){$ADJUNTAR_FACTURA_XML .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["ADJUNTAR_FACTURA_XML"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
-		}	else{
-			
-			//$ADJUNTAR_FACTURA_XML = "";
-			
-		}
-
-         
-        if($rowDOCTOS["ADJUNTAR_COTIZACION"]!=""){$ADJUNTAR_COTIZACION .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["ADJUNTAR_COTIZACION"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
-		}	else{
-			
-			//$ADJUNTAR_COTIZACION = "";
-			
-		}
-        
-        if($rowDOCTOS["CONPROBANTE_TRANSFERENCIA"]!=""){$CONPROBANTE_TRANSFERENCIA =  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["CONPROBANTE_TRANSFERENCIA"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
-		}	else{
-			
-			//$CONPROBANTE_TRANSFERENCIA = "";
-			
-		}
-        
-        if($rowDOCTOS["FOTO_ESTADO_PROVEE"]!=""){$FOTO_ESTADO_PROVEE .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["FOTO_ESTADO_PROVEE"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
-		}	else{
-			
-			//$FOTO_ESTADO_PROVEE = "";
-			
-		}
-        
-        if($rowDOCTOS["COMPLEMENTOS_PAGO_PDF"]!=""){$COMPLEMENTOS_PAGO_PDF .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["COMPLEMENTOS_PAGO_PDF"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
-		}	else{
-			
-			//$COMPLEMENTOS_PAGO_PDF = "";
-			
-		}
-        
-
-        if($rowDOCTOS["COMPLEMENTOS_PAGO_XML"]!=""){$COMPLEMENTOS_PAGO_XML .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["COMPLEMENTOS_PAGO_XML"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
-		}	else{
-			
-			//$COMPLEMENTOS_PAGO_XML = "";
-			
-		}
-
-        if($rowDOCTOS["CANCELACIONES_PDF"]!=""){$CANCELACIONES_PDF .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["CANCELACIONES_PDF"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
-		}	else{
-			
-			//$CANCELACIONES_PDF = "";
-			
-		}
-
-        if($rowDOCTOS["CANCELACIONES_XML"]!=""){$CANCELACIONES_XML .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["CANCELACIONES_XML"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
-		}	else{
-			
-			//$CANCELACIONES_XML = "";
-			
-		}
-
-        
-        if($rowDOCTOS["ADJUNTAR_FACTURA_DE_COMISION_PDF"]!=""){$ADJUNTAR_FACTURA_DE_COMISION_PDF .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["ADJUNTAR_FACTURA_DE_COMISION_PDF"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
-		}	else{
-			
-			//$ADJUNTAR_FACTURA_DE_COMISION_PDF = "";
-			
-		}
-
-        if($rowDOCTOS["ADJUNTAR_ARCHIVO_1"]!=""){$ADJUNTAR_ARCHIVO_1 .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["ADJUNTAR_ARCHIVO_1"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
-		}	else{
-			
-			//$ADJUNTAR_ARCHIVO_1 = "";
-			
-		}
-        
-        if($rowDOCTOS["CALCULO_DE_COMISION"]!=""){$CALCULO_DE_COMISION .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["CALCULO_DE_COMISION"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
-		}	else{
-			
-			//$CALCULO_DE_COMISION = "";
-			
-		}
-
-        if($rowDOCTOS["COMPROBANTE_DE_DEVOLUCION"]!=""){$COMPROBANTE_DE_DEVOLUCION .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["COMPROBANTE_DE_DEVOLUCION"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
-		}	else{
-			
-			//$COMPROBANTE_DE_DEVOLUCION = "";
-			
-		}
-
-        if($rowDOCTOS["NOTA_DE_CREDITO_COMPRA"]!=""){$NOTA_DE_CREDITO_COMPRA .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["NOTA_DE_CREDITO_COMPRA"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
-		}	else{
-			
-			//$NOTA_DE_CREDITO_COMPRA = "";
-			
-		}
-
-      
-        if($rowDOCTOS["ADJUNTAR_FACTURA_DE_COMISION_XML"]!=""){$ADJUNTAR_FACTURA_DE_COMISION_XML .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["ADJUNTAR_FACTURA_DE_COMISION_XML"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
-		}	else{
-			
-			//$ADJUNTAR_FACTURA_DE_COMISION_XML = "";
-			
-		}
-
-}
-
-
+        // Cada archivo se envuelve en div.fila-archivo con ID único para eliminarlo del DOM al borrar
+        if($rowDOCTOS["ADJUNTAR_FACTURA_PDF"]!=""){$ADJUNTAR_FACTURA_PDF .= "<div class='fila-archivo' id='fila_".$rowDOCTOS['id']."_ADJUNTAR_FACTURA_PDF'><a target='_blank' href='includes/archivos/".$rowDOCTOS["ADJUNTAR_FACTURA_PDF"]."'>Visualizar!</a> <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span>".$rowDOCTOS['fechaingreso']."</span></div>"; }
+        if($rowDOCTOS["ADJUNTAR_FACTURA_XML"]!=""){$ADJUNTAR_FACTURA_XML .= "<div class='fila-archivo' id='fila_".$rowDOCTOS['id']."_ADJUNTAR_FACTURA_XML'><a target='_blank' href='includes/archivos/".$rowDOCTOS["ADJUNTAR_FACTURA_XML"]."'>Visualizar!</a> <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span>".$rowDOCTOS['fechaingreso']."</span></div>"; }
+        if($rowDOCTOS["ADJUNTAR_COTIZACION"]!=""){$ADJUNTAR_COTIZACION .= "<div class='fila-archivo' id='fila_".$rowDOCTOS['id']."_ADJUNTAR_COTIZACION'><a target='_blank' href='includes/archivos/".$rowDOCTOS["ADJUNTAR_COTIZACION"]."'>Visualizar!</a> <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span>".$rowDOCTOS['fechaingreso']."</span></div>"; }
+        if($rowDOCTOS["CONPROBANTE_TRANSFERENCIA"]!=""){$CONPROBANTE_TRANSFERENCIA .= "<div class='fila-archivo' id='fila_".$rowDOCTOS['id']."_CONPROBANTE_TRANSFERENCIA'><a target='_blank' href='includes/archivos/".$rowDOCTOS["CONPROBANTE_TRANSFERENCIA"]."'>Visualizar!</a> <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span>".$rowDOCTOS['fechaingreso']."</span></div>"; }
+        if($rowDOCTOS["FOTO_ESTADO_PROVEE"]!=""){$FOTO_ESTADO_PROVEE .= "<div class='fila-archivo' id='fila_".$rowDOCTOS['id']."_FOTO_ESTADO_PROVEE'><a target='_blank' href='includes/archivos/".$rowDOCTOS["FOTO_ESTADO_PROVEE"]."'>Visualizar!</a> <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span>".$rowDOCTOS['fechaingreso']."</span></div>"; }
+        if($rowDOCTOS["COMPLEMENTOS_PAGO_PDF"]!=""){$COMPLEMENTOS_PAGO_PDF .= "<div class='fila-archivo' id='fila_".$rowDOCTOS['id']."_COMPLEMENTOS_PAGO_PDF'><a target='_blank' href='includes/archivos/".$rowDOCTOS["COMPLEMENTOS_PAGO_PDF"]."'>Visualizar!</a> <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span>".$rowDOCTOS['fechaingreso']."</span></div>"; }
+        if($rowDOCTOS["COMPLEMENTOS_PAGO_XML"]!=""){$COMPLEMENTOS_PAGO_XML .= "<div class='fila-archivo' id='fila_".$rowDOCTOS['id']."_COMPLEMENTOS_PAGO_XML'><a target='_blank' href='includes/archivos/".$rowDOCTOS["COMPLEMENTOS_PAGO_XML"]."'>Visualizar!</a> <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span>".$rowDOCTOS['fechaingreso']."</span></div>"; }
+        if($rowDOCTOS["CANCELACIONES_PDF"]!=""){$CANCELACIONES_PDF .= "<div class='fila-archivo' id='fila_".$rowDOCTOS['id']."_CANCELACIONES_PDF'><a target='_blank' href='includes/archivos/".$rowDOCTOS["CANCELACIONES_PDF"]."'>Visualizar!</a> <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span>".$rowDOCTOS['fechaingreso']."</span></div>"; }
+        if($rowDOCTOS["CANCELACIONES_XML"]!=""){$CANCELACIONES_XML .= "<div class='fila-archivo' id='fila_".$rowDOCTOS['id']."_CANCELACIONES_XML'><a target='_blank' href='includes/archivos/".$rowDOCTOS["CANCELACIONES_XML"]."'>Visualizar!</a> <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span>".$rowDOCTOS['fechaingreso']."</span></div>"; }
+        if($rowDOCTOS["ADJUNTAR_FACTURA_DE_COMISION_PDF"]!=""){$ADJUNTAR_FACTURA_DE_COMISION_PDF .= "<div class='fila-archivo' id='fila_".$rowDOCTOS['id']."_ADJUNTAR_FACTURA_DE_COMISION_PDF'><a target='_blank' href='includes/archivos/".$rowDOCTOS["ADJUNTAR_FACTURA_DE_COMISION_PDF"]."'>Visualizar!</a> <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span>".$rowDOCTOS['fechaingreso']."</span></div>"; }
+        if($rowDOCTOS["ADJUNTAR_ARCHIVO_1"]!=""){$ADJUNTAR_ARCHIVO_1 .= "<div class='fila-archivo' id='fila_".$rowDOCTOS['id']."_ADJUNTAR_ARCHIVO_1'><a target='_blank' href='includes/archivos/".$rowDOCTOS["ADJUNTAR_ARCHIVO_1"]."'>Visualizar!</a> <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span>".$rowDOCTOS['fechaingreso']."</span></div>"; }
+        if($rowDOCTOS["CALCULO_DE_COMISION"]!=""){$CALCULO_DE_COMISION .= "<div class='fila-archivo' id='fila_".$rowDOCTOS['id']."_CALCULO_DE_COMISION'><a target='_blank' href='includes/archivos/".$rowDOCTOS["CALCULO_DE_COMISION"]."'>Visualizar!</a> <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span>".$rowDOCTOS['fechaingreso']."</span></div>"; }
+        if($rowDOCTOS["COMPROBANTE_DE_DEVOLUCION"]!=""){$COMPROBANTE_DE_DEVOLUCION .= "<div class='fila-archivo' id='fila_".$rowDOCTOS['id']."_COMPROBANTE_DE_DEVOLUCION'><a target='_blank' href='includes/archivos/".$rowDOCTOS["COMPROBANTE_DE_DEVOLUCION"]."'>Visualizar!</a> <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span>".$rowDOCTOS['fechaingreso']."</span></div>"; }
+        if($rowDOCTOS["NOTA_DE_CREDITO_COMPRA"]!=""){$NOTA_DE_CREDITO_COMPRA .= "<div class='fila-archivo' id='fila_".$rowDOCTOS['id']."_NOTA_DE_CREDITO_COMPRA'><a target='_blank' href='includes/archivos/".$rowDOCTOS["NOTA_DE_CREDITO_COMPRA"]."'>Visualizar!</a> <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span>".$rowDOCTOS['fechaingreso']."</span></div>"; }
+        if($rowDOCTOS["ADJUNTAR_FACTURA_DE_COMISION_XML"]!=""){$ADJUNTAR_FACTURA_DE_COMISION_XML .= "<div class='fila-archivo' id='fila_".$rowDOCTOS['id']."_ADJUNTAR_FACTURA_DE_COMISION_XML'><a target='_blank' href='includes/archivos/".$rowDOCTOS["ADJUNTAR_FACTURA_DE_COMISION_XML"]."'>Visualizar!</a> <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span>".$rowDOCTOS['fechaingreso']."</span></div>"; }
+    }
 ?>
 </div>
 
 <?php
 
-
  $output .= '<div id="respuestaser"></div><form  id="ListadoPAGOPROVEEform"> 
       <div class="table-responsive">  
            <table class="table table-bordered" style="background: #ebf9e9;">';
-		   
 
 $campos_xml = '';
 
 if($row2xml["Version"]=='no' or $row2xml["Version"]==''){
-
 $campos_xml = '
-
-<!--aqui empieza la lectura BD a XML-->
-<!--aqui empieza la lectura BD a XML-->
-<!--aqui empieza la lectura BD a XML-->
-<!--aqui empieza la lectura BD a XML-->
-<!--aqui empieza la lectura BD a XML-->
-
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-
-<td width="30%" style="font-weight:bold;" ><label>NOMBRE RECEPTOR</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="nombreR" value="'.$row2xml["nombreR"].'"></td>
-</tr>
-
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-
-<td width="30%" style="font-weight:bold;" ><label>RFC RECEPTOR</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="rfcR" value="'.$row2xml["rfcR"].'"></td>
-</tr>
-
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-<td width="30%" style="font-weight:bold;" ><label>REGÍMEN FISCAL</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="regimenE" value="'.$row2xml["regimenE"].'"></td>
-</tr>
-
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-<td width="30%" style="font-weight:bold;" ><label>UUID</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="UUID" value="'.$row2xml["UUID"].'"></td>
-</tr>
-
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-<td width="30%" style="font-weight:bold;" ><label>FOLIO</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="folio" value="'.$row2xml["folio"].'"></td>
-</tr>
-
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-<td width="30%" style="font-weight:bold;" ><label>SERIE</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="serie" value="'.$row2xml["serie"].'"></td>
-</tr>
-
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-<td width="30%" style="font-weight:bold;" ><label>CLAVE DE UNIDAD</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="ClaveUnidadConcepto" value="'.$row2xml["ClaveUnidadConcepto"].'"></td>
-</tr>
-
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-<td width="30%" style="font-weight:bold;" ><label>CANTIDAD</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="CantidadConcepto" value="'.$row2xml["CantidadConcepto"].'"></td>
-</tr>
-
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-<td width="30%" style="font-weight:bold;" ><label>CLAVE DE PRODUCTO O SERVICIO</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="ClaveProdServConcepto" value="'.$row2xml["ClaveProdServConcepto"].'"></td>
-</tr>
-
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-<td width="30%" style="font-weight:bold;" ><label>DESCRIPCIÓN</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="DescripcionConcepto" value="'.$row2xml["DescripcionConcepto"].'"></td>
-</tr>
-
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-
-<td width="30%" style="font-weight:bold;" ><label>MONEDA</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="Moneda" value="'.$row2xml["Moneda"].'"></td>
-</tr>
-
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-<td width="30%" style="font-weight:bold;" ><label>TIPO DE CAMBIO</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="TipoCambio" value="'.$row2xml["TipoCambio"].'"></td>
-</tr>
-
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-<td width="30%" style="font-weight:bold;" ><label>USO DE CFDI</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="UsoCFDI" value="'.$row2xml["UsoCFDI"].'"></td>
-</tr>
-
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-<td width="30%" style="font-weight:bold;" ><label>METODO DE PAGO</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="metodoDePago" value="'.$row2xml["metodoDePago"].'"></td>
-</tr>
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-<td width="30%" style="font-weight:bold;" ><label>FORMA DE PAGO</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="formaDePago" value="'.$row2xml["formaDePago"].'"></td>
-</tr>
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-<td width="30%" style="font-weight:bold;" ><label>CONDICIONES DE PAGO</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="condicionesDePago" value="'.$row2xml["condicionesDePago"].'"></td>
-</tr>
-
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-<td width="30%" style="font-weight:bold;" ><label>TIPO DE COMPROBANTE</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="tipoDeComprobante" value="'.$row2xml["tipoDeComprobante"].'"></td>
-</tr>
-
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-<td width="30%" style="font-weight:bold;" ><label>VERSIÓN</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="Version" value="'.$row2xml["Version"].'"></td>
-</tr>
-<input type="hidden" name="actualiza" value="true">
-
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-<td width="30%" style="font-weight:bold;" ><label>FECHA DE TIMBRADO</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="fechaTimbrado" value="'.$row2xml["fechaTimbrado"].'"></td>
-</tr>
-
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-<td width="30%" style="font-weight:bold;" ><label>SUBTOTAL</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="subTotal" value="'.$row2xml["subTotal"].'"></td>
-</tr>
-
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-<td width="30%" style="font-weight:bold;" ><label>SERVICIO, PROPINA,ISH Y SANAMIENTO</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="Propina" value="'.$row2xml["Propina"].'"></td>
-</tr>
-
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-<td width="30%" style="font-weight:bold;" ><label>DESCUENTO</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="DESCUENTO" value="'.$row2xml["DESCUENTO"].'"></td>
-</tr>
-
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-<td width="30%" style="font-weight:bold;" ><label>TOTAL DE IMPUESTOS TRANSLADADOS</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="TImpuestosTrasladados" value="'.$row2xml["TImpuestosTrasladados"].'"></td>
-</tr>
- <tr style="background: #fbf696;style="font-weight:bold;">
-
-<td width="30%" style="font-weight:bold;" ><label>TOTAL DE IMPUESTOS RETENIDOS</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="TImpuestosRetenidos" value="'.$row2xml["TImpuestosRetenidos"].'"></td>
-</tr>
-
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-<td width="30%" style="font-weight:bold;" ><label>TUA</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="TUA" value="'.$row2xml["TUA"].'"></td>
-</tr>
-
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-<td width="30%" style="font-weight:bold;" ><label>TOTAL</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="totalf" value="'.$row2xml["totalf"].'"></td>
-</tr>
-
-
-
-<tr style="background: #fbf696;style="font-weight:bold;">
-
-<td width="30%" style="font-weight:bold;" ><label>TUA TOTAL CARGOS:</label></td>
-<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1"  name="TuaTotalCargos" value="'.$row2xml["TuaTotalCargos"].'"></td>
-</tr>
-
-<div id="respuestaser">
-
-<!--aqui termina la lectura BD a XML-->
-<!--aqui termina la lectura BD a XML-->
-<!--aqui termina la lectura BD a XML-->
-<!--aqui termina la lectura BD a XML-->
-<!--aqui termina la lectura BD a XML-->
-
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>NOMBRE RECEPTOR</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="nombreR" value="'.$row2xml["nombreR"].'"></td>
+	</tr>
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>RFC RECEPTOR</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="rfcR" value="'.$row2xml["rfcR"].'"></td>
+	</tr>
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>REGÍMEN FISCAL</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="regimenE" value="'.$row2xml["regimenE"].'"></td>
+	</tr>
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>UUID</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="UUID" value="'.$row2xml["UUID"].'"></td>
+	</tr>
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>FOLIO</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="folio" value="'.$row2xml["folio"].'"></td>
+	</tr>
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>SERIE</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="serie" value="'.$row2xml["serie"].'"></td>
+	</tr>
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>CLAVE DE UNIDAD</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="ClaveUnidadConcepto" value="'.$row2xml["ClaveUnidadConcepto"].'"></td>
+	</tr>
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>CANTIDAD</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="CantidadConcepto" value="'.$row2xml["CantidadConcepto"].'"></td>
+	</tr>
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>CLAVE DE PRODUCTO O SERVICIO</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="ClaveProdServConcepto" value="'.$row2xml["ClaveProdServConcepto"].'"></td>
+	</tr>
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>DESCRIPCIÓN</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="DescripcionConcepto" value="'.$row2xml["DescripcionConcepto"].'"></td>
+	</tr>
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>MONEDA</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="Moneda" value="'.$row2xml["Moneda"].'"></td>
+	</tr>
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>TIPO DE CAMBIO</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="TipoCambio" value="'.$row2xml["TipoCambio"].'"></td>
+	</tr>
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>USO DE CFDI</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="UsoCFDI" value="'.$row2xml["UsoCFDI"].'"></td>
+	</tr>
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>METODO DE PAGO</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="metodoDePago" value="'.$row2xml["metodoDePago"].'"></td>
+	</tr>
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>FORMA DE PAGO</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="formaDePago" value="'.$row2xml["formaDePago"].'"></td>
+	</tr>
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>CONDICIONES DE PAGO</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="condicionesDePago" value="'.$row2xml["condicionesDePago"].'"></td>
+	</tr>
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>TIPO DE COMPROBANTE</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="tipoDeComprobante" value="'.$row2xml["tipoDeComprobante"].'"></td>
+	</tr>
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>VERSIÓN</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="Version" value="'.$row2xml["Version"].'"></td>
+	</tr>
+	<input type="hidden" name="actualiza" value="true">
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>FECHA DE TIMBRADO</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="fechaTimbrado" value="'.$row2xml["fechaTimbrado"].'"></td>
+	</tr>
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>SUBTOTAL</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="subTotal" value="'.$row2xml["subTotal"].'"></td>
+	</tr>
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>SERVICIO, PROPINA,ISH Y SANAMIENTO</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="Propina" value="'.$row2xml["Propina"].'"></td>
+	</tr>
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>DESCUENTO</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="DESCUENTO" value="'.$row2xml["DESCUENTO"].'"></td>
+	</tr>
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>TOTAL DE IMPUESTOS TRANSLADADOS</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="TImpuestosTrasladados" value="'.$row2xml["TImpuestosTrasladados"].'"></td>
+	</tr>
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>TOTAL DE IMPUESTOS RETENIDOS</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="TImpuestosRetenidos" value="'.$row2xml["TImpuestosRetenidos"].'"></td>
+	</tr>
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>TUA</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="TUA" value="'.$row2xml["TUA"].'"></td>
+	</tr>
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>TOTAL</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="totalf" value="'.$row2xml["totalf"].'"></td>
+	</tr>
+	<tr style="background: #fbf696;">
+	<td width="30%" style="font-weight:bold;"><label>TUA TOTAL CARGOS:</label></td>
+	<td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="TuaTotalCargos" value="'.$row2xml["TuaTotalCargos"].'"></td>
+	</tr>
 '; 
-
 	}else{
         $campos_xml = '';
-        }
-
+    }
 
     $disableFactura = in_array($row["VIATICOSOPRO"], array(
         "PAGO A PROVEEDOR CON DOS O MAS FACTURAS",
@@ -375,161 +213,120 @@ $campos_xml = '
         ? ' style="width:300px;pointer-events:none;opacity:0.6;"'
         : ' style="width:300px;"';
 
-
      $output .= '
-
- <tr>
- 
-<td width="30%" style="font-weight:bold;" ><label>ADJUNTAR FACTURA (FORMATO XML)</label></td>
-<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_FACTURA_XML\')" ondragover="return false"'.$facturaDropZoneAttributes.'>
-<p>Suelta aquí o busca tu archivo</p>
-<p><input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_XML" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_FACTURA_XML\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_FACTURA_XML"] .' " required'.$facturaInputAttributes.' /></p>
-<input type="file" name="ADJUNTAR_FACTURA_XML" id="nono"'.$facturaInputAttributes.'/>
-<div id="3ADJUNTAR_FACTURA_XML">
-'.$ADJUNTAR_FACTURA_XML.'
-</tr> 
 <tr>
- 
- 
-<td width="30%" style="font-weight:bold;" ><label>ADJUNTAR FACTURA (FORMATO PDF)</label></td>
-<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_FACTURA_PDF\')" ondragover="return false"'.$facturaDropZoneAttributes.'>
+<td width="30%" style="font-weight:bold;"><label>ADJUNTAR FACTURA (FORMATO XML)</label></td>
+<td width="70%"><div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_FACTURA_XML\')" ondragover="return false"'.$facturaDropZoneAttributes.'>
 <p>Suelta aquí o busca tu archivo</p>
-<p><input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_PDF" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_FACTURA_PDF\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_FACTURA_PDF"] .' " required'.$facturaInputAttributes.' /></p>
-<input type="file" name="ADJUNTAR_FACTURA_PDF" id="nono"'.$facturaInputAttributes.'/>
-<div id="3ADJUNTAR_FACTURA_PDF">
-'.$ADJUNTAR_FACTURA_PDF.'
-</tr> 
-
-<tr style="background:#F368E7">
-
-<td width="30%" style="font-weight:bold;" ><label>NÚMERO CONSECUTIVO DE PAGO A PROVEEDORES</label></td>
-<td width="70%"><input type="text"   name="NUMERO_CONSECUTIVO_PROVEE" value="'.$row["NUMERO_CONSECUTIVO_PROVEE"].'"></td>
+<p><input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_XML" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_FACTURA_XML\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_FACTURA_XML"].' " required'.$facturaInputAttributes.' /></p>
+<input type="file" name="ADJUNTAR_FACTURA_XML" id="nono"'.$facturaInputAttributes.'/>
+<div id="3ADJUNTAR_FACTURA_XML">'.$ADJUNTAR_FACTURA_XML.'</div></div></td>
 </tr>
 
+<tr>
+<td width="30%" style="font-weight:bold;"><label>ADJUNTAR FACTURA (FORMATO PDF)</label></td>
+<td width="70%"><div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_FACTURA_PDF\')" ondragover="return false"'.$facturaDropZoneAttributes.'>
+<p>Suelta aquí o busca tu archivo</p>
+<p><input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_PDF" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_FACTURA_PDF\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_FACTURA_PDF"].' " required'.$facturaInputAttributes.' /></p>
+<input type="file" name="ADJUNTAR_FACTURA_PDF" id="nono"'.$facturaInputAttributes.'/>
+<div id="3ADJUNTAR_FACTURA_PDF">'.$ADJUNTAR_FACTURA_PDF.'</div></div></td>
+</tr>
+
+<tr style="background:#F368E7">
+<td width="30%" style="font-weight:bold;"><label>NÚMERO CONSECUTIVO DE PAGO A PROVEEDORES</label></td>
+<td width="70%"><input type="text" name="NUMERO_CONSECUTIVO_PROVEE" value="'.$row["NUMERO_CONSECUTIVO_PROVEE"].'"></td>
+</tr>
 
 <tr>
-    <td width="30%" style="font-weight:bold;" ><label>PAGO A PROVEEDOR, VIATICO, REEMBOLSO O<br> PAGO A PROVEEDOR CON DOS O MAS FACTURAS:</label></td>
-    <td width="70%" class="form-control">
+    <td width="30%" style="font-weight:bold;"><label>PAGO A PROVEEDOR, VIATICO, REEMBOLSO O<br> PAGO A PROVEEDOR CON DOS O MAS FACTURAS:</label></td>
+    <td width="70%">
         <select name="VIATICOSOPRO" style="background:#daddf5">
             <option style="background:#f2b4f5" value="SELECCIONA UNA OPCIÓN">SELECCIONA UNA OPCIÓN</option>
-            <option style="background:#f2b4f5" value="PAGO A PROVEEDOR" '.($row["VIATICOSOPRO"] == "PAGO A PROVEEDOR" ? "selected" : "").'>PAGO A PROVEEDOR </option>
+            <option style="background:#f2b4f5" value="PAGO A PROVEEDOR" '.($row["VIATICOSOPRO"] == "PAGO A PROVEEDOR" ? "selected" : "").'>PAGO A PROVEEDOR</option>
             <option style="background:#ddf5da" value="PAGO A PROVEEDOR CON DOS O MAS FACTURAS" '.($row["VIATICOSOPRO"] == "PAGO A PROVEEDOR CON DOS O MAS FACTURAS" ? "selected" : "").'>PAGO A PROVEEDOR CON DOS O MAS FACTURAS</option>
-			<option style="background:#b3f39b" value="PAGOS CON UNA SOLA FACTURA" '.($row["VIATICOSOPRO"] == "PAGOS CON UNA SOLA FACTURA" ? "selected" : "").'>PAGOS CON UNA SOLA FACTURA</option>
+            <option style="background:#b3f39b" value="PAGOS CON UNA SOLA FACTURA" '.($row["VIATICOSOPRO"] == "PAGOS CON UNA SOLA FACTURA" ? "selected" : "").'>PAGOS CON UNA SOLA FACTURA</option>
             <option style="background:#fceade" value="VIATICOS" '.($row["VIATICOSOPRO"] == "VIATICOS" ? "selected" : "").'>VIATICOS</option>
             <option style="background:#dee6fc" value="REEMBOLSO" '.($row["VIATICOSOPRO"] == "REEMBOLSO" ? "selected" : "").'>REEMBOLSO</option>
-            
         </select>
     </td>
 </tr>
 
- 
 <tr>
-
-
-<td width="30%" style="font-weight:bold;" ><label>NOMBRE COMERCIAL<br><a style="color:red;font-size:11px">OBLIGATORIO</a></label></td>
+<td width="30%" style="font-weight:bold;"><label>NOMBRE COMERCIAL<br><a style="color:red;font-size:11px">OBLIGATORIO</a></label></td>
 <td width="70%"><input type="text" name="NOMBRE_COMERCIAL" value="'.$row["NOMBRE_COMERCIAL"].'"></td>
-</tr> 
+</tr>
 <tr>
-
-<td width="30%" style="font-weight:bold;" ><label>RAZÓN SOCIAL</label></td>
+<td width="30%" style="font-weight:bold;"><label>RAZÓN SOCIAL</label></td>
 <td width="70%"><input type="text" name="RAZON_SOCIAL" value="'.$row["RAZON_SOCIAL"].'"></td>
-</tr> 
+</tr>
 <tr>
- 
-<td width="30%" style="font-weight:bold;" ><label>RFC DEL PROVEEDOR</label></td>
+<td width="30%" style="font-weight:bold;"><label>RFC DEL PROVEEDOR</label></td>
 <td width="70%"><input type="text" name="RFC_PROVEEDOR" value="'.$row["RFC_PROVEEDOR"].'"></td>
-</tr> 
+</tr>
 <tr>
-
-<td width="30%" style="font-weight:bold;" ><label>NÚMERO  DE EVENTO <br><a style="color:red;font-size:11px">OBLIGATORIO</a></label></td>
+<td width="30%" style="font-weight:bold;"><label>NÚMERO DE EVENTO<br><a style="color:red;font-size:11px">OBLIGATORIO</a></label></td>
 <td width="70%"><input type="text" name="NUMERO_EVENTO" value="'.$row["NUMERO_EVENTO"].'"></td>
-</tr> 
+</tr>
 <tr>
-
- 
-<td width="30%" style="font-weight:bold;" ><label>NOMBRE DEL EVENTO</label></td>
+<td width="30%" style="font-weight:bold;"><label>NOMBRE DEL EVENTO</label></td>
 <td width="70%"><input type="text" name="NOMBRE_EVENTO" value="'.$row["NOMBRE_EVENTO"].'"></td>
-</tr> 
+</tr>
 <tr>
- 
-<td width="30%" style="font-weight:bold;" ><label>MOTIVO DEL GASTO<br><a style="color:red;font-size:11px">OBLIGATORIO</a></label></td>
+<td width="30%" style="font-weight:bold;"><label>MOTIVO DEL GASTO<br><a style="color:red;font-size:11px">OBLIGATORIO</a></label></td>
 <td width="70%"><input type="text" name="MOTIVO_GASTO" value="'.$row["MOTIVO_GASTO"].'"></td>
-</tr> 
+</tr>
 <tr>
- 
-<td width="30%" style="font-weight:bold;" ><label>CONCEPTO</label></td>
+<td width="30%" style="font-weight:bold;"><label>CONCEPTO</label></td>
 <td width="70%"><input type="text" name="CONCEPTO_PROVEE" value="'.$row["CONCEPTO_PROVEE"].'"></td>
-</tr> 
+</tr>
 <tr>
-
-<td width="30%" style="font-weight:bold;" ><label>MONTO TOTAL DE LA COTIZACIÓN O DEL ADEUDO</label></td>
+<td width="30%" style="font-weight:bold;"><label>MONTO TOTAL DE LA COTIZACIÓN O DEL ADEUDO</label></td>
 <td width="70%"><input type="text" name="MONTO_TOTAL_COTIZACION_ADEUDO" value="'.$row["MONTO_TOTAL_COTIZACION_ADEUDO"].'"></td>
-</tr> 
-<tr >
-
-<td width="30%" style="font-weight:bold;" ><label>SUB TOTAL<br><a style="color:red;font-size:11px">OBLIGATORIO</a></label></td>
+</tr>
+<tr>
+<td width="30%" style="font-weight:bold;"><label>SUB TOTAL<br><a style="color:red;font-size:11px">OBLIGATORIO</a></label></td>
 <td width="70%"><input type="text" name="MONTO_FACTURA" id="montoTotalEvento" value="'.$row["MONTO_FACTURA"].'"></td>
 </tr>
-
- 
-<tr >
-<td width="30%" style="font-weight:bold;" ><label>IVA:</label></td>
+<tr>
+<td width="30%" style="font-weight:bold;"><label>IVA:</label></td>
 <td width="70%"><input type="text" name="IVA" id="montoTotalAvion" value="'.$row["IVA"].'"></td>
-</tr> 
-
+</tr>
 <tr>
-<td width="30%" style="font-weight:bold;" ><label>IMPUESTOS RETENIDOS  IVA:</label></td>
-<td width="70%"><input type="text" name="TImpuestosRetenidosIVA" id="montoRetenidoIVA"  value="'.$row["TImpuestosRetenidosIVA"].'"></td>
-</tr> 
-
-<tr >
-<td width="30%" style="font-weight:bold;" ><label>IMPUESTOS RETENIDOS  ISR:</label></td>
-<td width="70%"><input type="text" name="TImpuestosRetenidosISR"  id="montoRetenidoISR"  value="'.$row["TImpuestosRetenidosISR"].'"></td>
-</tr> 
-
-
-<tr >
-<td width="30%" style="font-weight:bold;" ><label>MONTO DE LA PROPINA O SERVICIO NO INCLUIDO EN LA FACTURA</label></td>
+<td width="30%" style="font-weight:bold;"><label>IMPUESTOS RETENIDOS IVA:</label></td>
+<td width="70%"><input type="text" name="TImpuestosRetenidosIVA" id="montoRetenidoIVA" value="'.$row["TImpuestosRetenidosIVA"].'"></td>
+</tr>
+<tr>
+<td width="30%" style="font-weight:bold;"><label>IMPUESTOS RETENIDOS ISR:</label></td>
+<td width="70%"><input type="text" name="TImpuestosRetenidosISR" id="montoRetenidoISR" value="'.$row["TImpuestosRetenidosISR"].'"></td>
+</tr>
+<tr>
+<td width="30%" style="font-weight:bold;"><label>MONTO DE LA PROPINA O SERVICIO NO INCLUIDO EN LA FACTURA</label></td>
 <td width="70%"><input type="text" name="MONTO_PROPINA" id="montoTotalpropina" value="'.$row["MONTO_PROPINA"].'"></td>
-</tr> 
+</tr>
 <tr>
-
-<td width="30%" style="font-weight:bold;" ><label>IMPUESTO SOBRE HOSPEDAJE MÁS EL IMPUESTO DE SANEAMIENTO</label></td>
+<td width="30%" style="font-weight:bold;"><label>IMPUESTO SOBRE HOSPEDAJE MÁS EL IMPUESTO DE SANEAMIENTO</label></td>
 <td width="70%"><input type="text" name="IMPUESTO_HOSPEDAJE" id="montoTotalhospedaje" value="'.$row["IMPUESTO_HOSPEDAJE"].'"></td>
 </tr>
-
 <tr>
-<td width="30%" style="font-weight:bold;" ><label>DESCUENTO:</label></td>
-<td width="70%"><input type="text" name="descuentos"  id="montoDescuentos" value="'.$row["descuentos"].'"></td>
-</tr> 
-
-
-<tr >
-<td width="30%" style="font-weight:bold;" ><label>TOTAL</label></td>
+<td width="30%" style="font-weight:bold;"><label>DESCUENTO:</label></td>
+<td width="70%"><input type="text" name="descuentos" id="montoDescuentos" value="'.$row["descuentos"].'"></td>
+</tr>
+<tr>
+<td width="30%" style="font-weight:bold;"><label>TOTAL</label></td>
 <td width="70%"><input type=»text» readonly=»readonly» style="background:#decaf1" name="MONTO_DEPOSITAR" id="montoTotalEventoResultado" value="'.$row["MONTO_DEPOSITAR"].'"></td>
 </tr>
-
-
-
-<tr >
-<td width="30%" style="font-weight:bold;" ><label>TIPO DE CAMBIO</label></td>
+<tr>
+<td width="30%" style="font-weight:bold;"><label>TIPO DE CAMBIO</label></td>
 <td width="70%"><input type="text" name="TIPO_CAMBIOP" value="'.$row["TIPO_CAMBIOP"].'"></td>
 </tr>
-
-<tr >
-<td width="30%" style="font-weight:bold;" ><label>TOTAL DE LA CONVERSIÓN </label></td>
+<tr>
+<td width="30%" style="font-weight:bold;"><label>TOTAL DE LA CONVERSIÓN</label></td>
 <td width="70%"><input type="text" name="TOTAL_ENPESOS" value="'.$row["TOTAL_ENPESOS"].'"></td>
 </tr>
 
-
 <tr>
-    <td width="30%" style="font-weight:bold;" ><label>FORMA DE PAGO:</label></td>
-    <td width="70%" class="form-control">
-        <!-- ================================================================
-             FIX: Se usa name="PFORMADE_PAGO" en el select cuando está activo.
-             Cuando el XML lo bloquea, el JS quita el name del select y lo
-             transfiere al hidden, evitando que .serialize() ignore el valor.
-             ================================================================ -->
+    <td width="30%" style="font-weight:bold;"><label>FORMA DE PAGO:</label></td>
+    <td width="70%">
         <select id="formaDePagoSelect" name="PFORMADE_PAGO" data-lock-xml="'.(!empty(trim((string)$row2xml["formaDePago"])) ? '1' : '0').'" style="background:#daddf5">
             <option style="background:#f2b4f5" value="03" '.($row["PFORMADE_PAGO"] == "03" ? "selected" : "").'>03 TRANSFERENCIA ELECTRÓNICA</option>
             <option style="background:#ddf5da" value="01" '.($row["PFORMADE_PAGO"] == "01" ? "selected" : "").'>01 EFECTIVO</option>
@@ -542,314 +339,216 @@ $campos_xml = '
             <option style="background:#fcfbde" value="29" '.($row["PFORMADE_PAGO"] == "29" ? "selected" : "").'>29 TARJETA DE SERVICIO</option>
             <option style="background:#f9e5fa" value="99" '.($row["PFORMADE_PAGO"] == "99" ? "selected" : "").'>99 OTRO</option>
         </select>
-        <!-- Hidden que toma el name cuando el select queda disabled -->
         <input type="hidden" id="formaDePagoHidden" name="" value="">
     </td>
 </tr>
 
 <tr style="background: #f1a766">
-<td width="30%" style="font-weight:bold;" ><label>MONTO DEPOSITADO</label></td>
+<td width="30%" style="font-weight:bold;"><label>MONTO DEPOSITADO</label></td>
 <td width="70%"><input type="text" name="MONTO_DEPOSITADO" value="'.$row["MONTO_DEPOSITADO"].'"></td>
 </tr>
 
-
-	<tr>
-	
-	<td width="30%" style="font-weight:bold;" ><label>TIPO DE MONEDA O DIVISA:</label></td>
-    <td width="70%" >
+<tr>
+	<td width="30%" style="font-weight:bold;"><label>TIPO DE MONEDA O DIVISA:</label></td>
+    <td width="70%">
         <select name="TIPO_DE_MONEDA" style="background:#daddf5">
-		
-		
-            <option style="background:#f2b4f5" value="SELECCIONA UNA OPCIÓN">SELECCIONA UNA OPCIÓN</option> 
-			
-			
-            <option style="background:#a3e4d7" value="MXN" '.($row["TIPO_DE_MONEDA"] == "MXN" ? "selected" : "").'>MXN (Peso mexicano) </option>
-			
-            <option style="background:#c9e8e8" value="USD" '.($row["TIPO_DE_MONEDA"] == "USD" ? "selected" : "").'>USD (Dolar) </option>			
-
-             <option style="background:#e8f6f3" value="EUR" '.($row["TIPO_DE_MONEDA"] == "EUR" ? "selected" : "").'>EUR (Euro) </option>     
-
-             <option style="background:#fdf2e9" value="GBP" '.($row["TIPO_DE_MONEDA"] == "GBP" ? "selected" : "").'>GBP (Libra esterlina)</option> 
-	
-
-             <option style="background:#eaeded" value="CHF" '.($row["TIPO_DE_MONEDA"] == "CHF" ? "selected" : "").'>CHF (Franco suizo)</option> 
-
-             <option style="background:#fdebd0" value="CNY" '.($row["TIPO_DE_MONEDA"] == "CNY" ? "selected" : "").'>CNY (Yuan)</option> 
-			 
-             <option style="background:#ebdef0" value="JPY" '.($row["TIPO_DE_MONEDA"] == "JPY" ? "selected" : "").'>JPY (Yen japonés)</option>
-
-             <option style="background:#fef5e7" value="HKD" '.($row["TIPO_DE_MONEDA"] == "HKD" ? "selected" : "").'>HKD (Dólar hongkonés)</option> 
-			 
-             <option style="background:#ebedef" value="CAD" '.($row["TIPO_DE_MONEDA"] == "CAD" ? "selected" : "").'>CAD (Dólar canadiense)</option> 	
-
-
-             <option style="background:#fbeee6" value="AUD" '.($row["TIPO_DE_MONEDA"] == "AUD" ? "selected" : "").'>AUD (Dólar australiano)</option>
-			 			 
-             <option style="background:#f2b4f5" value="BRL" '.($row["TIPO_DE_MONEDA"] == "BRL" ? "selected" : "").'>BRL (Real brasileño)</option>
-			 			 
-             <option style="background:#e8f6f3" value="RUB" '.($row["TIPO_DE_MONEDA"] == "RUB" ? "selected" : "").'>RUB  (Rublo ruso)</option>			 
+            <option style="background:#f2b4f5" value="SELECCIONA UNA OPCIÓN">SELECCIONA UNA OPCIÓN</option>
+            <option style="background:#a3e4d7" value="MXN" '.($row["TIPO_DE_MONEDA"] == "MXN" ? "selected" : "").'>MXN (Peso mexicano)</option>
+            <option style="background:#c9e8e8" value="USD" '.($row["TIPO_DE_MONEDA"] == "USD" ? "selected" : "").'>USD (Dolar)</option>
+            <option style="background:#e8f6f3" value="EUR" '.($row["TIPO_DE_MONEDA"] == "EUR" ? "selected" : "").'>EUR (Euro)</option>
+            <option style="background:#fdf2e9" value="GBP" '.($row["TIPO_DE_MONEDA"] == "GBP" ? "selected" : "").'>GBP (Libra esterlina)</option>
+            <option style="background:#eaeded" value="CHF" '.($row["TIPO_DE_MONEDA"] == "CHF" ? "selected" : "").'>CHF (Franco suizo)</option>
+            <option style="background:#fdebd0" value="CNY" '.($row["TIPO_DE_MONEDA"] == "CNY" ? "selected" : "").'>CNY (Yuan)</option>
+            <option style="background:#ebdef0" value="JPY" '.($row["TIPO_DE_MONEDA"] == "JPY" ? "selected" : "").'>JPY (Yen japonés)</option>
+            <option style="background:#fef5e7" value="HKD" '.($row["TIPO_DE_MONEDA"] == "HKD" ? "selected" : "").'>HKD (Dólar hongkonés)</option>
+            <option style="background:#ebedef" value="CAD" '.($row["TIPO_DE_MONEDA"] == "CAD" ? "selected" : "").'>CAD (Dólar canadiense)</option>
+            <option style="background:#fbeee6" value="AUD" '.($row["TIPO_DE_MONEDA"] == "AUD" ? "selected" : "").'>AUD (Dólar australiano)</option>
+            <option style="background:#f2b4f5" value="BRL" '.($row["TIPO_DE_MONEDA"] == "BRL" ? "selected" : "").'>BRL (Real brasileño)</option>
+            <option style="background:#e8f6f3" value="RUB" '.($row["TIPO_DE_MONEDA"] == "RUB" ? "selected" : "").'>RUB (Rublo ruso)</option>
         </select>
     </td>
-</tr> 
+</tr>
 
-
-
-<tr>   
-
-<td width="30%" style="font-weight:bold;" ><label>FECHA DE PROGRAMACIÓN DEL PAGO<br><a style="color:red;font-size:11px">OBLIGATORIO</a></label></td>
+<tr>
+<td width="30%" style="font-weight:bold;"><label>FECHA DE PROGRAMACIÓN DEL PAGO<br><a style="color:red;font-size:11px">OBLIGATORIO</a></label></td>
 <td width="70%"><input type="date" name="FECHA_DE_PAGO" value="'.$row["FECHA_DE_PAGO"].'"></td>
-</tr>  
-
-<tr   style="background: #f1a766">
-
-<td width="30%" style="font-weight:bold;" ><label>FECHA EFECTIVA DE PAGO:</label></td>
+</tr>
+<tr style="background: #f1a766">
+<td width="30%" style="font-weight:bold;"><label>FECHA EFECTIVA DE PAGO:</label></td>
 <td width="70%"><input type="date" name="FECHA_A_DEPOSITAR" value="'.$row["FECHA_A_DEPOSITAR"].'"></td>
-</tr> 
+</tr>
 <tr style="background: #f1a766">
-
-<td width="30%" style="font-weight:bold;" ><label>STATUS DE PAGO</label></td>
-<td width="70%" class="form-control">'.$STATUS_DE_PAGO .'</td>
-</tr> 
+<td width="30%" style="font-weight:bold;"><label>STATUS DE PAGO</label></td>
+<td width="70%">'.$STATUS_DE_PAGO.'</td>
+</tr>
 <tr style="background: #f1a766">
-
-<td width="30%" style="font-weight:bold;" ><label>ADJUNTAR COTIZACIÓN O REPORTE: (CUAQUIER FORMATO)</label></td>
-
-
-
-
-<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_COTIZACION\')" ondragover="return false" style="width:300px;">
+<td width="30%" style="font-weight:bold;"><label>ADJUNTAR COTIZACIÓN O REPORTE: (CUALQUIER FORMATO)</label></td>
+<td width="70%"><div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_COTIZACION\')" ondragover="return false" style="width:300px;">
 <p>Suelta aquí o busca tu archivo</p>
-<p><input class="form-control form-control-sm" id="ADJUNTAR_COTIZACION" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_COTIZACION\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_COTIZACION"] .' " required /></p>
+<p><input class="form-control form-control-sm" id="ADJUNTAR_COTIZACION" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_COTIZACION\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_COTIZACION"].' " required /></p>
 <input type="file" name="ADJUNTAR_COTIZACION" id="nono"/>
-<div id="3ADJUNTAR_COTIZACION">
-'.$ADJUNTAR_COTIZACION.'
-</tr> 
-
-
-
-<tr>
-<td width="30%" style="font-weight:bold;" ><label>ACTIVO FIJO</label></td>
-<td width="70%"><input type="text"   name="ACTIVO_FIJO"  value="'.$row["ACTIVO_FIJO"].'"></td>
-</tr>
-
-
-
-<tr>
-<td width="30%" style="font-weight:bold;" ><label>GASTO FIJO</label></td>
-<td width="70%"><input type="text"   name="GASTO_FIJO"  value="'.$row["GASTO_FIJO"].'"></td>
-</tr>
-
-
-
-<tr>
-<td width="30%" style="font-weight:bold;" ><label>PAGAR CADA:</label></td>
-<td width="70%"><input type="text"   name="PAGAR_CADA"  value="'.$row["PAGAR_CADA"].'"></td>
+<div id="3ADJUNTAR_COTIZACION">'.$ADJUNTAR_COTIZACION.'</div></div></td>
 </tr>
 
 <tr>
-<td width="30%" style="font-weight:bold;" ><label>FECHA DE PROGRAMACIÓN DE PAGO:</label></td>
-<td width="70%"><input type="date"   name="FECHA_PPAGO"  value="'.$row["FECHA_PPAGO"].'"></td>
+<td width="30%" style="font-weight:bold;"><label>ACTIVO FIJO</label></td>
+<td width="70%"><input type="text" name="ACTIVO_FIJO" value="'.$row["ACTIVO_FIJO"].'"></td>
 </tr>
-
-              
 <tr>
-<td width="30%" style="font-weight:bold;" ><label>FECHA DE TERMINACIÓN DE LA PROGRAMACIÓN:</label></td>
-<td width="70%"><input type="date"   name="FECHA_TPROGRAPAGO"  value="'.$row["FECHA_TPROGRAPAGO"].'"></td>
+<td width="30%" style="font-weight:bold;"><label>GASTO FIJO</label></td>
+<td width="70%"><input type="text" name="GASTO_FIJO" value="'.$row["GASTO_FIJO"].'"></td>
 </tr>
-
-
-
 <tr>
-<td width="30%" style="font-weight:bold;" ><label>NÚMERO DE EVENTO (FIJO) PARA PROGRAMACIÓN:</label></td>
-<td width="70%"><input type="text"   name="NUMERO_EVENTOFIJO"  value="'.$row["NUMERO_EVENTOFIJO"].'"></td>
+<td width="30%" style="font-weight:bold;"><label>PAGAR CADA:</label></td>
+<td width="70%"><input type="text" name="PAGAR_CADA" value="'.$row["PAGAR_CADA"].'"></td>
 </tr>
-
 <tr>
-<td width="30%" style="font-weight:bold;" ><label>CLASIFICACIÓN GENERAL:</label></td>
-<td width="70%"><input type="text"   name="CLASI_GENERAL"  value="'.$row["CLASI_GENERAL"].'"></td>
+<td width="30%" style="font-weight:bold;"><label>FECHA DE PROGRAMACIÓN DE PAGO:</label></td>
+<td width="70%"><input type="date" name="FECHA_PPAGO" value="'.$row["FECHA_PPAGO"].'"></td>
 </tr>
-
 <tr>
-<td width="30%" style="font-weight:bold;" ><label> SUB CLASIFICACIÓN GENERAL:</label></td>
-<td width="70%"><input type="text"   name="SUB_GENERAL"  value="'.$row["SUB_GENERAL"].'"></td>
+<td width="30%" style="font-weight:bold;"><label>FECHA DE TERMINACIÓN DE LA PROGRAMACIÓN:</label></td>
+<td width="70%"><input type="date" name="FECHA_TPROGRAPAGO" value="'.$row["FECHA_TPROGRAPAGO"].'"></td>
 </tr>
-
-
 <tr>
-
-<td width="30%" style="font-weight:bold;" ><label>INSTITUCIÓN BANCARIA</label></td>
+<td width="30%" style="font-weight:bold;"><label>NÚMERO DE EVENTO (FIJO) PARA PROGRAMACIÓN:</label></td>
+<td width="70%"><input type="text" name="NUMERO_EVENTOFIJO" value="'.$row["NUMERO_EVENTOFIJO"].'"></td>
+</tr>
+<tr>
+<td width="30%" style="font-weight:bold;"><label>CLASIFICACIÓN GENERAL:</label></td>
+<td width="70%"><input type="text" name="CLASI_GENERAL" value="'.$row["CLASI_GENERAL"].'"></td>
+</tr>
+<tr>
+<td width="30%" style="font-weight:bold;"><label>SUB CLASIFICACIÓN GENERAL:</label></td>
+<td width="70%"><input type="text" name="SUB_GENERAL" value="'.$row["SUB_GENERAL"].'"></td>
+</tr>
+<tr>
+<td width="30%" style="font-weight:bold;"><label>INSTITUCIÓN BANCARIA</label></td>
 <td width="70%"><input type="text" name="BANCO_ORIGEN" value="'.$row["BANCO_ORIGEN"].'"></td>
 </tr>
-
-
 <tr>
-
-<td width="30%" style="font-weight:bold;" ><label>PLACAS DEL VEHICULO</label></td>
+<td width="30%" style="font-weight:bold;"><label>PLACAS DEL VEHICULO</label></td>
 <td width="70%"><input type="text" name="PLACAS_VEHICULO" value="'.$row["PLACAS_VEHICULO"].'"></td>
 </tr>
-<tr  style="background: #f1a766">
-
-<td width="30%" style="font-weight:bold;" ><label>ADJUNTAR COMPROBANTE DE TRANSFERENCIA: (FORMATO PDF)</label></td>
-<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'CONPROBANTE_TRANSFERENCIA\')" ondragover="return false" style="width:300px;">
+<tr style="background: #f1a766">
+<td width="30%" style="font-weight:bold;"><label>ADJUNTAR COMPROBANTE DE TRANSFERENCIA: (FORMATO PDF)</label></td>
+<td width="70%"><div id="drop_file_zone" ondrop="upload_file2(event,\'CONPROBANTE_TRANSFERENCIA\')" ondragover="return false" style="width:300px;">
 <p>Suelta aquí o busca tu archivo</p>
-<p><input class="form-control form-control-sm" id="CONPROBANTE_TRANSFERENCIA" type="text" onkeydown="return false" onclick="file_explorer2(\'CONPROBANTE_TRANSFERENCIA\');" style="width:250px;" VALUE="'.$row["CONPROBANTE_TRANSFERENCIA"] .' " required /></p>
+<p><input class="form-control form-control-sm" id="CONPROBANTE_TRANSFERENCIA" type="text" onkeydown="return false" onclick="file_explorer2(\'CONPROBANTE_TRANSFERENCIA\');" style="width:250px;" VALUE="'.$row["CONPROBANTE_TRANSFERENCIA"].' " required /></p>
 <input type="file" name="CONPROBANTE_TRANSFERENCIA" id="nono"/>
-<div id="3CONPROBANTE_TRANSFERENCIA">
-'.$CONPROBANTE_TRANSFERENCIA.'
-</tr> 
+<div id="3CONPROBANTE_TRANSFERENCIA">'.$CONPROBANTE_TRANSFERENCIA.'</div></div></td>
+</tr>
 <tr>
-
-<td width="30%" style="font-weight:bold;" ><label>COMPLEMENTOS DE PAGO  (FORMATO PDF)</label></td>
-<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'COMPLEMENTOS_PAGO_PDF\')" ondragover="return false" style="width:300px;">
+<td width="30%" style="font-weight:bold;"><label>COMPLEMENTOS DE PAGO (FORMATO PDF)</label></td>
+<td width="70%"><div id="drop_file_zone" ondrop="upload_file2(event,\'COMPLEMENTOS_PAGO_PDF\')" ondragover="return false" style="width:300px;">
 <p>Suelta aquí o busca tu archivo</p>
-<p><input class="form-control form-control-sm" id="COMPLEMENTOS_PAGO_PDF" type="text" onkeydown="return false" onclick="file_explorer2(\'COMPLEMENTOS_PAGO_PDF\');" style="width:250px;" VALUE="'.$row["COMPLEMENTOS_PAGO_PDF"] .' " required /></p>
+<p><input class="form-control form-control-sm" id="COMPLEMENTOS_PAGO_PDF" type="text" onkeydown="return false" onclick="file_explorer2(\'COMPLEMENTOS_PAGO_PDF\');" style="width:250px;" VALUE="'.$row["COMPLEMENTOS_PAGO_PDF"].' " required /></p>
 <input type="file" name="COMPLEMENTOS_PAGO_PDF" id="nono"/>
-<div id="3COMPLEMENTOS_PAGO_PDF">
-'.$COMPLEMENTOS_PAGO_PDF.'
-</tr> 
+<div id="3COMPLEMENTOS_PAGO_PDF">'.$COMPLEMENTOS_PAGO_PDF.'</div></div></td>
+</tr>
 <tr>
-
-<td width="30%" style="font-weight:bold;" ><label>COMPLEMENTOS DE PAGO  (FORMATO XML)</label></td>
-<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'COMPLEMENTOS_PAGO_XML\')" ondragover="return false" style="width:300px;">
+<td width="30%" style="font-weight:bold;"><label>COMPLEMENTOS DE PAGO (FORMATO XML)</label></td>
+<td width="70%"><div id="drop_file_zone" ondrop="upload_file2(event,\'COMPLEMENTOS_PAGO_XML\')" ondragover="return false" style="width:300px;">
 <p>Suelta aquí o busca tu archivo</p>
-<p><input class="form-control form-control-sm" id="COMPLEMENTOS_PAGO_XML" type="text" onkeydown="return false" onclick="file_explorer2(\'COMPLEMENTOS_PAGO_XML\');" style="width:250px;" VALUE="'.$row["COMPLEMENTOS_PAGO_XML"] .' " required /></p>
+<p><input class="form-control form-control-sm" id="COMPLEMENTOS_PAGO_XML" type="text" onkeydown="return false" onclick="file_explorer2(\'COMPLEMENTOS_PAGO_XML\');" style="width:250px;" VALUE="'.$row["COMPLEMENTOS_PAGO_XML"].' " required /></p>
 <input type="file" name="COMPLEMENTOS_PAGO_XML" id="nono"/>
-<div id="3COMPLEMENTOS_PAGO_XML">
-'.$COMPLEMENTOS_PAGO_XML.'
-</tr> 
-
+<div id="3COMPLEMENTOS_PAGO_XML">'.$COMPLEMENTOS_PAGO_XML.'</div></div></td>
+</tr>
 <tr>
-
-<td width="30%" style="font-weight:bold;" ><label>ADJUNTAR CANCELACIONES (FORMATO PDF)</label></td>
-<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'CANCELACIONES_PDF\')" ondragover="return false" style="width:300px;">
+<td width="30%" style="font-weight:bold;"><label>ADJUNTAR CANCELACIONES (FORMATO PDF)</label></td>
+<td width="70%"><div id="drop_file_zone" ondrop="upload_file2(event,\'CANCELACIONES_PDF\')" ondragover="return false" style="width:300px;">
 <p>Suelta aquí o busca tu archivo</p>
-<p><input class="form-control form-control-sm" id="CANCELACIONES_PDF" type="text" onkeydown="return false" onclick="file_explorer2(\'CANCELACIONES_PDF\');" style="width:250px;" VALUE="'.$row["CANCELACIONES_PDF"] .' " required /></p>
+<p><input class="form-control form-control-sm" id="CANCELACIONES_PDF" type="text" onkeydown="return false" onclick="file_explorer2(\'CANCELACIONES_PDF\');" style="width:250px;" VALUE="'.$row["CANCELACIONES_PDF"].' " required /></p>
 <input type="file" name="CANCELACIONES_PDF" id="nono"/>
-<div id="3CANCELACIONES_PDF">
-'.$CANCELACIONES_PDF.'
-</tr> 
+<div id="3CANCELACIONES_PDF">'.$CANCELACIONES_PDF.'</div></div></td>
+</tr>
 <tr>
-
-<td width="30%" style="font-weight:bold;" ><label>ADJUNTAR CANCELACIONES (FORMATO PDF)</label></td>
-<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'CANCELACIONES_XML\')" ondragover="return false" style="width:300px;">
+<td width="30%" style="font-weight:bold;"><label>ADJUNTAR CANCELACIONES (FORMATO XML)</label></td>
+<td width="70%"><div id="drop_file_zone" ondrop="upload_file2(event,\'CANCELACIONES_XML\')" ondragover="return false" style="width:300px;">
 <p>Suelta aquí o busca tu archivo</p>
-<p><input class="form-control form-control-sm" id="CANCELACIONES_XML" type="text" onkeydown="return false" onclick="file_explorer2(\'CANCELACIONES_XML\');" style="width:250px;" VALUE="'.$row["CANCELACIONES_XML"] .' " required /></p>
+<p><input class="form-control form-control-sm" id="CANCELACIONES_XML" type="text" onkeydown="return false" onclick="file_explorer2(\'CANCELACIONES_XML\');" style="width:250px;" VALUE="'.$row["CANCELACIONES_XML"].' " required /></p>
 <input type="file" name="CANCELACIONES_XML" id="nono"/>
-<div id="3CANCELACIONES_XML">
-'.$CANCELACIONES_XML.'
-</tr> 
-
+<div id="3CANCELACIONES_XML">'.$CANCELACIONES_XML.'</div></div></td>
+</tr>
 <tr>
-
-<td width="30%" style="font-weight:bold;" ><label>ADJUNTAR FACTURA DE COMISIÓN :(FORMATO PDF)</label></td>
-<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_FACTURA_DE_COMISION_PDF\')" ondragover="return false" style="width:300px;">
+<td width="30%" style="font-weight:bold;"><label>ADJUNTAR FACTURA DE COMISIÓN (FORMATO PDF)</label></td>
+<td width="70%"><div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_FACTURA_DE_COMISION_PDF\')" ondragover="return false" style="width:300px;">
 <p>Suelta aquí o busca tu archivo</p>
-<p><input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_DE_COMISION_PDF" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_FACTURA_DE_COMISION_PDF\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_FACTURA_DE_COMISION_PDF"] .' " required /></p>
+<p><input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_DE_COMISION_PDF" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_FACTURA_DE_COMISION_PDF\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_FACTURA_DE_COMISION_PDF"].' " required /></p>
 <input type="file" name="ADJUNTAR_FACTURA_DE_COMISION_PDF" id="nono"/>
-<div id="3ADJUNTAR_FACTURA_DE_COMISION_PDF">
-'.$ADJUNTAR_FACTURA_DE_COMISION_PDF.'
+<div id="3ADJUNTAR_FACTURA_DE_COMISION_PDF">'.$ADJUNTAR_FACTURA_DE_COMISION_PDF.'</div></div></td>
 </tr>
 <tr>
-
-<td width="30%" style="font-weight:bold;" ><label>ADJUNTAR FACTURA DE COMISIÓN:(FORMATO XML)</label></td>
-<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_FACTURA_DE_COMISION_XML\')" ondragover="return false" style="width:300px;">
+<td width="30%" style="font-weight:bold;"><label>ADJUNTAR FACTURA DE COMISIÓN (FORMATO XML)</label></td>
+<td width="70%"><div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_FACTURA_DE_COMISION_XML\')" ondragover="return false" style="width:300px;">
 <p>Suelta aquí o busca tu archivo</p>
-<p><input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_DE_COMISION_XML" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_FACTURA_DE_COMISION_XML\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_FACTURA_DE_COMISION_XML"] .' " required /></p>
+<p><input class="form-control form-control-sm" id="ADJUNTAR_FACTURA_DE_COMISION_XML" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_FACTURA_DE_COMISION_XML\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_FACTURA_DE_COMISION_XML"].' " required /></p>
 <input type="file" name="ADJUNTAR_FACTURA_DE_COMISION_XML" id="nono"/>
-<div id="3ADJUNTAR_FACTURA_DE_COMISION_XML">
-'.$ADJUNTAR_FACTURA_DE_COMISION_XML.'
+<div id="3ADJUNTAR_FACTURA_DE_COMISION_XML">'.$ADJUNTAR_FACTURA_DE_COMISION_XML.'</div></div></td>
 </tr>
-
 <tr>
-
-<td width="30%" style="font-weight:bold;" ><label> ADJUNTAR CALCULO DE COMISIÓN</label></td>
-<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'CALCULO_DE_COMISION\')" ondragover="return false" style="width:300px;">
+<td width="30%" style="font-weight:bold;"><label>ADJUNTAR CÁLCULO DE COMISIÓN</label></td>
+<td width="70%"><div id="drop_file_zone" ondrop="upload_file2(event,\'CALCULO_DE_COMISION\')" ondragover="return false" style="width:300px;">
 <p>Suelta aquí o busca tu archivo</p>
-<p><input class="form-control form-control-sm" id="CALCULO_DE_COMISION" type="text" onkeydown="return false" onclick="file_explorer2(\'CALCULO_DE_COMISION\');" style="width:250px;" VALUE="'.$row["CALCULO_DE_COMISION"] .' " required /></p>
+<p><input class="form-control form-control-sm" id="CALCULO_DE_COMISION" type="text" onkeydown="return false" onclick="file_explorer2(\'CALCULO_DE_COMISION\');" style="width:250px;" VALUE="'.$row["CALCULO_DE_COMISION"].' " required /></p>
 <input type="file" name="CALCULO_DE_COMISION" id="nono"/>
-<div id="3CALCULO_DE_COMISION">
-'.$CALCULO_DE_COMISION.'
+<div id="3CALCULO_DE_COMISION">'.$CALCULO_DE_COMISION.'</div></div></td>
 </tr>
 <tr>
-
-<td width="30%" style="font-weight:bold;" ><label>MONTO DE COMISIÓN</label></td>
+<td width="30%" style="font-weight:bold;"><label>MONTO DE COMISIÓN</label></td>
 <td width="70%"><input type="text" name="MONTO_DE_COMISION" value="'.$row["MONTO_DE_COMISION"].'"></td>
 </tr>
-
-
-
 <tr>
-<td width="30%" style="font-weight:bold;" ><label> ADJUNTAR COMPROBANTE DE DEVOLUCIÓN DE DINERO A EPC</label></td>
-<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'COMPROBANTE_DE_DEVOLUCION\')" ondragover="return false" style="width:300px;">
+<td width="30%" style="font-weight:bold;"><label>ADJUNTAR COMPROBANTE DE DEVOLUCIÓN DE DINERO A EPC</label></td>
+<td width="70%"><div id="drop_file_zone" ondrop="upload_file2(event,\'COMPROBANTE_DE_DEVOLUCION\')" ondragover="return false" style="width:300px;">
 <p>Suelta aquí o busca tu archivo</p>
-<p><input class="form-control form-control-sm" id="COMPROBANTE_DE_DEVOLUCION" type="text" onkeydown="return false" onclick="file_explorer2(\'COMPROBANTE_DE_DEVOLUCION\');" style="width:250px;" VALUE="'.$row["COMPROBANTE_DE_DEVOLUCION"] .' " required /></p>
+<p><input class="form-control form-control-sm" id="COMPROBANTE_DE_DEVOLUCION" type="text" onkeydown="return false" onclick="file_explorer2(\'COMPROBANTE_DE_DEVOLUCION\');" style="width:250px;" VALUE="'.$row["COMPROBANTE_DE_DEVOLUCION"].' " required /></p>
 <input type="file" name="COMPROBANTE_DE_DEVOLUCION" id="nono"/>
-<div id="3COMPROBANTE_DE_DEVOLUCION">
-'.$COMPROBANTE_DE_DEVOLUCION.'
+<div id="3COMPROBANTE_DE_DEVOLUCION">'.$COMPROBANTE_DE_DEVOLUCION.'</div></div></td>
 </tr>
-
-
-
-
 <tr>
-
-<td width="30%" style="font-weight:bold;" ><label> ADJUNTAR NOTA DE CREDITO DE COMPRA</label></td>
-<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'NOTA_DE_CREDITO_COMPRA\')" ondragover="return false" style="width:300px;">
+<td width="30%" style="font-weight:bold;"><label>ADJUNTAR NOTA DE CRÉDITO DE COMPRA</label></td>
+<td width="70%"><div id="drop_file_zone" ondrop="upload_file2(event,\'NOTA_DE_CREDITO_COMPRA\')" ondragover="return false" style="width:300px;">
 <p>Suelta aquí o busca tu archivo</p>
-<p><input class="form-control form-control-sm" id="NOTA_DE_CREDITO_COMPRA" type="text" onkeydown="return false" onclick="file_explorer2(\'NOTA_DE_CREDITO_COMPRA\');" style="width:250px;" VALUE="'.$row["NOTA_DE_CREDITO_COMPRA"] .' " required /></p>
+<p><input class="form-control form-control-sm" id="NOTA_DE_CREDITO_COMPRA" type="text" onkeydown="return false" onclick="file_explorer2(\'NOTA_DE_CREDITO_COMPRA\');" style="width:250px;" VALUE="'.$row["NOTA_DE_CREDITO_COMPRA"].' " required /></p>
 <input type="file" name="NOTA_DE_CREDITO_COMPRA" id="nono"/>
-<div id="3NOTA_DE_CREDITO_COMPRA">
-'.$NOTA_DE_CREDITO_COMPRA.'
+<div id="3NOTA_DE_CREDITO_COMPRA">'.$NOTA_DE_CREDITO_COMPRA.'</div></div></td>
 </tr>
-
 <tr style="background: #f1a766">
-
-<td width="30%" style="font-weight:bold;" ><label>PÓLIZA NÚMERO</label></td>
+<td width="30%" style="font-weight:bold;"><label>PÓLIZA NÚMERO</label></td>
 <td width="70%"><input type="text" name="POLIZA_NUMERO" value="'.$row["POLIZA_NUMERO"].'"></td>
 </tr>
 <tr>
-
-<td width="30%" style="font-weight:bold;" ><label>NOMBRE DEL EJECUTIVO QUE INGRESO ESTA FACTURA</label></td>
+<td width="30%" style="font-weight:bold;"><label>NOMBRE DEL EJECUTIVO QUE INGRESO ESTA FACTURA</label></td>
 <td width="70%"><input type="text" name="NOMBRE_DEL_AYUDO" value="'.$row["NOMBRE_DEL_AYUDO"].'"></td>
 </tr>
-
-
 <tr>
-
-<td width="30%" style="font-weight:bold;" ><label>NOMBRE DEL EJECUTIVO QUE REALIZÓ LA COMPRA</label></td>
+<td width="30%" style="font-weight:bold;"><label>NOMBRE DEL EJECUTIVO QUE REALIZÓ LA COMPRA</label></td>
 <td width="70%"><input type="text" name="NOMBRE_DEL_EJECUTIVO" value="'.$row["NOMBRE_DEL_EJECUTIVO"].'"></td>
 </tr>
-
-
-
 <tr>
-
 <td width="30%" style="font-weight:bold;"><label>OBSERVACIONES</label></td>
 <td width="70%"><input type="text" name="OBSERVACIONES_1" value="'.$row["OBSERVACIONES_1"].'"></td>
 </tr>
 <tr>
-
-<td width="30%" style="font-weight:bold;" ><label>ADJUNTAR ARCHIVO RELACIONADO A ESTE GASTO</label></td>
-<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_ARCHIVO_1\')" ondragover="return false" style="width:300px;">
+<td width="30%" style="font-weight:bold;"><label>ADJUNTAR ARCHIVO RELACIONADO A ESTE GASTO</label></td>
+<td width="70%"><div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_ARCHIVO_1\')" ondragover="return false" style="width:300px;">
 <p>Suelta aquí o busca tu archivo</p>
-<p><input class="form-control form-control-sm" id="ADJUNTAR_ARCHIVO_1" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_ARCHIVO_1\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_ARCHIVO_1"] .' " required /></p>
+<p><input class="form-control form-control-sm" id="ADJUNTAR_ARCHIVO_1" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_ARCHIVO_1\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_ARCHIVO_1"].' " required /></p>
 <input type="file" name="ADJUNTAR_ARCHIVO_1" id="nono"/>
-<div id="3ADJUNTAR_ARCHIVO_1">
-'.$ADJUNTAR_ARCHIVO_1.'
+<div id="3ADJUNTAR_ARCHIVO_1">'.$ADJUNTAR_ARCHIVO_1.'</div></div></td>
 </tr>
-
-
 
 <tr><td colspan=2>
 <table id="reseteaxml" style="width:100%;">'.$campos_xml.'</table>
 </td></tr>
 
-
 <tr>
-<td width="30%" ><label>FECHA DE ÚLTIMA CARGA:</label></td>
+<td width="30%"><label>FECHA DE ÚLTIMA CARGA:</label></td>
 <td width="70%"><input type="text" readonly=»readonly» style="background:#decaf1" name="FECHA_DE_LLENADO" value="'.$row["FECHA_DE_LLENADO"].'"></td>
 </tr>
 </table>
+
 
 <tr>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <td width="30%"> <label><strong style="font-size:22px;"></strong></label></td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -888,121 +587,97 @@ $campos_xml = '
         <input type="hidden" value="'.$row["id"].'" name="IPpagoprovee" id="IPpagoprovee"/>
     </td>
 </tr>
-
-
-
      ';
     }
-    $output .= '</table></form>
-	
-	
-	';
+    $output .= '</table></form>';
     echo $output;
 }
-
 ?>
 
+<!-- ============================================================
+     MODAL DE CONFIRMACIÓN PARA BORRAR ARCHIVO (Bootstrap 4)
+============================================================ -->
+<div class="modal fade" id="modalConfirmaBorrar" tabindex="-1" role="dialog"
+     aria-labelledby="modalConfirmaBorrarLabel" aria-hidden="true"
+     style="z-index:99999;">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h6 class="modal-title" id="modalConfirmaBorrarLabel">⚠️ Confirmar eliminación</h6>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        ¿Estás seguro de que deseas borrar este archivo? Esta acción no se puede deshacer.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger btn-sm" id="btnConfirmaBorrar">Sí, borrar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 
 (function() {
-		const selectProveedor = document.getElementById('NOMBRE_COMERCIAL_SELECT');
-		const razonSocialInput = document.getElementById('RAZON_SOCIAL_INPUT');
-		const rfcProveedorInput = document.getElementById('RFC_PROVEEDOR_INPUT');
-		const selectEvento = document.getElementById('NUMERO_EVENTO_SELECT');
-		const nombreEventoInput = document.getElementById('NOMBRE_EVENTO_INPUT');
+    const selectProveedor = document.getElementById('NOMBRE_COMERCIAL_SELECT');
+    const razonSocialInput = document.getElementById('RAZON_SOCIAL_INPUT');
+    const rfcProveedorInput = document.getElementById('RFC_PROVEEDOR_INPUT');
+    const selectEvento = document.getElementById('NUMERO_EVENTO_SELECT');
+    const nombreEventoInput = document.getElementById('NOMBRE_EVENTO_INPUT');
 
-		const actualizarDatosProveedor = () => {
-			if (!selectProveedor) {
-				return;
-			}
+    const actualizarDatosProveedor = () => {
+        if (!selectProveedor) return;
+        const optionSeleccionada = selectProveedor.options[selectProveedor.selectedIndex];
+        if (!optionSeleccionada) return;
+        if (razonSocialInput) razonSocialInput.value = optionSeleccionada.getAttribute('data-razon') || '';
+        if (rfcProveedorInput) rfcProveedorInput.value = optionSeleccionada.getAttribute('data-rfc') || '';
+    };
 
-			const optionSeleccionada = selectProveedor.options[selectProveedor.selectedIndex];
-			if (!optionSeleccionada) {
-				return;
-			}
+    const actualizarDatosEvento = () => {
+        if (!selectEvento || !nombreEventoInput) return;
+        const opcion = selectEvento.options[selectEvento.selectedIndex];
+        nombreEventoInput.value = opcion ? opcion.getAttribute('data-nombre') || '' : '';
+    };
 
-			const razonSocial = optionSeleccionada.getAttribute('data-razon') || '';
-			const rfcProveedor = optionSeleccionada.getAttribute('data-rfc') || '';
+    if (selectProveedor) { selectProveedor.addEventListener('change', actualizarDatosProveedor); actualizarDatosProveedor(); }
+    if (selectEvento) { selectEvento.addEventListener('change', actualizarDatosEvento); actualizarDatosEvento(); }
+})();
 
-			if (razonSocialInput) {
-				razonSocialInput.value = razonSocial;
-			}
+var fileobj;
+function upload_file2(e, name) {
+    e.preventDefault();
+    fileobj = e.dataTransfer.files[0];
+    ajax_file_upload2(fileobj, name);
+}
 
-			if (rfcProveedorInput) {
-				rfcProveedorInput.value = rfcProveedor;
-			}
-		};
+function file_explorer2(name) {
+    document.getElementsByName(name)[0].click();
+    document.getElementsByName(name)[0].onchange = function() {
+        fileobj = document.getElementsByName(name)[0].files[0];
+        ajax_file_upload2(fileobj, name);
+    };
+}
 
-		const actualizarDatosEvento = () => {
-			if (!selectEvento || !nombreEventoInput) {
-				return;
-			}
-
-			const opcionSeleccionadaEvento = selectEvento.options[selectEvento.selectedIndex];
-			const nombreEvento = opcionSeleccionadaEvento ? opcionSeleccionadaEvento.getAttribute('data-nombre') || '' : '';
-			nombreEventoInput.value = nombreEvento;
-		};
-
-		if (selectProveedor) {
-			selectProveedor.addEventListener('change', actualizarDatosProveedor);
-			actualizarDatosProveedor();
-		}
-
-		if (selectEvento) {
-			selectEvento.addEventListener('change', actualizarDatosEvento);
-			actualizarDatosEvento();
-		}
-	})();
-
-	var fileobj;
-	function upload_file2(e,name) {
-	    e.preventDefault();
-	    fileobj = e.dataTransfer.files[0];
-	    ajax_file_upload2(fileobj,name);
-	}
-
-	 
-	function file_explorer2(name) {
-	    document.getElementsByName(name)[0].click();
-	    document.getElementsByName(name)[0].onchange = function() {
-	        fileobj = document.getElementsByName(name)[0].files[0];
-	        ajax_file_upload2(fileobj,name);
-	    };
-	}
-	
-	
-// Función para calcular el total automáticamente
 function calcularTotal() {
-    // Obtener valores
-    const montoEvento = parseFloat(document.getElementById('montoTotalEvento').value) || 0;
-    const montoAvion = parseFloat(document.getElementById('montoTotalAvion').value) || 0;
-    const montopropina = parseFloat(document.getElementById('montoTotalpropina').value) || 0;
+    const montoEvento    = parseFloat(document.getElementById('montoTotalEvento').value)    || 0;
+    const montoAvion     = parseFloat(document.getElementById('montoTotalAvion').value)     || 0;
+    const montopropina   = parseFloat(document.getElementById('montoTotalpropina').value)   || 0;
     const montohospedaje = parseFloat(document.getElementById('montoTotalhospedaje').value) || 0;
-    const montoRetenidoIVA = parseFloat(document.getElementById('montoRetenidoIVA').value) || 0;
-    const montoRetenidoISR = parseFloat(document.getElementById('montoRetenidoISR').value) || 0;
-    const montoDescuentos = parseFloat(document.getElementById('montoDescuentos').value) || 0;
-    
-    // Calcular suma
-    const total = montoEvento + montoAvion + montopropina + montohospedaje - montoRetenidoIVA - montoRetenidoISR - montoDescuentos;
-    
-    // Asignar resultado (con 2 decimales)
+    const montoRetIVA    = parseFloat(document.getElementById('montoRetenidoIVA').value)    || 0;
+    const montoRetISR    = parseFloat(document.getElementById('montoRetenidoISR').value)    || 0;
+    const montoDesc      = parseFloat(document.getElementById('montoDescuentos').value)     || 0;
+    const total = montoEvento + montoAvion + montopropina + montohospedaje - montoRetIVA - montoRetISR - montoDesc;
     document.getElementById('montoTotalEventoResultado').value = total.toFixed(2);
 }
 
-// Ejecutar al cargar la ventana
 window.onload = calcularTotal;
-
-// Escuchar cambios en los inputs
-document.getElementById('montoTotalEvento').addEventListener('input', calcularTotal);
-document.getElementById('montoTotalAvion').addEventListener('input', calcularTotal);
-document.getElementById('montoTotalpropina').addEventListener('input', calcularTotal);
-document.getElementById('montoTotalhospedaje').addEventListener('input', calcularTotal);
-document.getElementById('montoRetenidoIVA').addEventListener('input', calcularTotal);
-document.getElementById('montoRetenidoISR').addEventListener('input', calcularTotal);
-document.getElementById('montoDescuentos').addEventListener('input', calcularTotal);
-
-	
+['montoTotalEvento','montoTotalAvion','montoTotalpropina','montoTotalhospedaje',
+ 'montoRetenidoIVA','montoRetenidoISR','montoDescuentos'].forEach(function(id) {
+    document.getElementById(id).addEventListener('input', calcularTotal);
+});
 
 function ajax_file_upload2(file_obj, nombre) {
     if (!file_obj) return;
@@ -1028,14 +703,12 @@ function ajax_file_upload2(file_obj, nombre) {
             if (resp === '2') {
                 $('#3' + nombre).html('<p style="color:red;">Error, archivo diferente a PDF, JPG o GIF.</p>');
                 $('#' + nombre).val('');
-
             } else if (resp === '3') {
                 $('#3' + nombre).html('<p style="color:red;font-weight:600;">⚠️ UUID PREVIAMENTE CARGADO.</p>');
                 $('#' + nombre).val('');
-
-          } else if (resp.indexOf('3^^') === 0) {
+            } else if (resp.indexOf('3^^') === 0) {
                 var partes = resp.split('^^');
-   var numeroSolicitud = partes[1] ? $.trim(partes[1]) : '';
+                var numeroSolicitud = partes[1] ? $.trim(partes[1]) : '';
                 var numeroEvento = partes[2] ? $.trim(partes[2]) : '';
                 var detalleEvento = numeroEvento !== '' ? ' — Evento: <strong>' + numeroEvento + '</strong>' : '';
                 var msgDuplicado = numeroSolicitud !== ''
@@ -1043,11 +716,9 @@ function ajax_file_upload2(file_obj, nombre) {
                     : '<p style="color:red;font-weight:600;">⚠️ UUID PREVIAMENTE CARGADO.</p>';
                 $('#3' + nombre).html(msgDuplicado);
                 $('#' + nombre).val('');
-
             } else if (resp.indexOf('5^^') === 0) {
-                $('#3' + nombre).html('<p style="color:red;font-weight:600;">⚠️ EL ARCHIVO XML ESTÁ VACÍO O NO CONTIENE INFORMACIÓN VÁLIDA. Verifica que sea un CFDI timbrado correctamente e inténtalo de nuevo.</p>');
+                $('#3' + nombre).html('<p style="color:red;font-weight:600;">⚠️ EL ARCHIVO XML ESTÁ VACÍO O NO CONTIENE INFORMACIÓN VÁLIDA.</p>');
                 $('#' + nombre).val('');
-
             } else if (resp.indexOf('6^^') === 0) {
                 var partesReceptor = resp.split('^^');
                 var receptorXML = partesReceptor[1] ? $.trim(partesReceptor[1]) : '';
@@ -1056,8 +727,7 @@ function ajax_file_upload2(file_obj, nombre) {
                     : '⚠️ EL RECEPTOR DE LA FACTURA NO ES EPC, INN O EVE520.';
                 $('#3' + nombre).html('<p style="color:red;font-weight:600;">' + msgReceptor + '</p>');
                 $('#' + nombre).val('');
-
-} else if (resp.indexOf('7^^^') === 0) {
+            } else if (resp.indexOf('7^^^') === 0) {
                 var partesGasto = resp.split('^^^');
                 var numeroGasto = partesGasto[1] ? $.trim(partesGasto[1]) : '';
                 var msgGasto = numeroGasto !== ''
@@ -1065,150 +735,135 @@ function ajax_file_upload2(file_obj, nombre) {
                     : '<p style="color:#C82909;font-weight:600;">⚠️ UUID PREVIAMENTE CARGADO EN COMPROBACIÓN DE GASTOS.</p>';
                 $('#3' + nombre).html(msgGasto);
                 $('#' + nombre).val('');
-
             } else {
                 var result = response.split('^^');
                 $('#' + nombre).val(result[1]);
                 $('#3' + nombre).html('<p style="color:green;">✅ <a target="_blank" href="includes/archivos/' + $.trim(result[0]) + '">Visualizar archivo</a></p>');
 
-    // ── Para XML, mostrar UUID ──
-    if (nombre === 'ADJUNTAR_FACTURA_XML') {
-        $('#3' + nombre).html(
-            '<p style="color:green;">✅ <a target="_blank" href="includes/archivos/' 
-            + $.trim(result[0]) + '">Visualizar archivo</a></p>'
-        );
-
-        var formaPago = $.trim(result[2] || '');
-        if (formaPago.length) {
-            $('select[name="PFORMADE_PAGO"], input[name="PFORMADE_PAGO"]').val(formaPago);
-        }
-
-        if ((result[1] || '').length > 1) {
-            $('#respuestaser').html(
-                '<p style="color:green;font-size:25px;font-weight:bolder;">XML CORRECTAMENTE CARGADO CON EL UUID:<br> ' 
-                + result[1] + '</p>'
-            );
-            $('#reseteaxml').remove();
-        }
-
-        recargarElementos([
-            '#3ADJUNTAR_FACTURA_XML',
-            '#RAZON_SOCIAL2', '#RFC_PROVEEDOR2', '#CONCEPTO_PROVEE2',
-            '#TIPO_DE_MONEDA2', '#FECHA_DE_PAGO2', '#NUMERO_CONSECUTIVO_PROVEE2',
-            '#2MONTO_FACTURA', '#2MONTO_DEPOSITAR', '#2PFORMADE_PAGO',
-            '#2IVA', '#2TImpuestosRetenidosIVA', '#2TImpuestosRetenidosISR',
-            '#2descuentos', '#NOMBRE_COMERCIAL2', '#resettabla'
-        ]);
-
-    } else {
-        // ── Para todos los demás archivos: mostrar enlace directamente
-        // sin recargar desde el servidor (evita que desaparezca)
-        var nombreArchivo = $.trim(result[0]);
-        var idSB = ''; // el controlador devuelve el id del registro en result[0]
-        
-        $('#3' + nombre).html(
-            '<p style="color:green;">✅ <a target="_blank" href="includes/archivos/' 
-            + nombreArchivo + '">Visualizar!</a> &nbsp;'
-            + '<span style="color:blue;cursor:pointer;" class="view_dataSBborrar2" id="' 
-            + nombreArchivo + '">Borrar!</span></p>'
-        );
-        $('#respuestaser').html('<p style="color:green;">✅ ¡Archivo cargado con éxito!</p>');
-        
-        // Solo recargar la tabla general, NO el div del archivo
-        recargarElemento('#resettabla');
-    }
-}
+                if (nombre === 'ADJUNTAR_FACTURA_XML') {
+                    var formaPago = $.trim(result[2] || '');
+                    if (formaPago.length) {
+                        $('select[name="PFORMADE_PAGO"], input[name="PFORMADE_PAGO"]').val(formaPago);
+                    }
+                    if ((result[1] || '').length > 1) {
+                        $('#respuestaser').html('<p style="color:green;font-size:25px;font-weight:bolder;">XML CORRECTAMENTE CARGADO CON EL UUID:<br> ' + result[1] + '</p>');
+                        $('#reseteaxml').remove();
+                    }
+                    recargarElementos(['#3ADJUNTAR_FACTURA_XML','#RAZON_SOCIAL2','#RFC_PROVEEDOR2','#CONCEPTO_PROVEE2','#TIPO_DE_MONEDA2','#FECHA_DE_PAGO2','#NUMERO_CONSECUTIVO_PROVEE2','#2MONTO_FACTURA','#2MONTO_DEPOSITAR','#2PFORMADE_PAGO','#2IVA','#2TImpuestosRetenidosIVA','#2TImpuestosRetenidosISR','#2descuentos','#NOMBRE_COMERCIAL2','#resettabla']);
+                } else {
+                    var nombreArchivo = $.trim(result[0]);
+                    $('#3' + nombre).html('<p style="color:green;">✅ <a target="_blank" href="includes/archivos/' + nombreArchivo + '">Visualizar!</a> &nbsp;<span style="color:blue;cursor:pointer;" class="view_dataSBborrar2" id="' + nombreArchivo + '">Borrar!</span></p>');
+                    $('#respuestaser').html('<p style="color:green;">✅ ¡Archivo cargado con éxito!</p>');
+                    recargarElemento('#resettabla');
+                }
+            }
         }
     });
 }
 
-    // ================================================================
-    // FIX: Función corregida — usa selectores reales del HTML generado:
-    //   select#formaDePagoSelect  (name="PFORMADE_PAGO" cuando activo)
-    //   input#formaDePagoHidden   (recibe el name cuando select disabled)
-    // ================================================================
-	function bloquearFormaPagoDesdeXml(valorFormaPago) {
-		var $selectFormaPago = $('#formaDePagoSelect');
-		var $hiddenFormaPago = $('#formaDePagoHidden');
+function bloquearFormaPagoDesdeXml(valorFormaPago) {
+    var $selectFormaPago = $('#formaDePagoSelect');
+    var $hiddenFormaPago = $('#formaDePagoHidden');
+    if (valorFormaPago) { $selectFormaPago.val(valorFormaPago); }
+    $selectFormaPago.prop('disabled', true).attr('name', '');
+    $hiddenFormaPago.attr('name', 'PFORMADE_PAGO').val($selectFormaPago.val());
+}
 
-		if(valorFormaPago){
-			$selectFormaPago.val(valorFormaPago);
-		}
+(function inicializarBloqueoFormaPagoDesdeXml() {
+    var $selectFormaPago = $('#formaDePagoSelect');
+    if ($selectFormaPago.data('lock-xml') == 1) {
+        bloquearFormaPagoDesdeXml($selectFormaPago.val());
+    }
+})();
 
-        // Transferir el name del select al hidden para que .serialize() lo tome
-		$selectFormaPago.prop('disabled', true).attr('name', '');
-		$hiddenFormaPago.attr('name', 'PFORMADE_PAGO').val($selectFormaPago.val());
-	}
+$(document).ready(function () {
 
-    // ================================================================
-    // FIX: Inicialización al cargar — mismos selectores corregidos
-    // ================================================================
-	(function inicializarBloqueoFormaPagoDesdeXml() {
-		var $selectFormaPago = $('#formaDePagoSelect');
-		if($selectFormaPago.data('lock-xml') == 1){
-			bloquearFormaPagoDesdeXml($selectFormaPago.val());
-		}
-	})();
+    /* ---------------------------------------------------
+       BORRAR ARCHIVO ADJUNTO — Modal Bootstrap 4
+    --------------------------------------------------- */
+    var _borrarId      = null;
+    var _filaArchivoId = null;
 
-    $(document).ready(function(){
+    $(document).on('click', '.view_dataSBborrar2', function () {
+        _borrarId      = $(this).attr('id');
+        _filaArchivoId = $(this).closest('.fila-archivo').attr('id');
+        $('#modalConfirmaBorrar').modal({ backdrop: 'static', keyboard: false });
+        $('#modalConfirmaBorrar').modal('show');
+    });
 
-        $("#clickPAGOP").click(function(){
+    $('#btnConfirmaBorrar').on('click', function () {
+        var borrarId      = _borrarId;
+        var filaArchivoId = _filaArchivoId;
+        var $fila         = $('#' + filaArchivoId);
 
-            // ================================================================
-            // FIX: Sincronizar hidden/select justo antes de serializar,
-            // para cubrir ambos escenarios (con y sin bloqueo por XML).
-            // ================================================================
-            var $sel = $('#formaDePagoSelect');
-            var $hid = $('#formaDePagoHidden');
+        $('#modalConfirmaBorrar').modal('hide');
 
-            if($sel.prop('disabled')){
-                // Select bloqueado: el hidden ya debe tener el name, pero
-                // nos aseguramos de que tenga el valor correcto
-                $hid.attr('name', 'PFORMADE_PAGO').val($sel.val());
-            } else {
-                // Select activo: quitar name del hidden para evitar duplicado
-                $hid.removeAttr('name');
+        if ($fila.length) { $fila.css('opacity', '0.5'); }
+        $('#respuestaser').html('<p style="color:green;">Borrando...</p>');
+
+        $.ajax({
+            url: 'pagoproveedores/controladorPP.php',
+            method: 'POST',
+            data: { borra_id_sb: borrarId, borrasbdoc: 'borrasbdoc' },
+            success: function () {
+                // Elimina la fila completa: quita Visualizar!, Borrar! y fecha
+                if ($fila.length) {
+                    $fila.fadeOut(300, function () { $(this).remove(); });
+                }
+                $('#respuestaser').html("<span style='color:green;font-weight:bold;'>✅ Archivo eliminado correctamente</span>");
+            },
+            error: function () {
+                if ($fila.length) { $fila.css('opacity', '1'); }
+                $('#respuestaser').html("<span style='color:red;'>Error al borrar el archivo</span>");
             }
-
-            $.ajax({  
-                url:"pagoproveedores/controladorPP.php",
-                method:"POST",  
-                data:$('#ListadoPAGOPROVEEform').serialize(),
-
-                success:function(data){
-	
-                    var responseText = $.trim(data);
-                    var lowerResponse = responseText.toLowerCase();
-
-                    if(
-                        responseText === 'Ingresado' ||
-                        responseText === 'Actualizado' ||
-                        lowerResponse.indexOf('actualizado') !== -1 ||
-                        lowerResponse.indexOf('ingresado') !== -1
-                    ){
-                        $.getScript(loadAUT(1));	
-                        
-                        $("#respuestaser").html("<span id='ACTUALIZADO' >"+responseText+"</span>");
-                        $('#respuestaser2').html("<span id='ACTUALIZADO' >"+responseText+"</span>");
-                        setTimeout(function() {
-                            $("#respuestaser").fadeOut(300, function() {
-                                $(this).html('').show();
-                            });
-                          
-                        }, 2000);
-                    }
-                    else{
-                        var esCamposObligatorios = lowerResponse.indexOf('favor de llenar campos obligatorios') !== -1;
-                        if (esCamposObligatorios) {
-                            $('#respuestaser2').html("<span id='ACTUALIZADO'>" + responseText + "</span>");
-                            $("#respuestaser").html('');
-                        } else {
-                            $("#respuestaser").html(data);
-                        }
-                    }
-                }  
-            });
         });
     });
-		
-	</script>
+
+    $('#modalConfirmaBorrar').on('hidden.bs.modal', function () {
+        _borrarId      = null;
+        _filaArchivoId = null;
+    });
+
+    /* ---------------------------------------------------
+       GUARDAR CAMBIOS DEL REGISTRO
+    --------------------------------------------------- */
+    $("#clickPAGOP").click(function () {
+        var $sel = $('#formaDePagoSelect');
+        var $hid = $('#formaDePagoHidden');
+        if ($sel.prop('disabled')) {
+            $hid.attr('name', 'PFORMADE_PAGO').val($sel.val());
+        } else {
+            $hid.removeAttr('name');
+        }
+
+        $.ajax({
+            url: "pagoproveedores/controladorPP.php",
+            method: "POST",
+            data: $('#ListadoPAGOPROVEEform').serialize(),
+            success: function (data) {
+                var responseText = $.trim(data);
+                var lowerResponse = responseText.toLowerCase();
+
+                if (responseText === 'Ingresado' || responseText === 'Actualizado' ||
+                    lowerResponse.indexOf('actualizado') !== -1 || lowerResponse.indexOf('ingresado') !== -1) {
+                    $("#respuestaser").html("<span id='ACTUALIZADO'>" + responseText + "</span>");
+                    $('#respuestaser2').html("<span id='ACTUALIZADO'>" + responseText + "</span>");
+                    setTimeout(function () {
+                        $("#respuestaser").fadeOut(300, function () { $(this).html('').show(); });
+                    }, 2000);
+                } else {
+                    var esCamposObligatorios = lowerResponse.indexOf('favor de llenar campos obligatorios') !== -1;
+                    if (esCamposObligatorios) {
+                        $('#respuestaser2').html("<span id='ACTUALIZADO'>" + responseText + "</span>");
+                        $("#respuestaser").html('');
+                    } else {
+                        $("#respuestaser").html(data);
+                    }
+                }
+                loadAUT(1);
+            }
+        });
+    });
+
+});
+</script>
