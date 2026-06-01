@@ -331,7 +331,7 @@ $xmlFacturaInvalido = isset($_FILES['ADJUNTAR_FACTURA_XML'])
 	&& strtolower(pathinfo(isset($_FILES['ADJUNTAR_FACTURA_XML']['name']) ? $_FILES['ADJUNTAR_FACTURA_XML']['name'] : '', PATHINFO_EXTENSION)) !== 'xml';
 
 if($xmlFacturaInvalido){
-	echo '4';
+	echo '2';
 	exit;
 }
 
@@ -342,7 +342,7 @@ $pdfFacturaInvalido = isset($_FILES['ADJUNTAR_FACTURA_PDF'])
 	&& strtolower(pathinfo(isset($_FILES['ADJUNTAR_FACTURA_PDF']['name']) ? $_FILES['ADJUNTAR_FACTURA_PDF']['name'] : '', PATHINFO_EXTENSION)) !== 'pdf';
 
 if($pdfFacturaInvalido){
-	echo '4';
+	echo '2';
 	exit;
 }
 
@@ -367,7 +367,7 @@ if( $_FILES["ADJUNTAR_FACTURA_XML"] == true){
 		exit;
 	}
 	if($ADJUNTAR_FACTURA_XML2 === '1' || $ADJUNTAR_FACTURA_XML2 === '2'){
-		echo '4';
+		echo '2';
 		exit;
 	}
 

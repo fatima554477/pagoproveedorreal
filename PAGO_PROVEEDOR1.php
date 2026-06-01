@@ -19,16 +19,27 @@ $_SESSION['idusuario12']= '';
 
 
 $regresoFacturaTemporal = $pagoproveedores->variable_SUBETUFACTURA();
-$urlFacturaTemporalXml = __ROOT1__.'/includes/archivos/'.$regresoFacturaTemporal['ADJUNTAR_FACTURA_XML'];
-$xmlFacturaCargada = !empty($regresoFacturaTemporal['ADJUNTAR_FACTURA_XML']) && file_exists($urlFacturaTemporalXml);
-$atributosBloqueoFacturaXml = $xmlFacturaCargada ? 'disabled="disabled" data-locked="true" style="background:#d7bde2;"' : '';
 
-$listadosubePdf = $pagoproveedores->Listado_subefacturadocto('ADJUNTAR_FACTURA_PDF');
-$rowsubePdf = mysqli_fetch_array($listadosubePdf);
+// ✅ Verificar que es array con datos antes de usarlo
+$xmlFacturaCargada = !empty($regresoFacturaTemporal) 
+    && !empty($regresoFacturaTemporal['ADJUNTAR_FACTURA_XML']) 
+    && file_exists(__ROOT1__.'/includes/archivos/'.$regresoFacturaTemporal['ADJUNTAR_FACTURA_XML']);
+
+$atributosBloqueoFacturaXml = $xmlFacturaCargada 
+    ? 'disabled="disabled" data-locked="true" style="background:#d7bde2;"' 
+    : '';
+
+// --- PDF (corregir el typo __ROOT1__ con doble guion bajo) ---
+$listadosubePdf  = $pagoproveedores->Listado_subefacturadocto('ADJUNTAR_FACTURA_PDF');
+$rowsubePdf      = mysqli_fetch_array($listadosubePdf);
 $archivoPdfSubido = $rowsubePdf ? $rowsubePdf['ADJUNTAR_FACTURA_PDF'] : '';
-$urlFacturaTemporalPdf = __ROOT1.'/includes/archivos/'.$archivoPdfSubido;
-$pdfFacturaCargada = !empty($archivoPdfSubido) && file_exists($urlFacturaTemporalPdf);
-$atributosBloqueoFacturaPdf = $pdfFacturaCargada ? 'disabled="disabled" data-locked="true" style="background:#d7bde2;"' : '';
+
+$pdfFacturaCargada = !empty($archivoPdfSubido) 
+    && file_exists(__ROOT1__.'/includes/archivos/'.$archivoPdfSubido); // ✅ doble guion bajo
+
+$atributosBloqueoFacturaPdf = $pdfFacturaCargada 
+    ? 'disabled="disabled" data-locked="true" style="background:#d7bde2;"' 
+    : '';
 
 ?>
 		<script type="text/javascript">

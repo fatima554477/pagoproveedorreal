@@ -149,7 +149,7 @@ public function registrar_bitacora_adjuntos($idcomprobacion, $tipoAdjunto, $nomb
 
     $idcomprobacion = intval($idcomprobacion);
     $tipoAdjunto    = trim($tipoAdjunto);
-    $nombreArchivo  = trim($nombreArchivo);
+    $nombreArchivo  = trim(urldecode($nombreArchivo));
 
     if ($idcomprobacion <= 0 || $tipoAdjunto == '') {
         return;
@@ -278,58 +278,79 @@ private function nombre_legible_adjunto($tipo) {
         return mysqli_query($conn, "SELECT NUMERO_EVENTO, NOMBRE_EVENTO FROM 04altaeventos ORDER BY NUMERO_EVENTO");
     }
 
-     public function solocargartemp($archivo) {
-        $nombre_carpeta = __ROOT3__ . '/includes/archivos';
+public function solocargartemp($archivo) {
 
-        // ── Validar error de subida y archivo vacío ───────────────────────
-        if (!isset($_FILES[$archivo]) || $_FILES[$archivo]['error'] !== UPLOAD_ERR_OK) {
-            return "ERROR_SUBIDA";
-        }
-        if ($_FILES[$archivo]['size'] === 0) {
-            return "VACIO";
-        }
+    $nombre_carpeta = __ROOT3__ . '/includes/archivos';
 
-        $nombretemp    = $_FILES[$archivo]["tmp_name"];
-        $nombrearchivo = $_FILES[$archivo]["name"];
-        $extension     = explode('.', $nombrearchivo);
-        $cuenta        = count($extension) - 1;
-        $ext           = strtolower($extension[$cuenta]);
-
-        // ── Validar que tiene extensión real ─────────────────────────────
-        if ($cuenta === 0 || trim($ext) === '') {
-            return "SIN_EXTENSION";
-        }
-
-        // ── Sanitizar nombre ─────────────────────────────────────────────
-        $nombrebase = pathinfo($nombrearchivo, PATHINFO_FILENAME);
-        // Quitar caracteres conflictivos
-        $nombrebase = preg_replace('/[^a-zA-Z0-9_\-áéíóúÁÉÍÓÚñÑüÜ]/', '_', $nombrebase);
-        // Colapsar guiones bajos múltiples
-        $nombrebase = preg_replace('/_+/', '_', $nombrebase);
-        // Quitar guiones bajos al inicio y al final
-        $nombrebase = trim($nombrebase, '_');
-        // Limitar longitud
-        if (strlen($nombrebase) > 60) {
-            $nombrebase = substr($nombrebase, 0, 60);
-        }
-        // Fallback si quedó vacío
-        if ($nombrebase === '') {
-            $nombrebase = 'archivo';
-        }
-
-        $nuevonombre = $archivo . '_' . $nombrebase . '_' . date('Y_m_d_H_i_s') . '.' . $ext;
-
-        $permitidos = ['pdf', 'gif', 'jpeg', 'jpg', 'png', 'mp4', 'docx', 'doc', 'xml'];
-        if (!in_array($ext, $permitidos)) {
-            return "2";
-        }
-
-        if (move_uploaded_file($nombretemp, $nombre_carpeta . '/' . $nuevonombre)) {
-            chmod($nombre_carpeta . '/' . $nuevonombre, 0755);
-            return trim($nuevonombre);
-        }
-        return "1";
+    // ── Validar error de subida y archivo vacío ───────────────────────
+    if (!isset($_FILES[$archivo]) || $_FILES[$archivo]['error'] !== UPLOAD_ERR_OK) {
+        return "ERROR_SUBIDA";
     }
+
+    if ($_FILES[$archivo]['size'] === 0) {
+        return "VACIO";
+    }
+
+    $nombretemp = $_FILES[$archivo]["tmp_name"];
+
+    // Nombre original
+    $nombrearchivo = $_FILES[$archivo]["name"];
+
+    // Corregir codificación
+    $nombrearchivo = urldecode($nombrearchivo);
+
+    if (!mb_check_encoding($nombrearchivo, 'UTF-8')) {
+        $nombrearchivo = mb_convert_encoding($nombrearchivo, 'UTF-8', 'ISO-8859-1');
+    }
+
+    $nombrearchivo = iconv('UTF-8', 'UTF-8//IGNORE', $nombrearchivo);
+
+    $extension = explode('.', $nombrearchivo);
+    $cuenta = count($extension) - 1;
+    $ext = strtolower($extension[$cuenta]);
+
+    // ── Validar que tiene extensión real ─────────────────────────────
+    if ($cuenta === 0 || trim($ext) === '') {
+        return "SIN_EXTENSION";
+    }
+
+    // ── Sanitizar nombre ─────────────────────────────────────────────
+    $nombrebase = pathinfo($nombrearchivo, PATHINFO_FILENAME);
+
+    // Quitar caracteres conflictivos
+    $nombrebase = preg_replace('/[^a-zA-Z0-9_\-áéíóúÁÉÍÓÚñÑüÜ]/u', '_', $nombrebase);
+
+    // Colapsar guiones bajos múltiples
+    $nombrebase = preg_replace('/_+/', '_', $nombrebase);
+
+    // Quitar guiones bajos al inicio y al final
+    $nombrebase = trim($nombrebase, '_');
+
+    // Limitar longitud
+    if (mb_strlen($nombrebase) > 60) {
+        $nombrebase = mb_substr($nombrebase, 0, 60);
+    }
+
+    // Fallback si quedó vacío
+    if ($nombrebase === '') {
+        $nombrebase = 'archivo';
+    }
+
+    $nuevonombre = $archivo . '_' . $nombrebase . '_' . date('Y_m_d_H_i_s') . '.' . $ext;
+
+    $permitidos = ['pdf', 'gif', 'jpeg', 'jpg', 'png', 'mp4', 'docx', 'doc', 'xml'];
+
+    if (!in_array($ext, $permitidos)) {
+        return "2";
+    }
+
+    if (move_uploaded_file($nombretemp, $nombre_carpeta . '/' . $nuevonombre)) {
+        chmod($nombre_carpeta . '/' . $nuevonombre, 0755);
+        return trim($nuevonombre);
+    }
+
+    return "1";
+}
 
     public function pendiente_pago($total_menos_depositado, $NUMERO_EVENTO) {
         $total_menos_depositado = str_replace(',', '', $total_menos_depositado);
@@ -368,18 +389,48 @@ private function nombre_legible_adjunto($tipo) {
 public function variable_SUBETUFACTURA() {
     $conn = $this->db();
     if (empty($_SESSION['idPROV'])) return [];
-    
-    // Verificar que el documento temporal pertenece al usuario activo
-    $idem = intval($_SESSION['idem']);
-    $query = mysqli_query($conn, 
+
+    $idem    = intval($_SESSION['idem']);
+    $idPROV  = intval($_SESSION['idPROV']);
+
+    // Intento 1: buscar por idRelacion + idRelacionU (usuario actual)
+    $query = mysqli_query($conn,
         "SELECT * FROM 02SUBETUFACTURADOCTOS 
-         WHERE idRelacion = '" . $_SESSION['idPROV'] . "' 
-         AND idRelacionU = '{$idem}'   -- <-- agregar esta validación
-         AND idTemporal = 'si' 
-         AND (ADJUNTAR_FACTURA_XML IS NOT NULL OR ADJUNTAR_FACTURA_XML <> '') 
-         ORDER BY id DESC"
+         WHERE idRelacion = '{$idPROV}'
+         AND idRelacionU = '{$idem}'
+         AND idTemporal = 'si'
+         AND ADJUNTAR_FACTURA_XML IS NOT NULL 
+         AND ADJUNTAR_FACTURA_XML <> ''
+         ORDER BY id DESC
+         LIMIT 1"
     );
-    return mysqli_fetch_array($query, MYSQLI_ASSOC);
+
+    if ($query) {
+        $row = mysqli_fetch_array($query, MYSQLI_ASSOC);
+        if (!empty($row['ADJUNTAR_FACTURA_XML'])) {
+            return $row;
+        }
+    }
+
+    // Intento 2: fallback solo por idRelacion (por si idem no coincide)
+    $query2 = mysqli_query($conn,
+        "SELECT * FROM 02SUBETUFACTURADOCTOS 
+         WHERE idRelacion = '{$idPROV}'
+         AND idTemporal = 'si'
+         AND ADJUNTAR_FACTURA_XML IS NOT NULL 
+         AND ADJUNTAR_FACTURA_XML <> ''
+         ORDER BY id DESC
+         LIMIT 1"
+    );
+
+    if ($query2) {
+        $row2 = mysqli_fetch_array($query2, MYSQLI_ASSOC);
+        if (!empty($row2['ADJUNTAR_FACTURA_XML'])) {
+            return $row2;
+        }
+    }
+
+    return [];
 }
 
     public function variable_SUBETUFACTURA2($id12) {
@@ -1047,55 +1098,49 @@ public function VALIDA02XMLUUID($uuid) {
 
 public function borrar_historico_xml($nombretabla, $idusuario) {
     $conn      = $this->db();
-    $ruta      = __ROOT3__ . '/includes/archivos/';
     $idusuario = intval($idusuario);
 
-    // Columnas de archivos físicos que hay que borrar del servidor
+    // ✅ Nunca ejecutar si no hay usuario válido
+    if ($idusuario <= 0) return;
+
+    // ✅ Validar nombre de tabla contra lista blanca
+    $tablasPermitidas = ['02SUBETUFACTURADOCTOS', '07COMPROBACIONDOCTOS'];
+    if (!in_array($nombretabla, $tablasPermitidas)) return;
+
+    $ruta = __ROOT3__ . '/includes/archivos/';
+
     $columnas_archivos = [
-        'ADJUNTAR_FACTURA_XML',
-        'ADJUNTAR_FACTURA_PDF',
-        'ADJUNTAR_COTIZACION',
-        'CONPROBANTE_TRANSFERENCIA',
-        'ADJUNTAR_ARCHIVO_1',
-        'FOTO_ESTADO_PROVEE11',
-        'COMPLEMENTOS_PAGO_PDF',
-        'COMPLEMENTOS_PAGO_XML',
-        'CANCELACIONES_PDF',
-        'CANCELACIONES_XML',
-        'ADJUNTAR_FACTURA_DE_COMISION_PDF',
-        'ADJUNTAR_FACTURA_DE_COMISION_XML',
-        'CALCULO_DE_COMISION',
-        'COMPROBANTE_DE_DEVOLUCION',
+        'ADJUNTAR_FACTURA_XML', 'ADJUNTAR_FACTURA_PDF',
+        'ADJUNTAR_COTIZACION', 'CONPROBANTE_TRANSFERENCIA',
+        'ADJUNTAR_ARCHIVO_1', 'FOTO_ESTADO_PROVEE11',
+        'COMPLEMENTOS_PAGO_PDF', 'COMPLEMENTOS_PAGO_XML',
+        'CANCELACIONES_PDF', 'CANCELACIONES_XML',
+        'ADJUNTAR_FACTURA_DE_COMISION_PDF', 'ADJUNTAR_FACTURA_DE_COMISION_XML',
+        'CALCULO_DE_COMISION', 'COMPROBANTE_DE_DEVOLUCION',
         'NOTA_DE_CREDITO_COMPRA',
     ];
 
-    // 1. Traer todos los registros temporales del usuario
     $q = mysqli_query($conn,
         "SELECT * FROM {$nombretabla} 
          WHERE idRelacionU='{$idusuario}' 
          AND idTemporal='si'"
     ) or die('P44' . mysqli_error($conn));
 
-    // 2. Borrar cada archivo físico encontrado
     while ($row = mysqli_fetch_array($q, MYSQLI_ASSOC)) {
         foreach ($columnas_archivos as $col) {
             if (!empty($row[$col])) {
                 $archivo = $ruta . $row[$col];
-                if (file_exists($archivo)) {
-                    unlink($archivo);
-                }
+                if (file_exists($archivo)) unlink($archivo);
             }
         }
     }
 
-    // 3. Borrar TODOS los registros temporales del usuario de la tabla
     mysqli_query($conn,
         "DELETE FROM {$nombretabla} 
          WHERE idRelacionU='{$idusuario}' 
          AND idTemporal='si'"
     ) or die('P441' . mysqli_error($conn));
 
-    // 4. Limpiar sesión para evitar que cargue datos de sesiones anteriores
     $_SESSION['idPROV']                       = '';
     $_SESSION['P_NOMBRE_COMERCIAL_EMPRESA12'] = '';
     $_SESSION['idusuario12']                  = '';
