@@ -468,6 +468,8 @@ $(document).ready(function () {
     $(document).on('click', '.view_dataSBborrar2', function () {
         var borra_id_sb = $(this).attr('id');
         var $documentoNodo = $(this);
+        var $contenedorCampo = $documentoNodo.closest('[id^="3"]');
+        var campoAdjunto = $contenedorCampo.length ? $contenedorCampo.attr('id').replace(/^3/, '') : '';
         $('#dataModal3').modal('show');
 
         $('#btnYes').off('click').on('click', function () {
@@ -484,10 +486,15 @@ $(document).ready(function () {
                     if ($contenedorLinea.length) {
                         $contenedorLinea.remove();
                     } else {
+                        var $saltoLinea = $documentoNodo.nextAll('br:first');
                         $documentoNodo.prev('a').remove();
                         $documentoNodo.next('span').remove();
-                        $documentoNodo.next('br').remove();
+                        $saltoLinea.remove();
                         $documentoNodo.remove();
+                    }
+
+                    if (campoAdjunto !== '') {
+                        $('#' + campoAdjunto).val('');
                     }
 
                     recargarElemento('#' + borra_id_sb);

@@ -290,8 +290,13 @@ elseif($borrapagoaproveedores == 'borrapagoaproveedores'){
 }
 
 elseif($borrasbdoc =='borrasbdoc'){
-	$borra_id_sb = isset($_POST["borra_id_sb"])?$_POST["borra_id_sb"]:"";   
-	echo  $pagoproveedores->delete_subefacturadocto2($borra_id_sb);
+	$borra_id_sb = isset($_POST["borra_id_sb"])?trim($_POST["borra_id_sb"]):"";
+
+	if($borra_id_sb !== '' && ctype_digit($borra_id_sb)){
+		echo $pagoproveedores->delete_subefacturadocto2($borra_id_sb);
+	}else{
+		echo $pagoproveedores->delete_subefacturadocto2nombre($borra_id_sb);
+	}
 }
 
 

@@ -1090,10 +1090,74 @@ public function VALIDA02XMLUUID($uuid) {
         return mysqli_query($conn, "DELETE FROM 02SUBETUFACTURADOCTOS WHERE id='{$id}'");
     }
 
+
     public function delete_subefactura2nombre($nombre) {
-        $conn   = $this->db();
-        $nombre = mysqli_real_escape_string($conn, $nombre);
-        mysqli_query($conn, "DELETE FROM 02SUBETUFACTURADOCTOS WHERE ADJUNTAR_FACTURA_XML='{$nombre}'");
+        return $this->delete_subefacturadocto2nombre($nombre);
+    }
+
+    public function delete_subefacturadocto2nombre($nombre) {
+        $conn = $this->db();
+        $nombreSeguro = basename(trim((string)$nombre));
+
+        if ($nombreSeguro === '') {
+            return false;
+        }
+
+        $camposArchivos = array(
+            'ADJUNTAR_FACTURA_PDF',
+            'ADJUNTAR_FACTURA_XML',
+            'ADJUNTAR_COTIZACION',
+            'CONPROBANTE_TRANSFERENCIA',
+            'FOTO_ESTADO_PROVEE',
+            'FOTO_ESTADO_PROVEE11',
+            'COMPLEMENTOS_PAGO_PDF',
+            'COMPLEMENTOS_PAGO_XML',
+            'CANCELACIONES_PDF',
+            'CANCELACIONES_XML',
+            'ADJUNTAR_FACTURA_DE_COMISION_PDF',
+            'ADJUNTAR_FACTURA_DE_COMISION_XML',
+            'ADJUNTAR_ARCHIVO_1',
+            'CALCULO_DE_COMISION',
+            'COMPROBANTE_DE_DEVOLUCION',
+            'NOTA_DE_CREDITO_COMPRA'
+        );
+
+        $columnasExistentes = array();
+        $resultadoColumnas = mysqli_query($conn, "SHOW COLUMNS FROM 02SUBETUFACTURADOCTOS");
+        if ($resultadoColumnas) {
+            while ($columna = mysqli_fetch_array($resultadoColumnas, MYSQLI_ASSOC)) {
+                $columnasExistentes[] = $columna['Field'];
+            }
+        }
+
+        $nombreEscapado = mysqli_real_escape_string($conn, $nombreSeguro);
+        $condiciones = array();
+
+        foreach ($camposArchivos as $campo) {
+            if (in_array($campo, $columnasExistentes)) {
+                $condiciones[] = "`{$campo}`='{$nombreEscapado}'";
+            }
+        }
+
+        if (empty($condiciones)) {
+            return false;
+        }
+
+        $whereArchivos = implode(' OR ', $condiciones);
+        $query = mysqli_query($conn, "SELECT id, idTemporal, ADJUNTAR_FACTURA_XML FROM 02SUBETUFACTURADOCTOS WHERE {$whereArchivos} LIMIT 1");
+        $row = $query ? mysqli_fetch_array($query, MYSQLI_ASSOC) : null;
+
+        if ($row && $row['ADJUNTAR_FACTURA_XML'] != '') {
+            $idTemporal = mysqli_real_escape_string($conn, $row['idTemporal']);
+            mysqli_query($conn, "DELETE FROM 02XML WHERE ultimo_id='{$idTemporal}'");
+        }
+
+        $rutaArchivo = __ROOT3__ . '/includes/archivos/' . $nombreSeguro;
+        if (is_file($rutaArchivo)) {
+            unlink($rutaArchivo);
+        }
+
+        return mysqli_query($conn, "DELETE FROM 02SUBETUFACTURADOCTOS WHERE {$whereArchivos}");
     }
 
 public function borrar_historico_xml($nombretabla, $idusuario) {
