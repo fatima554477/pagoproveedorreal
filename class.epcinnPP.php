@@ -989,33 +989,50 @@ if ($doctoActual) {
         return $row['id'];
     }
 
-public function VALIDA02XMLUUID($uuid) {
+public function VALIDA02XMLUUID($uuid, $ultimoIdActual = '') {
     $conn  = $this->db();
-    $uuid  = mysqli_real_escape_string($conn, $uuid);
+    $uuid  = mysqli_real_escape_string($conn, trim((string)$uuid));
+    $ultimoIdActual = intval($ultimoIdActual);
 
-    // ── Verificar en 02XML ──
-    $query = mysqli_query($conn, "SELECT 02XML.id, 02XML.UUID, 02SUBETUFACTURA.NUMERO_CONSECUTIVO_PROVEE, 02SUBETUFACTURA.NUMERO_EVENTO
-        FROM 02XML LEFT JOIN 02SUBETUFACTURA ON 02XML.ultimo_id = 02SUBETUFACTURA.id
-        WHERE 02XML.UUID='{$uuid}'");
-    $row = mysqli_fetch_array($query, MYSQLI_ASSOC);
+    if ($uuid === '') {
+        return 'S';
+    }
 
-    if ($row['id']) {
-        $numero = ($row['NUMERO_CONSECUTIVO_PROVEE'] != '') ? $row['NUMERO_CONSECUTIVO_PROVEE'] : $row['id'];
+    // ── Verificar en 02XML sólo contra solicitudes reales ───────────────
+    // Antes se usaba LEFT JOIN y se reportaba como duplicado un XML huérfano
+    // (02XML sin 02SUBETUFACTURA). Eso mostraba un número que no existía al
+    // buscar la solicitud. Además, al editar una solicitud se debe permitir
+    // volver a validar su propio XML.
+    $whereSolicitudActual = $ultimoIdActual > 0 ? " AND 02XML.ultimo_id <> '{$ultimoIdActual}'" : '';
+    $query = mysqli_query($conn, "SELECT 02XML.id, 02XML.UUID, 02XML.ultimo_id,
+            02SUBETUFACTURA.id AS idSolicitud,
+            02SUBETUFACTURA.NUMERO_CONSECUTIVO_PROVEE,
+            02SUBETUFACTURA.NUMERO_EVENTO
+        FROM 02XML
+        INNER JOIN 02SUBETUFACTURA ON 02XML.ultimo_id = 02SUBETUFACTURA.id
+        WHERE 02XML.UUID='{$uuid}'{$whereSolicitudActual}
+        ORDER BY 02XML.id DESC
+        LIMIT 1");
+    $row = $query ? mysqli_fetch_array($query, MYSQLI_ASSOC) : null;
+
+    if (!empty($row['id'])) {
+        $numero = !empty($row['NUMERO_CONSECUTIVO_PROVEE']) ? $row['NUMERO_CONSECUTIVO_PROVEE'] : $row['idSolicitud'];
         $numeroEvento = isset($row['NUMERO_EVENTO']) ? trim((string)$row['NUMERO_EVENTO']) : '';
         return '3^^' . $numero . '^^' . $numeroEvento;
     }
 
     // ── Verificar en 07XML (Comprobación de Gastos) ──
-    $query7 = mysqli_query($conn, "SELECT id, ultimo_id FROM 07XML WHERE UUID='{$uuid}'");
-    $row7   = mysqli_fetch_array($query7, MYSQLI_ASSOC);
+    $query7 = mysqli_query($conn, "SELECT id, ultimo_id FROM 07XML WHERE UUID='{$uuid}' LIMIT 1");
+    $row7   = $query7 ? mysqli_fetch_array($query7, MYSQLI_ASSOC) : null;
 
-    if ($row7['id']) {
+    if (!empty($row7['id'])) {
         $numero7 = ($row7['ultimo_id'] != '') ? $row7['ultimo_id'] : $row7['id'];
         return '7^^^' . $numero7;
     }
 
     return 'S';
 }
+
 
 
     public function Listado_pagoproveedor() {

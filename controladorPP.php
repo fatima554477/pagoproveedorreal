@@ -425,7 +425,7 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 
 	if($_FILES['ADJUNTAR_FACTURA_XML']==true){
 		// ── Verificar UUID ANTES de mover el archivo ──────────────────────
-		$_resultadoUUID = $pagoproveedores->VALIDA02XMLUUID($regreso['UUID']);
+		$_resultadoUUID = $pagoproveedores->VALIDA02XMLUUID($regreso['UUID'], $IPpagoprovee);
 		
 		if(strpos($_resultadoUUID, '3^^') === 0) {
 			UNLINK(__ROOT1__.'/includes/archivos/'.$ADJUNTAR_FACTURA_XML2);
@@ -494,7 +494,7 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 				continue;
 			}
 
-			$resultado = $pagoproveedores->VALIDA02XMLUUID($regreso['UUID']);
+			$resultado = $pagoproveedores->VALIDA02XMLUUID($regreso['UUID'], $IPpagoprovee);
 			if($resultado == 'S'){
 				$pagoproveedores->borrar_xmls(__ROOT1__.'/includes/archivos/',$IPpagoprovee,$ADJUNTAR_FACTURA_XML,'02XML','02SUBETUFACTURADOCTOS');
 				echo $ADJUNTAR_FACTURA_XML.'^^'.$regreso['UUID'].'^^'.$regreso['formaDePago'].'^^'.$regreso['Descripcion'];
@@ -584,7 +584,7 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 				continue;
 			}
 
-			$resultado = $pagoproveedores->VALIDA02XMLUUID($regreso['UUID']);
+			$resultado = $pagoproveedores->VALIDA02XMLUUID($regreso['UUID'], $IPpagoprovee);
 			if($resultado == 'S'){
 				echo $ADJUNTAR_FACTURA_XML;
 
