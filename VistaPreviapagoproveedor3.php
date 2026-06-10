@@ -158,9 +158,7 @@ if($identioficador != '') {
                 <input type="hidden" name="TImpuestosRetenidosISR"        value="'.$row["TImpuestosRetenidosISR"].'">
                 <input type="hidden" name="MONTO_PROPINA"                 value="'.$row["MONTO_PROPINA"].'">
                 <input type="hidden" name="IMPUESTO_HOSPEDAJE"            value="'.$row["IMPUESTO_HOSPEDAJE"].'">
-                <input type="hidden" name="descuentos"                    value="'.$row["descuentos"].'">
-                <input type="hidden" name="MONTO_FACTURA"                    value="'.$row["MONTO_FACTURA"].'">
-                <input type="hidden" name="MONTO_DEPOSITAR"               value="'.$row["MONTO_DEPOSITAR"].'">';
+                <input type="hidden" name="descuentos"               value="'.$row["descuentos"].'">';
         }
 
         // ── Disable factura según tipo de pago ────────────────────────────

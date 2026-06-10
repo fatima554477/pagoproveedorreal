@@ -197,6 +197,131 @@ private function nombre_legible_adjunto($tipo) {
     return isset($map[$tipo]) ? $map[$tipo] : str_replace('_', ' ', $tipo);
 }
 
+private function columnas_adjuntos_bitacora() {
+
+    return [
+
+        'ADJUNTAR_FACTURA_XML',
+
+        'ADJUNTAR_FACTURA_PDF',
+
+        'ADJUNTAR_COTIZACION',
+
+        'CONPROBANTE_TRANSFERENCIA',
+
+        'ADJUNTAR_ARCHIVO_1',
+
+        'FOTO_ESTADO_PROVEE11',
+
+        'COMPLEMENTOS_PAGO_PDF',
+
+        'COMPLEMENTOS_PAGO_XML',
+
+        'CANCELACIONES_PDF',
+
+        'CANCELACIONES_XML',
+
+        'ADJUNTAR_FACTURA_DE_COMISION_PDF',
+
+        'ADJUNTAR_FACTURA_DE_COMISION_XML',
+
+        'CALCULO_DE_COMISION',
+
+        'COMPROBANTE_DE_DEVOLUCION',
+
+        'NOTA_DE_CREDITO_COMPRA',
+
+    ];
+
+}
+
+
+
+private function adjuntos_temporales_para_bitacora($conn, $tabla, $idRelacion) {
+
+    $tablasPermitidas = ['02SUBETUFACTURADOCTOS', '07COMPROBACIONDOCT'];
+
+    if (!in_array($tabla, $tablasPermitidas)) {
+
+        return [];
+
+    }
+
+
+
+    $idRelacion = mysqli_real_escape_string($conn, $idRelacion);
+
+    if ($idRelacion === '') {
+
+        return [];
+
+    }
+
+
+
+    $filtroUsuario = '';
+
+    if (!empty($_SESSION['idem'])) {
+
+        $idem = intval($_SESSION['idem']);
+
+        $filtroUsuario = " AND (idRelacionU = '{$idem}' OR idRelacionU = '' OR idRelacionU IS NULL)";
+
+    }
+
+
+
+    $query = mysqli_query($conn, "SELECT * FROM {$tabla} WHERE idRelacion = '{$idRelacion}' AND idTemporal = 'si'{$filtroUsuario}");
+
+    if (!$query) {
+
+        return [];
+
+    }
+
+
+
+    $adjuntos = [];
+
+    while ($row = mysqli_fetch_array($query, MYSQLI_ASSOC)) {
+
+        foreach ($this->columnas_adjuntos_bitacora() as $columna) {
+
+            if (!empty($row[$columna])) {
+
+                $adjuntos[] = $this->nombre_legible_adjunto($columna) . ': ' . trim(urldecode($row[$columna]));
+
+            }
+
+        }
+
+    }
+
+
+
+    return array_values(array_unique($adjuntos));
+
+}
+
+
+
+private function registrar_bitacora_adjuntos_ingreso($conn, $idcomprobacion, $adjuntos, $usuarioBitacora) {
+
+    if (empty($adjuntos)) {
+
+        return;
+
+    }
+
+
+
+    $detalle = 'Al ingresar el registro se adjuntaron archivos: ' . implode(' | ', $adjuntos) . '.';
+
+    $this->registrar_bitacora($conn, $idcomprobacion, 'INGRESO', $detalle, $usuarioBitacora, '');
+
+}
+
+
 
 
     public function guardar_motivo_rechazo($idcomprobacion, $motivoRechazo) {
@@ -855,8 +980,11 @@ if ($doctoActual) {
 
             mysqli_query($conn, $var2) or die('P160' . mysqli_error($conn));
             $ultimo_id = mysqli_insert_id($conn);
+			 $adjuntosIngreso = $this->adjuntos_temporales_para_bitacora($conn, '02SUBETUFACTURADOCTOS', $_SESSION['idPROV']);
+
 
             $this->registrar_bitacora($conn, $ultimo_id, 'INGRESO', 'Registro ingresado desde el módulo PAGO A PROVEEDORES.', $usuarioBitacora, '');
+     $this->registrar_bitacora_adjuntos_ingreso($conn, $ultimo_id, $adjuntosIngreso, $usuarioBitacora);
 
             // ── Parsear XML una sola vez y reutilizar los datos ───────────
             $regresourl = $this->variable_SUBETUFACTURA2($_SESSION['idPROV']);
