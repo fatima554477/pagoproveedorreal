@@ -449,9 +449,9 @@ $.ajax({
 			/*nuevo inicio*/
 
 	        $("#SUBIRFACTURAform")[0].reset(); //resetea formulario
-			$("#RAZON_SOCIAL").val(''); //borra valores vienen de PHP
+		
 			$("#CONCEPTO_PROVEE").val(''); //borra valores vienen de PHP
-			$("#RFC_PROVEEDOR").val(''); //borra valores vienen de PHP
+		
 			$("#TIPO_DE_MONEDA").val(''); //borra valores vienen de PHP
 			$("#FECHA_DE_PAGO").val(''); //borra valores vienen de PHP
 			$("#NUMERO_CONSECUTIVO_PROVEE").val(''); //borra valores vienen de PHP

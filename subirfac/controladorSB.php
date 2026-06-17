@@ -230,8 +230,12 @@ $prefijosNumeroEvento = array('EPC','INN','EVE');
 
 if(in_array(strtoupper(trim($NUMERO_EVENTO)),$prefijosNumeroEvento)){
         echo "<P style='color:red; font-size:23px;'>FAVOR DE COMPLETAR EL NÚMERO DE EVENTO AGREGANDO EL NÚMERO CORRESPONDIENTE DESPUÉS DE LAS INICIALES DE LA EMPRESA SIN ESPACIOS.</p>";
+			exit;
+
 }elseif($NOMBRE_COMERCIAL == "" or  $NUMERO_EVENTO == "" or  $NOMBRE_DEL_EJECUTIVO == "" or  $MONTO_TOTAL_COTIZACION_ADEUDO == ""){
 echo "<P style='color:red; font-size:23px;'>FAVOR DE LLENAR TODOS LOS CAMPOS OBLIGATORIOS</p>";
+exit;
+
 }else{
 
 
