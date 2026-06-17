@@ -511,59 +511,32 @@ public function solocargartemp($archivo) {
         return mysqli_fetch_array($query, MYSQLI_ASSOC);
     }
 
-public function variable_SUBETUFACTURA() {
-    $conn = $this->db();
-    if (empty($_SESSION['idPROV'])) return [];
+	public function variable_SUBETUFACTURA(){
+		$conn = $this->db();
+		$idUsuario = isset($_SESSION['idem']) ? mysqli_real_escape_string($conn, $_SESSION['idem']) : '';
 
-    $idem    = intval($_SESSION['idem']);
-    $idPROV  = intval($_SESSION['idPROV']);
+		$filtroUsuario = ($idUsuario !== '') ? " and idRelacionU = '".$idUsuario."'" : '';
 
-    // Intento 1: buscar por idRelacion + idRelacionU (usuario actual)
-    $query = mysqli_query($conn,
-        "SELECT * FROM 02SUBETUFACTURADOCTOS 
-         WHERE idRelacion = '{$idPROV}'
-         AND idRelacionU = '{$idem}'
-         AND idTemporal = 'si'
-         AND ADJUNTAR_FACTURA_XML IS NOT NULL 
-         AND ADJUNTAR_FACTURA_XML <> ''
-         ORDER BY id DESC
-         LIMIT 1"
-    );
+		$variablequery = "select * from 02SUBETUFACTURADOCTOS where idRelacion = '".$_SESSION['idPROV']."' and idTemporal = 'si'".$filtroUsuario." and ADJUNTAR_FACTURA_XML is not null and ADJUNTAR_FACTURA_XML <> '' order by id desc ";
+		$arrayquery = mysqli_query($conn,$variablequery);
+		return $row = mysqli_fetch_array($arrayquery, MYSQLI_ASSOC);
+	}
 
-    if ($query) {
-        $row = mysqli_fetch_array($query, MYSQLI_ASSOC);
-        if (!empty($row['ADJUNTAR_FACTURA_XML'])) {
-            return $row;
-        }
-    }
+	public function variable_SUBETUFACTURA2($id12){
+		$conn = $this->db();
+		$idUsuario = isset($_SESSION['idem']) ? $_SESSION['idem'] : (isset($_SESSION['idempermiso']) ? $_SESSION['idempermiso'] : '');
 
-    // Intento 2: fallback solo por idRelacion (por si idem no coincide)
-    $query2 = mysqli_query($conn,
-        "SELECT * FROM 02SUBETUFACTURADOCTOS 
-         WHERE idRelacion = '{$idPROV}'
-         AND idTemporal = 'si'
-         AND ADJUNTAR_FACTURA_XML IS NOT NULL 
-         AND ADJUNTAR_FACTURA_XML <> ''
-         ORDER BY id DESC
-         LIMIT 1"
-    );
+		$variablequery = "select * from 02SUBETUFACTURADOCTOS where
+		idRelacion = '".$id12."' and
+		idTemporal = 'si' and ADJUNTAR_FACTURA_XML is not null and ADJUNTAR_FACTURA_XML <> '' and
 
-    if ($query2) {
-        $row2 = mysqli_fetch_array($query2, MYSQLI_ASSOC);
-        if (!empty($row2['ADJUNTAR_FACTURA_XML'])) {
-            return $row2;
-        }
-    }
+		idRelacionU = '".mysqli_real_escape_string($conn, $idUsuario)."' and
 
-    return [];
-}
-
-    public function variable_SUBETUFACTURA2($id12) {
-        $conn  = $this->db();
-        $id12  = mysqli_real_escape_string($conn, $id12);
-        $query = mysqli_query($conn, "SELECT * FROM 02SUBETUFACTURADOCTOS WHERE idRelacion = '{$id12}' AND idTemporal = 'si' AND (ADJUNTAR_FACTURA_XML IS NOT NULL OR ADJUNTAR_FACTURA_XML <> '') ORDER BY id DESC");
-        return mysqli_fetch_array($query, MYSQLI_ASSOC);
-    }
+		TIPOARCHIVO = 'xml'
+		order by id desc ";
+		$arrayquery = mysqli_query($conn,$variablequery);
+		return $row = mysqli_fetch_array($arrayquery, MYSQLI_ASSOC);
+	}
 
     public function revisar_pagoproveedor() {
         $conn  = $this->db();
@@ -983,23 +956,24 @@ if ($doctoActual) {
 			 $adjuntosIngreso = $this->adjuntos_temporales_para_bitacora($conn, '02SUBETUFACTURADOCTOS', $_SESSION['idPROV']);
 
 
-            $this->registrar_bitacora($conn, $ultimo_id, 'INGRESO', 'Registro ingresado desde el módulo PAGO A PROVEEDORES.', $usuarioBitacora, '');
+            $this->registrar_bitacora($conn, $ultimo_id, 'INGRESO', 'Registro ingresado desde el módulo PAGO A PROVEEDOR CON DOS O MÁS FACTURAS.', $usuarioBitacora, '');
      $this->registrar_bitacora_adjuntos_ingreso($conn, $ultimo_id, $adjuntosIngreso, $usuarioBitacora);
 
             // ── Parsear XML una sola vez y reutilizar los datos ───────────
-            $regresourl = $this->variable_SUBETUFACTURA2($_SESSION['idPROV']);
-            $urlXml     = __ROOT3__ . '/includes/archivos/' . $regresourl['ADJUNTAR_FACTURA_XML'];
-            $datosXml   = null;
-            if (file_exists($urlXml)) {
-                $conexion2 = new herramientas();
-                $datosXml  = $conexion2->lectorxml($urlXml);
-            }
-            // Pasar $datosXml ya leídos — guardarxmlDB2 NO releerá el archivo
-            $this->guardarxmlDB2($ultimo_id, $_SESSION['idPROV'], '02XML', $urlXml, $datosXml);
+				$regresourl = $this->variable_SUBETUFACTURA2($_SESSION['idPROV']);
+				$url = __ROOT3__.'/includes/archivos/'.$regresourl['ADJUNTAR_FACTURA_XML'];
+				ob_start();
+				$this->guardarxmlDB2($ultimo_id,$_SESSION['idPROV'],'02XML',$url);
+				ob_end_clean();
+				$idUsuarioTemporal = isset($_SESSION['idem']) ? mysqli_real_escape_string($conn, $_SESSION['idem']) : '';
 
-            mysqli_query($conn, "UPDATE 02SUBETUFACTURADOCTOS SET idTemporal='{$ultimo_id}' WHERE idRelacion='" . $_SESSION['idPROV'] . "' AND idTemporal='si'");
+				$filtroUsuarioTemporal = ($idUsuarioTemporal !== '') ? " and idRelacionU = '".$idUsuarioTemporal."'" : '';
 
-            return "Ingresado";
+				mysqli_query($conn,
+					"UPDATE 02SUBETUFACTURADOCTOS SET idTemporal ='".$ultimo_id."'
+							where idRelacion = '".$_SESSION['idPROV']."' and idTemporal ='si'".$filtroUsuarioTemporal);
+
+				return "Ingresado";
         }
     }
 
@@ -1219,9 +1193,23 @@ public function VALIDA02XMLUUID($uuid, $ultimoIdActual = '') {
 
     public function Listado_subefacturadocto($ADJUNTAR_COTIZACION) {
         $conn = $this->db();
+		     $idPROV = isset($_SESSION['idPROV']) ? intval($_SESSION['idPROV']) : 0;
+
+        $idem = isset($_SESSION['idem']) ? intval($_SESSION['idem']) : 0;
+
+
+
+        if ($idPROV <= 0 || $idem <= 0) {
+
+            return mysqli_query($conn, "SELECT id,{$ADJUNTAR_COTIZACION},fechaingreso FROM 02SUBETUFACTURADOCTOS WHERE 1=0");
+
+        }
+
         return mysqli_query($conn, "SELECT id,{$ADJUNTAR_COTIZACION},fechaingreso FROM 02SUBETUFACTURADOCTOS
-            WHERE idRelacion='" . $_SESSION['idPROV'] . "' AND idTemporal='si'
-            AND ({$ADJUNTAR_COTIZACION} IS NOT NULL OR {$ADJUNTAR_COTIZACION}<>'') ORDER BY id DESC");
+    WHERE idRelacion='{$idPROV}' AND idRelacionU='{$idem}' AND idTemporal='si'
+
+            AND {$ADJUNTAR_COTIZACION} IS NOT NULL AND {$ADJUNTAR_COTIZACION}<>'' ORDER BY id DESC");
+
     }
 
     public function delete_subefacturadocto2($id) {

@@ -222,7 +222,10 @@ function ajax_file_upload1(file_obj, nombre) {
 
             // ── Éxito: archivo cargado correctamente ──────────────────────
             } else {
-                $('#' + nombre).val(response);
+                     var result = resp.split('^^');
+
+                $('#' + nombre).val($.trim(result[0] || ''));
+
                 $('#1' + nombre).html('<p style="color:green;">✅ ¡Archivo cargado con éxito!</p>');
                 $('#mensajeADJUNTOCOL').html('<p style="color:green;">✅ ¡Actualizado!</p>');
 
