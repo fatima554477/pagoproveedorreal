@@ -647,7 +647,7 @@ while($rowsube=mysqli_fetch_array($listadosube)){
                   
 					<script type="text/javascript">  function EFECTIVO (texto) {    alert(texto);} </script>
                    
-				 <option style="background:#f2b4f5"  name="PFORMADE_PAGO" value="03">03 TRANSFERENCIA ELECTRONICA DE FONDOS</option>	
+					
 		     <option style="background:#f2b4f5"  <?php if($formaDePago=='03'){echo "selected";} ?> value="03" name="PFORMADE_PAGO">03 TRANSFERENCIA ELECTRONICA DE FONDOS</option>	
 					
 					

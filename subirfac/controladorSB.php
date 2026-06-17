@@ -373,7 +373,8 @@ $camposArchivoSB = array('ADJUNTAR_FACTURA_PDF','ADJUNTAR_FACTURA_XML','ADJUNTAR
 
 foreach($camposArchivoSB as $campoArchivoSB){
 
-	if(isset($_FILES[$campoArchivoSB]) && is_array($_FILES[$campoArchivoSB]) && isset($_FILES[$campoArchivoSB]['error']) && intval($_FILES[$campoArchivoSB]['error']) !== 0){
+	if(isset($_FILES[$campoArchivoSB]) && is_array($_FILES[$campoArchivoSB]) && isset($_FILES[$campoArchivoSB]['error']) && intval($_FILES[$campoArchivoSB]['error']) !== UPLOAD_ERR_OK && intval($_FILES[$campoArchivoSB]['error']) !== UPLOAD_ERR_NO_FILE){
+
 
 		echo 'ERROR_SUBIDA^^'.$campoArchivoSB;
 

@@ -451,6 +451,7 @@ $.ajax({
 	        $("#SUBIRFACTURAform")[0].reset(); //resetea formulario
 		
 			$("#CONCEPTO_PROVEE").val(''); //borra valores vienen de PHP
+			$("#PFORMADE_PAGO").val(''); //borra valores vienen de PHP
 		
 			$("#TIPO_DE_MONEDA").val(''); //borra valores vienen de PHP
 			$("#FECHA_DE_PAGO").val(''); //borra valores vienen de PHP
@@ -475,6 +476,7 @@ $.ajax({
 			$("#2COMPROBANTE_DE_DEVOLUCION").load(location.href + " #2COMPROBANTE_DE_DEVOLUCION");
 			$("#IMPUESTO_HOSPEDAJE").load(location.href + " #IMPUESTO_HOSPEDAJE");
 			$("#MONTO_PROPINA").load(location.href + " #MONTO_PROPINA");
+			$("#2PFORMADE_PAGO").load(location.href + " #2PFORMADE_PAGO");
 
 			$("#IVA").load(location.href + " #IVA");
 			$("#A").load(location.href + " #A");
