@@ -950,6 +950,86 @@ public function solocargartemp($archivo) {
 			and ADJUNTAR_FACTURA_PDF <> '".$nombrearchivo."' and ADJUNTAR_FACTURA_PDF <>''")
 			or die('P44'.mysqli_error($conn));
 	}
+	
+	
+	public function reemplazar_factura_unica($campo, $idRelacion, $idTemporal, $nombrearchivo, $ruta){
+
+		$conn = $this->db();
+
+		$camposPermitidos = array('ADJUNTAR_FACTURA_XML', 'ADJUNTAR_FACTURA_PDF');
+
+		if(!in_array($campo, $camposPermitidos, true) || trim((string)$nombrearchivo) === ''){
+
+			return false;
+
+		}
+
+
+
+		$campoSql = $campo;
+
+		$idRelacionSql = mysqli_real_escape_string($conn, (string)$idRelacion);
+
+		$idTemporalSql = mysqli_real_escape_string($conn, (string)$idTemporal);
+
+		$nombreSql = mysqli_real_escape_string($conn, (string)$nombrearchivo);
+
+
+
+		$query = mysqli_query($conn,
+
+			"SELECT id, ".$campoSql." AS archivo FROM 02SUBETUFACTURADOCTOS
+
+			WHERE idRelacion = '".$idRelacionSql."'
+
+			AND idTemporal = '".$idTemporalSql."'
+
+			AND ".$campoSql." <> '".$nombreSql."'
+
+			AND ".$campoSql." IS NOT NULL
+
+			AND ".$campoSql." <> ''") or die('P44'.mysqli_error($conn));
+
+
+
+		while($row = mysqli_fetch_array($query, MYSQLI_ASSOC)){
+
+			$archivoAnterior = isset($row['archivo']) ? trim((string)$row['archivo']) : '';
+
+			if($archivoAnterior !== '' && file_exists($ruta.$archivoAnterior)){
+
+				unlink($ruta.$archivoAnterior);
+
+			}
+
+		}
+
+
+
+		if($campoSql === 'ADJUNTAR_FACTURA_XML'){
+
+			mysqli_query($conn, "DELETE FROM 02XML WHERE ultimo_id = '".$idTemporalSql."'") or die('P44'.mysqli_error($conn));
+
+		}
+
+
+
+		return mysqli_query($conn,
+
+			"DELETE FROM 02SUBETUFACTURADOCTOS
+
+			WHERE idRelacion = '".$idRelacionSql."'
+
+			AND idTemporal = '".$idTemporalSql."'
+
+			AND ".$campoSql." <> '".$nombreSql."'
+
+			AND ".$campoSql." IS NOT NULL
+
+			AND ".$campoSql." <> ''") or die('P44'.mysqli_error($conn));
+
+	}
+
 
 	public function borrar_historico_xml($nombretabla, $idusuario){
 		$conn = $this->db();

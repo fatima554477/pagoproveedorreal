@@ -500,6 +500,8 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 
 		$resultado = $SUBEFACTURA->VALIDA02XMLUUID($regreso['UUID']);
 		if($resultado == 'S'){
+			$SUBEFACTURA->reemplazar_factura_unica('ADJUNTAR_FACTURA_XML', $idPROV, $IPSB1p, $ADJUNTAR_FACTURA_XML, __ROOT1__.'/includes/archivos/');
+
 			echo $ADJUNTAR_FACTURA_XML;
 		}else{
 			echo $resultado;
@@ -508,7 +510,18 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 			$SUBEFACTURA->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
 		}
 	}
-}else{echo $ADJUNTAR_FACTURA_XML;}
+}else{
+
+	if($ETQIETA === 'ADJUNTAR_FACTURA_PDF'){
+
+		$SUBEFACTURA->reemplazar_factura_unica('ADJUNTAR_FACTURA_PDF', $idPROV, $IPSB1p, $ADJUNTAR_FACTURA_XML, __ROOT1__.'/includes/archivos/');
+
+	}
+
+	echo $ADJUNTAR_FACTURA_XML;
+
+}
+
 $SUBEFACTURA->registrar_bitacora_sb('adjuntar', 'Se adjuntó/actualizó un documento en 02SUBETUFACTURADOCTOS', $IPSB1p, '02SUBETUFACTURADOCTOS');
 
 }
@@ -618,6 +631,8 @@ $nombreRxml = isset($regreso['nombreR']) ? trim((string)$regreso['nombreR']) : '
 
 		$resultado = $SUBEFACTURA->VALIDA02XMLUUID($regreso['UUID']);
 		if($resultado == 'S'){
+				$SUBEFACTURA->reemplazar_factura_unica('ADJUNTAR_FACTURA_XML', $idPROV, 'si', $ADJUNTAR_FACTURA_XML, __ROOT1__.'/includes/archivos/');
+
 			echo $ADJUNTAR_FACTURA_XML;
 		}else{
 			echo $resultado;
@@ -626,7 +641,18 @@ $nombreRxml = isset($regreso['nombreR']) ? trim((string)$regreso['nombreR']) : '
 			$SUBEFACTURA->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
 		}
 	}
-}else{echo $ADJUNTAR_FACTURA_XML;}
+}else{
+
+	if($ETQIETA === 'ADJUNTAR_FACTURA_PDF'){
+
+		$SUBEFACTURA->reemplazar_factura_unica('ADJUNTAR_FACTURA_PDF', $idPROV, 'si', $ADJUNTAR_FACTURA_XML, __ROOT1__.'/includes/archivos/');
+
+	}
+
+	echo $ADJUNTAR_FACTURA_XML;
+
+}
+
 
 
 	$SUBEFACTURA->registrar_bitacora_sb('adjuntar', 'Se adjuntó un documento temporal en 02SUBETUFACTURADOCTOS', 'si', '02SUBETUFACTURADOCTOS');
