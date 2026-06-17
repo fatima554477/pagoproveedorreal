@@ -108,22 +108,85 @@
 	            processData: false,
 	            data: form_data,
  beforeSend: function() {
-$('#1'+nombre).html('<p style="color:green;">Cargando archivo!</p>');
-$('#mensajeADJUNTOCOL').html('<p style="color:green;">Actualizado!</p>');
+('#1'+nombre).html('<p style="color:green;"><span class="spinner-border spinner-border-sm"></span>&nbsp;Cargando archivo...</p>');
+
+$('#mensajeADJUNTOCOL').html('<p style="color:green;"><span class="spinner-border spinner-border-sm"></span>&nbsp;Cargando archivo...</p>');
+
     },				
 	            success:function(response) {
-if($.trim(response) == 2 ){
-$('#1'+nombre).html('<p style="color:red;">Error, archivo diferente a PDF, JPG o GIF.</p>');
+var resp = $.trim(response);
+
+if(resp.indexOf('VACIO^^') === 0){
+
+$('#1'+nombre).html('<p style="color:red;font-weight:600;">⚠️ EL ARCHIVO ESTÁ VACÍO (0 KB). Verifica que el archivo tenga contenido antes de subirlo.</p>');
+
 $('#'+nombre).val("");
-/*nuevo inicio*/
-}else if($.trim(response) == 3 ){
-	$('#1'+nombre).html('<p style="color:red;">UUID PREVIAMENTE CARGADO.</p>');
+}else if(resp.indexOf('SIN_EXTENSION^^') === 0){
+
+$('#1'+nombre).html('<p style="color:red;font-weight:600;">⚠️ EL ARCHIVO NO TIENE EXTENSIÓN RECONOCIDA. Asegúrate de que el nombre del archivo termine en .xml, .pdf, .jpg, etc.</p>');
+
+$('#'+nombre).val("");
+
+}else if(resp.indexOf('ERROR_SUBIDA^^') === 0){
+
+$('#1'+nombre).html('<p style="color:red;font-weight:600;">⚠️ ERROR AL RECIBIR EL ARCHIVO EN EL SERVIDOR. Puede que sea demasiado grande o que la conexión se haya interrumpido. Intenta de nuevo.</p>');
+
+$('#'+nombre).val("");
+
+}else if(resp == 2){
+
+var exts = (nombre === 'ADJUNTAR_FACTURA_XML') ? 'XML' : (nombre === 'ADJUNTAR_FACTURA_PDF') ? 'PDF' : 'PDF, JPG, PNG, DOCX, XML, XLSX, MP4, TXT u otro formato de documento';
+
+$('#1'+nombre).html('<p style="color:red;">⚠️ FORMATO DE ARCHIVO NO PERMITIDO. Este campo acepta únicamente archivos en formato: <strong>'+exts+'</strong>.</p>');
+
+$('#'+nombre).val("");
+
+}else if(resp == 1){
+
+$('#1'+nombre).html('<p style="color:red;font-weight:600;">⚠️ ERROR AL GUARDAR EL ARCHIVO EN EL SERVIDOR. Intenta de nuevo o contacta a soporte técnico.</p>');
+
+$('#'+nombre).val("");
+
+}else if(resp.indexOf('3^^') === 0 || resp == 3){
+
+var partes = resp.split('^^');
+
+var numeroSolicitud = partes[1] ? $.trim(partes[1]) : '';
+
+var numeroEvento = partes[2] ? $.trim(partes[2]) : '';
+
+var detalleEvento = numeroEvento !== '' ? ' — Evento: <strong>'+numeroEvento+'</strong>' : '';
+
+var msgDuplicado = numeroSolicitud !== '' ? '<p style="color:red;font-weight:600;">⚠️ UUID YA REGISTRADO — Se encuentra en la solicitud: <strong>'+numeroSolicitud+'</strong>'+detalleEvento+'</p>' : '<p style="color:red;font-weight:600;">⚠️ UUID PREVIAMENTE CARGADO.</p>';
+
+$('#1'+nombre).html(msgDuplicado);
+
+$('#'+nombre).val("");
+
+}else if(resp.indexOf('7^^^') === 0){
+
+var partesGasto = resp.split('^^^');
+
+var numeroGasto = partesGasto[1] ? $.trim(partesGasto[1]) : '';
+
+var msgGasto = numeroGasto !== '' ? '<p style="color:#C82909;font-weight:600;">⚠️ UUID YA REGISTRADO EN COMPROBACIÓN DE GASTOS — CON EL ID: <strong>'+numeroGasto+'</strong></p>' : '<p style="color:#C82909;font-weight:600;">⚠️ UUID PREVIAMENTE CARGADO EN COMPROBACIÓN DE GASTOS.</p>';
+
+$('#1'+nombre).html(msgGasto);
+
+$('#'+nombre).val("");
+
+}else if(resp.indexOf('5^^') === 0){
+
+$('#1'+nombre).html('<p style="color:red;font-weight:600;">⚠️ EL ARCHIVO XML ESTÁ VACÍO O NO CONTIENE INFORMACIÓN VÁLIDA. Verifica que sea un CFDI timbrado correctamente e inténtalo de nuevo.</p>');
+
 $('#'+nombre).val("");
 /*nuevo inicio*/
 
 }else{
-$('#'+nombre).val(response);
-$('#1'+nombre).html('<a target="_blank" href="includes/archivos/'+$.trim(response)+'"></a>');
+$('#'+nombre).val(resp);
+
+$('#1'+nombre).html('<a target="_blank" href="includes/archivos/'+resp+'"></a>');
+
 
 /*nuevo inicio*/
 $("#2ADJUNTAR_FACTURA_XML").load(location.href + " #2ADJUNTAR_FACTURA_XML");

@@ -311,10 +311,79 @@ class accesoclase extends colaboradores{
 	/**
 	 * Sube un archivo a /includes/archivos (carpeta original).
 	 */
-	public function solocargartemp($archivo){
-		$nombre_carpeta = __ROOT3__.'/includes/archivos';
-		return $this->_solocargar_interno($archivo, $nombre_carpeta);
-	}
+public function solocargartemp($archivo) {
+
+    $nombre_carpeta = __ROOT3__ . '/includes/archivos';
+
+    // ── Validar error de subida y archivo vacío ───────────────────────
+    if (!isset($_FILES[$archivo]) || $_FILES[$archivo]['error'] !== UPLOAD_ERR_OK) {
+        return "ERROR_SUBIDA";
+    }
+
+    if ($_FILES[$archivo]['size'] === 0) {
+        return "VACIO";
+    }
+
+    $nombretemp = $_FILES[$archivo]["tmp_name"];
+
+    // Nombre original
+    $nombrearchivo = $_FILES[$archivo]["name"];
+
+    // Corregir codificación
+    $nombrearchivo = urldecode($nombrearchivo);
+
+    if (!mb_check_encoding($nombrearchivo, 'UTF-8')) {
+        $nombrearchivo = mb_convert_encoding($nombrearchivo, 'UTF-8', 'ISO-8859-1');
+    }
+
+    $nombrearchivo = iconv('UTF-8', 'UTF-8//IGNORE', $nombrearchivo);
+
+    $extension = explode('.', $nombrearchivo);
+    $cuenta = count($extension) - 1;
+    $ext = strtolower($extension[$cuenta]);
+
+    // ── Validar que tiene extensión real ─────────────────────────────
+    if ($cuenta === 0 || trim($ext) === '') {
+        return "SIN_EXTENSION";
+    }
+
+    // ── Sanitizar nombre ─────────────────────────────────────────────
+    $nombrebase = pathinfo($nombrearchivo, PATHINFO_FILENAME);
+
+    // Quitar caracteres conflictivos
+    $nombrebase = preg_replace('/[^a-zA-Z0-9_\-áéíóúÁÉÍÓÚñÑüÜ]/u', '_', $nombrebase);
+
+    // Colapsar guiones bajos múltiples
+    $nombrebase = preg_replace('/_+/', '_', $nombrebase);
+
+    // Quitar guiones bajos al inicio y al final
+    $nombrebase = trim($nombrebase, '_');
+
+    // Limitar longitud
+    if (mb_strlen($nombrebase) > 60) {
+        $nombrebase = mb_substr($nombrebase, 0, 60);
+    }
+
+    // Fallback si quedó vacío
+    if ($nombrebase === '') {
+        $nombrebase = 'archivo';
+    }
+
+    $nuevonombre = $archivo . '_' . $nombrebase . '_' . date('Y_m_d_H_i_s') . '.' . $ext;
+
+    $permitidos = ['pdf', 'gif', 'jpeg', 'jpg', 'png', 'mp4', 'docx', 'doc', 'xml'];
+
+    if (!in_array($ext, $permitidos)) {
+        return "2";
+    }
+
+    if (move_uploaded_file($nombretemp, $nombre_carpeta . '/' . $nuevonombre)) {
+        chmod($nombre_carpeta . '/' . $nuevonombre, 0755);
+        return trim($nuevonombre);
+    }
+
+    return "1";
+}
 
 	/**
 	 * Sube un archivo a /includes/archivos2 (carpeta alternativa SB).
@@ -328,14 +397,82 @@ class accesoclase extends colaboradores{
 	 * Lógica compartida de carga de archivos.
 	 */
 	private function _solocargar_interno($archivo, $nombre_carpeta){
-		$nombretemp   = $_FILES[$archivo]["tmp_name"];
-		$nombrearchivo = $_FILES[$archivo]["name"];
-		$extension    = explode('.', $nombrearchivo);
-		$cuenta       = count($extension) - 1;
-		$nuevonombre  = $archivo.'_'.date('Y_m_d_h_i_s').'.'.$extension[$cuenta];
+if(!isset($_FILES[$archivo]) || $_FILES[$archivo]['error'] !== UPLOAD_ERR_OK){
 
-		$extensionesPermitidas = array('pdf','gif','jpeg','jpg','png','mp4','docx','doc','xml');
-		if(!in_array(strtolower($extension[$cuenta]), $extensionesPermitidas)){
+			return "ERROR_SUBIDA";
+
+		}
+
+
+
+		if($_FILES[$archivo]['size'] === 0){
+
+			return "VACIO";
+
+		}
+
+
+
+		$nombretemp = $_FILES[$archivo]["tmp_name"];
+
+		$nombrearchivo = urldecode($_FILES[$archivo]["name"]);
+
+
+
+		if(!mb_check_encoding($nombrearchivo, 'UTF-8')){
+
+			$nombrearchivo = mb_convert_encoding($nombrearchivo, 'UTF-8', 'ISO-8859-1');
+
+		}
+
+		$nombrearchivo = iconv('UTF-8', 'UTF-8//IGNORE', $nombrearchivo);
+
+
+
+		$extension = explode('.', $nombrearchivo);
+
+		$cuenta = count($extension) - 1;
+
+		$ext = strtolower($extension[$cuenta]);
+
+
+
+		if($cuenta === 0 || trim($ext) === ''){
+
+			return "SIN_EXTENSION";
+
+		}
+
+
+
+		$nombrebase = pathinfo($nombrearchivo, PATHINFO_FILENAME);
+
+		$nombrebase = preg_replace('/[^a-zA-Z0-9_\-áéíóúÁÉÍÓÚñÑüÜ]/u', '_', $nombrebase);
+
+		$nombrebase = preg_replace('/_+/', '_', $nombrebase);
+
+		$nombrebase = trim($nombrebase, '_');
+
+		if(mb_strlen($nombrebase) > 60){
+
+			$nombrebase = mb_substr($nombrebase, 0, 60);
+
+		}
+
+		if($nombrebase === ''){
+
+			$nombrebase = 'archivo';
+
+		}
+
+
+
+		$nuevonombre = $archivo.'_'. $nombrebase.'_'.date('Y_m_d_H_i_s').'.'.$ext;
+
+		$extensionesPermitidas = array('pdf','gif','jpeg','jpg','png','mp4','docx','doc','xml','xlsx','xls','txt');
+
+		if(!in_array($ext, $extensionesPermitidas)){
+
 			return "2";
 		}
 
@@ -475,15 +612,57 @@ class accesoclase extends colaboradores{
 
 	public function VALIDA02XMLUUID($uuid){
 		$conn = $this->db();
-		$variablequery = "select id,UUID from 02XML where UUID = '".$uuid."' ";
-		$arrayquery = mysqli_query($conn,$variablequery);
-		$row = mysqli_fetch_array($arrayquery, MYSQLI_ASSOC);
-		if($row['id'] <= 1){
+	    $uuid = mysqli_real_escape_string($conn, trim((string)$uuid));
+
+		if($uuid === ''){
+
 			return 'S';
-		}else{
-			return $row['id'];
-		}
+
 	}
+		$variablequery = "SELECT 02XML.id, 02XML.UUID, 02XML.ultimo_id, 02SUBETUFACTURA.id AS idSolicitud, 02SUBETUFACTURA.NUMERO_CONSECUTIVO_PROVEE, 02SUBETUFACTURA.NUMERO_EVENTO
+
+			FROM 02XML
+
+			INNER JOIN 02SUBETUFACTURA ON 02XML.ultimo_id = 02SUBETUFACTURA.id
+
+			WHERE 02XML.UUID = '".$uuid."'
+
+			ORDER BY 02XML.id DESC LIMIT 1";
+
+		$arrayquery = mysqli_query($conn,$variablequery);
+
+		$row = $arrayquery ? mysqli_fetch_array($arrayquery, MYSQLI_ASSOC) : null;
+
+		if(!empty($row['id'])){
+
+			$numero = !empty($row['NUMERO_CONSECUTIVO_PROVEE']) ? $row['NUMERO_CONSECUTIVO_PROVEE'] : $row['idSolicitud'];
+
+			$numeroEvento = isset($row['NUMERO_EVENTO']) ? trim((string)$row['NUMERO_EVENTO']) : '';
+
+			return '3^^'.$numero.'^^'.$numeroEvento;
+
+		}
+
+
+
+		$query7 = mysqli_query($conn, "SELECT id, ultimo_id FROM 07XML WHERE UUID = '".$uuid."' LIMIT 1");
+
+		$row7 = $query7 ? mysqli_fetch_array($query7, MYSQLI_ASSOC) : null;
+
+		if(!empty($row7['id'])){
+
+			$numero7 = ($row7['ultimo_id'] != '') ? $row7['ultimo_id'] : $row7['id'];
+
+			return '7^^^'.$numero7;
+
+		}
+
+
+
+		return 'S';
+
+	}
+
 
 	public function actualizar_forma_pago($id, $formaDePago){
 		if($id == '' || $formaDePago == ''){ return false; }

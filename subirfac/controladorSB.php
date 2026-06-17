@@ -327,6 +327,57 @@ elseif($borrasbdoc =='borrasbdoc'){
 
 $idPROV = isset($_SESSION["idPROV"])?$_SESSION["idPROV"]:"";
 $IPSB1p = isset($_POST["IPSB1p"])?$_POST["IPSB1p"]:"";
+$camposArchivoSB = array('ADJUNTAR_FACTURA_PDF','ADJUNTAR_FACTURA_XML','ADJUNTAR_COTIZACION','CONPROBANTE_TRANSFERENCIA','ADJUNTAR_ARCHIVO_1');
+
+foreach($camposArchivoSB as $campoArchivoSB){
+
+	if(isset($_FILES[$campoArchivoSB]) && is_array($_FILES[$campoArchivoSB]) && isset($_FILES[$campoArchivoSB]['error']) && intval($_FILES[$campoArchivoSB]['error']) !== 0){
+
+		echo 'ERROR_SUBIDA^^'.$campoArchivoSB;
+
+		exit;
+
+	}
+
+	if(isset($_FILES[$campoArchivoSB]) && is_array($_FILES[$campoArchivoSB]) && isset($_FILES[$campoArchivoSB]['error']) && intval($_FILES[$campoArchivoSB]['error']) === 0){
+
+		if(isset($_FILES[$campoArchivoSB]['size']) && intval($_FILES[$campoArchivoSB]['size']) === 0){
+
+			echo 'VACIO^^'.$campoArchivoSB;
+
+			exit;
+
+		}
+
+		$extensionSB = strtolower(pathinfo(isset($_FILES[$campoArchivoSB]['name']) ? $_FILES[$campoArchivoSB]['name'] : '', PATHINFO_EXTENSION));
+
+		if($extensionSB === ''){
+
+			echo 'SIN_EXTENSION^^'.$campoArchivoSB;
+
+			exit;
+
+		}
+
+		if($campoArchivoSB === 'ADJUNTAR_FACTURA_XML' && $extensionSB !== 'xml'){
+
+			echo '2';
+
+			exit;
+
+		}
+
+		if($campoArchivoSB === 'ADJUNTAR_FACTURA_PDF' && $extensionSB !== 'pdf'){
+
+			echo '2';
+
+			exit;
+
+		}
+
+	}
+
+}
 
 if( $IPSB1p != '' and ($_FILES["ADJUNTAR_FACTURA_PDF"] == true or $_FILES["ADJUNTAR_FACTURA_XML"] == true or  $_FILES["ADJUNTAR_COTIZACION"] == true  or  $_FILES["CONPROBANTE_TRANSFERENCIA"] == true  or  $_FILES["ADJUNTAR_ARCHIVO_1"] == true )) {
 if($idPROV != ''){
@@ -338,11 +389,24 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 	$url = __ROOT1__.'/includes/archivos/'.$ADJUNTAR_FACTURA_XML;
 	if( file_exists($url) ){
 		$regreso = $conexion2->lectorxml($url);
+		if(empty($regreso) || !isset($regreso['UUID']) || trim($regreso['UUID']) === ''){
+
+			echo '5^^ADJUNTAR_FACTURA_XML';
+
+			UNLINK($url);
+
+			$SUBEFACTURA->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
+
+			exit;
+
+		}
+
 		$resultado = $SUBEFACTURA->VALIDA02XMLUUID($regreso['UUID']);
 		if($resultado == 'S'){
 			echo $ADJUNTAR_FACTURA_XML;
 		}else{
-			echo '3';
+			echo $resultado;
+
 			UNLINK($url);
 			$SUBEFACTURA->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
 		}
@@ -367,11 +431,24 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 	$url = __ROOT1__.'/includes/archivos/'.$ADJUNTAR_FACTURA_XML;
 	if( file_exists($url) ){
 		$regreso = $conexion2->lectorxml($url);
+		if(empty($regreso) || !isset($regreso['UUID']) || trim($regreso['UUID']) === ''){
+
+			echo '5^^ADJUNTAR_FACTURA_XML';
+
+			UNLINK($url);
+
+			$SUBEFACTURA->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
+
+			exit;
+
+		}
+
 		$resultado = $SUBEFACTURA->VALIDA02XMLUUID($regreso['UUID']);
 		if($resultado == 'S'){
 			echo $ADJUNTAR_FACTURA_XML;
 		}else{
-			echo '3';
+			echo $resultado;
+
 			UNLINK($url);
 			$SUBEFACTURA->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
 		}
