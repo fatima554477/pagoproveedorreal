@@ -194,7 +194,7 @@ var receptorXML = partesReceptor[1] ? $.trim(partesReceptor[1]) : '';
 
 
 
-var msgReceptor = receptorXML !== '' ? '⚠️ EL RECEPTOR DE LA FACTURA NO ES VÁLIDO: <strong>'+receptorXML+'</strong>. Debe ser EPC, INN o EVE520.' : '⚠️ EL RECEPTOR DE LA FACTURA NO ES EPC, INN O EVE520.';
+var msgReceptor = receptorXML !== '' ? '⚠️ EL RECEPTOR DE LA FACTURA NO ES VÁLIDO ES: <strong style="color:#000000;">'+receptorXML+'</strong>. Debe ser EPC, INN o EVE520.' : '⚠️ EL RECEPTOR DE LA FACTURA NO ES EPC, INN O EVE520.';
 
 
 
@@ -391,9 +391,34 @@ $(document).keydown(function(event) {
 });
 
 $("#enviarSUBIRFACTURA").click(function(){
-const scrollPositionBeforeSubmit = $(window).scrollTop();
-const restoreScroll = () => {
-    $(window).scrollTop(scrollPositionBeforeSubmit);
+const mantenerMensajeSubirFacturaVisible = () => {
+
+    const mensaje = document.getElementById('mensajeSUBIRFACTURA');
+
+    if (mensaje) {
+
+        mensaje.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    }
+
+};
+
+const mostrarMensajeSubirFactura = (html, tiempoVisible) => {
+
+    const $mensaje = $("#mensajeSUBIRFACTURA");
+
+    $mensaje.html(html).fadeIn();
+
+    mantenerMensajeSubirFacturaVisible();
+
+
+
+    if (tiempoVisible) {
+
+        $mensaje.delay(tiempoVisible).fadeOut();
+
+    }
+
 };
 const numeroEventoInput = $('input[name="NUMERO_EVENTO"]');
 const numeroEventoSanitizado = numeroEventoInput.val().replace(/\s+/g, '').trim();
@@ -402,8 +427,8 @@ const numeroEvento = numeroEventoSanitizado;
 const prefijosNumeroEvento = ["EPC", "INN", "EVE"];
 
 if (prefijosNumeroEvento.includes(numeroEvento.toUpperCase())) {
-        $("#mensajeSUBIRFACTURA").html("<span style='color:red;'>FAVOR DE COMPLETAR EL NÚMERO DE EVENTO AGREGANDO EL NÚMERO CORRESPONDIENTE DESPUÉS DE LAS INICIALES DE LA EMPRESA.</span>").fadeIn().delay(3000).fadeOut();
-        numeroEventoInput.focus();
+       mostrarMensajeSubirFactura("<span style='color:red;'>FAVOR DE COMPLETAR EL NÚMERO DE EVENTO AGREGANDO EL NÚMERO CORRESPONDIENTE DESPUÉS DE LAS INICIALES DE LA EMPRESA.</span>", 5000);
+
         return;
 }
 
@@ -470,13 +495,15 @@ $.ajax({
 			$('#NUMERO_EVENTO2').load(location.href + ' #NUMERO_EVENTO2');
 			
 			
-			$("#mensajeSUBIRFACTURA").html("<span id='ACTUALIZADO' >"+data+"</span>").fadeIn().delay(3000).fadeOut();
+			mostrarMensajeSubirFactura("<span id='ACTUALIZADO' >"+data+"</span>", 3000);
+
             $('#resettabla').load(location.href + ' #resettabla');
 			
 			
 			$.getScript(load(1));
 			}else{
-			$("#mensajeSUBIRFACTURA").html(data).fadeIn().delay(5000).fadeOut();
+			mostrarMensajeSubirFactura(data, 5000);
+
 		}
 })
 .fail(function() {

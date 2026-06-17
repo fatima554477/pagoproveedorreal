@@ -534,6 +534,82 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 			exit;
 
 		}
+		$nombreRxml = isset($regreso['nombreR']) ? trim((string)$regreso['nombreR']) : '';
+
+
+
+		if(!esReceptorCorporativoSB($nombreRxml)){
+
+
+
+			echo '6^^'.$nombreRxml;
+
+
+
+			UNLINK($url);
+
+
+
+			$SUBEFACTURA->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
+
+
+
+			exit;
+
+
+
+		}
+$nombreRxml = isset($regreso['nombreR']) ? trim((string)$regreso['nombreR']) : '';
+
+
+
+		if(!esReceptorCorporativoSB($nombreRxml)){
+
+
+
+			echo '6^^'.$nombreRxml;
+
+
+
+			UNLINK($url);
+
+
+
+			$SUBEFACTURA->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
+
+
+
+			exit;
+
+
+
+		}
+		$nombreRxml = isset($regreso['nombreR']) ? trim((string)$regreso['nombreR']) : '';
+
+
+
+		if(!esReceptorCorporativoSB($nombreRxml)){
+
+
+
+			echo '6^^'.$nombreRxml;
+
+
+
+			UNLINK($url);
+
+
+
+			$SUBEFACTURA->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
+
+
+
+			exit;
+
+
+
+		}
+
 
 		$resultado = $SUBEFACTURA->VALIDA02XMLUUID($regreso['UUID']);
 		if($resultado == 'S'){

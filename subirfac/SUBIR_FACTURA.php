@@ -237,8 +237,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   
 	<form class="row g-3 needs-validation was-validated" novalidate="" id="SUBIRFACTURAform" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" >
-	<div id="mensajeADJUNTOCOL" style="margin: 8px 0;"></div>
-
+	
 	          
   <table  style="border-collapse: collapse;" border="1" class="table mb-0 table-striped">
 
@@ -269,7 +268,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		
 	</div>
 				 
-<div id="1ADJUNTAR_FACTURA_XML"><?php 
+<div id="2ADJUNTAR_FACTURA_XML"><?php 
 
 
 $listadosube = $SUBEFACTURA->Listado_subefacturadocto('ADJUNTAR_FACTURA_XML');
@@ -402,7 +401,7 @@ if (isset($nombreR) && isset($prefijosNumeroEvento[$nombreR]) && trim((string)$N
 		
 	</div>
 				 
-<div id="1ADJUNTAR_FACTURA_PDF"><?php 
+<div id="2ADJUNTAR_FACTURA_PDF"><?php 
 
 $listadosube = $SUBEFACTURA->Listado_subefacturadocto('ADJUNTAR_FACTURA_PDF');
 
