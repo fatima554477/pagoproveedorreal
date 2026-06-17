@@ -12,6 +12,43 @@ $SUBEFACTURA = NEW accesoclase();
 $conexion = NEW colaboradores();
 $conexion2 = new herramientas();
 
+if(!function_exists('normalizarTextoEmpresaSB')){
+
+	function normalizarTextoEmpresaSB($texto){
+
+		$texto = mb_strtoupper(trim((string)$texto), 'UTF-8');
+
+		$texto = preg_replace('/\s+/', ' ', $texto);
+
+		return $texto;
+
+	}
+
+}
+
+
+
+if(!function_exists('esReceptorCorporativoSB')){
+
+	function esReceptorCorporativoSB($nombreReceptor){
+
+		$nombreNormalizado = normalizarTextoEmpresaSB($nombreReceptor);
+
+		$empresasCorporativo = array(
+
+			normalizarTextoEmpresaSB('EVENTOS PROMOCIONES Y CONVENCIONES'),
+
+			normalizarTextoEmpresaSB('INNOVA CONGRESOS Y CONVENCIONES'),
+
+			normalizarTextoEmpresaSB('EVENTOS 520')
+
+		);
+
+		return $nombreNormalizado !== '' && in_array($nombreNormalizado, $empresasCorporativo);
+
+	}
+
+}
 
 $hiddensubefactura = isset($_POST["hiddensubefactura"])?$_POST["hiddensubefactura"]:"";
 $validaDATOSBANCARIOS1 = isset($_POST["validaDATOSBANCARIOS1"])?$_POST["validaDATOSBANCARIOS1"]:"";
@@ -400,6 +437,55 @@ foreach($_FILES AS $ETQIETA => $VALOR){
 			exit;
 
 		}
+$nombreRxml = isset($regreso['nombreR']) ? trim((string)$regreso['nombreR']) : '';
+
+		if($nombreRxml !== '' && !esReceptorCorporativoSB($nombreRxml)){
+
+
+
+			echo '6^^'.$nombreRxml;
+
+
+
+			UNLINK($url);
+
+
+
+			$SUBEFACTURA->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
+
+
+
+			exit;
+
+
+
+		}
+
+
+		$nombreRxml = isset($regreso['nombreR']) ? trim((string)$regreso['nombreR']) : '';
+
+		if($nombreRxml !== '' && !esReceptorCorporativoSB($nombreRxml)){
+
+
+
+			echo '6^^'.$nombreRxml;
+
+
+
+			UNLINK($url);
+
+
+
+			$SUBEFACTURA->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML);
+
+
+
+			exit;
+
+
+
+		}
+
 
 		$resultado = $SUBEFACTURA->VALIDA02XMLUUID($regreso['UUID']);
 		if($resultado == 'S'){

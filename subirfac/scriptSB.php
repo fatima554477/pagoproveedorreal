@@ -178,6 +178,27 @@ $('#'+nombre).val("");
 }else if(resp.indexOf('5^^') === 0){
 
 $('#1'+nombre).html('<p style="color:red;font-weight:600;">⚠️ EL ARCHIVO XML ESTÁ VACÍO O NO CONTIENE INFORMACIÓN VÁLIDA. Verifica que sea un CFDI timbrado correctamente e inténtalo de nuevo.</p>');
+$('#'+nombre).val("");
+
+
+
+}else if(resp.indexOf('6^^') === 0){
+
+
+
+var partesReceptor = resp.split('^^');
+
+
+
+var receptorXML = partesReceptor[1] ? $.trim(partesReceptor[1]) : '';
+
+
+
+var msgReceptor = receptorXML !== '' ? '⚠️ EL RECEPTOR DE LA FACTURA NO ES VÁLIDO: <strong>'+receptorXML+'</strong>. Debe ser EPC, INN o EVE520.' : '⚠️ EL RECEPTOR DE LA FACTURA NO ES EPC, INN O EVE520.';
+
+
+
+$('#1'+nombre).html('<p style="color:red;font-weight:600;">'+msgReceptor+'</p>');
 
 $('#'+nombre).val("");
 /*nuevo inicio*/
