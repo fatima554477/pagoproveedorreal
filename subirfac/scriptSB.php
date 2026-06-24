@@ -256,10 +256,10 @@ $('#2IVA').load(location.href + ' #2IVA');
 		method:'POST',
 		data:{pasarD_text:pasarD_text,pasarDID:pasarDID},
 		beforeSend:function(){
-			$('#mensajeDATOSBANCARIOS12').html('cargando');
+			$('#mensajeDATOSBANCARIOS1').html('cargando');
 		},
 		success:function(data){
-			$('#mensajeDATOSBANCARIOS12').html("<span id='ACTUALIZADO' >"+data+"</span>").fadeIn().delay(2000).fadeOut(); 
+			$('#mensajeDATOSBANCARIOS1').html("<span id='ACTUALIZADO' >"+data+"</span>").fadeIn().delay(2000).fadeOut(); 
 			$('#resetBancario1p').load(location.href + ' #resetBancario1p');
 		}
 	});
