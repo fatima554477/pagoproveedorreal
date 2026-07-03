@@ -840,6 +840,7 @@ function load(page, options){
 		'TImpuestosRetenidos_3':TImpuestosRetenidos,
 		'DEPARTAMENTO2':DEPARTAMENTO2
 	};
+window.ultimosParametrosFiltro = parametros;
 
 	$("#loader2").fadeIn('slow');
 	if (filtroXhr && filtroXhr.readyState !== 4) {
@@ -891,6 +892,37 @@ function load(page, options){
 	});
 }
 
+function exportarExcelFiltrado(){
+
+	var parametros = window.ultimosParametrosFiltro || null;
+
+	if(!parametros){
+
+		load(currentPage || 1);
+
+		parametros = window.ultimosParametrosFiltro || {};
+
+	}
+
+	parametros = $.extend({}, parametros, { action: 'exportar_excel', page: 1 });
+
+	// Enviar en la misma ventana fuerza la descarga y evita bloqueos de pop-up o pestañas en blanco.
+
+	var form = $('<form>', { method: 'POST', action: 'pagoproveedores/clases3/exportar_excel.php', target: '_self' });
+
+	$.each(parametros, function(key, value){
+
+		form.append($('<input>', { type: 'hidden', name: key, value: value == null ? '' : value }));
+
+	});
+
+	$('body').append(form);
+
+	form.trigger('submit');
+
+	form.remove();
+
+}
 
 /* ============================================================
    HELPERS — Bitácora Timeline

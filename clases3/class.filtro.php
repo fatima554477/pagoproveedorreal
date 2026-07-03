@@ -596,6 +596,40 @@ else{
 		
 
 	}
+	
+		public function getComplementosMasivo($ids) {
+    $conn = $this->db();
+
+    // Limpiar y normalizar el arreglo de IDs
+    $ids = array_filter(array_unique(array_map('intval', (array)$ids)));
+    if (empty($ids)) {
+        return [];
+    }
+
+    $idsStr = implode(',', $ids);
+
+    $q = mysqli_query(
+        $conn,
+        "SELECT idTemporal, COMPLEMENTOS_PAGO_PDF, COMPLEMENTOS_PAGO_XML
+         FROM 02SUBETUFACTURADOCTOS
+         WHERE idTemporal IN ({$idsStr})
+         ORDER BY id DESC"
+    );
+
+    $resultado = array();
+    if ($q) {
+        while ($row = mysqli_fetch_array($q, MYSQLI_ASSOC)) {
+            $key = $row['idTemporal'];
+            // Como viene ordenado DESC por id, la PRIMERA vez que vemos
+            // un idTemporal es la más reciente (igual que LIMIT 1 del original).
+            if (!isset($resultado[$key])) {
+                $resultado[$key] = $row;
+            }
+        }
+    }
+
+    return $resultado; // [ '02SUBETUFACTURAid' => ['COMPLEMENTOS_PAGO_PDF'=>..., 'COMPLEMENTOS_PAGO_XML'=>...], ... ]
+}
 
 
 
