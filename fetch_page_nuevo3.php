@@ -31,12 +31,12 @@
     </style>
 
 <div id="content">
-	<hr/> <strong>	  <p class="mb-0 text-uppercase" ><img src="includes/contraer31.png" id="mostrar46" onclick="load(1);"style="cursor:pointer;"/>
-<img src="includes/contraer41.png" id="ocultar46" style="cursor:pointer;"/>&nbsp;&nbsp;&nbsp; FILTRO PAGO A PROVEEDORES-A  </p></strong></div>
+	<hr/> <strong>	  <p class="mb-0 text-uppercase" ><img src="includes/contraer31.png" id="mostrar2" style="cursor:pointer;"/>
+<img src="includes/contraer41.png" id="ocultar2" style="cursor:pointer;"/>&nbsp;&nbsp;&nbsp; FILTRO PAGO A PROVEEDORES-A  </p></strong></div>
 <div id="mensajefiltro"></div>
 <div id="pasarpagado2"></div>
 </div>
-<div id="target46" style="display:block;" class="content2">
+<div id="target2" style="display:block;" class="content2">
 	<div class="card">
 		<div class="card-body">
 			<!--aqui inicia filtro-->
@@ -50,6 +50,7 @@
     $todosMaxPerPage = 500;
 ?>
     <select class="form-select mb-3" id="per_page" onchange="load(1);">
+        <option value="10" <?php if($perPageRequest=='7') echo 'selected'; ?>>7</option>
         <option value="10" <?php if($perPageRequest=='10') echo 'selected'; ?>>10</option>
         <option value="15" <?php if($perPageRequest=='15') echo 'selected'; ?>>15</option>
 
@@ -64,9 +65,11 @@
 </td>
 
 
-					<td width="30%" align="center">
-						<button class="btn btn-sm btn-outline-success px-5" type="button" onclick="load(1);">BUSCAR</button>
-					</td>
+				<td width="30%" align="center">
+    <button class="btn btn-sm btn-outline-success px-5" type="button" onclick="load(1);">BUSCAR</button>
+    &nbsp;
+    <button class="btn btn-sm btn-outline-danger px-4" type="button" onclick="LIMPIAR_FILTRO();">🧹 LIMPIAR FILTRO</button>
+</td>
 					<td width="30%" align="center"> <span>PLANTILLA</span> 
 					
 					
