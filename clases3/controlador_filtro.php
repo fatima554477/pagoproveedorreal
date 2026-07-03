@@ -63,6 +63,7 @@ if($action == "ajax"){
 	$FECHA_DE_PAGO = isset($_POST["FECHA_DE_PAGO"]) ? trim($_POST["FECHA_DE_PAGO"]) : "";
 	$FECHA_DE_PAGO2a = isset($_POST["FECHA_DE_PAGO2a"]) ? trim($_POST["FECHA_DE_PAGO2a"]) : "";
 	$FECHA_DE_PAGO_VACIO = isset($_POST["FECHA_DE_PAGO_VACIO"]) ? trim($_POST["FECHA_DE_PAGO_VACIO"]) : "";
+	$ADJUNTAR_FACTURA_XML_VACIO = isset($_POST["ADJUNTAR_FACTURA_XML_VACIO"]) ? trim($_POST["ADJUNTAR_FACTURA_XML_VACIO"]) : "";
 	$FECHA_A_DEPOSITAR = isset($_POST["FECHA_A_DEPOSITAR"]) ? trim($_POST["FECHA_A_DEPOSITAR"]) : "";
 	$STATUS_DE_PAGO = isset($_POST["STATUS_DE_PAGO"]) ? trim($_POST["STATUS_DE_PAGO"]) : "";
 	$ACTIVO_FIJO = isset($_POST["ACTIVO_FIJO"]) ? trim($_POST["ACTIVO_FIJO"]) : "";
@@ -177,6 +178,7 @@ $page = (isset($_POST["page"]) && !empty($_POST["page"])) ? intval($_POST["page"
 		"FECHA_DE_PAGO" => $FECHA_DE_PAGO,
 		"FECHA_DE_PAGO2a" => $FECHA_DE_PAGO2a,
 		"FECHA_DE_PAGO_VACIO" => $FECHA_DE_PAGO_VACIO,
+		"ADJUNTAR_FACTURA_XML_VACIO" => $ADJUNTAR_FACTURA_XML_VACIO,
 		"FECHA_INICIO_EVENTO" => $FECHA_INICIO_EVENTO,
 		"FECHA_FINAL_EVENTO" => $FECHA_FINAL_EVENTO,
 		"FECHA_A_DEPOSITAR" => $FECHA_A_DEPOSITAR,
@@ -570,7 +572,12 @@ $page = (isset($_POST["page"]) && !empty($_POST["page"])) ? intval($_POST["page"
 <td style="background:#c9e8e8"></td>
 <?php } ?>
 
-<?php if($database->plantilla_filtro($nombreTabla,"ADJUNTAR_FACTURA_XML",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="background:#c9e8e8;text-align:center"><input type="text" class="form-control" id="ADJUNTAR_FACTURA_XML" value="<?php echo $ADJUNTAR_FACTURA_XML; ?>"></td>
+<?php if($database->plantilla_filtro($nombreTabla,"ADJUNTAR_FACTURA_XML",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="background:#c9e8e8;text-align:center">
+		<div class="form-check" style="margin:0; white-space:nowrap;">
+			<input class="form-check-input" type="checkbox" value="si" id="ADJUNTAR_FACTURA_XML_VACIO" <?php if($ADJUNTAR_FACTURA_XML_VACIO==='si'){echo 'checked';} ?>>
+			<label class="form-check-label" for="ADJUNTAR_FACTURA_XML_VACIO">VACÍOS</label>
+		</div>
+	</div></td>
 <?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"ADJUNTAR_FACTURA_PDF",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="background:#c9e8e8;text-align:center"><input type="text" class="form-control" id="ADJUNTAR_FACTURA_PDF" value="<?php echo $ADJUNTAR_FACTURA_PDF; ?>"></td>
 <?php } ?>

@@ -618,6 +618,7 @@ function LIMPIAR_FILTRO(){
 		if(el){ el.value = ''; }
 	});
 	$("#FECHA_DE_PAGO_VACIO").prop("checked", false);
+	$("#ADJUNTAR_FACTURA_XML_VACIO").prop("checked", false);
 	load(1);
 }
 
@@ -662,6 +663,7 @@ function load(page, options){
 	var FECHA_DE_PAGO=$("#FECHA_DE_PAGO").val();
 	var FECHA_DE_PAGO2a=$("#FECHA_DE_PAGO2a").val();
 	var FECHA_DE_PAGO_VACIO=$("#FECHA_DE_PAGO_VACIO").is(":checked") ? '1' : '';
+	var ADJUNTAR_FACTURA_XML_VACIO=$("#ADJUNTAR_FACTURA_XML_VACIO").is(":checked") ? 'si' : '';
 	var FECHA_A_DEPOSITAR=$("#FECHA_A_DEPOSITAR_2").val();
 	var STATUS_DE_PAGO=$("#STATUS_DE_PAGO_2").val();
 	var ACTIVO_FIJO=$("#ACTIVO_FIJO_2").val();
@@ -760,6 +762,7 @@ function load(page, options){
 		'FECHA_DE_PAGO':FECHA_DE_PAGO,
 		'FECHA_DE_PAGO2a':FECHA_DE_PAGO2a,
 		'FECHA_DE_PAGO_VACIO':FECHA_DE_PAGO_VACIO,
+		'ADJUNTAR_FACTURA_XML_VACIO':ADJUNTAR_FACTURA_XML_VACIO,
 		'FECHA_FINAL_EVENTO':FECHA_FINAL_EVENTO,
 		'FECHA_INICIO_EVENTO':FECHA_INICIO_EVENTO,
 		'FECHA_A_DEPOSITAR':FECHA_A_DEPOSITAR,

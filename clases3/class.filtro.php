@@ -1,11 +1,10 @@
 <?php
 /**
  	--------------------------
-	Autor: Sandor Matamoros
 	Programer: Fatima Arellano
 	Propietario: EPC
 	fecha sandor: 
-    fecha fatis : 05/04/2025
+    fecha fatis : 05/04/2026
 	----------------------------
  
 */
@@ -209,7 +208,6 @@ public function datos_bancarios_pagado($rfc, $nombreComercial = null, $fechaPago
    
 
 public function DOCUMENTOSFISCALES_PAGOA($idRelacion, $documento, $documento2 = FALSE){
-    // ✅ CACHÉ
     static $cache = [];
     $cacheKey = $idRelacion . '|' . $documento . '|' . $documento2;
     if (array_key_exists($cacheKey, $cache)) {
@@ -217,21 +215,26 @@ public function DOCUMENTOSFISCALES_PAGOA($idRelacion, $documento, $documento2 = 
     }
 
     $conn = $this->db();
-    $variable2 = "SELECT * FROM 02DOCUMENTOSFISCALES WHERE idRelacion = '".$idRelacion."' AND "
-        ."(DOCUMENTO_LEGAL = '".$documento."' OR DOCUMENTO_LEGAL = '".$documento2."') LIMIT 1";
+    
+    $variable2 = "SELECT * FROM 02DOCUMENTOSFISCALES 
+                  WHERE idRelacion = '".$idRelacion."' 
+                  AND (DOCUMENTO_LEGAL = '".$documento."' OR DOCUMENTO_LEGAL = '".$documento2."') 
+                  AND ADJUNTAR_DOCUMENTO_LEGAL != ''
+                  AND ADJUNTAR_DOCUMENTO_LEGAL != '1'
+                  AND ADJUNTAR_DOCUMENTO_LEGAL != '2'
+                  ORDER BY id DESC 
+                  LIMIT 1";
+
     $query2 = mysqli_query($conn, $variable2);
 
     $ADJUNTAR_DOCUMENTO_LEGAL = "";
-    while($row2 = mysqli_fetch_array($query2, MYSQLI_ASSOC)){
-        if($row2['ADJUNTAR_DOCUMENTO_LEGAL'] != 2 ||
-           $row2['ADJUNTAR_DOCUMENTO_LEGAL'] != '' ||
-           $row2['ADJUNTAR_DOCUMENTO_LEGAL'] != 1){
-            $ADJUNTAR_DOCUMENTO_LEGAL .= "<a target='_blank' href='includes/archivos/".$row2['ADJUNTAR_DOCUMENTO_LEGAL']."'>ver</a><br>";
-        } else {
-            $ADJUNTAR_DOCUMENTO_LEGAL .= "<br>";
+    $row2 = mysqli_fetch_array($query2, MYSQLI_ASSOC);
+    if($row2){
+        $archivo = trim((string)$row2['ADJUNTAR_DOCUMENTO_LEGAL']);
+        if($archivo !== ''){
+            $ADJUNTAR_DOCUMENTO_LEGAL = "<a target='_blank' href='includes/archivos/".$archivo."'>ver</a><br>";
         }
     }
-
 
     $cache[$cacheKey] = $ADJUNTAR_DOCUMENTO_LEGAL;
     return $cache[$cacheKey];
@@ -331,7 +334,17 @@ public function DOCUMENTOSFISCALES_PAGOA($idRelacion, $documento, $documento2 = 
 		if($search['PFORMADE_PAGO']!=""){
 			$sWhere2.="  $tables.PFORMADE_PAGO LIKE '%".$search['PFORMADE_PAGO']."%' and ";}
 
-   if(isset($search['FECHA_DE_PAGO_VACIO']) && $search['FECHA_DE_PAGO_VACIO']!==""){
+if(isset($search['ADJUNTAR_FACTURA_XML_VACIO']) 
+   && $search['ADJUNTAR_FACTURA_XML_VACIO'] == "si"){
+
+    $sWhere2 .= " (
+        02XML.UUID IS NULL
+        OR TRIM(02XML.UUID) = ''
+    ) and ";
+}
+		
+
+if(isset($search['FECHA_DE_PAGO_VACIO']) && $search['FECHA_DE_PAGO_VACIO']!==""){
    $sWhere2.=" ($tables.FECHA_DE_PAGO IS NULL OR $tables.FECHA_DE_PAGO = '' OR $tables.FECHA_DE_PAGO = '0000-00-00') and ";
    }elseif($search['FECHA_DE_PAGO']!="" and $search['FECHA_DE_PAGO2a']!=""){
    //BETWEEN '2022-01-12' AND '2022-01-22' DATE(`ribono_tabla`.fechaamazon) 	
@@ -539,8 +552,15 @@ public function DOCUMENTOSFISCALES_PAGOA($idRelacion, $documento, $documento2 = 
 		}
 if($sWhere3campo == ""){
     $sWhere3campo .= " CASE 
-        WHEN ($tables.FECHA_DE_PAGO IS NULL OR TRIM($tables.FECHA_DE_PAGO) = '' OR $tables.FECHA_DE_PAGO = '0000-00-00') THEN 1 
-        ELSE 0 
+        WHEN (
+            ($tables.FECHA_DE_PAGO IS NULL OR TRIM($tables.FECHA_DE_PAGO) = '' OR $tables.FECHA_DE_PAGO = '0000-00-00')
+            AND (
+                YEAR($tables.FECHA_DE_LLENADO) >= 2026
+                OR YEAR(STR_TO_DATE($tables.FECHA_DE_LLENADO, '%d/%m/%Y')) >= 2026
+                OR YEAR(STR_TO_DATE($tables.FECHA_DE_LLENADO, '%d-%m-%Y')) >= 2026
+            )
+        ) THEN 0 
+        ELSE 1 
     END asc,
     CASE 
         WHEN $tables.FECHA_DE_PAGO REGEXP '^[0-9]{4}-[0-9]{2}-[0-9]{2}' 
@@ -879,6 +899,7 @@ return (float) $PorfaltaDeFacturaSUBERES2 = (float) $PorfaltaDeFactura + (float)
                 foreach ($columnasIdentificador as $columna) {
                         $condicionesIdentificador[] = "`p`.`".$columna."` = '".$idPersonal."'";
                 }
+				
 
                 $sql = "
                         SELECT DISTINCT ae.NUMERO_EVENTO
@@ -932,14 +953,7 @@ return (float) $PorfaltaDeFacturaSUBERES2 = (float) $PorfaltaDeFactura + (float)
                 return $columnasCache;
         }
 
-        /**
-         * Verifica si una columna existe en una tabla de la base de datos activa.
-         *
-         * @param mysqli $conn Conexión activa a la base de datos.
-         * @param string $tabla Nombre de la tabla.
-         * @param string $columna Nombre de la columna.
-         * @return bool
-         */
+
         private function columnaExisteEnTabla($conn, $tabla, $columna) {
                 if (!$conn || $tabla === '' || $columna === '') {
                         return false;
