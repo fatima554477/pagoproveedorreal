@@ -532,7 +532,7 @@ function load(page){
 		'TUA': TUA, 'TuaTotalCargos': TuaTotalCargos, 'Descuento': Descuento,
 		'propina': propina, 'DEPARTAMENTO2': DEPARTAMENTO2
 	};
-      window.ultimosParametrosFiltro = $.extend({}, parametros);
+ 
 	$.ajax({
 		url: 'comprobacionesVYO/clases/controlador_filtro.php',
 		type: 'POST',
@@ -610,25 +610,7 @@ $(document).on('click', '.view_dataPAGOPROVEEbitacora', function () {
 		error: function () { $('#bitacoraSubLabel').html('id. <b>#' + idSubetufactura + '</b>'); $('#bitacoraPagoBody').html('<div class="alert alert-danger m-3">Error al consultar la bitácora. Intenta nuevamente.</div>'); }
 	});
 });
-function exportarExcelFiltrado2(){
-	var parametros = window.ultimosParametrosFiltro || null;
 
-	if(!parametros){
-		load(1);
-		parametros = window.ultimosParametrosFiltro || {};
-	}
-
-	parametros = $.extend({}, parametros, { action: 'exportar_excel', page: 1 });
-
-	// La descarga se realiza en la misma ventana para evitar bloqueos del navegador.
-	var form = $('<form>', { method: 'POST', action: 'comprobacionesVYO/clases/exportar_excel.php', target: '_self' });
-	$.each(parametros, function(key, value){
-		form.append($('<input>', { type: 'hidden', name: key, value: value == null ? '' : value }));
-	});
-	$('body').append(form);
-	form.trigger('submit');
-	form.remove();
-}
 </script>
 <div class="modal fade" id="modalBitacoraPago" tabindex="-1" aria-labelledby="modalBitacoraPagoLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
