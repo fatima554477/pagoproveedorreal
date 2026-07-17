@@ -9,7 +9,7 @@ $DEPARTAMENTO = !empty($_POST["DEPARTAMENTO2"]) ? $_POST["DEPARTAMENTO2"] : "DEF
 $nombreTabla = "SELECT * FROM `08comprobacionesfiltroDes`, 08altaeventosfiltroPLA WHERE 08comprobacionesfiltroDes.id = 08altaeventosfiltroPLA.idRelacion";
 $altaeventos = "comprobaciones";
 $tables = "04altaeventos";
-$campos = "07COMPROBACION.*, 07XML.*, 04altaeventos.FECHA_INICIO_EVENTO AS FECHA_INICIO_EVENTO, 04altaeventos.FECHA_FINAL_EVENTO AS FECHA_FINAL_EVENTO";
+$campos = "07COMPROBACION.*, 07XML.*, 07XML.total AS TOTAL_XML, 04altaeventos.FECHA_INICIO_EVENTO AS FECHA_INICIO_EVENTO, 04altaeventos.FECHA_FINAL_EVENTO AS FECHA_FINAL_EVENTO";
 
 // Los nombres se mantienen alineados con el arreglo $search de controlador_filtro.php.
 $keys = array('RAZON_SOCIAL','EJECUTIVOTARJETA','NUMERO_EVENTO','RFC_PROVEEDOR','NOMBRE_EVENTO','MOTIVO_GASTO','CONCEPTO_PROVEE','MONTO_FACTURA','MONTO_PROPINA','MONTO_DEPOSITAR','TIPO_DE_MONEDA','PFORMADE_PAGO','FECHA_A_DEPOSITAR_DESDE','FECHA_A_DEPOSITAR_HASTA','STATUS_DE_PAGO','BANCO_ORIGEN','ACTIVO_FIJO','GASTO_FIJO','PAGAR_CADA','FECHA_PPAGO','FECHA_TPROGRAPAGO','NUMERO_EVENTOFIJO','CLASI_GENERAL','SUB_GENERAL','MONTO_DE_COMISION','POLIZA_NUMERO','ADJUNTAR_FACTURA_XML_VACIO','NOMBRE_DEL_EJECUTIVO','NOMBRE_DEL_AYUDO','OBSERVACIONES_1','FECHA_DE_LLENADO','hiddenpagoproveedores','ADJUNTAR_COTIZACION','TIPO_CAMBIOP','TOTAL_ENPESOS','IMPUESTO_HOSPEDAJE','IVA','FECHA_INICIO_EVENTO','FECHA_FINAL_EVENTO','TImpuestosRetenidosIVA','TImpuestosRetenidosISR','descuentos','NOMBRE_COMERCIAL','PorfaltaDeFactura','UUID','total','metodoDePago','serie','folio','regimenE','UsoCFDI','TImpuestosTrasladados','TImpuestosRetenidos','Version','tipoDeComprobante','condicionesDePago','fechaTimbrado','nombreR','rfcR','Moneda','TipoCambio','ValorUnitarioConcepto','DescripcionConcepto','ClaveUnidad','ClaveProdServ','Cantidad','ImporteConcepto','UnidadConcepto','RFC_RECEPTOR','CantidadConcepto','TUA','TuaTotalCargos','Descuento','subTotal','propina','query');
@@ -28,8 +28,9 @@ if(!empty($_POST['NUMERO_EVENTO'])) { $search['NUMERO_EVENTO'] = $_POST['NUMERO_
 // Mismo orden y textos visibles del listado de comprobaciones. La llave indica el
 // campo real de la consulta y plantilla indica el campo configurado en la plantilla.
 $catalog = array(
- 'NOMBRE_COMERCIAL'=>array('NOMBRE_COMERCIAL','NOMBRE COMERCIAL'),'RAZON_SOCIAL'=>array('RAZON_SOCIAL','RAZÓN SOCIAL'),'RFC_PROVEEDOR'=>array('RFC_PROVEEDOR','RFC PROVEEDOR'),'NUMERO_EVENTO'=>array('NUMERO_EVENTO','NÚMERO EVENTO'),'NOMBRE_EVENTO'=>array('NOMBRE_EVENTO','NOMBRE EVENTO'),'FECHA_INICIO_EVENTO'=>array('FECHA_INICIO_EVENTO','FECHA INICIO EVENTO'),'FECHA_FINAL_EVENTO'=>array('FECHA_FINAL_EVENTO','FECHA FINAL EVENTO'),'MOTIVO_GASTO'=>array('MOTIVO_GASTO','MOTIVO GASTO'),'CONCEPTO_PROVEE'=>array('CONCEPTO_PROVEE','CONCEPTO'),'MONTO_FACTURA'=>array('MONTO_FACTURA','SUBTOTAL'),'IVA'=>array('IVA','IVA'),'TImpuestosRetenidosIVA'=>array('TImpuestosRetenidosIVA','IMPUESTOS RETENIDOS IVA'),'TImpuestosRetenidosISR'=>array('TImpuestosRetenidosISR','IMPUESTOS RETENIDOS ISR'),'MONTO_PROPINA'=>array('MONTO_PROPINA','MONTO DE LA PROPINA O SERVICIO NO INCLUIDO EN LA FACTURA'),'IMPUESTO_HOSPEDAJE'=>array('IMPUESTO_HOSPEDAJE','IMPUESTO SOBRE HOSPEDAJE MÁS EL IMPUESTO DE SANEAMIENTO'),'descuentos'=>array('descuentos','DESCUENTO'),'MONTO_DEPOSITAR'=>array('MONTO_DEPOSITAR','TOTAL'),'TIPO_DE_MONEDA'=>array('TIPO_DE_MONEDA','TIPO DE MONEDA O DIVISA'),'TIPO_CAMBIOP'=>array('TIPO_CAMBIOP','TIPO DE CAMBIO'),'TOTAL_ENPESOS'=>array('TOTAL_ENPESOS','TOTAL DE LA CONVERSIÓN'),'PFORMADE_PAGO'=>array('PFORMADE_PAGO','FORMA DE PAGO'),'FECHA_A_DEPOSITAR'=>array('FECHA_A_DEPOSITAR','FECHA DE CARGO EN TDC'),'STATUS_DE_PAGO'=>array('STATUS_DE_PAGO','STATUS DE PAGO'),'ACTIVO_FIJO'=>array('ACTIVO_FIJO','ACTIVO FIJO'),'GASTO_FIJO'=>array('GASTO_FIJO','GASTO FIJO'),'CLASI_GENERAL'=>array('CLASI_GENERAL','CLASIFICACIÓN GENERAL'),'SUB_GENERAL'=>array('SUB_GENERAL','SUB CLASIFICACIÓN GENERAL'),'POLIZA_NUMERO'=>array('POLIZA_NUMERO','PÓLIZA NÚMERO'),'EJECUTIVOTARJETA'=>array('EJECUTIVOTARJETA','NOMBRE DEL EJECUTIVO TITULAR DE LA TARJETA'),'BANCO_ORIGEN'=>array('BANCO_ORIGEN','INSTITUCIÓN BANCARIA'),'NOMBRE_DEL_EJECUTIVO'=>array('NOMBRE_DEL_EJECUTIVO','NOMBRE DEL EJECUTIVO QUE REALIZÓ LA COMPRA'),'NOMBRE_DEL_AYUDO'=>array('NOMBRE_DEL_AYUDO','NOMBRE DEL EJECUTIVO QUE INGRESO ESTA FACTURA'),'OBSERVACIONES_1'=>array('OBSERVACIONES_1','OBSERVACIONES 1'),'FECHA_DE_LLENADO'=>array('FECHA_DE_LLENADO','FECHA Y HORA DE LLENADO'),'UUID'=>array('UUID','UUID'),'folio'=>array('FOLIO','FOLIO'),'serie'=>array('SERIE','SERIE'),'metodoDePago'=>array('metodoDePago','MÉTODO DE PAGO'),'UsoCFDI'=>array('USO_CFDI','USO DE CFDI'),'subTotal'=>array('subTotal','SUBTOTAL'),'total'=>array('total','TOTAL')
+  'NOMBRE_COMERCIAL'=>array('NOMBRE_COMERCIAL','NOMBRE COMERCIAL'),'RAZON_SOCIAL'=>array('RAZON_SOCIAL','RAZÓN SOCIAL'),'RFC_PROVEEDOR'=>array('RFC_PROVEEDOR','RFC PROVEEDOR'),'NUMERO_EVENTO'=>array('NUMERO_EVENTO','NÚMERO EVENTO'),'NOMBRE_EVENTO'=>array('NOMBRE_EVENTO','NOMBRE EVENTO'),'FECHA_INICIO_EVENTO'=>array('FECHA_INICIO_EVENTO','FECHA INICIO EVENTO'),'FECHA_FINAL_EVENTO'=>array('FECHA_FINAL_EVENTO','FECHA FINAL EVENTO'),'MOTIVO_GASTO'=>array('MOTIVO_GASTO','MOTIVO GASTO'),'CONCEPTO_PROVEE'=>array('CONCEPTO_PROVEE','CONCEPTO'),'MONTO_FACTURA'=>array('MONTO_FACTURA','SUBTOTAL'),'IVA'=>array('IVA','IVA'),'TImpuestosRetenidosIVA'=>array('TImpuestosRetenidosIVA','IMPUESTOS RETENIDOS IVA'),'TImpuestosRetenidosISR'=>array('TImpuestosRetenidosISR','IMPUESTOS RETENIDOS ISR'),'MONTO_PROPINA'=>array('MONTO_PROPINA','MONTO DE LA PROPINA O SERVICIO NO INCLUIDO EN LA FACTURA'),'IMPUESTO_HOSPEDAJE'=>array('IMPUESTO_HOSPEDAJE','IMPUESTO SOBRE HOSPEDAJE MÁS EL IMPUESTO DE SANEAMIENTO'),'descuentos'=>array('descuentos','DESCUENTO'),'MONTO_DEPOSITAR'=>array('MONTO_DEPOSITAR','TOTAL'),'TIPO_DE_MONEDA'=>array('TIPO_DE_MONEDA','TIPO DE MONEDA O DIVISA'),'TIPO_CAMBIOP'=>array('TIPO_CAMBIOP','TIPO DE CAMBIO'),'TOTAL_ENPESOS'=>array('TOTAL_ENPESOS','TOTAL DE LA CONVERSIÓN'),'PFORMADE_PAGO'=>array('PFORMADE_PAGO','FORMA DE PAGO'),'FECHA_A_DEPOSITAR'=>array('FECHA_A_DEPOSITAR','FECHA DE CARGO EN TDC'),'STATUS_DE_PAGO'=>array('STATUS_DE_PAGO','STATUS DE PAGO'),'ACTIVO_FIJO'=>array('ACTIVO_FIJO','ACTIVO FIJO'),'GASTO_FIJO'=>array('GASTO_FIJO','GASTO FIJO'),'CLASI_GENERAL'=>array('CLASI_GENERAL','CLASIFICACIÓN GENERAL'),'SUB_GENERAL'=>array('SUB_GENERAL','SUB CLASIFICACIÓN GENERAL'),'POLIZA_NUMERO'=>array('POLIZA_NUMERO','PÓLIZA NÚMERO'),'EJECUTIVOTARJETA'=>array('EJECUTIVOTARJETA','NOMBRE DEL EJECUTIVO TITULAR DE LA TARJETA'),'BANCO_ORIGEN'=>array('BANCO_ORIGEN','INSTITUCIÓN BANCARIA'),'NOMBRE_DEL_EJECUTIVO'=>array('NOMBRE_DEL_EJECUTIVO','NOMBRE DEL EJECUTIVO QUE REALIZÓ LA COMPRA'),'NOMBRE_DEL_AYUDO'=>array('NOMBRE_DEL_AYUDO','NOMBRE DEL EJECUTIVO QUE INGRESO ESTA FACTURA'),'OBSERVACIONES_1'=>array('OBSERVACIONES_1','OBSERVACIONES 1'),'FECHA_DE_LLENADO'=>array('FECHA_DE_LLENADO','FECHA Y HORA DE LLENADO'),'UUID'=>array('UUID','UUID'),'folio'=>array('FOLIO','FOLIO'),'serie'=>array('SERIE','SERIE'),'metodoDePago'=>array('metodoDePago','MÉTODO DE PAGO'),'UsoCFDI'=>array('USO_CFDI','USO DE CFDI'),'subTotal'=>array('subTotal','SUBTOTAL'),'TOTAL_XML'=>array('total','TOTAL')
 );
+
 $columns = array();
 foreach($catalog as $field=>$definition){
     if($database->plantilla_filtro($nombreTabla, $definition[0], $altaeventos, $DEPARTAMENTO) == 'si') { $columns[$field]=$definition[1]; }
@@ -37,7 +38,8 @@ foreach($catalog as $field=>$definition){
 if(empty($columns)){
     foreach(array_slice($catalog, 0, 20, true) as $field=>$definition){ $columns[$field]=$definition[1]; }
 }
-
+/ Este valor se calcula en el listado de comprobaciones; no depende de la plantilla.
+$columns['PERDIDA_COSTO_FISCAL_46'] = '46% PERDIDA DE COSTO FISCAL';
 $datos = $database->getData($tables, $campos, $search);
 $rows = array();
 while($datos && ($r = mysqli_fetch_array($datos, MYSQLI_ASSOC))){ $rows[] = $r; }
@@ -62,8 +64,27 @@ function color_de_fila($database, $row){
     return !empty($row['ClaveProdServ']) ? 'BLANCO' : 'AMARILLO';
 }
 
-$money = array('MONTO_FACTURA','IVA','IEPS','MONTO_PROPINA','IMPUESTO_HOSPEDAJE','descuentos','MONTO_DEPOSITAR','MONTO_DEPOSITADO','TOTAL_ENPESOS','subTotal','total');
+$money = array('PERDIDA_COSTO_FISCAL_46','MONTO_FACTURA','IVA','IEPS','MONTO_PROPINA','IMPUESTO_HOSPEDAJE','descuentos','MONTO_DEPOSITAR','MONTO_DEPOSITADO','TOTAL_ENPESOS','subTotal','TOTAL_XML');
 $dates = array('FECHA_DE_PAGO','FECHA_A_DEPOSITAR','FECHA_DE_LLENADO','FECHA_INICIO_EVENTO','FECHA_FINAL_EVENTO');
+function monto_numerico($valor){
+    return (float)str_replace(array(',', '$'), '', (string)$valor);
+}
+
+// El total XML considera los cargos capturados fuera del comprobante.
+function total_xml_con_cargos($row){
+    return monto_numerico(isset($row['TOTAL_XML']) ? $row['TOTAL_XML'] : 0)
+        + monto_numerico(isset($row['MONTO_PROPINA']) ? $row['MONTO_PROPINA'] : 0)
+        + monto_numerico(isset($row['IMPUESTO_HOSPEDAJE']) ? $row['IMPUESTO_HOSPEDAJE'] : 0);
+}
+
+function perdida_costo_fiscal_46($row){
+    $tieneXml = !empty(trim((string)(isset($row['UUID']) ? $row['UUID'] : '')));
+    $sin46 = isset($row['STATUS_CHECKBOX']) && $row['STATUS_CHECKBOX'] === 'si';
+    $rechazado = isset($row['STATUS_RECHAZADO']) && $row['STATUS_RECHAZADO'] === 'si';
+    $totalXml = monto_numerico(isset($row['TOTAL_XML']) ? $row['TOTAL_XML'] : 0);
+    $base = $totalXml > 0 ? $totalXml : monto_numerico(isset($row['MONTO_DEPOSITAR']) ? $row['MONTO_DEPOSITAR'] : 0);
+    return (!$rechazado && !$tieneXml && !$sin46) ? $base * 1.46 : 0;
+}
 
 // Mapa de color de fila -> índice de estilo de texto (s) e índice de estilo de dinero (s)
 // s=1  texto normal (blanco/ sin relleno)
@@ -88,7 +109,13 @@ foreach($rows as $row){
     $sheet.='<row r="'.$rnum.'">';
     $c=1;
     foreach($columns as $field=>$label){
-        $val=isset($row[$field])?$row[$field]:'';
+                if($field === 'PERDIDA_COSTO_FISCAL_46'){
+            $val = perdida_costo_fiscal_46($row);
+        } elseif($field === 'TOTAL_XML') {
+            $val = total_xml_con_cargos($row);
+        } else {
+            $val=isset($row[$field])?$row[$field]:'';
+        }
         $cell=col_name($c).$rnum;
         if(in_array($field,$money,true) && is_numeric(str_replace(array(',','$'),'',$val))){
             $num=str_replace(array(',','$'),'',$val);
@@ -122,7 +149,7 @@ function descargar_excel_html($database, $filename, $columns, $rows, $money){
         $class = strtolower($color);
         echo '<tr class="'.$class.'">';
         foreach($columns as $field=>$label){
-            $val = isset($row[$field]) ? strip_tags((string)$row[$field]) : '';
+                  $val = $field === 'PERDIDA_COSTO_FISCAL_46' ? perdida_costo_fiscal_46($row) : ($field === 'TOTAL_XML' ? total_xml_con_cargos($row) : (isset($row[$field]) ? strip_tags((string)$row[$field]) : ''));
             $isMoney = in_array($field, $money, true) && is_numeric(str_replace(array(',','$'), '', $val));
             echo '<td'.($isMoney ? ' class="money"' : '').'>'.htmlspecialchars($val, ENT_QUOTES, 'UTF-8').'</td>';
         }
