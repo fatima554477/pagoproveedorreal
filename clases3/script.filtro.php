@@ -635,6 +635,23 @@ $(function() {
 
 
 var filtroXhr = null;
+function ajustarCaretaFiltro(){
+
+	var $tabla = $('.datos_ajax2 table.table').first();
+
+	var $encabezado = $tabla.find('thead tr:first-child').first();
+
+	var $filtros = $tabla.find('thead tr:nth-child(2) td');
+
+	if(!$encabezado.length || !$filtros.length){ return; }
+
+
+
+	var altoEncabezado = Math.ceil($encabezado.outerHeight() || 0);
+
+	$filtros.css('top', altoEncabezado + 'px');
+
+}
 
 function load(page, options){
 	options = options || {};
@@ -858,6 +875,8 @@ window.ultimosParametrosFiltro = parametros;
 		},
 		success: function(data){
 			$(".datos_ajax2").html(data).fadeIn('slow');
+				ajustarCaretaFiltro();
+
 			$("#loader2").html('<div class="msg-actualizando">✅ ACTUALIZADO</div>');
 			const todosOption = document.getElementById('per_page_todos_option');
 			if(todosOption){

@@ -5,8 +5,8 @@
 	Autor: Sandor Matamoros
 	Programer: Fatima Arellano
 	Propietario: EPC
-    fecha sandor: 05/JUNIO/2025
-    fecha fatis : 05/04/2025
+    fecha sandor: 05/JUNIO/2023
+    fecha fatis : 05/04/2026
 
 	----------------------------
 */
@@ -334,7 +334,7 @@ $page = (isset($_POST["page"]) && !empty($_POST["page"])) ? intval($_POST["page"
 		z-index: 9;
 	}
 </style>
-<div style="max-height: 600px; overflow-y: auto;">
+<div id="scroll-container" style="max-height: 600px; overflow-y: auto;">
 	<table class="table table-striped table-bordered">
 
 		<thead>
@@ -875,6 +875,7 @@ $page = (isset($_POST["page"]) && !empty($_POST["page"])) ? intval($_POST["page"
 <td style="background:#c9e8e8"></td>
 <td style="background:#c9e8e8"></td>
 <td style="background:#c9e8e8"></td>
+<td style="background:#c9e8e8"></td>
 		</tr>
 		</thead>
 
@@ -925,9 +926,17 @@ $page = (isset($_POST["page"]) && !empty($_POST["page"])) ? intval($_POST["page"
 			$identificadorProveedor = $nombreComercialActual !== '' ? $nombreComercialActual : (isset($row['RFC_PROVEEDOR']) ? trim($row['RFC_PROVEEDOR']) : '');
 			$nombreComercialMostrar = $nombreComercialActual !== '' ? $nombreComercialActual : $identificadorProveedor;
 
-			$rowDoc = $database->getDoctos_subefactura($row['02SUBETUFACTURAid']);
-			$complementoPdf = isset($rowDoc['COMPLEMENTOS_PAGO_PDF']) ? trim((string)$rowDoc['COMPLEMENTOS_PAGO_PDF']) : '';
-			$complementoXml = isset($rowDoc['COMPLEMENTOS_PAGO_XML']) ? trim((string)$rowDoc['COMPLEMENTOS_PAGO_XML']) : '';
+$complementoPdf = '';
+			$complementoXml = '';
+			$queryComplementosDOCTOS = $database->Listado_subefacturaDOCTOS($row['02SUBETUFACTURAid']);
+			while ($rowComplementoDOCTOS = mysqli_fetch_array($queryComplementosDOCTOS)) {
+				if (isset($rowComplementoDOCTOS['COMPLEMENTOS_PAGO_PDF'])) {
+					$complementoPdf .= trim((string)$rowComplementoDOCTOS['COMPLEMENTOS_PAGO_PDF']);
+				}
+				if (isset($rowComplementoDOCTOS['COMPLEMENTOS_PAGO_XML'])) {
+					$complementoXml .= trim((string)$rowComplementoDOCTOS['COMPLEMENTOS_PAGO_XML']);
+				}
+			}
 			$tieneComplemento = ($complementoPdf !== '' || $complementoXml !== '');
 
 			if (isset($row['STATUS_AUDITORIA3']) && trim($row['STATUS_AUDITORIA3']) === 'si') {
@@ -1325,12 +1334,14 @@ if($database->plantilla_filtro($nombreTabla,"PENDIENTE_PAGO",$altaeventos,$DEPAR
 <?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"PFORMADE_PAGO",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="text-align:center"><?php echo $row['PFORMADE_PAGO']; $colspan2 += 1; ?></td>
 <?php } ?>
+
+<?php if($database->plantilla_filtro($nombreTabla,"FECHA_DE_PAGO",$altaeventos,$DEPARTAMENTO)=="si"){ ?>
 <td style="text-align:center"><?php 
 $colspan2 += 1;
 $f = $row['FECHA_DE_PAGO'];
 echo ($f && $f !== '0000-00-00') ? date('d/m/Y', strtotime($f)) : '';
 ?></td>
-
+<?php } ?>
 
 
 <?php if($database->plantilla_filtro($nombreTabla,"FECHA_A_DEPOSITAR",$altaeventos,$DEPARTAMENTO)=="si"){ ?>
