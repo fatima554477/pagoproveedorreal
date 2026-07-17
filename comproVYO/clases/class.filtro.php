@@ -112,10 +112,32 @@ class orders extends accesoclase {
     return $nombreCompleto;
 }
 
-	public function countAll($sql){
+public function countAll($sql){
 		$query=$this->mysqli->query($sql);
 		$count=$query->num_rows;
 		return $count;
+	}
+
+	/**
+	 * Builds a filter for fields that can contain either a collaborator ID or a
+	 * collaborator's name.  Requiring every word lets users search a full name
+	 * even when the second name is present in the personnel record.
+	 */
+	private function filtroPersona($campo, $valor) {
+		$valor = trim((string) $valor);
+		$valorEscapado = $this->mysqli->real_escape_string(strtoupper($valor));
+		$nombreCompleto = "UPPER(CONCAT_WS(' ', NOMBRE_1, NOMBRE_2, APELLIDO_PATERNO, APELLIDO_MATERNO))";
+		$terminos = preg_split('/\s+/u', $valor, -1, PREG_SPLIT_NO_EMPTY);
+		$condicionesNombre = array();
+
+		foreach ($terminos as $termino) {
+			$terminoEscapado = $this->mysqli->real_escape_string(strtoupper($termino));
+			$condicionesNombre[] = $nombreCompleto." LIKE '%".$terminoEscapado."%'";
+		}
+
+		$busquedaNombre = "SELECT idRelacion FROM 01informacionpersonal WHERE ".implode(' AND ', $condicionesNombre);
+
+		return "(UPPER(07COMPROBACION.".$campo.") LIKE '%".$valorEscapado."%' OR 07COMPROBACION.".$campo." IN (".$busquedaNombre."))";
 	}
 
 	public function getData($tables,$campos,$search){
@@ -140,12 +162,7 @@ if($search['NUMERO_EVENTO']!=""){
 $sWhere2.="  $tables.NUMERO_EVENTO LIKE '%".$search['NUMERO_EVENTO']."%' AND ";}
 
 if($search['EJECUTIVOTARJETA']!=""){
-$ejecutivoTarjeta = strtoupper($search['EJECUTIVOTARJETA']);
-$ejecutivoTarjetaEscapado = $this->mysqli->real_escape_string($ejecutivoTarjeta);
-
-$busquedaNombre = "SELECT idRelacion FROM 01informacionpersonal WHERE UPPER(CONCAT_WS(' ', NOMBRE_1, NOMBRE_2, APELLIDO_PATERNO, APELLIDO_MATERNO)) LIKE '%".$ejecutivoTarjetaEscapado."%'";
-
-$sWhere2.="  (UPPER($tables.EJECUTIVOTARJETA) LIKE '%".$ejecutivoTarjetaEscapado."%' OR $tables.EJECUTIVOTARJETA IN (".$busquedaNombre.")) AND ";}
+$sWhere2.="  ".$this->filtroPersona('EJECUTIVOTARJETA', $search['EJECUTIVOTARJETA'])." AND ";}
 
 
 if($search['NOMBRE_EVENTO']!=""){
@@ -202,20 +219,9 @@ $sWhere2.="  $tables.MONTO_DE_COMISION LIKE '%".$search['MONTO_DE_COMISION']."%'
 if($search['POLIZA_NUMERO']!=""){
 $sWhere2.="  $tables.POLIZA_NUMERO LIKE '%".$search['POLIZA_NUMERO']."%' AND ";}
 if($search['NOMBRE_DEL_EJECUTIVO']!=""){
-$nombreEjecutivo = strtoupper($search['NOMBRE_DEL_EJECUTIVO']);
-$nombreEjecutivoEscapado = $this->mysqli->real_escape_string($nombreEjecutivo);
-
-$busquedaNombreEjecutivo = "SELECT idRelacion FROM 01informacionpersonal WHERE UPPER(CONCAT_WS(' ', NOMBRE_1, NOMBRE_2, APELLIDO_PATERNO, APELLIDO_MATERNO)) LIKE '%".$nombreEjecutivoEscapado."%'";
-
-$sWhere2.="  (UPPER($tables.NOMBRE_DEL_EJECUTIVO) LIKE '%".$nombreEjecutivoEscapado."%' OR $tables.NOMBRE_DEL_EJECUTIVO IN (".$busquedaNombreEjecutivo.")) AND ";}
+$sWhere2.="  ".$this->filtroPersona('NOMBRE_DEL_EJECUTIVO', $search['NOMBRE_DEL_EJECUTIVO'])." AND ";}
 if($search['NOMBRE_DEL_AYUDO']!=""){
-$nombreAyudo = strtoupper($search['NOMBRE_DEL_AYUDO']);
-
-$nombreAyudoEscapado = $this->mysqli->real_escape_string($nombreAyudo);
-
-$busquedaNombreAyudo = "SELECT idRelacion FROM 01informacionpersonal WHERE UPPER(CONCAT_WS(' ', NOMBRE_1, NOMBRE_2, APELLIDO_PATERNO, APELLIDO_MATERNO)) LIKE '%".$nombreAyudoEscapado."%'";
-
-$sWhere2.="  (UPPER($tables.NOMBRE_DEL_AYUDO) LIKE '%".$nombreAyudoEscapado."%' OR $tables.NOMBRE_DEL_AYUDO IN (".$busquedaNombreAyudo.")) AND ";}
+$sWhere2.="  ".$this->filtroPersona('NOMBRE_DEL_AYUDO', $search['NOMBRE_DEL_AYUDO'])." AND ";}
 
 if($search['OBSERVACIONES_1']!=""){
 $sWhere2.="  $tables.OBSERVACIONES_1 LIKE '%".$search['OBSERVACIONES_1']."%' AND ";}

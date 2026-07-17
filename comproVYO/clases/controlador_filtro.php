@@ -57,7 +57,7 @@ if($action == "ajax"){
 	$MONTO_TOTAL_COTIZACION_ADEUDO = isset($_POST["MONTO_TOTAL_COTIZACION_ADEUDO"]) ? $_POST["MONTO_TOTAL_COTIZACION_ADEUDO"] : ""; 
 	$MONTO_FACTURA = isset($_POST["MONTO_FACTURA"]) ? $_POST["MONTO_FACTURA"] : ""; 
 	$ADJUNTAR_FACTURA_XML_VACIO = isset($_POST["ADJUNTAR_FACTURA_XML_VACIO"]) ? trim($_POST["ADJUNTAR_FACTURA_XML_VACIO"]) : "";
-	$EJECUTIVOTARJETA = isset($_POST["EJECUTIVOTARJETA_1"]) ? $_POST["EJECUTIVOTARJETA_1"] : ""; 
+	$EJECUTIVOTARJETA = isset($_POST["EJECUTIVOTARJETA"]) ? $_POST["EJECUTIVOTARJETA"] : ""; 
 	$MONTO_PROPINA = isset($_POST["MONTO_PROPINA"]) ? $_POST["MONTO_PROPINA"] : ""; 
 	$MONTO_DEPOSITAR = isset($_POST["MONTO_DEPOSITAR"]) ? $_POST["MONTO_DEPOSITAR"] : ""; 
 	$TIPO_DE_MONEDA = isset($_POST["TIPO_DE_MONEDA"]) ? $_POST["TIPO_DE_MONEDA"] : ""; 
@@ -83,7 +83,6 @@ if($action == "ajax"){
 	$TOTAL_ENPESOS = isset($_POST["TOTAL_ENPESOS"]) ? $_POST["TOTAL_ENPESOS"] : ""; 
 	$IMPUESTO_HOSPEDAJE = isset($_POST["IMPUESTO_HOSPEDAJE"]) ? $_POST["IMPUESTO_HOSPEDAJE"] : ""; 
 	$IVA = isset($_POST["IVA"]) ? $_POST["IVA"] : "";
-	$EJECUTIVOTARJETA = isset($_POST["EJECUTIVOTARJETA"]) ? $_POST["EJECUTIVOTARJETA"] : "";
 	$NOMBRE_COMERCIAL = isset($_POST["NOMBRE_COMERCIAL"]) ? $_POST["NOMBRE_COMERCIAL"] : "";
 	$TImpuestosRetenidosIVA = isset($_POST["TImpuestosRetenidosIVA_5"]) ? $_POST["TImpuestosRetenidosIVA_5"] : ""; 
 	$TImpuestosRetenidosISR = isset($_POST["TImpuestosRetenidosISR_5"]) ? $_POST["TImpuestosRetenidosISR_5"] : ""; 
@@ -427,7 +426,7 @@ if($action == "ajax"){
 <?php if($database->plantilla_filtro($nombreTabla,"EJECUTIVOTARJETA",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="background:#c9e8e8"><input type="text" class="form-control" id="EJECUTIVOTARJETA_1" value="<?php echo $EJECUTIVOTARJETA; ?>"></td><?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"BANCO_ORIGEN",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="background:#c9e8e8"><input type="text" class="form-control" id="BANCO_ORIGEN_1" value="<?php echo $BANCO_ORIGEN; ?>"></td><?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"NOMBRE_DEL_EJECUTIVO",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="background:#c9e8e8"><input type="text" class="form-control" id="NOMBRE_DEL_EJECUTIVO_1" value="<?php echo $NOMBRE_DEL_EJECUTIVO; ?>"></td><?php } ?>
-<?php if($database->plantilla_filtro($nombreTabla,"NOMBRE_DEL_AYUDO",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="background:#c9e8e8"><input type="text" class="form-control" id="NOMBRE_DEL_AYUDO_1" value="<?php echo $NOMBRE_DEL_EJECUTIVO; ?>"></td><?php } ?>
+<?php if($database->plantilla_filtro($nombreTabla,"NOMBRE_DEL_AYUDO",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="background:#c9e8e8"><input type="text" class="form-control" id="NOMBRE_DEL_AYUDO_1" value="<?php echo $NOMBRE_DEL_AYUDO; ?>"></td><?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"OBSERVACIONES_1",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="background:#c9e8e8;width:700px;min-width:700px;max-width:700px;"><input type="text" class="form-control" id="OBSERVACIONES_1_2" value="<?php echo $OBSERVACIONES_1; ?>"></td><?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"ADJUNTAR_ARCHIVO_1",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="background:#c9e8e8;"><input type="text" class="form-control" id="ADJUNTAR_ARCHIVO_1" value="<?php echo $ADJUNTAR_ARCHIVO_1; ?>"></td><?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"NOMBRE_RECEPTOR",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="background:#f9f3a1;text-align:center"><input type="text" class="form-control" id="nombreR" value="<?php echo $nombreR; ?>"></td><?php } ?>
