@@ -233,26 +233,71 @@ $variablequery = mysqli_query($conn,$variable);
 
 public function solocargartemp($archivo)
 {
-    $nombre_carpeta = __ROOT2__.'/includes/archivos';
+    $nombre_carpeta = __ROOT2__ . '/includes/archivos';
+
+    if (!isset($_FILES[$archivo]) || $_FILES[$archivo]['error'] !== UPLOAD_ERR_OK) {
+        return "ERROR_SUBIDA";
+    }
+
+    if ($_FILES[$archivo]['size'] === 0) {
+        return "VACIO";
+    }
+
     $nombretemp    = $_FILES[$archivo]["tmp_name"];
     $nombrearchivo = basename($_FILES[$archivo]["name"]);
-    $extension     = explode('.', $nombrearchivo);
-    $cuenta        = count($extension) - 1;
-    $ext           = strtolower($extension[$cuenta]);
+
+    // Corregir nombre original
+    $nombrearchivo = urldecode($nombrearchivo);
+
+    if (function_exists('mb_check_encoding') && !mb_check_encoding($nombrearchivo, 'UTF-8')) {
+        $nombrearchivo = mb_convert_encoding($nombrearchivo, 'UTF-8', 'ISO-8859-1');
+    }
+
+    if (function_exists('iconv')) {
+        $nombrearchivo = iconv('UTF-8', 'UTF-8//IGNORE', $nombrearchivo);
+    }
+
+    $extension = explode('.', $nombrearchivo);
+    $cuenta    = count($extension) - 1;
+    $ext       = strtolower($extension[$cuenta]);
+
+    if ($cuenta === 0 || trim($ext) === '') {
+        return "SIN_EXTENSION";
+    }
 
     $extensionesPermitidas = array('pdf','gif','jpeg','jpg','png','mp4','docx','doc','xml');
-    if(!in_array($ext, $extensionesPermitidas)){
+
+    if (!in_array($ext, $extensionesPermitidas)) {
         return "2";
     }
 
-    // ✅ Nombre único para evitar sobreescribir archivos de otros registros
-    $nombrebase  = pathinfo($nombrearchivo, PATHINFO_FILENAME);
+    $nombrebase = pathinfo($nombrearchivo, PATHINFO_FILENAME);
+
+    $nombrebase = preg_replace('/[^a-zA-Z0-9_\-áéíóúÁÉÍÓÚñÑüÜ]/u', '_', $nombrebase);
+    $nombrebase = preg_replace('/_+/', '_', $nombrebase);
+    $nombrebase = trim($nombrebase, '_');
+
+    if (function_exists('mb_strlen')) {
+        if (mb_strlen($nombrebase, 'UTF-8') > 60) {
+            $nombrebase = mb_substr($nombrebase, 0, 60, 'UTF-8');
+        }
+    } else {
+        if (strlen($nombrebase) > 60) {
+            $nombrebase = substr($nombrebase, 0, 60);
+        }
+    }
+
+    if ($nombrebase === '') {
+        $nombrebase = 'archivo';
+    }
+
     $nuevonombre = $nombrebase . '_' . uniqid() . '.' . $ext;
 
-    if(move_uploaded_file($nombretemp, $nombre_carpeta.'/'.$nuevonombre)){
-        chmod($nombre_carpeta.'/'.$nuevonombre, 0755);
+    if (move_uploaded_file($nombretemp, $nombre_carpeta . '/' . $nuevonombre)) {
+        chmod($nombre_carpeta . '/' . $nuevonombre, 0755);
         return trim($nuevonombre);
     }
+
     return "1";
 }
 
@@ -1638,9 +1683,10 @@ $variablequery = "select id,".$ADJUNTAR_COTIZACION.",fechaingreso from 07COMPROB
 		}
 	}
 	
-  public function delete_subefacturadocto2($id){ $conn = $this->db();
+  public function delete_subefacturadocto2($id, $rutaArchivos = ''){ $conn = $this->db();
 
-    $query = "SELECT idTemporal, ADJUNTAR_FACTURA_XML FROM 07COMPROBACIONDOCT WHERE id = '".$id."' ";
+    $id = mysqli_real_escape_string($conn, (string)$id);
+    $query = "SELECT * FROM 07COMPROBACIONDOCT WHERE id = '".$id."' ";
     $resultado = mysqli_query($conn,$query);
     $row = mysqli_fetch_array($resultado, MYSQLI_ASSOC);
 
@@ -1649,21 +1695,97 @@ $variablequery = "select id,".$ADJUNTAR_COTIZACION.",fechaingreso from 07COMPROB
         mysqli_query($conn,$variablequery);
 
 
+     }
+
+    if($row && $rutaArchivos != ''){
+        $this->borrar_archivos_fila_docto($row, $rutaArchivos);
     }
 
     $variablequery = "delete from 07COMPROBACIONDOCT where id = '".$id."' ";
     return $arrayquery = mysqli_query($conn,$variablequery);
 
 }
+   public function delete_subefacturadocto2nombre($nombre, $campo, $rutaArchivos = ''){ $conn = $this->db();
+   if($campo === 'FOTO_ESTADO_PROVEE11'){
+       $campo = 'FOTO_ESTADO_PROVEE';
+   }
+   $camposPermitidos = $this->campos_adjuntos_docto();
+   if(!in_array($campo, $camposPermitidos, true)){
+       return false;
+   }
 
-   public function delete_subefactura2nombre($nombre){ $conn = $this->db(); 
+   $nombre = mysqli_real_escape_string($conn, basename((string)$nombre));
+   if($nombre == ''){
+       return false;
+   }
+
+   $query = "SELECT * FROM 07COMPROBACIONDOCT WHERE ".$campo." = '".$nombre."' ORDER BY id DESC LIMIT 1";
+   $resultado = mysqli_query($conn,$query);
+   $row = mysqli_fetch_array($resultado, MYSQLI_ASSOC);
+   if(!$row){
+       return false;
+   }
+
+   if($campo === 'ADJUNTAR_FACTURA_XML'){
+       $variablequeryXml = "DELETE FROM 07XML WHERE ultimo_id = '".$row['idTemporal']."' ";
+       mysqli_query($conn,$variablequeryXml);
+   }
+
+   if($rutaArchivos != ''){
+       $this->borrar_archivo_docto($nombre, $rutaArchivos);
+   }
+
+   $variablequery = "delete from 07COMPROBACIONDOCT where id = '".$row['id']."' ";
+   return mysqli_query($conn,$variablequery);
+
+}
+
+   public function delete_subefactura2nombre($nombre){ $conn = $this->db();
+   $nombre = mysqli_real_escape_string($conn, (string)$nombre);   
    $variablequery = "delete from 07COMPROBACIONDOCT where ADJUNTAR_FACTURA_XML = '".$nombre."' ";
    mysqli_query($conn,$variablequery); 
 
 }
 
 
+   private function campos_adjuntos_docto(){
+       return array(
+           'ADJUNTAR_FACTURA_PDF',
+           'ADJUNTAR_FACTURA_XML',
+           'ADJUNTAR_COTIZACION',
+           'CONPROBANTE_TRANSFERENCIA',
+           'FOTO_ESTADO_PROVEE',
+           'COMPLEMENTOS_PAGO_PDF',
+           'COMPLEMENTOS_PAGO_XML',
+           'CANCELACIONES_PDF',
+           'CANCELACIONES_XML',
+           'ADJUNTAR_FACTURA_DE_COMISION_PDF',
+           'ADJUNTAR_FACTURA_DE_COMISION_XML',
+           'ADJUNTAR_ARCHIVO_1',
+           'CALCULO_DE_COMISION',
+           'COMPROBANTE_DE_DEVOLUCION',
+           'NOTA_DE_CREDITO_COMPRA'
+       );
+   }
 
+   private function borrar_archivos_fila_docto($row, $rutaArchivos){
+       foreach($this->campos_adjuntos_docto() as $campo){
+           if(isset($row[$campo]) && trim((string)$row[$campo]) != ''){
+               $this->borrar_archivo_docto($row[$campo], $rutaArchivos);
+           }
+       }
+   }
+
+   private function borrar_archivo_docto($nombre, $rutaArchivos){
+       $archivo = basename((string)$nombre);
+       if($archivo == ''){
+           return;
+       }
+       $rutaCompleta = rtrim((string)$rutaArchivos, '/').'/'.$archivo;
+       if(file_exists($rutaCompleta)){
+           @unlink($rutaCompleta);
+       }
+   }
 
 
 
