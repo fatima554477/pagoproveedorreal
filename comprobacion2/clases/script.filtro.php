@@ -534,18 +534,18 @@ function load(page){
 	};
       window.ultimosParametrosFiltro = $.extend({}, parametros);
 	$.ajax({
-		url: 'comprobacionesVYO/clases/controlador_filtro.php',
+		url: 'comprobaciones/clases/controlador_filtro.php',
 		type: 'POST',
 		data: parametros,
 		beforeSend: function(){
-			$("#loader5").stop(true, true);
-			$("#loader5").html(
-				'<div class="msg-actualizando"><span class="loader5"></span> ⏳ ACTUALIZANDO...</div>'
+			$("#loader").stop(true, true);
+			$("#loader").html(
+				'<div class="msg-actualizando"><span class="loader"></span> ⏳ ACTUALIZANDO...</div>'
 			).fadeIn();
 		},
 		success: function(data){
 			$(".datos_ajax").html(data).fadeIn('slow');
-			$("#loader5").html('<div class="msg-actualizando">✅ ACTUALIZADO</div>');
+			$("#loader").html('<div class="msg-actualizando">✅ ACTUALIZADO</div>');
 			$('.checkbox').each(function() {
 				const id = $(this).data('id');
 				if (localStorage.getItem('checkbox_' + id) === 'checked') {
@@ -565,11 +565,11 @@ function load(page){
 		},
 		error: function(xhr, status){
 			if (status !== 'abort') {
-				$("#loader5").html('<div class="msg-actualizando">❌ Error al actualizar</div>');
+				$("#loader").html('<div class="msg-actualizando">❌ Error al actualizar</div>');
 			}
 		},
 		complete: function(){
-			$("#loader5").delay(700).fadeOut("slow", function(){ $(this).html(""); });
+			$("#loader").delay(700).fadeOut("slow", function(){ $(this).html(""); });
 		}
 	});
 }
