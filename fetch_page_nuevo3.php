@@ -68,7 +68,12 @@
 				<td width="30%" align="center">
     <button class="btn btn-sm btn-outline-success px-5" type="button" onclick="load(1);">BUSCAR</button>
     &nbsp;
+	
     <button class="btn btn-sm btn-outline-danger px-4" type="button" onclick="LIMPIAR_FILTRO();">🧹 LIMPIAR FILTRO</button>
+	   &nbsp;
+<?php if($conexion->variablespermisos('','exelPPA','ver')=='si'){ ?>
+    <button class="btn btn-sm btn-outline-primary px-4" type="button" onclick="exportarExcelFiltrado();">📊 Exportar a Excel</button><?php } ?>
+
 </td>
 					<td width="30%" align="center"> <span>PLANTILLA</span> 
 					

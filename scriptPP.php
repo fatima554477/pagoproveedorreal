@@ -642,22 +642,6 @@ $(document).ready(function () {
 
 
 
-//NOMBRE DEL BOTÓN
-$(document).on('click', '.view_dataPAGOPROVEEmodifica', function(){
-var personal_id = $(this).attr('id');
-$.ajax({
-url:'pagoproveedores/VistaPreviapagoproveedor.php',
-method:'POST',
-data:{personal_id:personal_id},
-beforeSend:function(){
-$('#mensajepagoproveedores').html('cargando');
-},
-success:function(data){
-$('#personal_detalles').html(data);
-$('#dataModal').modal('toggle');
-}
-});
-});
 
 
 

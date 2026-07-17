@@ -956,7 +956,7 @@ if ($doctoActual) {
 			 $adjuntosIngreso = $this->adjuntos_temporales_para_bitacora($conn, '02SUBETUFACTURADOCTOS', $_SESSION['idPROV']);
 
 
-            $this->registrar_bitacora($conn, $ultimo_id, 'INGRESO', 'Registro ingresado desde el módulo PAGO A PROVEEDOR CON DOS O MÁS FACTURAS.', $usuarioBitacora, '');
+            $this->registrar_bitacora($conn, $ultimo_id, 'INGRESO', 'Registro ingresado desde el módulo PAGO A PROVEEDORES.', $usuarioBitacora, '');
      $this->registrar_bitacora_adjuntos_ingreso($conn, $ultimo_id, $adjuntosIngreso, $usuarioBitacora);
 
             // ── Parsear XML una sola vez y reutilizar los datos ───────────
