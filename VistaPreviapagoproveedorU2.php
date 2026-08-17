@@ -1,8 +1,7 @@
 <?php
 /*
 fecha fatis : 04/04/2024
-ACTUALIZADO: fixes archivos desde 02SUBETUFACTURADOCTOS
-MODIFICADO: campos bloqueados para coincidir con vista previa 2
+
 */
 
 if(!isset($_SESSION)) { session_start(); }
@@ -41,6 +40,13 @@ if($identioficador != '') {
 
         $archivosActuales = array_fill_keys($columnasArchivos, '');
         $listaDoctos      = array_fill_keys($columnasArchivos, '');
+ $camposSinBorrado = [
+
+            'ADJUNTAR_FACTURA_XML',
+
+            'ADJUNTAR_FACTURA_PDF',
+
+        ];
 
         $qArchivos = mysqli_query($conn,
             "SELECT * FROM 02SUBETUFACTURADOCTOS 
@@ -55,9 +61,17 @@ if($identioficador != '') {
                         if ($archivosActuales[$col] === '') {
                             $archivosActuales[$col] = $rowDoc[$col];
                         }
+                                              // ── FIX: agregado span Borrar para que view_dataSBborrar2 funcione ──
+
+                        $accionBorrar = in_array($col, $camposSinBorrado, true)
+
+                            ? ''
+
+                            : " <span id='" . $rowDoc['id'] . "' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span>";
+
                         $listaDoctos[$col] .=
                             "<a target='_blank' href='includes/archivos/" . $rowDoc[$col] . "'>Visualizar!</a>"
-                            
+                                           . $accionBorrar
                             . " <span>" . $rowDoc['fechaingreso'] . "</span><br/>";
                     }
                 }
@@ -282,6 +296,8 @@ if($identioficador != '') {
                      <input type="hidden" name="IMPUESTO_HOSPEDAJE"               value="'.$row["IMPUESTO_HOSPEDAJE"].'">
                      <input type="hidden" name="OBSERVACIONES_1"                  value="'.$row["OBSERVACIONES_1"].'">
                      <input type="hidden" name="CONPROBANTE_TRANSFERENCIA"        value="'.$archivosActuales['CONPROBANTE_TRANSFERENCIA'].'">
+                     <input type="hidden" name="COMPLEMENTOS_PAGO_PDF"            value="'.$archivosActuales['COMPLEMENTOS_PAGO_PDF'].'">
+                     <input type="hidden" name="COMPLEMENTOS_PAGO_XML"            value="'.$archivosActuales['COMPLEMENTOS_PAGO_XML'].'">
                      <input type="hidden" name="CANCELACIONES_PDF"                value="'.$archivosActuales['CANCELACIONES_PDF'].'">
                      <input type="hidden" name="CANCELACIONES_XML"                value="'.$archivosActuales['CANCELACIONES_XML'].'">
                      <input type="hidden" name="ADJUNTAR_FACTURA_DE_COMISION_PDF" value="'.$archivosActuales['ADJUNTAR_FACTURA_DE_COMISION_PDF'].'">
@@ -548,10 +564,13 @@ if($identioficador != '') {
         '.$hiddens.'
 
         <tr>
-            <td></td>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp
             <td>
-                <button class="btn btn-sm btn-outline-success px-5" type="button" id="clickPAGOP">GUARDAR</button>
-                <div id="respuestaser2" class="d-inline-block ms-3"></div>
+                <button class="btn btn-sm btn-outline-success px-5" type="button" id="clickPAGOP">GUARDAR</button></td><td>
+                <div id="respuestaser2" class="d-inline-block ms-3"><div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+        <!-- Botón CERRAR al lado -->
+        <button class="btn btn-sm btn-outline-success px-5" type="button" data-bs-dismiss="modal">CERRAR</button>
                 <input type="hidden" value="ENVIARPAGOprovee" name="ENVIARPAGOprovee"/>
                 <input type="hidden" value="'.$row["id"].'" name="IPpagoprovee" id="IPpagoprovee"/>
             </td>
@@ -742,7 +761,8 @@ function ajax_file_upload2(file_obj, nombre) {
             // ── Éxito: archivo cargado correctamente ──────────────────────
             } else {
                 var result = response.split('^^');
-                $('#' + nombre).val(result[1]);
+                 $('#' + nombre).val($.trim(result[0] || ''));
+
                 $('#3' + nombre).html('<p style="color:green;">✅ <a target="_blank" href="includes/archivos/' + $.trim(result[0]) + '">Visualizar archivo</a></p>');
 
                 // ── Para XML, mostrar UUID ──

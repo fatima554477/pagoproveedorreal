@@ -35,6 +35,7 @@ if($identioficador != '') {
             'CALCULO_DE_COMISION',
             'COMPROBANTE_DE_DEVOLUCION',
             'NOTA_DE_CREDITO_COMPRA',
+            'ACUSE_CANCELACION',
             'ADJUNTAR_ARCHIVO_1',
         ];
 
@@ -79,10 +80,18 @@ if($identioficador != '') {
         $STATUS_DE_PAGO .= '</select>';
         $STATUS_DE_PAGO .= '<input type="hidden" name="STATUS_DE_PAGO" value="' . $row['STATUS_DE_PAGO'] . '">';
 
-        // ── Bloqueo de fecha si ya está aprobado/pagado ───────────────────
+        // ── Cálculo de status (movido arriba para poder usarse en el bloqueo de fecha) ──
+        $statusVentasConfirmado = isset($row['STATUS_VENTAS'])
+            && trim(strtolower($row['STATUS_VENTAS'])) == 'si';
+
+        $statusPagoBloqueado = isset($row['STATUS_DE_PAGO'])
+            && in_array(trim(strtoupper($row['STATUS_DE_PAGO'])), ['APROBADO', 'PAGADO']);
+
+        // ── Bloqueo de fecha si ya está aprobado/pagado O ventas confirmadas ──
+        // (CAMBIO) Ahora también se bloquea cuando STATUS_VENTAS = 'si'
         $fechaDePagoBloqueada    = '';
         $fechaProgramacionColor  = '#39FF14';
-        if (in_array($row['STATUS_DE_PAGO'], ['APROBADO', 'PAGADO'])) {
+        if ($statusPagoBloqueado || $statusVentasConfirmado) {
             $fechaDePagoBloqueada   = ' readonly="readonly" style="background:#d7bde2"';
             $fechaProgramacionColor = '#dfd9f3';
         }
@@ -93,12 +102,6 @@ if($identioficador != '') {
         $styleTotalAuditoria1   = 'style="background:#decaf1"';
         $styleLabelMontos       = 'style="background:#39FF14"';
         $hiddenMontosBloqueados = '';
-
-        $statusVentasConfirmado = isset($row['STATUS_VENTAS'])
-            && trim(strtolower($row['STATUS_VENTAS'])) == 'si';
-
-        $statusPagoBloqueado = isset($row['STATUS_DE_PAGO'])
-            && in_array(trim(strtoupper($row['STATUS_DE_PAGO'])), ['APROBADO', 'PAGADO']);
 
         if ($statusVentasConfirmado || $statusPagoBloqueado) {
             $bloqueoAuditoria1      = ' readonly="readonly" ';
@@ -234,6 +237,7 @@ if($identioficador != '') {
                      <input type="hidden" name="CALCULO_DE_COMISION"              value="'.$archivosActuales['CALCULO_DE_COMISION'].'">
                      <input type="hidden" name="COMPROBANTE_DE_DEVOLUCION"        value="'.$archivosActuales['COMPROBANTE_DE_DEVOLUCION'].'">
                      <input type="hidden" name="NOTA_DE_CREDITO_COMPRA"           value="'.$archivosActuales['NOTA_DE_CREDITO_COMPRA'].'">
+                     <input type="hidden" name="ACUSE_CANCELACION"           value="'.$archivosActuales['ACUSE_CANCELACION'].'">
                      <input type="hidden" name="FOTO_ESTADO_PROVEE11"             value="'.$archivosActuales['FOTO_ESTADO_PROVEE11'].'">';
 
         // ── HTML de la vista ──────────────────────────────────────────────
@@ -411,9 +415,10 @@ if($identioficador != '') {
             <td style="background:#dfd9f3;"><label>TIPO DE MONEDA O DIVISA</label></td>
             <td>
                 <select name="TIPO_DE_MONEDA_VISUAL" style="background:#daddf5" disabled>
-                    <option value="MXN" '.($row["TIPO_DE_MONEDA"]=="MXN"?"selected":"").'>MXN (Peso mexicano)</option>
-                    <option value="USD" '.($row["TIPO_DE_MONEDA"]=="USD"?"selected":"").'>USD (Dólar)</option>
-                    <option value="EUR" '.($row["TIPO_DE_MONEDA"]=="EUR"?"selected":"").'>EUR (Euro)</option>
+        <option value="MXN" '.($row["TIPO_DE_MONEDA"]=="MXN"?"selected":"").'>MXN (Peso mexicano)</option>
+		<option value="COP" '.($row["TIPO_DE_MONEDA"]=="COP"?"selected":"").'>COP (Peso colombiano)</option>
+        <option value="USD" '.($row["TIPO_DE_MONEDA"]=="USD"?"selected":"").'>USD (Dólar)</option>
+        <option value="EUR" '.($row["TIPO_DE_MONEDA"]=="EUR"?"selected":"").'>EUR (Euro)</option>
                     <option value="GBP" '.($row["TIPO_DE_MONEDA"]=="GBP"?"selected":"").'>GBP (Libra esterlina)</option>
                     <option value="CHF" '.($row["TIPO_DE_MONEDA"]=="CHF"?"selected":"").'>CHF (Franco suizo)</option>
                     <option value="CNY" '.($row["TIPO_DE_MONEDA"]=="CNY"?"selected":"").'>CNY (Yuan)</option>
@@ -478,6 +483,15 @@ if($identioficador != '') {
                 'COMPLEMENTOS_PAGO_PDF',
                 $archivosActuales['COMPLEMENTOS_PAGO_PDF'],
                 $listaDoctos['COMPLEMENTOS_PAGO_PDF']
+            ).'</td>
+        </tr>
+		
+		        <tr>
+            <td style="font-weight:bold;background:#39FF14;"><label>ACUSE DE CANCELACIÓN</label></td>
+            <td>'.$zonaArchivo(
+                'ACUSE_CANCELACION',
+                $archivosActuales['ACUSE_CANCELACION'],
+                $listaDoctos['ACUSE_CANCELACION']
             ).'</td>
         </tr>
 
@@ -711,7 +725,8 @@ if($identioficador != '') {
                 // ── Éxito: archivo cargado correctamente ──────────────────────
                 } else {
                     var result = response.split('^^');
-                    $('#' + nombre).val(result[1]);
+                    $('#' + nombre).val($.trim(result[0] || ''));
+
                     $('#3' + nombre).html('<p style="color:green;">✅ <a target="_blank" href="includes/archivos/' + $.trim(result[0]) + '">Visualizar archivo</a></p>');
 
                     // ── Para XML, mostrar UUID ──

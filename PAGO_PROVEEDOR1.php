@@ -767,6 +767,7 @@ if($rfcE==true){
 						<div id="TIPO_DE_MONEDA2">
 							<select class="form-select mb-3" aria-label="Default select example" id="validationCustom02" required="" name="TIPO_DE_MONEDA" <?php echo $atributoBloqueoSelectXml; ?> >
 								<option style="background: #c9e8e8" name="TIPO_DE_MONEDA" value="MXN" <?php if($Moneda=='MXN' ){echo "selected";} ?>>MXN (Peso mexicano)</option>
+								<option style="background: #c9e8e8" name="TIPO_DE_MONEDA" value="COP" <?php if($Moneda=='COP' ){echo "selected";} ?>>COP (Peso colombiano)</option>
 								<option style="background: #a3e4d7" name="TIPO_DE_MONEDA" value="USD" <?php if($Moneda=='USD' ){echo "selected";} ?>>USD (Dolar)</option>
 								<option style="background: #e8f6f3" name="TIPO_DE_MONEDA" value="EUR" <?php if($Moneda=='EUR' ){echo "selected";} ?>>EUR (Euro)</option>
 								<option style="background: #fdf2e9" name="TIPO_DE_MONEDA" value="GBP" <?php if($Moneda=='GBP' ){echo "selected";} ?>>GBP (Libra esterlina)</option>

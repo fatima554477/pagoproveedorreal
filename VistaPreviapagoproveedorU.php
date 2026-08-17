@@ -40,6 +40,13 @@ if($identioficador != '') {
 
         $archivosActuales = array_fill_keys($columnasArchivos, '');
         $listaDoctos      = array_fill_keys($columnasArchivos, '');
+ $camposSinBorrado = [
+
+            'ADJUNTAR_FACTURA_XML',
+
+            'ADJUNTAR_FACTURA_PDF',
+
+        ];
 
         $qArchivos = mysqli_query($conn,
             "SELECT * FROM 02SUBETUFACTURADOCTOS 
@@ -54,10 +61,17 @@ if($identioficador != '') {
                         if ($archivosActuales[$col] === '') {
                             $archivosActuales[$col] = $rowDoc[$col];
                         }
-                        // ── FIX: agregado span Borrar para que view_dataSBborrar2 funcione ──
+                                              // ── FIX: agregado span Borrar para que view_dataSBborrar2 funcione ──
+
+                        $accionBorrar = in_array($col, $camposSinBorrado, true)
+
+                            ? ''
+
+                            : " <span id='" . $rowDoc['id'] . "' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span>";
+
                         $listaDoctos[$col] .=
                             "<a target='_blank' href='includes/archivos/" . $rowDoc[$col] . "'>Visualizar!</a>"
-                            . " <span id='" . $rowDoc['id'] . "' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span>"
+                                           . $accionBorrar
                             . " <span>" . $rowDoc['fechaingreso'] . "</span><br/>";
                     }
                 }
@@ -745,7 +759,8 @@ if($identioficador != '') {
             // ── Éxito: archivo cargado correctamente ──────────────────────
             } else {
                 var result = response.split('^^');
-                $('#' + nombre).val(result[1]);
+                $('#' + nombre).val($.trim(result[0] || ''));
+
                 $('#3' + nombre).html('<p style="color:green;">✅ <a target="_blank" href="includes/archivos/' + $.trim(result[0]) + '">Visualizar archivo</a></p>');
 
                 // ── Para XML de factura ──

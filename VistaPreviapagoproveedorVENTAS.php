@@ -63,6 +63,13 @@ $STATUS_DE_PAGO = '<select required="" name="STATUS_DE_PAGO">
 			//$ADJUNTAR_FACTURA_XML = "";
 			
 		}
+		
+		if($rowDOCTOS["ACUSE_CANCELACION"]!=""){$ACUSE_CANCELACION .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["ACUSE_CANCELACION"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
+		}	else{
+			
+			//$ACUSE_CANCELACION = "";
+			
+		}
 
          
         if($rowDOCTOS["ADJUNTAR_COTIZACION"]!=""){$ADJUNTAR_COTIZACION .=  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["ADJUNTAR_COTIZACION"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
@@ -403,7 +410,7 @@ $campos_xml = '
 <tr style="background:#F368E7">
 
 <td width="30%" style="font-weight:bold;" ><label>NÚMERO CONSECUTIVO DE PAGO A PROVEEDORES</label></td>
-<td width="70%"><input type="text"   name="NUMERO_CONSECUTIVO_PROVEE" value="'.$row["NUMERO_CONSECUTIVO_PROVEE"].'"></td>
+<td width="70%"><input type="text"  readonly=»readonly» style="background:#decaf1" name="NUMERO_CONSECUTIVO_PROVEE" value="'.$row["NUMERO_CONSECUTIVO_PROVEE"].'"></td>
 </tr>
 
 
@@ -565,6 +572,8 @@ $campos_xml = '
 			
             <option style="background:#a3e4d7" value="MXN" '.($row["TIPO_DE_MONEDA"] == "MXN" ? "selected" : "").'>MXN (Peso mexicano) </option>
 			
+	<option value="COP" '.($row["TIPO_DE_MONEDA"]=="COP"?"selected":"").'>COP (Peso colombiano)</option>
+			
             <option style="background:#c9e8e8" value="USD" '.($row["TIPO_DE_MONEDA"] == "USD" ? "selected" : "").'>USD (Dolar) </option>			
 
              <option style="background:#e8f6f3" value="EUR" '.($row["TIPO_DE_MONEDA"] == "EUR" ? "selected" : "").'>EUR (Euro) </option>     
@@ -617,12 +626,12 @@ $campos_xml = '
 
 
 
-<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_COTIZACION\')" ondragover="return false" style="width:300px;">
+<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ACUSE_CANCELACION\')" ondragover="return false" style="width:300px;">
 <p>Suelta aquí o busca tu archivo</p>
-<p><input class="form-control form-control-sm" id="ADJUNTAR_COTIZACION" type="text" onkeydown="return false" onclick="file_explorer2(\'ADJUNTAR_COTIZACION\');" style="width:250px;" VALUE="'.$row["ADJUNTAR_COTIZACION"] .' " required /></p>
-<input type="file" name="ADJUNTAR_COTIZACION" id="nono"/>
+<p><input class="form-control form-control-sm" id="ACUSE_CANCELACION" type="text" onkeydown="return false" onclick="file_explorer2(\'ACUSE_CANCELACION\');" style="width:250px;" VALUE="'.$row["ACUSE_CANCELACION"] .' " required /></p>
+<input type="file" name="ACUSE_CANCELACION" id="nono"/>
 <div id="3ADJUNTAR_COTIZACION">
-'.$ADJUNTAR_COTIZACION.'
+'.$ACUSE_CANCELACION.'
 </tr> 
 
 
@@ -737,6 +746,17 @@ $campos_xml = '
 <input type="file" name="CANCELACIONES_XML" id="nono"/>
 <div id="3CANCELACIONES_XML">
 '.$CANCELACIONES_XML.'
+</tr> 
+
+
+
+<td width="30%" style="font-weight:bold;" ><label>ACUSE DE CANCELACIÓN</label></td>
+<td width="70%">	<div id="drop_file_zone" ondrop="upload_file2(event,\'ACUSE_CANCELACION\')" ondragover="return false" style="width:300px;">
+<p>Suelta aquí o busca tu archivo</p>
+<p><input class="form-control form-control-sm" id="ACUSE_CANCELACION" type="text" onkeydown="return false" onclick="file_explorer2(\'ACUSE_CANCELACION\');" style="width:250px;" VALUE="'.$row["ACUSE_CANCELACION"] .' " required /></p>
+<input type="file" name="ACUSE_CANCELACION" id="nono"/>
+<div id="3ACUSE_CANCELACION">
+'.$ACUSE_CANCELACION.'
 </tr> 
 
 <tr>
@@ -1117,14 +1137,18 @@ function ajax_file_upload2(file_obj, nombre) {
             // ── Éxito: archivo cargado correctamente ──────────────────────
             } else {
                 var result = response.split('^^');
-                $('#' + nombre).val(result[1]);
+                $('#' + nombre).val($.trim(result[0] || ''));
+
                 $('#3' + nombre).html('<p style="color:green;">✅ <a target="_blank" href="includes/archivos/' + $.trim(result[0]) + '">Visualizar archivo</a></p>');
 
                 // ── Para XML, mostrar UUID ──
-                if (nombre === 'ADJUNTAR_FACTURA_XML') {
+                      if (nombre === 'ADJUNTAR_FACTURA_XML') {
+                    var nombreArchivoXml = $.trim(result[0]);
                     $('#3' + nombre).html(
                         '<p style="color:green;">✅ <a target="_blank" href="includes/archivos/'
-                        + $.trim(result[0]) + '">Visualizar archivo</a></p>'
+                        + nombreArchivoXml + '">Visualizar archivo</a> &nbsp;'
+                        + '<span style="color:blue;cursor:pointer;" class="view_dataSBborrar2" id="'
+                        + nombreArchivoXml + '">Borrar!</span></p>'
                     );
 
                     var formaPago = $.trim(result[2] || '');
