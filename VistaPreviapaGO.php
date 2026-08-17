@@ -54,6 +54,7 @@ $ADJUNTAR_FACTURA_DE_COMISION_XML = "";
 $ADJUNTAR_ARCHIVO_1 = "";
 $CALCULO_DE_COMISION = "";
 $COMPROBANTE_DE_DEVOLUCION = "";
+$ACUSE_CANCELACION = "";
 $NOTA_DE_CREDITO_COMPRA = "";
 
 	$queryVISTAPREV = $pagoproveedores->Listado_subefacturaDOCTOS($row['id']);		
@@ -72,7 +73,14 @@ $NOTA_DE_CREDITO_COMPRA = "";
         if($rowDOCTOS["ADJUNTAR_FACTURA_DE_COMISION_PDF"]!=""){$ADJUNTAR_FACTURA_DE_COMISION_PDF .= "<div class='fila-archivo' id='fila_".$rowDOCTOS['id']."_ADJUNTAR_FACTURA_DE_COMISION_PDF'><a target='_blank' href='includes/archivos/".$rowDOCTOS["ADJUNTAR_FACTURA_DE_COMISION_PDF"]."'>Visualizar!</a> <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span>".$rowDOCTOS['fechaingreso']."</span></div>"; }
         if($rowDOCTOS["ADJUNTAR_ARCHIVO_1"]!=""){$ADJUNTAR_ARCHIVO_1 .= "<div class='fila-archivo' id='fila_".$rowDOCTOS['id']."_ADJUNTAR_ARCHIVO_1'><a target='_blank' href='includes/archivos/".$rowDOCTOS["ADJUNTAR_ARCHIVO_1"]."'>Visualizar!</a> <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span>".$rowDOCTOS['fechaingreso']."</span></div>"; }
         if($rowDOCTOS["CALCULO_DE_COMISION"]!=""){$CALCULO_DE_COMISION .= "<div class='fila-archivo' id='fila_".$rowDOCTOS['id']."_CALCULO_DE_COMISION'><a target='_blank' href='includes/archivos/".$rowDOCTOS["CALCULO_DE_COMISION"]."'>Visualizar!</a> <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span>".$rowDOCTOS['fechaingreso']."</span></div>"; }
+		
+		
+		
         if($rowDOCTOS["COMPROBANTE_DE_DEVOLUCION"]!=""){$COMPROBANTE_DE_DEVOLUCION .= "<div class='fila-archivo' id='fila_".$rowDOCTOS['id']."_COMPROBANTE_DE_DEVOLUCION'><a target='_blank' href='includes/archivos/".$rowDOCTOS["COMPROBANTE_DE_DEVOLUCION"]."'>Visualizar!</a> <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span>".$rowDOCTOS['fechaingreso']."</span></div>"; }
+		        
+		if($rowDOCTOS["ACUSE_CANCELACION"]!=""){$ACUSE_CANCELACION .= "<div class='fila-archivo' id='fila_".$rowDOCTOS['id']."ACUSE_CANCELACION'><a target='_blank' href='includes/archivos/".$rowDOCTOS["ACUSE_CANCELACION"]."'>Visualizar!</a> <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span>".$rowDOCTOS['fechaingreso']."</span></div>"; }
+		
+		
         if($rowDOCTOS["NOTA_DE_CREDITO_COMPRA"]!=""){$NOTA_DE_CREDITO_COMPRA .= "<div class='fila-archivo' id='fila_".$rowDOCTOS['id']."_NOTA_DE_CREDITO_COMPRA'><a target='_blank' href='includes/archivos/".$rowDOCTOS["NOTA_DE_CREDITO_COMPRA"]."'>Visualizar!</a> <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span>".$rowDOCTOS['fechaingreso']."</span></div>"; }
         if($rowDOCTOS["ADJUNTAR_FACTURA_DE_COMISION_XML"]!=""){$ADJUNTAR_FACTURA_DE_COMISION_XML .= "<div class='fila-archivo' id='fila_".$rowDOCTOS['id']."_ADJUNTAR_FACTURA_DE_COMISION_XML'><a target='_blank' href='includes/archivos/".$rowDOCTOS["ADJUNTAR_FACTURA_DE_COMISION_XML"]."'>Visualizar!</a> <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span>".$rowDOCTOS['fechaingreso']."</span></div>"; }
     }
@@ -234,7 +242,7 @@ $campos_xml = '
 
 <tr style="background:#F368E7">
 <td width="30%" style="font-weight:bold;"><label>NÚMERO CONSECUTIVO DE PAGO A PROVEEDORES</label></td>
-<td width="70%"><input type="text" name="NUMERO_CONSECUTIVO_PROVEE" value="'.$row["NUMERO_CONSECUTIVO_PROVEE"].'"></td>
+<td width="70%"><input type="text" name="NUMERO_CONSECUTIVO_PROVEE" readonly=»readonly» style="background:#decaf1" value="'.$row["NUMERO_CONSECUTIVO_PROVEE"].'"></td>
 </tr>
 
 <tr>
@@ -470,6 +478,17 @@ $campos_xml = '
 <input type="file" name="CANCELACIONES_XML" id="nono"/>
 <div id="3CANCELACIONES_XML">'.$CANCELACIONES_XML.'</div></div></td>
 </tr>
+
+<tr>
+<td width="30%" style="font-weight:bold;"><label>ACUSE DE CANCELACIÓN</label></td>
+<td width="70%"><div id="drop_file_zone" ondrop="upload_file2(event,\'ACUSE_CANCELACION\')" ondragover="return false" style="width:300px;">
+<p>Suelta aquí o busca tu archivo</p>
+<p><input class="form-control form-control-sm" id="ACUSE_CANCELACION" type="text" onkeydown="return false" onclick="file_explorer2(\'ACUSE_CANCELACION\');" style="width:250px;" VALUE="'.$row["ACUSE_CANCELACION"].' " required /></p>
+<input type="file" name="ACUSE_CANCELACION" id="nono"/>
+<div id="3ACUSE_CANCELACION">'.$ACUSE_CANCELACION.'</div></div></td>
+</tr>
+
+
 <tr>
 <td width="30%" style="font-weight:bold;"><label>ADJUNTAR FACTURA DE COMISIÓN (FORMATO PDF)</label></td>
 <td width="70%"><div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_FACTURA_DE_COMISION_PDF\')" ondragover="return false" style="width:300px;">
@@ -737,7 +756,8 @@ function ajax_file_upload2(file_obj, nombre) {
                 $('#' + nombre).val('');
             } else {
                 var result = response.split('^^');
-                $('#' + nombre).val(result[1]);
+                $('#' + nombre).val($.trim(result[0] || ''));
+
                 $('#3' + nombre).html('<p style="color:green;">✅ <a target="_blank" href="includes/archivos/' + $.trim(result[0]) + '">Visualizar archivo</a></p>');
 
                 if (nombre === 'ADJUNTAR_FACTURA_XML') {
