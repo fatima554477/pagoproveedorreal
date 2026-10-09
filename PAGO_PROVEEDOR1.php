@@ -492,10 +492,142 @@ if($rowsubePdf){
 									document.getElementsByName('RAZON_SOCIAL')[0].value = result[0];
 									document.getElementsByName('RFC_PROVEEDOR')[0].value = result[1];
 									$('#NOMBRE_COMERCIAL2').html('');
+									actualizarCalificacionProveedor(NOMBRE_COMERCIAL, result[1]);
+
 								}
 							})
 						}
+						function claseClasificacionProveedor(clasificacion){
+	var clases = {
+		'DE CASA': 'bandera-de-casa',
+		'SEGUNDA OPCIÓN': 'bandera-segunda-opcion',
+		'TERCERA OPCIÓN': 'bandera-tercera-opcion',
+		'VETADO': 'bandera-vetado'
+	};
+	return clases[clasificacion] || 'bandera-no-evaluado';
+}
+
+function claseCalificacionProveedor(calificacion){
+	var numero = parseInt(calificacion, 10);
+	return numero >= 1 && numero <= 10 ? 'calificacion-proveedor-' + numero : 'calificacion-proveedor-sin-calificar';
+}
+
+function mostrarEvaluacionProveedor($contenedor, datos){
+	var $clasificacion = $('<span>')
+		.addClass('bandera-evaluacion ' + claseClasificacionProveedor(datos.clasificacion))
+		.attr('title', datos.clasificacion)
+		.append($('<i>').addClass('fa fa-flag').attr('aria-hidden', 'true'))
+		.append($('<span>').text(datos.clasificacion));
+	var $calificacion = $('<span>')
+		.addClass('calificacion-proveedor ' + claseCalificacionProveedor(datos.calificacion))
+		.text(datos.calificacion);
+
+	$contenedor.empty()
+		.append($('<span>').addClass('etiqueta-evaluacion-proveedor').text('CLASIFICACIÓN'))
+		.append($clasificacion)
+		.append($('<span>').addClass('etiqueta-evaluacion-proveedor').text('CALIFICACIÓN'))
+		.append($calificacion);
+}
+
+function actualizarCalificacionProveedor(idProveedor, rfcProveedor){
+	var $contenedor = $('#CALIFICACION_PROVEEDOR2');
+
+	$contenedor.html('<span style="color:#666;">Consultando clasificación y calificación...</span>');
+
+	$.ajax({
+
+		url: 'ventasoperaciones/controladorVO.php',
+
+		type: 'POST',
+
+		dataType: 'json',
+
+		data: {
+
+			action: 'calificacion_proveedor',
+
+			idProveedor: idProveedor || '',
+
+			rfcProveedor: rfcProveedor || ''
+
+		},
+
+		success: function(datos){
+
+			if(!datos || !datos.encontrado){
+
+				$contenedor.html('<strong style="color:#dc3545;">PROVEEDOR SIN INFORMACIÓN DE CALIFICACIÓN</strong>');
+
+				return;
+
+			}
+
+			mostrarEvaluacionProveedor($contenedor, datos);
+		},
+
+		error: function(){
+
+			$contenedor.html('<strong style="color:#dc3545;">NO FUE POSIBLE CONSULTAR LA CALIFICACIÓN</strong>');
+
+		}
+
+	});
+
+}
 						</script>
+
+<style>
+.evaluacion-proveedor-contenedor {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+.etiqueta-evaluacion-proveedor {
+	font-weight: bold;
+	font-size: 12px;
+}
+.bandera-evaluacion {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 5px;
+	min-width: 120px;
+	padding: 5px 10px;
+	border-radius: 5px;
+	font-weight: bold;
+	font-size: 12px;
+	text-align: center;
+	white-space: nowrap;
+}
+.bandera-no-evaluado { background: #fff; color: #000; border: 1px solid #999; }
+.bandera-de-casa { background: #28a745; color: #fff; }
+.bandera-segunda-opcion { background: #ffc107; color: #000; }
+.bandera-tercera-opcion { background: #ffb6c1; color: #000; }
+.bandera-vetado { background: #dc3545; color: #fff; }
+.calificacion-proveedor {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 42px;
+	padding: 5px 12px;
+	border: 1px solid rgba(0, 0, 0, .2);
+	border-radius: 5px;
+	color: #000;
+	font-weight: bold;
+}
+.calificacion-proveedor-1 { background: #FF0000; color: #fff; }
+.calificacion-proveedor-2 { background: #FA5858; }
+.calificacion-proveedor-3 { background: #F5A9A9; }
+.calificacion-proveedor-4,
+.calificacion-proveedor-5 { background: #F6CECE; }
+.calificacion-proveedor-6 { background: #CEF6E3; }
+.calificacion-proveedor-7 { background: #A9F5E1; }
+.calificacion-proveedor-8 { background: #81F7D8; }
+.calificacion-proveedor-9 { background: #00FFBF; }
+.calificacion-proveedor-10 { background: #04B486; color: #fff; }
+.calificacion-proveedor-sin-calificar { background: #fff; border-color: #999; }
+</style>
 						<?php if($conexion->variablespermisos('','PAGO_PROVEEDOR1boton','ver')=='si'){ ?>
 							<a href="listaproveedores.php" target="_blank" rel="noopener noreferrer">
 								<button style="float: right;width:220px" class="btn btn-sm btn-primary px-5" type="button"> AGREGAR PROVEEDOR </button>
@@ -511,9 +643,47 @@ if($rfcE==true){
 	<strong style="word-spacing: 10px; letter-spacing: 2px;font-size:16PX;background:#CCFF00;">'.$explotado23[1].'</strong>';
 	}
 ?>
-</span> </td>
-				</tr>
-				<tr style="background:#fcf3cf">
+</span> 
+		 </td>
+                 </tr>
+
+                 <tr style="background:#d9edf7" id="row-calificacion-proveedor">
+                 <th scope="row">
+                    <label class="form-label">CLASIFICACIÓN Y CALIFICACIÓN DEL PROVEEDOR</label>
+                 </th>
+                 <td>
+<div id="CALIFICACION_PROVEEDOR2" class="evaluacion-proveedor-contenedor" role="status" aria-live="polite">
+<?php
+$calificacionProveedor = $rfcE ? $pagoproveedores->obtenerCalificacionProveedor('', $rfcE) : null;
+if($calificacionProveedor && $calificacionProveedor['encontrado']){
+	$clasesClasificacion = array(
+		'DE CASA' => 'bandera-de-casa',
+		'SEGUNDA OPCIÓN' => 'bandera-segunda-opcion',
+		'TERCERA OPCIÓN' => 'bandera-tercera-opcion',
+		'VETADO' => 'bandera-vetado'
+	);
+	$clasificacion = $calificacionProveedor['clasificacion'];
+	$claseClasificacion = isset($clasesClasificacion[$clasificacion])
+		? $clasesClasificacion[$clasificacion] : 'bandera-no-evaluado';
+	$calificacion = $calificacionProveedor['calificacion'];
+	$numeroCalificacion = (int) $calificacion;
+	$claseCalificacion = $numeroCalificacion >= 1 && $numeroCalificacion <= 10
+		? 'calificacion-proveedor-'.$numeroCalificacion : 'calificacion-proveedor-sin-calificar';
+
+	echo '<span class="etiqueta-evaluacion-proveedor">CLASIFICACIÓN</span>';
+	echo '<span class="bandera-evaluacion '.htmlspecialchars($claseClasificacion, ENT_QUOTES, 'UTF-8').'">';
+	echo '<i class="fa fa-flag" aria-hidden="true"></i><span>'.htmlspecialchars($clasificacion, ENT_QUOTES, 'UTF-8').'</span></span>';
+	echo '<span class="etiqueta-evaluacion-proveedor">CALIFICACIÓN</span>';
+	echo '<span class="calificacion-proveedor '.htmlspecialchars($claseCalificacion, ENT_QUOTES, 'UTF-8').'">'.htmlspecialchars($calificacion, ENT_QUOTES, 'UTF-8').'</span>';
+}else{
+	echo '<span style="color:#666;">SELECCIONA UN PROVEEDOR PARA CONSULTAR SU CLASIFICACIÓN Y CALIFICACIÓN</span>';
+}
+?>
+</div>
+                 </td>
+                 </tr>
+
+                   <tr  style="background:#fcf3cf">
 
 					<th scope="row">
         <label style="width:300px" for="RAZON_SOCIAL" class="form-label"><span id="label-razon-social-text"><?php echo $labelRazonSocial; ?></span></label>

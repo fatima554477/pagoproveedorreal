@@ -621,6 +621,12 @@ if($identioficador != '') {
         var form_data = new FormData();
         form_data.append(nombre, file_obj);
         form_data.append("IPpagoprovee", $("#IPpagoprovee").val());
+		        if (nombre === 'ADJUNTAR_FACTURA_XML') {
+
+            form_data.append("validarRazonSocialXml", "1");
+
+        }
+
 
         $.ajax({
             type: 'POST',
@@ -721,6 +727,28 @@ if($identioficador != '') {
                         : '⚠️ EL RECEPTOR DE LA FACTURA NO ES EPC, INN O EVE520.';
                     $('#3' + nombre).html('<p style="color:red;font-weight:600;">' + msgReceptor + '</p>');
                     $('#' + nombre).val('');
+					              // ── Emisor distinto de la razón social guardada en la solicitud ──
+
+                } else if (resp.indexOf('8^^') === 0) {
+
+                    $('#3' + nombre).html(
+
+                        '<p style="color:red;font-weight:600;">⚠️ LA RAZÓN SOCIAL DEL EMISOR DEL XML ' +
+
+                        'NO COINCIDE CON LA RAZÓN SOCIAL REGISTRADA EN LA SOLICITUD. ' +
+
+                        'El archivo no fue guardado.</p>'
+
+                    );
+
+                    $('#respuestaser').html(
+
+                        '<p style="color:red;font-weight:600;">⚠️ No se guardó el XML porque las razones sociales no coinciden.</p>'
+
+                    );
+
+                    $('#' + nombre).val('');
+
 
                 // ── Éxito: archivo cargado correctamente ──────────────────────
                 } else {

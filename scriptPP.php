@@ -1,7 +1,7 @@
 <?php
 /*
-fecha sandor: 
-fecha fatis : 05/04/2024
+fecha sandor: 05/04/2023
+fecha fatis : 
 
 */
 ?>
@@ -236,7 +236,7 @@ function ajax_file_upload1(file_obj, nombre) {
                         '#TIPO_DE_MONEDA2', '#FECHA_DE_PAGO2', '#NUMERO_CONSECUTIVO_PROVEE2',
                         '#2MONTO_FACTURA', '#2MONTO_DEPOSITAR', '#2PFORMADE_PAGO',
                         '#2IVA', '#2TImpuestosRetenidosIVA', '#2TImpuestosRetenidosISR',
-                        '#2descuentos', '#NOMBRE_COMERCIAL2', '#resettabla'
+                        '#2descuentos', '#NOMBRE_COMERCIAL2', '#resettabla','#CALIFICACION_PROVEEDOR2'
                     ]);
                 } else {
                     recargarElemento('#2' + nombre);
@@ -430,7 +430,7 @@ $(document).ready(function () {
             '#2descuentos', '#descuentos',
             '#RAZON_SOCIAL2', '#RFC_PROVEEDOR2',
             '#TIPO_DE_MONEDA2', '#FECHA_DE_PAGO2', '#CONCEPTO_PROVEE2',
-            '#NOMBRE_COMERCIAL2', '#resettabla'
+            '#NOMBRE_COMERCIAL2', '#resettabla','#CALIFICACION_PROVEEDOR2',
         ]);
     }
 

@@ -1,7 +1,7 @@
 <?php
 /*
-fecha sandor: 
-fecha fatis : 03/04/2024
+fecha sandor: 03/04/2023
+fecha fatis : 
 */
 
     if(!isset($_SESSION)) 
@@ -11,7 +11,7 @@ fecha fatis : 03/04/2024
 
 define('__ROOT1__', dirname(dirname(__FILE__)));
 include_once (__ROOT1__."/includes/error_reporting.php");
-include_once (__ROOT1__."/pagoproveedores/class.epcinnPP.php");
+include_once (__ROOT1__."/pagoproveedores2/class.epcinnPP.php");
 
 $pagoproveedores= NEW accesoclase();
 $conexion = NEW colaboradores();
@@ -138,6 +138,20 @@ echo $pagoproveedores->PASARPAGADOACTUALIZAR ($pasarpagado_id , $pasarpagado_tex
 }
 
 $action = isset($_POST["action"])?$_POST["action"]:"";
+if($action === 'calificacion_proveedor'){
+
+    header('Content-Type: application/json; charset=utf-8');
+
+    $idProveedor = isset($_POST['idProveedor']) ? $_POST['idProveedor'] : '';
+
+    $rfcProveedor = isset($_POST['rfcProveedor']) ? $_POST['rfcProveedor'] : '';
+
+    echo json_encode($pagoproveedores->obtenerCalificacionProveedor($idProveedor, $rfcProveedor));
+
+    exit;
+
+}
+
 if($action=='total_menos_dep'){
 $total_menos_depositado = isset($_POST["total_menos_depositado"])?$_POST["total_menos_depositado"]:"";
 $numero_evento2a = isset($_POST["numero_evento2a"])?$_POST["numero_evento2a"]:"";
@@ -415,6 +429,53 @@ if( $_FILES["ADJUNTAR_FACTURA_XML"] == true){
 
 $idPROV = isset($_SESSION["idPROV"])?$_SESSION["idPROV"]:$idwebc;
 $IPpagoprovee = isset($_POST["IPpagoprovee"])?$_POST["IPpagoprovee"]:"";
+
+
+// La vista de edición exige que el emisor del CFDI corresponda a la razón
+
+// social que ya pertenece a la solicitud. Se consulta la base de datos en el
+
+// servidor para que la validación no pueda evadirse alterando el formulario.
+
+$validarRazonSocialXml = isset($_POST['validarRazonSocialXml']) && $_POST['validarRazonSocialXml'] === '1';
+
+if($validarRazonSocialXml && $IPpagoprovee !== '' && isset($_FILES['ADJUNTAR_FACTURA_XML']) && $_FILES['ADJUNTAR_FACTURA_XML'] == true){
+
+	$conn = $conexion->db();
+
+	$idSolicitud = intval($IPpagoprovee);
+
+	$consultaRazonSocial = mysqli_query(
+
+		$conn,
+
+		"SELECT RAZON_SOCIAL FROM 02SUBETUFACTURA WHERE id = '{$idSolicitud}' LIMIT 1"
+
+	);
+
+	$solicitud = $consultaRazonSocial ? mysqli_fetch_assoc($consultaRazonSocial) : null;
+
+	$razonSocialGuardada = $solicitud && isset($solicitud['RAZON_SOCIAL']) ? $solicitud['RAZON_SOCIAL'] : '';
+
+
+
+	if(!$solicitud || normalizarTextoEmpresaVO($nombreE) !== normalizarTextoEmpresaVO($razonSocialGuardada)){
+
+		if(isset($url) && file_exists($url)){
+
+			unlink($url);
+
+		}
+
+		$pagoproveedores->delete_subefactura2nombre($ADJUNTAR_FACTURA_XML2);
+
+		echo '8^^';
+
+		exit;
+
+	}
+
+}
 
 
 // ── BLOQUE 1: Subida con IPpagoprovee (registro existente) ────────────────

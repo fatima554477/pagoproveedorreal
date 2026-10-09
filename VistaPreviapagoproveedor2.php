@@ -585,6 +585,8 @@ $campos_xml = '
 			
             <option style="background:#a3e4d7" value="MXN" '.($row["TIPO_DE_MONEDA"] == "MXN" ? "selected" : "").'>MXN (Peso mexicano) </option>
 			
+<option style="background:#a3e4d7" value="COP" '.($row["TIPO_DE_MONEDA"] == "COP" ? "selected" : "").'>COP (Peso colombiano) </option>
+			
             <option style="background:#c9e8e8" value="USD" '.($row["TIPO_DE_MONEDA"] == "USD" ? "selected" : "").'>USD (Dolar) </option>			
 
              <option style="background:#e8f6f3" value="EUR" '.($row["TIPO_DE_MONEDA"] == "EUR" ? "selected" : "").'>EUR (Euro) </option>     
