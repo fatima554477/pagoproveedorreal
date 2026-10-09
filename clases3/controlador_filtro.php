@@ -2,10 +2,9 @@
 
 /**
  	--------------------------
-	Autor: Sandor Matamoros
 	Programer: Fatima Arellano
 	Propietario: EPC
-    fecha sandor: 05/JUNIO/2023
+    fecha sandor: 
     fecha fatis : 05/04/2026
 
 	----------------------------
@@ -139,7 +138,7 @@ if($action == "ajax"){
 	$P_NUMERO_CUENTA_SWIFT_1 = isset($_POST["P_NUMERO_CUENTA_SWIFT_1"]) ? trim($_POST["P_NUMERO_CUENTA_SWIFT_1"]) : "";
 	$FOTO_ESTADO_PROVEE = isset($_POST["FOTO_ESTADO_PROVEE"]) ? trim($_POST["FOTO_ESTADO_PROVEE"]) : "";
 	$ULTIMA_CARGA_DATOBANCA = isset($_POST["ULTIMA_CARGA_DATOBANCA"]) ? trim($_POST["ULTIMA_CARGA_DATOBANCA"]) : "";
-
+	
 	if($_SESSION['num_evento'] == true) {
 		$NUMERO_EVENTO = $_SESSION['num_evento'];
 	}
@@ -445,6 +444,13 @@ $page = (isset($_POST["page"]) && !empty($_POST["page"])) ? intval($_POST["page"
 <?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"COMPLEMENTOS_PAGO_XML",$altaeventos,$DEPARTAMENTO)=="si"){ ?><th style="background:#c9e8e8;text-align:center">COMPLEMENTOS DE PAGO XML</th>
 <?php } ?>
+
+
+<?php
+if($database->plantilla_filtro($nombreTabla,"ACUSE_CANCELACION",$altaeventos,$DEPARTAMENTO)=="si"){ ?><th style="background:#c9e8e8;text-align:center">ACUSE DE CANCELACIÓN</th>
+<?php } ?>
+
+
 <?php if($database->plantilla_filtro($nombreTabla,"CANCELACIONES_PDF",$altaeventos,$DEPARTAMENTO)=="si"){ ?><th style="background:#c9e8e8;text-align:center">CANCELACIONES PDF</th>
 <?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"CANCELACIONES_XML",$altaeventos,$DEPARTAMENTO)=="si"){ ?><th style="background:#c9e8e8;text-align:center">CANCELACIONES XML</th>
@@ -469,7 +475,8 @@ $page = (isset($_POST["page"]) && !empty($_POST["page"])) ? intval($_POST["page"
 <?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"OBSERVACIONES_1",$altaeventos,$DEPARTAMENTO)=="si"){ ?><th style="background:#c9e8e8;text-align:center;width:700px;min-width:700px;max-width:700px;">OBSERVACIONES 1</th>
 <?php } ?>
-<?php if($database->plantilla_filtro($nombreTabla,"ADJUNTAR_ARCHIVO_1",$altaeventos,$DEPARTAMENTO)=="si"){ ?><th style="background:#c9e8e8;text-align:center">ARCHIVO RELACIONADO A ESTE GASTO:</th>
+<?php if($database->plantilla_filtro($nombreTabla,"ADJUNTAR_ARCHIVO_1",$altaeventos,$DEPARTAMENTO)=="si"){ ?><th style="background:#c9e8e8;text-align:center">ARCHIVO RELACIONADO A ESTE GASTO o<br> 
+EVIDENCIA DEL SERVICIO OTORGADO:</th>
 <?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"FECHA_DE_LLENADO",$altaeventos,$DEPARTAMENTO)=="si"){ ?><th style="background:#c9e8e8;text-align:center">FECHA Y HORA <br>DE LLENADO</th>
 <?php } ?>
@@ -768,6 +775,10 @@ $page = (isset($_POST["page"]) && !empty($_POST["page"])) ? intval($_POST["page"
 <?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"CANCELACIONES_XML",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="background:#c9e8e8;text-align:center"><input type="text" class="form-control" id="CANCELACIONES_XML" value="<?php echo $CANCELACIONES_XML; ?>"></td>
 <?php } ?>
+
+<?php if($database->plantilla_filtro($nombreTabla,"ACUSE_CANCELACION",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="background:#c9e8e8;text-align:center"></td>
+ 
+<?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"ADJUNTAR_FACTURA_DE_COMISION_PDF",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="background:#c9e8e8;text-align:center"><input type="text" class="form-control" id="ADJUNTAR_FACTURA_DE_COMISION_PDF" value=""></td>
 <?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"ADJUNTAR_FACTURA_DE_COMISION_XML",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="background:#c9e8e8;text-align:center"><input type="text" class="form-control" id="ADJUNTAR_FACTURA_DE_COMISION_XML" value=""></td>
@@ -938,13 +949,15 @@ $complementoPdf = '';
 				}
 			}
 			$tieneComplemento = ($complementoPdf !== '' || $complementoXml !== '');
-
 			if (isset($row['STATUS_AUDITORIA3']) && trim($row['STATUS_AUDITORIA3']) === 'si') {
 				$fondo_existe_xml  = "style='background-color:#ffffff'";
 				$fondo_existe_xml2 = "style='background-color:#ffffff'";
 			} else if ($tieneComplemento) {
 				$fondo_existe_xml  = "style='background-color:#ffffff'";
 				$fondo_existe_xml2 = "style='background-color:#ffffff'";
+			} else if (isset($row['TIPO_DE_MONEDA']) && strtoupper(trim($row['TIPO_DE_MONEDA'])) !== 'MXN') {
+				$fondo_existe_xml  = "style='background-color:#73FCFF'";
+				$fondo_existe_xml2 = "style='background-color:#73FCFF'";
 			} else if (isset($row['STATUS_DE_PAGO']) && $row['STATUS_DE_PAGO'] === 'RECHAZADO') {
 				$fondo_existe_xml  = "style='background-color:#ff0000'";
 				$fondo_existe_xml2 = "style='background-color:#ff0000'";
@@ -975,9 +988,9 @@ $complementoPdf = '';
 
 <?php
 if (!function_exists('renderDocumentLinks')) {
-	function renderDocumentLinks($rawValue) {
-		if (!isset($rawValue) || trim((string)$rawValue) === '') return '';
-		$links = '';
+	function documentFilePaths($rawValue) {
+		if (!isset($rawValue) || trim((string)$rawValue) === '') return array();
+		$filePaths = array();
 		$rawValue = html_entity_decode((string)$rawValue);
 		$chunks = preg_split('/\s*,\s*/', $rawValue, -1, PREG_SPLIT_NO_EMPTY);
 		$files = [];
@@ -1012,15 +1025,89 @@ if (!function_exists('renderDocumentLinks')) {
 				$filePath = implode('/', $partesPath);
 				if ($isAbsolutePath) $filePath = '/' . $filePath;
 			}
-			$links .= '<a href="' . $filePath . '" target="_blank">Ver!</a><br/>';
+			$filePaths[] = $filePath;
+		}
+		return $filePaths;
+	}
+
+	function renderDocumentLinks($rawValue) {
+		$links = '';
+		foreach ((array)documentFilePaths($rawValue) as $filePath) {
+			$links .= '<a href="' . htmlspecialchars($filePath, ENT_QUOTES, 'UTF-8') . '" target="_blank">Ver!</a><br/>';
 		}
 		return $links;
 	}
+
+	// Devuelve la extensión del archivo (sin query string / fragment), en minúsculas
+	function attachmentExtension($filePath) {
+		$clean = preg_replace('/[?#].*$/', '', $filePath);
+		$ext = pathinfo($clean, PATHINFO_EXTENSION);
+		return strtolower($ext);
+	}
+
+	// Construye el bloque HTML para un solo archivo dentro de la galería,
+	// según el tipo detectado por su extensión.
+	function renderAttachmentPreviewBlock($filePath) {
+		$safePath = htmlspecialchars($filePath, ENT_QUOTES, 'UTF-8');
+		$ext = attachmentExtension($filePath);
+
+		$imageExts = array('jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp');
+		$iframeExts = array('pdf', 'txt'); // el navegador puede renderizarlos directo en un iframe
+
+		if (in_array($ext, $imageExts, true)) {
+			return '<figure><a href="' . $safePath . '" target="_blank"><img src="' . $safePath . '" alt="Foto adjunta"></a></figure>';
+		}
+
+		if (in_array($ext, $iframeExts, true)) {
+			$label = ($ext === 'pdf') ? 'Vista previa PDF' : 'Vista previa TXT';
+			return '<figure class="preview-doc">'
+				. '<iframe src="' . $safePath . '" title="' . $label . '"></iframe>'
+				. '<figcaption><a href="' . $safePath . '" target="_blank">' . $label . ' &middot; Abrir en pestaña nueva</a></figcaption>'
+				. '</figure>';
+		}
+
+		// Cualquier otro formato (docx, xlsx, zip, etc.): sin vista previa embebida, solo descarga
+		$extLabel = $ext !== '' ? strtoupper($ext) : 'ARCHIVO';
+		return '<figure class="preview-file">'
+			. '<div class="file-icon">' . htmlspecialchars($extLabel, ENT_QUOTES, 'UTF-8') . '</div>'
+			. '<figcaption><a href="' . $safePath . '" target="_blank">Descargar / abrir</a></figcaption>'
+			. '</figure>';
+	}
+
+	function renderPhotoGalleryLink($rawValues) {
+		$filePaths = array();
+		foreach ($rawValues as $rawValue) {
+			$filePaths = array_merge($filePaths, (array)documentFilePaths($rawValue));
+		}
+		$filePaths = array_values(array_unique($filePaths));
+		if (empty($filePaths)) return '';
+
+		$galleryItems = '';
+		foreach ($filePaths as $filePath) {
+			$galleryItems .= renderAttachmentPreviewBlock($filePath);
+		}
+
+		$galleryHtml = '<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Archivos adjuntos</title><style>'
+			. 'body{font-family:Arial,sans-serif;margin:24px;background:#f4f4f4}h1{text-align:center}'
+			. '.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}'
+			. 'figure{margin:0;padding:12px;background:#fff;border-radius:8px;box-shadow:0 2px 8px #0002}'
+			. 'img{display:block;width:100%;height:auto;object-fit:contain}'
+			. '.preview-doc iframe{width:100%;height:320px;border:1px solid #ddd;border-radius:4px}'
+			. '.preview-file{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;text-align:center}'
+			. '.file-icon{font-weight:bold;font-size:14px;color:#666;background:#eee;border-radius:6px;padding:24px 12px;margin-bottom:8px;width:100%}'
+			. 'figcaption{margin-top:8px;text-align:center;font-size:14px}'
+			. '</style></head><body><h1>Archivos adjuntos</h1><div class="gallery">' . $galleryItems . '</div></body></html>';
+		$encodedGallery = base64_encode($galleryHtml);
+		$onclick = "var galeria=window.open('','_blank');if(!galeria){return true;}galeria.document.write(atob('" . $encodedGallery . "'));galeria.document.close();return false;";
+
+		return '<a href="' . htmlspecialchars($filePaths[0], ENT_QUOTES, 'UTF-8') . '" target="_blank" onclick="'
+			. htmlspecialchars($onclick, ENT_QUOTES, 'UTF-8') . '">Visualizar archivos</a>';
+	}
 }
 
-$ADJUNTAR_FACTURA_PDF = ''; $ADJUNTAR_FACTURA_XML = ''; $ADJUNTAR_COTIZACION = ''; $CONPROBANTE_TRANSFERENCIA = '';
+$ADJUNTAR_FACTURA_PDF = ''; $ADJUNTAR_FACTURA_XML = ''; $ADJUNTAR_COTIZACION = ''; $CONPROBANTE_TRANSFERENCIA = '';$ACUSE_CANCELACION='';
 $ADJUNTAR_ARCHIVO_1 = ''; $COMPLEMENTOS_PAGO_PDF = ''; $COMPLEMENTOS_PAGO_XML = ''; $CANCELACIONES_PDF = '';
-$CANCELACIONES_XML = ''; $ADJUNTAR_FACTURA_DE_COMISION_PDF = ''; $ADJUNTAR_FACTURA_DE_COMISION_XML = '';
+$CANCELACIONES_XML = ''; $ADJUNTAR_FACTURA_DE_COMISION_PDF = ''; $archivosAdjuntos1 = array();$ADJUNTAR_FACTURA_DE_COMISION_XML = '';
 $CALCULO_DE_COMISION = ''; $COMPROBANTE_DE_DEVOLUCION = ''; $NOTA_DE_CREDITO_COMPRA = ''; $FOTO_ESTADO_PROVEE11 = '';
 $querycontrasDOCTOS = $database->Listado_subefacturaDOCTOS($row['02SUBETUFACTURAid']);
 while ($rowDOCTOS = mysqli_fetch_array($querycontrasDOCTOS)) {
@@ -1038,8 +1125,10 @@ while ($rowDOCTOS = mysqli_fetch_array($querycontrasDOCTOS)) {
 	$COMPROBANTE_DE_DEVOLUCION       .= renderDocumentLinks($rowDOCTOS["COMPROBANTE_DE_DEVOLUCION"]);
 	$NOTA_DE_CREDITO_COMPRA          .= renderDocumentLinks($rowDOCTOS["NOTA_DE_CREDITO_COMPRA"]);
 	$FOTO_ESTADO_PROVEE11            .= renderDocumentLinks($rowDOCTOS["FOTO_ESTADO_PROVEE11"]);
-	$ADJUNTAR_ARCHIVO_1              .= renderDocumentLinks($rowDOCTOS["ADJUNTAR_ARCHIVO_1"]);
+	$ACUSE_CANCELACION              .= renderDocumentLinks($rowDOCTOS["ACUSE_CANCELACION"]);
+$archivosAdjuntos1[]        = $rowDOCTOS["ADJUNTAR_ARCHIVO_1"];
 }
+$ADJUNTAR_ARCHIVO_1 = renderPhotoGalleryLink($archivosAdjuntos1);
 ?>
 
 <!-- SOLICITANTE (siempre checked+disabled) -->
@@ -1385,6 +1474,9 @@ echo ($f && $f !== '0000-00-00') ? date('d/m/Y', strtotime($f)) : '';
 <?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"COMPLEMENTOS_PAGO_XML",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="text-align:center"><?php echo $COMPLEMENTOS_PAGO_XML; $colspan2 += 1; ?></td>
 <?php } ?>
+
+<?php if($database->plantilla_filtro($nombreTabla,"ACUSE_CANCELACION",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="text-align:center"><?php echo $ACUSE_CANCELACION; $colspan2 += 1; ?></td>
+<?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"CANCELACIONES_PDF",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="text-align:center"><?php echo $CANCELACIONES_PDF; $colspan2 += 1; ?></td>
 <?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"CANCELACIONES_XML",$altaeventos,$DEPARTAMENTO)=="si"){ ?><td style="text-align:center"><?php echo $CANCELACIONES_XML; $colspan2 += 1; ?></td>
@@ -1530,6 +1622,8 @@ if ($mostrarXML) {
 <td style="text-align:center"><?php
 if ($mostrarXML) { echo number_format($row['TImpuestosRetenidos'],2,'.',','); $TImpuestosRetenidos12 += $row['TImpuestosRetenidos']; $totales2 = 'si'; }
 ?></td>
+
+
 <?php } ?>
 <?php if($database->plantilla_filtro($nombreTabla,"TUA",$altaeventos,$DEPARTAMENTO)=="si"){ ?>
 <td style="text-align:center"><?php
@@ -1574,15 +1668,23 @@ if ($mostrarXML) {
 <td style="text-align:center" id="valorCalculado_<?php echo $row['02SUBETUFACTURAid']; ?>">
 <?php
 if (in_array($row['VIATICOSOPRO'], ['VIATICOS','REEMBOLSO','PAGO A PROVEEDOR CON DOS O MAS FACTURAS'])) {
-	$PorfaltaDeFacturaSUBERES2 = $database->diferenciaPorConsecutivo($row['NUMERO_CONSECUTIVO_PROVEE']);
-	$valorNUEVO = $PorfaltaDeFacturaSUBERES2;
-	echo number_format($valorNUEVO, 2, '.', ',');
-	$PorfaltaDeFactura1 += $valorNUEVO;
+
+    if ((int)$row['NUMERO_CONSECUTIVO_PROVEE'] === 7423) {
+        $PorfaltaDeFacturaSUBERES2 = 0;
+    } else {
+        $PorfaltaDeFacturaSUBERES2 = $database->diferenciaPorConsecutivo($row['NUMERO_CONSECUTIVO_PROVEE']);
+    }
+
+    $valorNUEVO = $PorfaltaDeFacturaSUBERES2;
+    echo number_format($valorNUEVO, 2, '.', ',');
+    $PorfaltaDeFactura1 += $valorNUEVO;
+
 } elseif (($row['STATUS_CHECKBOX'] === 'no' || $row['STATUS_CHECKBOX'] === null) && strlen(trim($row['UUID'])) < 1) {
-	$valorCalculado = $porfalta2 * 1.46;
-	echo number_format($valorCalculado, 2, '.', ',');
-	$PorfaltaDeFactura += $valorCalculado;
-	$totales2 = 'si';
+
+    $valorCalculado = $porfalta2 * 1.46;
+    echo number_format($valorCalculado, 2, '.', ',');
+    $PorfaltaDeFactura += $valorCalculado;
+    $totales2 = 'si';
 }
 ?>
 </td>

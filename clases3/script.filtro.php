@@ -553,6 +553,22 @@ function STATUS_FINANZAS(FINANZAS_id){
 
 function STATUS_VENTAS(VENTAS_id){
 	var checkBox = document.getElementById("STATUS_VENTAS"+VENTAS_id);
+
+	if(checkBox.checked){
+		// Antes de autorizar por VENTAS, confirmar que el registro tiene los datos mínimos capturados.
+		var confirmarAutorizacion = confirm(
+			"Antes de autorizar, verifica que el registro tenga capturados los siguientes datos:\n\n" +
+			"- MOTIVO DEL GASTO\n" +
+			"- FECHA DE PROGRAMACIÓN DEL PAGO\n\n" +
+			"¿Deseas continuar con la autorización?"
+		);
+
+		if(!confirmarAutorizacion){
+			checkBox.checked = false;
+			return;
+		}
+	}
+
 	var VENTAS_text = checkBox.checked ? "si" : "no";
 	$.ajax({
 		url:'pagoproveedores/controladorPP.php',
