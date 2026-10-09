@@ -499,6 +499,14 @@ if($identioficador != '') {
             <td style="background:#39FF14;"><label>OBSERVACIONES</label></td>
             <td><input type="text" name="OBSERVACIONES_1" value="'.$row["OBSERVACIONES_1"].'"></td>
         </tr>
+<tr style="background:#d2faf1">
+<td><label>EMAIL PARA ENVÍO DE COMPROBANTE DE PAGO</label></td>
+<td><input type="email" class="form-control" name="email_enviacomprobante" value="'.htmlspecialchars(isset($row['email_enviacomprobante']) ? $row['email_enviacomprobante'] : '', ENT_QUOTES, 'UTF-8').'" autocomplete="email" placeholder="correo@proveedor.com">
+<button type="button" class="btn btn-outline-primary enviar-comprobante-pago" data-csrf="'.htmlspecialchars(ComprobantePagoEmail::token(), ENT_QUOTES, 'UTF-8').'">ENVIAR COMPROBANTE</button>
+<small>Guarda el email y carga el comprobante antes de enviarlo.</small>
+<div class="resultado-comprobante-pago" role="status" aria-live="polite"></div></td>
+</tr>
+
 
         <tr>
             <td style="background:#39FF14;"><label>ADJUNTAR ARCHIVO RELACIONADO A ESTE GASTO</label></td>
@@ -541,6 +549,7 @@ if($identioficador != '') {
     } // end while
 
     echo $output;
+require __DIR__.'/script_comprobante_pago.php';
 }
 ?>
 
@@ -621,12 +630,6 @@ if($identioficador != '') {
         var form_data = new FormData();
         form_data.append(nombre, file_obj);
         form_data.append("IPpagoprovee", $("#IPpagoprovee").val());
-		        if (nombre === 'ADJUNTAR_FACTURA_XML') {
-
-            form_data.append("validarRazonSocialXml", "1");
-
-        }
-
 
         $.ajax({
             type: 'POST',
@@ -727,28 +730,6 @@ if($identioficador != '') {
                         : '⚠️ EL RECEPTOR DE LA FACTURA NO ES EPC, INN O EVE520.';
                     $('#3' + nombre).html('<p style="color:red;font-weight:600;">' + msgReceptor + '</p>');
                     $('#' + nombre).val('');
-					              // ── Emisor distinto de la razón social guardada en la solicitud ──
-
-                } else if (resp.indexOf('8^^') === 0) {
-
-                    $('#3' + nombre).html(
-
-                        '<p style="color:red;font-weight:600;">⚠️ LA RAZÓN SOCIAL DEL EMISOR DEL XML ' +
-
-                        'NO COINCIDE CON LA RAZÓN SOCIAL REGISTRADA EN LA SOLICITUD. ' +
-
-                        'El archivo no fue guardado.</p>'
-
-                    );
-
-                    $('#respuestaser').html(
-
-                        '<p style="color:red;font-weight:600;">⚠️ No se guardó el XML porque las razones sociales no coinciden.</p>'
-
-                    );
-
-                    $('#' + nombre).val('');
-
 
                 // ── Éxito: archivo cargado correctamente ──────────────────────
                 } else {

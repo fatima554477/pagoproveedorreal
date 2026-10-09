@@ -549,6 +549,14 @@ $campos_xml = '
 <td width="30%" style="font-weight:bold;"><label>OBSERVACIONES</label></td>
 <td width="70%"><input type="text" name="OBSERVACIONES_1" value="'.$row["OBSERVACIONES_1"].'"></td>
 </tr>
+<tr style="background:#d2faf1">
+<td><label>EMAIL PARA ENVÍO DE COMPROBANTE DE PAGO</label></td>
+<td><input type="email" class="form-control" name="email_enviacomprobante" value="'.htmlspecialchars(isset($row['email_enviacomprobante']) ? $row['email_enviacomprobante'] : '', ENT_QUOTES, 'UTF-8').'" autocomplete="email" placeholder="correo@proveedor.com">
+<button type="button" class="btn btn-outline-primary enviar-comprobante-pago" data-csrf="'.htmlspecialchars(ComprobantePagoEmail::token(), ENT_QUOTES, 'UTF-8').'">ENVIAR COMPROBANTE</button>
+<small>Guarda el email y carga el comprobante antes de enviarlo.</small>
+<div class="resultado-comprobante-pago" role="status" aria-live="polite"></div></td>
+</tr>
+
 <tr>
 <td width="30%" style="font-weight:bold;"><label>ADJUNTAR ARCHIVO RELACIONADO A ESTE GASTO</label></td>
 <td width="70%"><div id="drop_file_zone" ondrop="upload_file2(event,\'ADJUNTAR_ARCHIVO_1\')" ondragover="return false" style="width:300px;">
@@ -610,6 +618,7 @@ $campos_xml = '
     }
     $output .= '</table></form>';
     echo $output;
+require __DIR__.'/script_comprobante_pago.php';
 }
 ?>
 
@@ -704,12 +713,6 @@ function ajax_file_upload2(file_obj, nombre) {
     var form_data = new FormData();
     form_data.append(nombre, file_obj);
     form_data.append("IPpagoprovee", $("#IPpagoprovee").val());
-	    if (nombre === 'ADJUNTAR_FACTURA_XML') {
-
-        form_data.append("validarRazonSocialXml", "1");
-
-    }
-
 
     $.ajax({
         type: 'POST',
@@ -759,27 +762,6 @@ function ajax_file_upload2(file_obj, nombre) {
                     ? '<p style="color:#C82909;font-weight:600;">⚠️ UUID YA REGISTRADO EN COMPROBACIÓN DE GASTOS — ID: <strong>' + numeroGasto + '</strong></p>'
                     : '<p style="color:#C82909;font-weight:600;">⚠️ UUID PREVIAMENTE CARGADO EN COMPROBACIÓN DE GASTOS.</p>';
                 $('#3' + nombre).html(msgGasto);
-                $('#' + nombre).val('');
-				         // ── Emisor distinto de la razón social guardada en la solicitud ──
-
-            } else if (resp.indexOf('8^^') === 0) {
-
-                $('#3' + nombre).html(
-
-                    '<p style="color:red;font-weight:600;">⚠️ LA RAZÓN SOCIAL DEL EMISOR DEL XML ' +
-
-                    'NO COINCIDE CON LA RAZÓN SOCIAL REGISTRADA EN LA SOLICITUD. ' +
-
-                    'El archivo no fue guardado.</p>'
-
-                );
-
-                $('#respuestaser').html(
-
-                    '<p style="color:red;font-weight:600;">⚠️ No se guardó el XML porque las razones sociales no coinciden.</p>'
-
-                );
-
                 $('#' + nombre).val('');
             } else {
                 var result = response.split('^^');

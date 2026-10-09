@@ -3,13 +3,15 @@
 clase EPC INNOVA
 CREADO : 10/mayo/2023
 fecha sandor: 
-fecha fatis : 07/08/2026
+fecha fatis : 07/04/2024
 
 */
 
     define('__ROOT3__', dirname(dirname(__FILE__)));
     require __ROOT3__."/includes/class.epcinn.php";
 
+
+require_once __ROOT3__."/includes/comprobante_pago_email.php";
 
 class accesoclase extends colaboradores {
 
@@ -762,8 +764,11 @@ public function solocargartemp($archivo) {
         $FechaTimbrado, $tipoDeComprobante, $metodoDePago, $formaDePago, $condicionesDePago, $subTotal,
         $TipoCambio, $Moneda, $total, $serie, $folio, $LugarExpedicion, $rfcE, $nombreE,
         $regimenE, $rfcR, $nombreR, $UsoCFDI, $DomicilioFiscalReceptor, $RegimenFiscalReceptor,
-        $UUID, $TImpuestosRetenidos, $TImpuestosTrasladados, $TuaTotalCargos, $Descuento, $Propina, $TUA, $actualiza, $DescripcionConcepto
+        $UUID, $TImpuestosRetenidos, $TImpuestosTrasladados, $TuaTotalCargos, $Descuento, $Propina, $TUA, $actualiza, $DescripcionConcepto, $email_enviacomprobante = null
     ) {
+        if (!ComprobantePagoEmail::validarEmail($email_enviacomprobante)) {
+            return 'Escribe un email válido para el envío del comprobante de pago.';
+        }
         // Limpiar montos
         foreach (['MONTO_TOTAL_COTIZACION_ADEUDO','MONTO_DEPOSITAR','MONTO_FACTURA','MONTO_PROPINA',
                   'MONTO_DEPOSITADO','MONTO_DE_COMISION','PENDIENTE_PAGO','TOTAL_ENPESOS',
@@ -778,6 +783,10 @@ public function solocargartemp($archivo) {
     $NOMBRE_COMERCIAL            = mysqli_real_escape_string($conn, $NOMBRE_COMERCIAL);
     $RAZON_SOCIAL                = mysqli_real_escape_string($conn, $RAZON_SOCIAL);
 	$OBSERVACIONES_1             = mysqli_real_escape_string($conn, $OBSERVACIONES_1);
+        $emailSQL = mysqli_real_escape_string($conn, $email_enviacomprobante === null ? '' : trim($email_enviacomprobante));
+        // Otros formularios que no incluyen el campo conservan el email existente.
+        $emailUpdate = $email_enviacomprobante === null ? '' : "email_enviacomprobante = '".$emailSQL."',";
+
 
         // Obtener nombre comercial
         $queryNC   = mysqli_query($conn, "SELECT P_NOMBRE_COMERCIAL_EMPRESA FROM 02direccionproveedor1 WHERE idRelacion='{$NOMBRE_COMERCIAL}'") or die('P160' . mysqli_error($conn));
@@ -806,6 +815,7 @@ public function solocargartemp($archivo) {
         }
 
         $var1 = "UPDATE 02SUBETUFACTURA SET
+            {$emailUpdate}
             NUMERO_CONSECUTIVO_PROVEE='{$NUMERO_CONSECUTIVO_PROVEE}',ID_RELACIONADO='{$ID_RELACIONADO}',
             NOMBRE_COMERCIAL='{$NOMBRE_COMERCIAL}',RAZON_SOCIAL='{$RAZON_SOCIAL}',VIATICOSOPRO='{$VIATICOSOPRO}',
             RFC_PROVEEDOR='{$RFC_PROVEEDOR}',NUMERO_EVENTO='{$NUMERO_EVENTO}',NOMBRE_EVENTO='{$NOMBRE_EVENTO}',
@@ -840,7 +850,7 @@ public function solocargartemp($archivo) {
             CLASIFICACION_GENERAL,CLASIFICACION_ESPECIFICA,PLACAS_VEHICULO,MONTO_DE_COMISION,POLIZA_NUMERO,
             NOMBRE_DEL_EJECUTIVO,NOMBRE_DEL_AYUDO,OBSERVACIONES_1,TIPO_CAMBIOP,TOTAL_ENPESOS,
             IMPUESTO_HOSPEDAJE,TImpuestosRetenidosIVA,TImpuestosRetenidosISR,descuentos,IVA,
-            PENDIENTE_PAGO,hiddenpagoproveedores,idRelacion,idRelacionU)
+            PENDIENTE_PAGO,hiddenpagoproveedores,idRelacion,idRelacionU,email_enviacomprobante)
             VALUES ('{$NUMERO_CONSECUTIVO_PROVEE}','{$ID_RELACIONADO}','{$NOMBRE_COMERCIAL2}',
             '{$RAZON_SOCIAL}','{$VIATICOSOPRO}','{$RFC_PROVEEDOR}','{$NUMERO_EVENTO}','{$NOMBRE_EVENTO}',
             '{$MOTIVO_GASTO}','{$CONCEPTO_PROVEE}','{$MONTO_TOTAL_COTIZACION_ADEUDO}','{$MONTO_DEPOSITAR}',
@@ -852,7 +862,7 @@ public function solocargartemp($archivo) {
             '{$CLASIFICACION_ESPECIFICA}','{$PLACAS_VEHICULO}','{$MONTO_DE_COMISION}','{$POLIZA_NUMERO}',
             '{$NOMBRE_DEL_EJECUTIVO}','{$NOMBRE_DEL_AYUDO}','{$OBSERVACIONES_1}','{$TIPO_CAMBIOP}',
             '{$TOTAL_ENPESOS}','{$IMPUESTO_HOSPEDAJE}','{$TImpuestosRetenidosIVA}','{$TImpuestosRetenidosISR}',
-            '{$descuentos}','{$IVA}','{$PENDIENTE_PAGO}','{$hiddenpagoproveedores}','{$session}','{$idRelacionU}')";
+            '{$descuentos}','{$IVA}','{$PENDIENTE_PAGO}','{$hiddenpagoproveedores}','{$session}','{$idRelacionU}','{$emailSQL}')";
 
         if ($ENVIARPAGOprovee == 'ENVIARPAGOprovee') {
 
@@ -869,7 +879,7 @@ public function solocargartemp($archivo) {
                 MONTO_PROPINA,TIPO_DE_MONEDA,BANCO_ORIGEN,MONTO_DEPOSITADO,CLASIFICACION_GENERAL,
                 CLASIFICACION_ESPECIFICA,MONTO_DE_COMISION,POLIZA_NUMERO,NOMBRE_DEL_EJECUTIVO,
                 NOMBRE_DEL_AYUDO,OBSERVACIONES_1,TIPO_CAMBIOP,TOTAL_ENPESOS,IMPUESTO_HOSPEDAJE,
-                TImpuestosRetenidosIVA,TImpuestosRetenidosISR,descuentos,IVA,ACTIVO_FIJO,GASTO_FIJO,VIATICOSOPRO
+                TImpuestosRetenidosIVA,TImpuestosRetenidosISR,descuentos,IVA,ACTIVO_FIJO,GASTO_FIJO,VIATICOSOPRO,email_enviacomprobante
                 FROM 02SUBETUFACTURA WHERE id='" . intval($IPpagoprovee) . "' LIMIT 1");
             $registroAnterior = $consultaAnterior ? mysqli_fetch_array($consultaAnterior, MYSQLI_ASSOC) : [];
 
@@ -924,6 +934,7 @@ if ($doctoActual) {
                 'CLASIFICACION_ESPECIFICA' => $CLASIFICACION_ESPECIFICA,
                 'MONTO_DE_COMISION' => $MONTO_DE_COMISION, 'POLIZA_NUMERO' => $POLIZA_NUMERO,
                 'NOMBRE_DEL_EJECUTIVO' => $NOMBRE_DEL_EJECUTIVO, 'NOMBRE_DEL_AYUDO' => $NOMBRE_DEL_AYUDO,
+                'email_enviacomprobante' => $email_enviacomprobante === null ? (isset($registroAnterior['email_enviacomprobante']) ? $registroAnterior['email_enviacomprobante'] : '') : trim($email_enviacomprobante),
                 'OBSERVACIONES_1' => $OBSERVACIONES_1, 'TIPO_CAMBIOP' => $TIPO_CAMBIOP,
                 'TOTAL_ENPESOS' => $TOTAL_ENPESOS, 'IMPUESTO_HOSPEDAJE' => $IMPUESTO_HOSPEDAJE,
                 'TImpuestosRetenidosIVA' => $TImpuestosRetenidosIVA,
@@ -1354,79 +1365,5 @@ public function borrar_historico_xml($nombretabla, $idusuario) {
         $_SESSION['P_NOMBRE_COMERCIAL_EMPRESA12'] = $row['P_NOMBRE_COMERCIAL_EMPRESA'];
         return $row['idusuario'] . '^^^^' . $row['P_NOMBRE_COMERCIAL_EMPRESA'];
     }
-	/**
-
-	 * Devuelve la clasificación y la última calificación registrada para un proveedor.
-
-	 * La clasificación vive en 02usuarios y la calificación sigue el mismo criterio
-
-	 * de la carpeta calificacion: el registro con el id más reciente.
-
-	 */
-
-	public function obtenerCalificacionProveedor($idProveedor = '', $rfc = ''){
-
-		$conn = $this->db();
-
-		$idProveedor = (int) $idProveedor;
-
-		$rfc = trim((string) $rfc);
-
-
-
-		if($idProveedor < 1 && $rfc !== ''){
-
-			$rfcSeguro = mysqli_real_escape_string($conn, $rfc);
-
-			$resultadoProveedor = mysqli_query($conn,
-
-				"SELECT idRelacion FROM 02direccionproveedor1 WHERE P_RFC_MTDP = '".$rfcSeguro."' LIMIT 1");
-
-			$proveedor = $resultadoProveedor ? mysqli_fetch_array($resultadoProveedor, MYSQLI_ASSOC) : null;
-
-			$idProveedor = $proveedor ? (int) $proveedor['idRelacion'] : 0;
-
-		}
-
-
-
-		if($idProveedor < 1){
-
-			return array('encontrado' => false, 'clasificacion' => '', 'calificacion' => '');
-
-		}
-
-
-
-		$resultado = mysqli_query($conn, "SELECT usuarios.EVALUACION,
-
-			(SELECT ADJUNTO_CALIFICACION FROM 02CALIFICACION
-
-			 WHERE idRelacion = usuarios.id ORDER BY id DESC LIMIT 1) AS CALIFICACION
-
-			FROM 02usuarios AS usuarios WHERE usuarios.id = '".$idProveedor."' LIMIT 1");
-
-		$row = $resultado ? mysqli_fetch_array($resultado, MYSQLI_ASSOC) : null;
-
-
-
-		$presentacionesClasificacion = array(
-			'DE_CASA' => 'DE CASA',
-			'SEGUNDA_OPCION' => 'SEGUNDA OPCIÓN',
-			'TERCERA_OPCION' => 'TERCERA OPCIÓN',
-			'VETADO' => 'VETADO'
-		);
-		$evaluacion = $row ? trim((string) $row['EVALUACION']) : '';
-
-		return array(
-			'encontrado' => (bool) $row,
-			'clasificacion' => isset($presentacionesClasificacion[$evaluacion])
-				? $presentacionesClasificacion[$evaluacion] : 'SIN CLASIFICAR',
-			'calificacion' => $row && trim((string) $row['CALIFICACION']) !== '' ? $row['CALIFICACION'] : 'SIN CALIFICAR'
-
-		);
-
-	}
-
 }
 ?>
