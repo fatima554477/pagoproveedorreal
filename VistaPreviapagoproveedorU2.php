@@ -538,6 +538,12 @@ if($identioficador != '') {
             <td style="background:#dfd9f3;"><label>OBSERVACIONES</label></td>
             <td><input type="text" readonly style="background:#d7bde2" name="OBSERVACIONES_1" value="'.$row["OBSERVACIONES_1"].'"></td>
         </tr>
+<tr style="background:#d2faf1">
+<td><label>EMAIL PARA ENVÍO DE COMPROBANTE DE PAGO</label></td>
+<td><input type="email" class="form-control" name="email_enviacomprobante" value="'.htmlspecialchars(isset($row['email_enviacomprobante']) ? $row['email_enviacomprobante'] : '', ENT_QUOTES, 'UTF-8').'" autocomplete="email" placeholder="correo@proveedor.com">
+<small>Guarda el correo con los cambios del registro.</small>
+</td>
+</tr>
 
         <tr>
             <td style="background:#dfd9f3;"><label>ADJUNTAR ARCHIVO RELACIONADO A ESTE GASTO</label></td>

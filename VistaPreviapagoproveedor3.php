@@ -500,11 +500,10 @@ if($identioficador != '') {
             <td><input type="text" name="OBSERVACIONES_1" value="'.$row["OBSERVACIONES_1"].'"></td>
         </tr>
 <tr style="background:#d2faf1">
-<td><label>EMAIL PARA ENVÍO DE COMPROBANTE DE PAGO</label></td>
+<td ><label>EMAIL PARA ENVÍO DE COMPROBANTE DE PAGO<br><a style="color:red;font-size:11px">OBLIGATORIO</a></label></td>
 <td><input type="email" class="form-control" name="email_enviacomprobante" value="'.htmlspecialchars(isset($row['email_enviacomprobante']) ? $row['email_enviacomprobante'] : '', ENT_QUOTES, 'UTF-8').'" autocomplete="email" placeholder="correo@proveedor.com">
-<button type="button" class="btn btn-outline-primary enviar-comprobante-pago" data-csrf="'.htmlspecialchars(ComprobantePagoEmail::token(), ENT_QUOTES, 'UTF-8').'">ENVIAR COMPROBANTE</button>
-<small>Guarda el email y carga el comprobante antes de enviarlo.</small>
-<div class="resultado-comprobante-pago" role="status" aria-live="polite"></div></td>
+<small>Guarda el correo con los cambios del registro.</small>
+</td>
 </tr>
 
 

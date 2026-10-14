@@ -53,6 +53,8 @@ $STATUS_DE_PAGO = '<select required="" name="STATUS_DE_PAGO">
 </select>';
 		
 
+	$tieneComprobanteTransferencia = false;
+	$CONPROBANTE_TRANSFERENCIA = '';
 	$queryVISTAPREV = $pagoproveedores->Listado_subefacturaDOCTOS($row['id']);		
 	while($rowDOCTOS = mysqli_fetch_array($queryVISTAPREV))
 	{
@@ -77,7 +79,7 @@ $STATUS_DE_PAGO = '<select required="" name="STATUS_DE_PAGO">
 			//$ADJUNTAR_COTIZACION = "";
 		}
         
-        if($rowDOCTOS["CONPROBANTE_TRANSFERENCIA"]!=""){$CONPROBANTE_TRANSFERENCIA =  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["CONPROBANTE_TRANSFERENCIA"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>'; 
+        if(isset($rowDOCTOS["CONPROBANTE_TRANSFERENCIA"]) && trim($rowDOCTOS["CONPROBANTE_TRANSFERENCIA"]) !== ''){$tieneComprobanteTransferencia = true; $CONPROBANTE_TRANSFERENCIA =  "<a target='_blank' href='includes/archivos/".$rowDOCTOS["CONPROBANTE_TRANSFERENCIA"]."'>Visualizar!</a>"." <span id='".$rowDOCTOS['id']."' class='view_dataSBborrar2' style='cursor:pointer;color:blue;'>Borrar!</span> <span > ".$rowDOCTOS['fechaingreso']."</span>".'<br/>';
 		}	else{
 			//$CONPROBANTE_TRANSFERENCIA = "";
 		}
@@ -397,7 +399,7 @@ $campos_xml = '
 <td width="70%"><input type="text" id="NOMBRE_EVENTO_INPUT" style="width:80%;" name="NOMBRE_EVENTO" value="'.$row["NOMBRE_EVENTO"].'"></td>
 </tr> 
 <tr>
-<td width="30%" style="font-weight:bold;"><label>MOTIVO DEL GASTO</label></td>
+<td width="30%" style="font-weight:bold;"><label>MOTIVO DEL GASTO<br><a style="color:red;font-size:11px">OBLIGATORIO</a></label></td>
 <td width="70%"><input type="text" name="MOTIVO_GASTO" value="'.$row["MOTIVO_GASTO"].'"></td>
 </tr> 
 <tr>
@@ -409,7 +411,7 @@ $campos_xml = '
 <td width="70%"><input type="text" name="MONTO_TOTAL_COTIZACION_ADEUDO" value="'.$row["MONTO_TOTAL_COTIZACION_ADEUDO"].'"></td>
 </tr> 
 <tr>
-<td width="30%" style="font-weight:bold;"><label>SUB TOTAL:</label></td>
+<td width="30%" style="font-weight:bold;"><label>SUB TOTAL:<br><a style="color:red;font-size:11px">OBLIGATORIO</a></label></td>
 <td width="70%"><input type="text" name="MONTO_FACTURA" id="montoTotalEvento" value="'.$row["MONTO_FACTURA"].'"></td>
 </tr>
 <tr>
@@ -498,7 +500,7 @@ $campos_xml = '
 
 
 <tr>
-<td width="30%" style="font-weight:bold;"><label>FECHA DE PROGRAMACIÓN DEL PAGO</label></td>
+<td width="30%" style="font-weight:bold;"><label>FECHA DE PROGRAMACIÓN DEL PAGO<br><a style="color:red;font-size:11px">OBLIGATORIO</a></label></td>
 <td width="70%"><input type="date" name="FECHA_DE_PAGO" value="'.$row["FECHA_DE_PAGO"].'"></td>
 </tr>  
 <tr style="background: #f1a766">
@@ -684,13 +686,13 @@ $campos_xml = '
 <td width="30%" style="font-weight:bold;"><label>OBSERVACIONES</label></td>
 <td width="70%"><input type="text" name="OBSERVACIONES_1" value="'.$row["OBSERVACIONES_1"].'"></td>
 </tr>
-<tr style="background:#d2faf1">
+'.($tieneComprobanteTransferencia ? '<tr style="background:#d2faf1">
 <td><label>EMAIL PARA ENVÍO DE COMPROBANTE DE PAGO</label></td>
 <td><input type="email" class="form-control" name="email_enviacomprobante" value="'.htmlspecialchars(isset($row['email_enviacomprobante']) ? $row['email_enviacomprobante'] : '', ENT_QUOTES, 'UTF-8').'" autocomplete="email" placeholder="correo@proveedor.com">
 <button type="button" class="btn btn-outline-primary enviar-comprobante-pago" data-csrf="'.htmlspecialchars(ComprobantePagoEmail::token(), ENT_QUOTES, 'UTF-8').'">ENVIAR COMPROBANTE</button>
 <small>Guarda el email y carga el comprobante antes de enviarlo.</small>
 <div class="resultado-comprobante-pago" role="status" aria-live="polite"></div></td>
-</tr>
+</tr>' : '').'
 
 <tr>
 <td width="30%" style="font-weight:bold;"><label>ADJUNTAR ARCHIVO RELACIONADO A ESTE GASTO</label></td>

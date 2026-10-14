@@ -578,6 +578,8 @@ public function solocargartemp($archivo) {
 
         if ($actualiza !== 'true') return;
 
+        $descripcionSQL = mysqli_real_escape_string($conn, (string)$DescripcionConcepto);
+
         $row = $this->busca_02XML($ultimo_id);
         $existe = ($row['ultimo_id'] != 0 && $row['ultimo_id'] != '');
 
@@ -591,7 +593,7 @@ public function solocargartemp($archivo) {
             `UUID`='{$UUID}',`TuaTotalCargos`='{$TuaTotalCargos}',`TUA`='{$TUA}',
             `Propina`='{$Propina}',`Descuento`='{$Descuento}',
             `TImpuestosRetenidos`='{$TImpuestosRetenidos}',`TImpuestosTrasladados`='{$TImpuestosTrasladados}',
-            DescripcionConcepto='{$DescripcionConcepto}'";
+            DescripcionConcepto='{$descripcionSQL}'";
 
         if ($existe) {
             mysqli_query($conn, "UPDATE `02XML` SET {$campos} WHERE `ultimo_id`='{$ultimo_id}'") or die('P352' . mysqli_error($conn));
@@ -606,7 +608,7 @@ public function solocargartemp($archivo) {
                 '{$LugarExpedicion}','{$rfcE}','{$nombreE}','{$regimenE}','{$rfcR}','{$nombreR}','{$UsoCFDI}',
                 '{$DomicilioFiscalReceptor}','{$RegimenFiscalReceptor}','{$UUID}','{$TImpuestosRetenidos}',
                 '{$TImpuestosTrasladados}','{$session}','{$ultimo_id}','{$TuaTotalCargos}','{$Descuento}',
-                '{$TUA}','{$Propina}','{$DescripcionConcepto}')") or die('P350' . mysqli_error($conn));
+                '{$TUA}','{$Propina}','{$descripcionSQL}')") or die('P350' . mysqli_error($conn));
         }
     }
 
@@ -666,6 +668,7 @@ public function solocargartemp($archivo) {
         $ClaveProdServ        = $regreso['ClaveProdServ'];
         $Unidad               = $regreso['Unidad'];
         $Descripcion          = $regreso['Descripcion'];
+        $descripcionSQL       = mysqli_real_escape_string($conn, (string)$Descripcion);
         $ClaveUnidad          = $regreso['ClaveUnidad'];
         $NoIdentificacion     = $regreso['NoIdentificacion'];
         $TuaTotalCargos       = isset($regreso['TuaTotalCargos']) ? $regreso['TuaTotalCargos'] : '';
@@ -685,7 +688,7 @@ public function solocargartemp($archivo) {
             `UUID`='{$UUID}',`TuaTotalCargos`='{$TuaTotalCargos}',`TUA`='{$TUA}',
             `Propina`='{$Propina}',`Descuento`='{$Descuento}',
             CantidadConcepto='{$Cantidad}',ValorUnitarioConcepto='{$ValorUnitario}',ImporteConcepto='{$Importe}',
-            ClaveProdServConcepto='{$ClaveProdServ}',UnidadConcepto='{$Unidad}',DescripcionConcepto='{$Descripcion}',
+            ClaveProdServConcepto='{$ClaveProdServ}',UnidadConcepto='{$Unidad}',DescripcionConcepto='{$descripcionSQL}',
             ClaveUnidadConcepto='{$ClaveUnidad}',NoIdentificacionConcepto='{$NoIdentificacion}',
             `TImpuestosRetenidos`='{$TImpuestosRetenidos}',`TImpuestosTrasladados`='{$TImpuestosTrasladados}'";
 
@@ -705,7 +708,7 @@ public function solocargartemp($archivo) {
                 '{$DomicilioFiscalReceptor}','{$RegimenFiscalReceptor}','{$UUID}','{$TImpuestosRetenidos}',
                 '{$TImpuestosTrasladados}','{$session}','{$ultimo_id}','{$TuaTotalCargos}','{$Descuento}',
                 '{$TUA}','{$Propina}','{$Cantidad}','{$ValorUnitario}','{$Importe}','{$ClaveProdServ}',
-                '{$Unidad}','{$Descripcion}','{$ClaveUnidad}','{$NoIdentificacion}')") or die('P350' . mysqli_error($conn));
+                '{$Unidad}','{$descripcionSQL}','{$ClaveUnidad}','{$NoIdentificacion}')") or die('P350' . mysqli_error($conn));
             echo "Ingresado";
         } else {
             mysqli_query($conn, "UPDATE {$tabla} SET {$camposComunes} WHERE `ultimo_id`='{$ultimo_id}'") or die('P352' . mysqli_error($conn));
@@ -783,6 +786,7 @@ public function solocargartemp($archivo) {
     $NOMBRE_COMERCIAL            = mysqli_real_escape_string($conn, $NOMBRE_COMERCIAL);
     $RAZON_SOCIAL                = mysqli_real_escape_string($conn, $RAZON_SOCIAL);
 	$OBSERVACIONES_1             = mysqli_real_escape_string($conn, $OBSERVACIONES_1);
+    $conceptoSQL                 = mysqli_real_escape_string($conn, (string)$CONCEPTO_PROVEE);
         $emailSQL = mysqli_real_escape_string($conn, $email_enviacomprobante === null ? '' : trim($email_enviacomprobante));
         // Otros formularios que no incluyen el campo conservan el email existente.
         $emailUpdate = $email_enviacomprobante === null ? '' : "email_enviacomprobante = '".$emailSQL."',";
@@ -819,7 +823,7 @@ public function solocargartemp($archivo) {
             NUMERO_CONSECUTIVO_PROVEE='{$NUMERO_CONSECUTIVO_PROVEE}',ID_RELACIONADO='{$ID_RELACIONADO}',
             NOMBRE_COMERCIAL='{$NOMBRE_COMERCIAL}',RAZON_SOCIAL='{$RAZON_SOCIAL}',VIATICOSOPRO='{$VIATICOSOPRO}',
             RFC_PROVEEDOR='{$RFC_PROVEEDOR}',NUMERO_EVENTO='{$NUMERO_EVENTO}',NOMBRE_EVENTO='{$NOMBRE_EVENTO}',
-            MOTIVO_GASTO='{$MOTIVO_GASTO}',CONCEPTO_PROVEE='{$CONCEPTO_PROVEE}',
+            MOTIVO_GASTO='{$MOTIVO_GASTO}',CONCEPTO_PROVEE='{$conceptoSQL}',
             MONTO_TOTAL_COTIZACION_ADEUDO='{$MONTO_TOTAL_COTIZACION_ADEUDO}',MONTO_DEPOSITAR='{$MONTO_DEPOSITAR}',
             MONTO_PROPINA='{$MONTO_PROPINA}',PENDIENTE_PAGO='{$PENDIENTE_PAGO}',
             FECHA_AUTORIZACION_RESPONSABLE='{$FECHA_AUTORIZACION_RESPONSABLE}',
@@ -853,7 +857,7 @@ public function solocargartemp($archivo) {
             PENDIENTE_PAGO,hiddenpagoproveedores,idRelacion,idRelacionU,email_enviacomprobante)
             VALUES ('{$NUMERO_CONSECUTIVO_PROVEE}','{$ID_RELACIONADO}','{$NOMBRE_COMERCIAL2}',
             '{$RAZON_SOCIAL}','{$VIATICOSOPRO}','{$RFC_PROVEEDOR}','{$NUMERO_EVENTO}','{$NOMBRE_EVENTO}',
-            '{$MOTIVO_GASTO}','{$CONCEPTO_PROVEE}','{$MONTO_TOTAL_COTIZACION_ADEUDO}','{$MONTO_DEPOSITAR}',
+            '{$MOTIVO_GASTO}','{$conceptoSQL}','{$MONTO_TOTAL_COTIZACION_ADEUDO}','{$MONTO_DEPOSITAR}',
             '{$MONTO_PROPINA}','{$FECHA_AUTORIZACION_RESPONSABLE}','{$FECHA_AUTORIZACION_AUDITORIA}',
             '{$FECHA_DE_LLENADO}','{$MONTO_FACTURA}','{$TIPO_DE_MONEDA}','{$PFORMADE_PAGO}',
             '{$FECHA_DE_PAGO}','{$FECHA_A_DEPOSITAR}','{$STATUS_DE_PAGO}','{$ACTIVO_FIJO}','{$GASTO_FIJO}',
