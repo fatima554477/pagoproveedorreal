@@ -138,13 +138,7 @@ if($action == "ajax"){
 	$P_NUMERO_CUENTA_SWIFT_1 = isset($_POST["P_NUMERO_CUENTA_SWIFT_1"]) ? trim($_POST["P_NUMERO_CUENTA_SWIFT_1"]) : "";
 	$FOTO_ESTADO_PROVEE = isset($_POST["FOTO_ESTADO_PROVEE"]) ? trim($_POST["FOTO_ESTADO_PROVEE"]) : "";
 	$ULTIMA_CARGA_DATOBANCA = isset($_POST["ULTIMA_CARGA_DATOBANCA"]) ? trim($_POST["ULTIMA_CARGA_DATOBANCA"]) : "";
-	
-	if($_SESSION['num_evento'] == true) {
-		$NUMERO_EVENTO = $_SESSION['num_evento'];
-	}
-	if($_POST['NUMERO_EVENTO'] == true) {
-		$NUMERO_EVENTO = $_POST['NUMERO_EVENTO'];
-	}
+
 
 	$per_page = intval($_POST["per_page"]);
 	$max_per_page = 500;
@@ -1030,10 +1024,10 @@ if (!function_exists('renderDocumentLinks')) {
 		return $filePaths;
 	}
 
-	function renderDocumentLinks($rawValue) {
+	function renderDocumentLinks($rawValue, $separador = '<br/>') {
 		$links = '';
 		foreach ((array)documentFilePaths($rawValue) as $filePath) {
-			$links .= '<a href="' . htmlspecialchars($filePath, ENT_QUOTES, 'UTF-8') . '" target="_blank">Ver!</a><br/>';
+			$links .= '<a href="' . htmlspecialchars($filePath, ENT_QUOTES, 'UTF-8') . '" target="_blank">Ver!</a>'.$separador;
 		}
 		return $links;
 	}
@@ -1109,12 +1103,18 @@ $ADJUNTAR_FACTURA_PDF = ''; $ADJUNTAR_FACTURA_XML = ''; $ADJUNTAR_COTIZACION = '
 $ADJUNTAR_ARCHIVO_1 = ''; $COMPLEMENTOS_PAGO_PDF = ''; $COMPLEMENTOS_PAGO_XML = ''; $CANCELACIONES_PDF = '';
 $CANCELACIONES_XML = ''; $ADJUNTAR_FACTURA_DE_COMISION_PDF = ''; $archivosAdjuntos1 = array();$ADJUNTAR_FACTURA_DE_COMISION_XML = '';
 $CALCULO_DE_COMISION = ''; $COMPROBANTE_DE_DEVOLUCION = ''; $NOTA_DE_CREDITO_COMPRA = ''; $FOTO_ESTADO_PROVEE11 = '';
+require_once dirname(dirname(__DIR__)).'/includes/comprobante_pago_email.php';
+$historialComprobante = ComprobantePagoEmail::historial($database->mysqli, $row['02SUBETUFACTURAid']);
 $querycontrasDOCTOS = $database->Listado_subefacturaDOCTOS($row['02SUBETUFACTURAid']);
 while ($rowDOCTOS = mysqli_fetch_array($querycontrasDOCTOS)) {
 	$ADJUNTAR_FACTURA_PDF            .= renderDocumentLinks($rowDOCTOS["ADJUNTAR_FACTURA_PDF"]);
 	$ADJUNTAR_FACTURA_XML            .= renderDocumentLinks($rowDOCTOS["ADJUNTAR_FACTURA_XML"]);
 	$ADJUNTAR_COTIZACION             .= renderDocumentLinks($rowDOCTOS["ADJUNTAR_COTIZACION"]);
-	$CONPROBANTE_TRANSFERENCIA       .= renderDocumentLinks($rowDOCTOS["CONPROBANTE_TRANSFERENCIA"]);
+	$nombreComprobante = trim((string)$rowDOCTOS['CONPROBANTE_TRANSFERENCIA']);
+    if ($nombreComprobante !== '') {
+        $CONPROBANTE_TRANSFERENCIA .= '<div style="display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap">'.renderDocumentLinks($nombreComprobante, ' ')
+            .ComprobantePagoEmail::estadoArchivo($nombreComprobante, dirname(dirname(__DIR__)).'/includes/archivos', $historialComprobante).'</div>';
+    }
 	$COMPLEMENTOS_PAGO_PDF           .= renderDocumentLinks($rowDOCTOS["COMPLEMENTOS_PAGO_PDF"]);
 	$COMPLEMENTOS_PAGO_XML           .= renderDocumentLinks($rowDOCTOS["COMPLEMENTOS_PAGO_XML"]);
 	$CANCELACIONES_PDF               .= renderDocumentLinks($rowDOCTOS["CANCELACIONES_PDF"]);
