@@ -686,13 +686,12 @@ $campos_xml = '
 <td width="30%" style="font-weight:bold;"><label>OBSERVACIONES</label></td>
 <td width="70%"><input type="text" name="OBSERVACIONES_1" value="'.$row["OBSERVACIONES_1"].'"></td>
 </tr>
-'.($tieneComprobanteTransferencia ? '<tr style="background:#d2faf1">
-<td><label>EMAIL PARA ENVÍO DE COMPROBANTE DE PAGO</label></td>
+<tr >
+<td style="font-weight:bold;"><label>EMAIL PARA ENVÍO DE COMPROBANTE DE PAGO</label></td>
 <td><input type="email" class="form-control" name="email_enviacomprobante" value="'.htmlspecialchars(isset($row['email_enviacomprobante']) ? $row['email_enviacomprobante'] : '', ENT_QUOTES, 'UTF-8').'" autocomplete="email" placeholder="correo@proveedor.com">
-<button type="button" class="btn btn-outline-primary enviar-comprobante-pago" data-csrf="'.htmlspecialchars(ComprobantePagoEmail::token(), ENT_QUOTES, 'UTF-8').'">ENVIAR COMPROBANTE</button>
-<small>Guarda el email y carga el comprobante antes de enviarlo.</small>
-<div class="resultado-comprobante-pago" role="status" aria-live="polite"></div></td>
-</tr>' : '').'
+<small>GUARDAR Y ENVIAR guarda los datos y envía el comprobante al correo indicado. Carga el comprobante antes de enviarlo.</small>
+</td>
+</tr>
 
 <tr>
 <td width="30%" style="font-weight:bold;"><label>ADJUNTAR ARCHIVO RELACIONADO A ESTE GASTO</label></td>
@@ -714,13 +713,18 @@ $campos_xml = '
 <td width="30%"><label>FECHA DE ÚLTIMA CARGA:</label></td>
 <td width="70%"><input type="text" readonly="readonly" style="background:#decaf1" name="FECHA_DE_LLENADO" value="'.$row["FECHA_DE_LLENADO"].'"></td>
 </tr>
-</table>
-<tr>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <td width="30%"><label><strong style="font-size:22px;"></strong></label></td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<tr>
+    <td width="30%"></td>
     <td width="70%" class="align-middle">
-        <button class="btn btn-sm btn-outline-success px-5" type="button" id="clickPAGOP">GUARDAR</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <div id="respuestaser" class="d-inline-block ms-3" style="color:#f5f5f5;text-shadow:1px 1px 1px #919191,1px 2px 1px #919191,1px 3px 1px #919191,1px 4px 1px #919191,1px 5px 1px #919191,1px 6px 1px #919191,1px 7px 1px #919191,1px 8px 1px #919191,1px 9px 1px #919191,1px 10px 1px #919191,1px 18px 6px rgba(16,16,16,0.4),1px 22px 10px rgba(16,16,16,0.2),1px 25px 35px rgba(16,16,16,0.2),1px 30px 60px rgba(16,16,16,0.4);"></div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div class="d-flex flex-wrap align-items-center gap-3">
+        <button class="btn btn-sm btn-outline-success px-5" type="button" id="clickPAGOP">GUARDAR</button>
+        <button type="button" class="btn btn-sm btn-outline-primary px-5 enviar-comprobante-pago" data-guardar-antes="1" data-csrf="'.htmlspecialchars(ComprobantePagoEmail::token(), ENT_QUOTES, 'UTF-8').'">GUARDAR Y ENVIAR</button>
+        <div class="flex-grow-1" style="min-width:180px;overflow-wrap:anywhere;">
+        <div id="respuestaser" role="status" aria-live="polite"></div>
+        <div class="resultado-comprobante-pago" role="status" aria-live="polite"></div>
+        </div>
         <button class="btn btn-sm btn-outline-success px-5" type="button" data-bs-dismiss="modal">CERRAR</button>
+        </div>
         <input type="hidden" value="ENVIARPAGOprovee" name="ENVIARPAGOprovee"/>
         <input type="hidden" value="'.$identioficador.'" name="IPpagoprovee" id="IPpagoprovee"/>
     </td>
