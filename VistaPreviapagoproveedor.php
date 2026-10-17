@@ -688,7 +688,7 @@ $campos_xml = '
 </tr>
 <tr >
 <td style="font-weight:bold;"><label>EMAIL PARA ENVÍO DE COMPROBANTE DE PAGO</label></td>
-<td><input type="email" class="form-control" name="email_enviacomprobante" value="'.htmlspecialchars(isset($row['email_enviacomprobante']) ? $row['email_enviacomprobante'] : '', ENT_QUOTES, 'UTF-8').'" autocomplete="email" placeholder="correo@proveedor.com">
+<td><input type="email" multiple class="form-control" name="email_enviacomprobante" value="'.htmlspecialchars(isset($row['email_enviacomprobante']) ? $row['email_enviacomprobante'] : '', ENT_QUOTES, 'UTF-8').'" autocomplete="email" placeholder="uno@proveedor.com, dos@proveedor.com">
 <small>GUARDAR Y ENVIAR guarda los datos y envía el comprobante al correo indicado. Carga el comprobante antes de enviarlo.</small>
 </td>
 </tr>

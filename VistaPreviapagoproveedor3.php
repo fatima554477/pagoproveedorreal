@@ -501,8 +501,8 @@ if($identioficador != '') {
         </tr>
 <tr style="background:#d2faf1">
 <td ><label>EMAIL PARA ENVÍO DE COMPROBANTE DE PAGO<br><a style="color:red;font-size:11px">OBLIGATORIO</a></label></td>
-<td><input type="email" class="form-control" name="email_enviacomprobante" value="'.htmlspecialchars(isset($row['email_enviacomprobante']) ? $row['email_enviacomprobante'] : '', ENT_QUOTES, 'UTF-8').'" autocomplete="email" placeholder="correo@proveedor.com">
-<small>Guarda el correo con los cambios del registro.</small>
+<td><input type="email" multiple class="form-control" name="email_enviacomprobante" '.(isset($row['STATUS_VENTAS']) && strtolower(trim((string)$row['STATUS_VENTAS'])) === 'si' ? 'readonly="readonly" style="background:#d7bde2"' : '').' value="'.htmlspecialchars(isset($row['email_enviacomprobante']) ? $row['email_enviacomprobante'] : '', ENT_QUOTES, 'UTF-8').'" autocomplete="email" placeholder="uno@proveedor.com, dos@proveedor.com">
+<small>Puedes guardar uno o varios correos separados por coma ejemplo: uno@proveedor.com, dos@proveedor.com </small>
 </td>
 </tr>
 

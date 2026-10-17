@@ -849,7 +849,7 @@ $campos_xml = '
 </tr>
 <tr style="background:#d2faf1">
 <td><label>EMAIL PARA ENVÍO DE COMPROBANTE DE PAGO</label></td>
-<td><input type="email" class="form-control" name="email_enviacomprobante" value="'.htmlspecialchars(isset($row['email_enviacomprobante']) ? $row['email_enviacomprobante'] : '', ENT_QUOTES, 'UTF-8').'" autocomplete="email" placeholder="correo@proveedor.com">
+<td><input type="email" multiple class="form-control" name="email_enviacomprobante" '.(isset($row['STATUS_VENTAS']) && strtolower(trim((string)$row['STATUS_VENTAS'])) === 'si' ? 'readonly="readonly" style="background:#d7bde2"' : '').' value="'.htmlspecialchars(isset($row['email_enviacomprobante']) ? $row['email_enviacomprobante'] : '', ENT_QUOTES, 'UTF-8').'" autocomplete="email" placeholder="uno@proveedor.com, dos@proveedor.com">
 <button type="button" class="btn btn-outline-primary enviar-comprobante-pago" data-csrf="'.htmlspecialchars(ComprobantePagoEmail::token(), ENT_QUOTES, 'UTF-8').'">ENVIAR COMPROBANTE</button>
 <small>Guarda el email y carga el comprobante antes de enviarlo.</small>
 <div class="resultado-comprobante-pago" role="status" aria-live="polite"></div></td>

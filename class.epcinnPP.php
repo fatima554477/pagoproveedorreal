@@ -770,7 +770,7 @@ public function solocargartemp($archivo) {
         $UUID, $TImpuestosRetenidos, $TImpuestosTrasladados, $TuaTotalCargos, $Descuento, $Propina, $TUA, $actualiza, $DescripcionConcepto, $email_enviacomprobante = null
     ) {
         if (!ComprobantePagoEmail::validarEmail($email_enviacomprobante)) {
-            return 'Escribe un email válido para el envío del comprobante de pago.';
+            return 'Escribe correos válidos separados por comas para el envío del comprobante de pago.';
         }
         // Limpiar montos
         foreach (['MONTO_TOTAL_COTIZACION_ADEUDO','MONTO_DEPOSITAR','MONTO_FACTURA','MONTO_PROPINA',

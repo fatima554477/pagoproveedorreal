@@ -540,8 +540,8 @@ if($identioficador != '') {
         </tr>
 <tr style="background:#d2faf1">
 <td><label>EMAIL PARA ENVÍO DE COMPROBANTE DE PAGO</label></td>
-<td><input type="email" class="form-control" name="email_enviacomprobante" value="'.htmlspecialchars(isset($row['email_enviacomprobante']) ? $row['email_enviacomprobante'] : '', ENT_QUOTES, 'UTF-8').'" autocomplete="email" placeholder="correo@proveedor.com">
-<small>Guarda el correo con los cambios del registro.</small>
+<td><input type="email" multiple class="form-control" name="email_enviacomprobante" '.(isset($row['STATUS_VENTAS']) && strtolower(trim((string)$row['STATUS_VENTAS'])) === 'si' ? 'readonly="readonly" style="background:#d7bde2"' : '').' value="'.htmlspecialchars(isset($row['email_enviacomprobante']) ? $row['email_enviacomprobante'] : '', ENT_QUOTES, 'UTF-8').'" autocomplete="email" placeholder="uno@proveedor.com, dos@proveedor.com">
+<small>GPuedes guardar uno o varios correos separados por coma ejemplo: uno@proveedor.com, dos@proveedor.com </small>
 </td>
 </tr>
 
@@ -625,7 +625,7 @@ if($identioficador != '') {
                         var r = $.trim(data).toLowerCase();
                         if (r.indexOf('actualizado') !== -1 || r.indexOf('ingresado') !== -1) {
                             $('#dataModal').modal('hide');
-                            if (typeof loadAUT === 'function') loadAUT(1);
+                            if (typeof load === 'function') load(1);
                             $("#mensajepagoproveedores").html("<span id='ACTUALIZADO'>" + $.trim(data) + "</span>");
                             $("#respuestaser2").html("<span id='ACTUALIZADO'>" + $.trim(data) + "</span>");
                         } else {
@@ -641,6 +641,7 @@ if($identioficador != '') {
             });
     });
 
+
     // ── Subida de archivos (zonas activas: COMPLEMENTOS_PAGO_XML y COMPLEMENTOS_PAGO_PDF) ──
     window.upload_file2 = function (e, name) {
         e.preventDefault();
@@ -654,7 +655,7 @@ if($identioficador != '') {
         input.onchange = function () { ajax_file_upload2(input.files[0], name); };
     };
 
-function ajax_file_upload2(file_obj, nombre) {
+  function ajax_file_upload2(file_obj, nombre) {
     if (!file_obj) return;
 
     var form_data = new FormData();
@@ -718,12 +719,9 @@ function ajax_file_upload2(file_obj, nombre) {
                     'Intenta de nuevo o contacta a soporte técnico.</p>'
                 );
                 $('#' + nombre).val('');
-				
 
             // ── UUID duplicado en Pago Proveedores (02XML) ────────────────
-            }
-
-			else if (resp.indexOf('3^^') === 0) {
+            } else if (resp.indexOf('3^^') === 0) {
                 var partes = resp.split('^^');
                 var numeroSolicitud = partes[1] ? $.trim(partes[1]) : '';
                 var numeroEvento    = partes[2] ? $.trim(partes[2]) : '';
@@ -767,12 +765,12 @@ function ajax_file_upload2(file_obj, nombre) {
             // ── Éxito: archivo cargado correctamente ──────────────────────
             } else {
                 var result = response.split('^^');
-                 $('#' + nombre).val($.trim(result[0] || ''));
+                $('#' + nombre).val($.trim(result[0] || ''));
 
                 $('#3' + nombre).html('<p style="color:green;">✅ <a target="_blank" href="includes/archivos/' + $.trim(result[0]) + '">Visualizar archivo</a></p>');
 
-                // ── Para XML, mostrar UUID ──
-                   if (nombre === 'ADJUNTAR_FACTURA_XML') {
+                // ── Para XML de factura ──
+                  if (nombre === 'ADJUNTAR_FACTURA_XML') {
                     var nombreArchivoXml = $.trim(result[0]);
                     $('#3' + nombre).html(
                         '<p style="color:green;">✅ <a target="_blank" href="includes/archivos/'
@@ -783,7 +781,8 @@ function ajax_file_upload2(file_obj, nombre) {
 
                     var formaPago = $.trim(result[2] || '');
                     if (formaPago.length) {
-                        $('select[name="PFORMADE_PAGO"], input[name="PFORMADE_PAGO"]').val(formaPago);
+                        $('select[name="PFORMADE_PAGO_VISUAL"]').val(formaPago);
+                        $('input[name="PFORMADE_PAGO"]').val(formaPago);
                     }
 
                     if ((result[1] || '').length > 1) {
@@ -804,14 +803,20 @@ function ajax_file_upload2(file_obj, nombre) {
                     ]);
 
                 } else {
-                    // ── Para todos los demás archivos ──
+                    // ── Para todos los demás archivos (complementos, etc.) ──
                     var nombreArchivo = $.trim(result[0]);
+                    var nuevoValor    = $.trim(result[1] || result[0]);
+
                     $('#3' + nombre).html(
                         '<p style="color:green;">✅ <a target="_blank" href="includes/archivos/'
                         + nombreArchivo + '">Visualizar!</a> &nbsp;'
                         + '<span style="color:blue;cursor:pointer;" class="view_dataSBborrar2" id="'
                         + nombreArchivo + '">Borrar!</span></p>'
                     );
+
+                    // Actualizar el hidden para que el form envíe el nuevo archivo
+                    $('input[name="' + nombre + '"]').val(nuevoValor);
+
                     $('#respuestaser').html('<p style="color:green;">✅ ¡Archivo cargado con éxito!</p>');
                     recargarElemento('#resettabla');
                 }

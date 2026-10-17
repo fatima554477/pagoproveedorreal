@@ -7,7 +7,7 @@ $(document).off('click.comprobantePago', '.enviar-comprobante-pago')
     var $email = $form.find('[name="email_enviacomprobante"]');
     var $mensaje = $form.find('.resultado-comprobante-pago');
     if (!$email.val().trim() || !$email[0].checkValidity()) {
-      $mensaje.text('Escribe un email válido para enviar el comprobante.');
+      $mensaje.text('Escribe correos válidos separados por comas para enviar el comprobante.');
       $email[0].reportValidity();
       return;
     }
